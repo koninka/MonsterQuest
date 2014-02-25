@@ -10,11 +10,8 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="index.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7A5236A8-27CE-45B2-B0B0-1FA576E68BBE}</ProjectGuid>
+    <ProjectGuid>{C90E151B-D374-4FFD-888B-B9C196AE76A6}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>MonsterQuest</RootNamespace>
   </PropertyGroup>
@@ -44,7 +41,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -82,6 +78,15 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="index.cpp" />
+    <ClCompile Include="MainApp.cpp" />
+    <ClCompile Include="RegAuth.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MainApp.h" />
+    <ClInclude Include="RegAuth.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
