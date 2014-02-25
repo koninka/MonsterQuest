@@ -12,6 +12,9 @@
 #include <Wt/Json/Serializer>
 #include <Wt/Http/Client>
 #include <Wt/Http/Message>
+#include <Wt/Http/Response>
+#include <Wt/WServer>
+#include <Wt/WResource>
 
 using namespace Wt;
 
@@ -55,15 +58,16 @@ void LoginForm::sendLogInRequest()
 	msg.addHeader("Content-Type", "application/json");
 	msg.addHeader("Accept", "application/json");
 	msg.addBodyText(Json::serialize(data));
-	client.request(Http::Post, "http://localhost", msg);
+	client.request(Http::Post, "http://localhost/json", msg);
 }
 
 void LoginForm::receiveJSONresponse(boost::system::error_code err, const Http::Message& response)
 {
-	if (!err && response.status() == 200)
-	{
-		doJavaScript("alert(" + response.body() + ");");
-	}
+
+	//if (!err && response.status() == 200)
+	//{
+	//	doJavaScript("alert(" + response.body() + ");");
+	//}
 }
 
 class MainApplication : public WApplication
@@ -78,19 +82,38 @@ MainApplication::MainApplication(const WEnvironment& env)
 	: WApplication(env), form(new LoginForm(root())) 
 {}
 
-
-class JsonHandlerApplication : public WApplication
+class JsonHandlerResource : public WResource
 {
 public:
-	JsonHandlerApplication(const WEnvironment& env): WApplication(env) {} 
+	void handleRequest(const Http::Request& request, Http::Response& response);
 };
+
+void JsonHandlerResource::handleRequest(const Http::Request& request, Http::Response& response)
+{
+	response.setMimeType("application/json");
+	std::string body;
+	request.in() >> body;
+	out << body << std::endl;
+	response.out() << body << std::endl;
+}
 
 WApplication* createApplication(const WEnvironment& env)
 {
 	return new MainApplication(env);
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-    return WRun(argc, argv, &createApplication);
+  Wt::WServer server(argv[0]); //Создаём сервер
+  server.addResource(new JsonHandlerResource(), "/json");
+
+  server.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION); //Конфигурируем его
+
+  server.addEntryPoint(Wt::Application, createApplication); //Добавляем "точку входа"
+
+  if (server.start()) {
+    int sig = Wt::WServer::waitForShutdown(); //Если заработало, ждём завершения
+    std::cerr << "Shutting down: (signal = " << sig << ")" << std::endl;
+    server.stop();
+  }
 }
