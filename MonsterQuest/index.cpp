@@ -11,10 +11,11 @@ int main(int argc, char **argv)
 
   server.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
 
-  server.addEntryPoint(Wt::Application, CreateApplication);
+  server.addEntryPoint(Application, CreateApplication);
 
-  if (server.start()) {
-    int sig = Wt::WServer::waitForShutdown();
+  if (server.start()) 
+  {
+    int sig = WServer::waitForShutdown();
     std::cerr << "Shutting down: (signal = " << sig << ")" << std::endl;
     server.stop();
   }

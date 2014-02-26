@@ -18,7 +18,7 @@ LoginForm::LoginForm(WContainerWidget* parent):
 void LoginForm::SendLogInRequest()
 {
 	Json::Object data;
-	data["action"] = "login";
+	data["action"] = WString("login");
 	data["username"] = usernameTextEdit.text();
 	data["password"] = passwordTextEdit.text();	
 	Http::Message msg;
@@ -30,17 +30,59 @@ void LoginForm::SendLogInRequest()
 
 void LoginForm::ReceiveJSONresponse(boost::system::error_code err, const Http::Message& response)
 {
+    if (!err && response.status() == 200)
+    {
+        Json::Object data;
+        Json::parse(response.body(), data);
+       // if (data.get("result") == "ok")
+           // doJavaScript("alert('ur sid is " + data.get("sid") + "');");
+    } else 
+        doJavaScript("alert('error has occured during connection to server');");
+	
+}
 
-	if (!err && response.status() == 200)
-	{
-		doJavaScript("alert(" + response.body() + ");");
-	}
+std::string JsonHandlerResource::handleLogin(Json::Object& data)
+{
+    return "a";
+}
+
+std::string JsonHandlerResource::handleLogout(Json::Object& data)
+{
+    return "a";
+}
+
+std::string JsonHandlerResource::handleRegister(Json::Object& data)
+{
+    return "a";
 }
 
 void JsonHandlerResource::handleRequest(const Http::Request& request, Http::Response& response)
 {
 	response.setMimeType("application/json");
+	Json::Object data;
 	std::string body;
-	request.in() >> body;
-	response.out() << body << std::endl;
+	while (!request.in().eof())
+	{
+		std::string str;
+		request.in() >> str;
+		body += str;
+	}
+    Json::parse(body, data);
+    if (!data.contains("action"))
+    {
+        Json::Object err;
+        err["result"] = "error";
+        err["message"] = "invalid operation";
+        response.out() << Json::serialize(err);
+    } else {
+        std::string responseBody;
+        std::string action = data.get("action");
+        if (action == "login")
+            responseBody = handleLogin(data);
+        else if (action == "logout")
+            responseBody = handleLogout(data);
+        else if (action == "register")
+            responseBody = handleRegister(data);
+        response.out() << responseBody;
+    }
 }
