@@ -12,6 +12,7 @@
 #include <Wt/WEnvironment>
 #include <Wt/Json/Object>
 #include <Wt/Json/Serializer>
+#include <Wt/Json/Parser>
 #include <Wt/Http/Client>
 #include <Wt/Http/Message>
 #include <Wt/Http/Response>
@@ -29,6 +30,11 @@ public:
 	LoginForm(WContainerWidget* = 0);
 };
 
-struct JsonHandlerResource : public Wt::WResource {
+class JsonHandlerResource : public Wt::WResource {
+private:
+    std::string handleLogin(Json::Object data);
+    std::string handleRegister(Json::Object data);
+    std::string handleLogout(Json::Object data);
+public:
 	void handleRequest(const Wt::Http::Request&, Wt::Http::Response&);
 };
