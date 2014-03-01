@@ -13,25 +13,24 @@ function registerSuccess(data, textStatus, jqXHR) {
     alert(data)
 }
 
+function SendRequest(data, callback){
+    $.ajax({
+        method : "POST",
+        url : "/json",
+        data : JSON.stringify(data),
+        success : callback
+    });
+}
+
 $("#loginBtn").click(function() {
     var data = fetchData();
     data["action"] = "login";
-    $.ajax({
-            method : "POST",
-            url : "/json",
-            data : JSON.stringify(data),
-            success : loginSuccess
-        });
+    SendRequest(data, loginSucces);
 });
 
 $("#registerBtn").click(function () {
     var data = fetchData();
     data["action"] = "register";
-    $.ajax({
-            method : "POST",
-            url : "/json",
-            data : JSON.stringify(data),
-            success : registerSuccess
-        });
+    SendRequest(data, registerSuccess);
 });
 
