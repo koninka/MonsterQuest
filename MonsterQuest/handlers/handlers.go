@@ -48,6 +48,7 @@ func registerAction(hash map[string] interface{}) string {
 }
 
 func JsonHandler(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-type", "application/json")
     body, _ := ioutil.ReadAll(r.Body)
     var rawData interface{}
     json.Unmarshal(body, &rawData)
