@@ -6,8 +6,7 @@ import (
 )
 
 func main() {
-    http.HandleFunc("/", handlers.MainHandler)
+    http.Handle("/", http.FileServer(http.Dir("./")))
     http.HandleFunc("/json", handlers.JsonHandler)
-    http.HandleFunc("/require/", handlers.RequireHandler)
     http.ListenAndServe(":80", nil)
 }
