@@ -2,7 +2,7 @@ package main
 
 import (
     "net/http"
-    "github.com/MultiTeemer/server/handlers"
+    "MonsterQuest/MonsterQuest/handlers"
 )
 
 func main() {
