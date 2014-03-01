@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mocha</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="mocha/mocha.css" />
+    
+    <script src="mocha/mocha.js">mocha.setup('bdd')</script>
+    <script>mocha.setup('bdd')</script>
+    <script src="chai/chai.js"></script>
+    
+    <script src="/require/jquery-1.11.0.min.js"></script>
+    <script src="/require/requester.js"></script>
+    <script src="tests/registration.test.js"></script>
+    
+  </head>
+  <body>
+    <div id="mocha"></div>
+    
+    <script>
+	    mocha.run();
+    </script>
+  </body>
+</html>
