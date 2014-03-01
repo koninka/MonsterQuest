@@ -62,6 +62,6 @@ func JsonHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RequireHandler(w http.ResponseWriter, r *http.Request) {
-    file, _ := ioutil.ReadFile(pathToSource + r.URL.Path[len("/require/"):])
+    file, _ := ioutil.ReadFile(pathToSource + "js/" + r.URL.Path[len("/require/"):])
     fmt.Fprintf(w, "%s", file)    
 }
