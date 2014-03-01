@@ -11,7 +11,7 @@ import (
     "regexp"
 )
 
-const pathToSource = "../src/MonsterQuest/MonsterQuest/"
+const pathToSource = ""
 
 func MainHandler(w http.ResponseWriter, r *http.Request) {
      t, _ := template.ParseFiles(pathToSource + "index.html")
