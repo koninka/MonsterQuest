@@ -8,6 +8,7 @@ import (
     "encoding/json"
     "database/sql"
     _ "github.com/go-sql-driver/mysql"
+    "regexp"
 )
 
 const pathToSource = "../src/MonsterQuest/MonsterQuest/"
@@ -27,16 +28,21 @@ func registerAction(hash map[string] interface{}) string {
     defer db.Close()
     rows, _ := db.Query("select id from users where login = ?", hash["login"])
     defer rows.Close()
+    
+    appropriateLogin, _ := regexp.MatchString("([a-z]|[A-Z]|[0-9]){2,36}", hash["login"].(string))
+    appropriatePassword, _ := regexp.MatchString(".{6,36}", hash["password"].(string))
+    
     if rows.Next() {
         data["result"] = "loginExists"
-        res, _ := json.Marshal(data)
-        return string(res)
-    }
-
-    // some checks for goodness of login and password will be here
+    } else if !appropriateLogin {
+        data["result"] = "badLogin"
+    } else if !appropriatePassword {  
+        data["result"] = "badPassword"
+    } else {
+        db.Query("insert into users(login, password) values(?, ?)", hash["login"], hash["password"])
+        data["result"] = "ok"
+    }  
     
-    db.Query("insert into users(login, password) values(?, ?)", hash["login"], hash["password"])
-    data["result"] = "ok"
     res, _ := json.Marshal(data)
     return string(res)
 }
