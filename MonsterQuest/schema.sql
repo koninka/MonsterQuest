@@ -1,7 +1,10 @@
-
 create database monsterquest;
 
 use monsterquest;
+
+GRANT ALL
+ON `camerapeople`.*
+TO `monsterquest_user`@localhost IDENTIFIED BY 'qwerty';
 
 create table users(
 	id integer not null auto_increment primary key,
