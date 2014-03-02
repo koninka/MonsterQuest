@@ -1,4 +1,4 @@
-package main 
+package main
 
 import (
     "net/http"
@@ -10,5 +10,5 @@ func main() {
     http.Handle("/require/", http.StripPrefix("/require/", http.FileServer(http.Dir("./js"))))
     http.Handle("/tests/",   http.FileServer(http.Dir("./")))
     http.HandleFunc("/json", handlers.JsonHandler)
-    http.ListenAndServe(":80", nil)
+    http.ListenAndServe(":8080", nil)
 }
