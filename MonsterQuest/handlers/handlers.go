@@ -11,10 +11,8 @@ import (
     "regexp"
 )
 
-const pathToSource = ""
-
 func MainHandler(w http.ResponseWriter, r *http.Request) {
-     t, _ := template.ParseFiles(pathToSource + "index.html")
+     t, _ := template.ParseFiles("index.html")
      t.Execute(w, nil)
 }
 
