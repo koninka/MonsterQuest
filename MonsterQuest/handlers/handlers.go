@@ -22,7 +22,7 @@ func registerAction(hash map[string] interface{}) string {
     rows, _ := db.Query("select id from users where login = ?", hash["login"])
     defer rows.Close()
     
-    appropriateLogin, _ := regexp.MatchString("^([a-z]|[A-Z]|[0-9]){2,36}$", hash["login"].(string))
+    appropriateLogin, _ := regexp.MatchString("^[a-zA-Z0-9]{2,36}$", hash["login"].(string))
     appropriatePassword, _ := regexp.MatchString("^.{6,36}$", hash["password"].(string))
     
     if rows.Next() {
