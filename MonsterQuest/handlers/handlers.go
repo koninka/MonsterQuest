@@ -3,7 +3,6 @@ package handlers
 import (
     "fmt"
     "net/http"
-    "html/template"
     "io/ioutil"
     "encoding/json"
     "database/sql"
