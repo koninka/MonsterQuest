@@ -16,25 +16,25 @@ func loginAction(hash map[string] interface{}) string {
 
 func registerAction(hash map[string] interface{}) string {
     data := make(map[string] string)
-    db, _ := sql.Open("mysql", "root:12345@/monsterquest")
+    db, _ := sql.Open("mysql", "monster_user:qwerty@/monsterquest")
     defer db.Close()
     rows, _ := db.Query("select id from users where login = ?", hash["login"])
     defer rows.Close()
-    
+
     appropriateLogin, _ := regexp.MatchString("^([a-z]|[A-Z]|[0-9]){2,36}$", hash["login"].(string))
     appropriatePassword, _ := regexp.MatchString("^.{6,36}$", hash["password"].(string))
-    
+
     if rows.Next() {
         data["result"] = "loginExists"
     } else if !appropriateLogin {
         data["result"] = "badLogin"
-    } else if !appropriatePassword {  
+    } else if !appropriatePassword {
         data["result"] = "badPassword"
     } else {
         db.Query("insert into users(login, password) values(?, ?)", hash["login"], hash["password"])
         data["result"] = "ok"
-    }  
-    
+    }
+
     res, _ := json.Marshal(data)
     return string(res)
 }

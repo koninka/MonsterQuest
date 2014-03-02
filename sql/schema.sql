@@ -1,10 +1,11 @@
+DROP DATABASE IF EXISTS monsterquest;
 CREATE DATABASE monsterquest;
 
 use monsterquest;
 
 GRANT ALL
 ON `camerapeople`.*
-TO `monsterquest_user`@localhost IDENTIFIED BY 'qwerty';
+TO `monster_user`@localhost IDENTIFIED BY 'qwerty';
 
 CREATE TABLE users (
 	id       INT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
