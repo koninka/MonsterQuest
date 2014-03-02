@@ -5,8 +5,8 @@ use monsterquest;
 
 create table users(
 	id integer not null auto_increment primary key,
-	login varchar(10) not null,
-	password varchar(10) not null
+	login varchar(36) not null,
+	password varchar(36) not null
 );
 
 create table securityId(
