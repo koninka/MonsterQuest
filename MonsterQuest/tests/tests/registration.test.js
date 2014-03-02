@@ -29,6 +29,16 @@ describe('Registration', function(){
         }
         SendRequest(data, CallBack);
     })
+
+    it('should successfully register', function(done){
+        data['login'] = '1111111111111111111111111111111111111';
+        data['password'] = '-------------';
+        CallBack = function (data){
+            expect(data['result']).to.equal('badLogin');
+            done();
+        }
+        SendRequest(data, CallBack)
+    })
     
     it('should fail register by loginExists', function(done){
         data = {
@@ -56,9 +66,49 @@ describe('Registration', function(){
         SendRequest(data, CallBack);
     })
     
+    it('should fail register by badLogin', function(done){
+        data['login'] = '-e';
+        data['password'] = '112345';
+        CallBack = function (data){
+            expect(data['result']).to.equal('badLogin');
+            done();
+        }
+        SendRequest(data, CallBack)
+    })
+
+    it('should fail register by badLogin', function(done){
+        data['login'] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        data['password'] = '-------------';
+        CallBack = function (data){
+            expect(data['result']).to.equal('badLogin');
+            done();
+        }
+        SendRequest(data, CallBack)
+    })
+
+    it('should fail register by badLogin', function(done){
+        data['login'] = '+-/:::-;-*&^';
+        data['password'] = '-------------';
+        CallBack = function (data){
+            expect(data['result']).to.equal('badLogin');
+            done();
+        }
+        SendRequest(data, CallBack)
+    })
+
     it('should fail register by badPassword', function(done){
         data['login'] = login + 1;
         data['password'] = 'c';
+        CallBack = function (data){
+            expect(data['result']).to.equal('badPassword');
+            done();
+        }
+        SendRequest(data, CallBack);
+    })
+
+    it('should fail register by badPassword', function(done){
+        data['login'] = login + 1;
+        data['password'] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         CallBack = function (data){
             expect(data['result']).to.equal('badPassword');
             done();
