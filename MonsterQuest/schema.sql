@@ -1,4 +1,4 @@
-create database monsterquest;
+CREATE DATABASE monsterquest;
 
 use monsterquest;
 
@@ -6,14 +6,14 @@ GRANT ALL
 ON `camerapeople`.*
 TO `monsterquest_user`@localhost IDENTIFIED BY 'qwerty';
 
-create table users(
-	id integer not null auto_increment primary key,
-	login varchar(10) not null,
-	password varchar(10) not null
+CREATE TABLE users (
+	id       INT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	login    VARCHAR(10) NOT NULL,
+	password VARCHAR(10) NOT NULL
 );
 
-create table securityId(
-	id integer not null auto_increment primary key,
-	user_id integer not null references users(id) on delete cascade,
-	sid text not null
+CREATE TABLE securityId (
+	id      INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	user_id INT  NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+	sid     TEXT NOT NULL
 );
