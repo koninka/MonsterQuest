@@ -11,11 +11,6 @@ import (
     "regexp"
 )
 
-func MainHandler(w http.ResponseWriter, r *http.Request) {
-     t, _ := template.ParseFiles("index.html")
-     t.Execute(w, nil)
-}
-
 func loginAction(hash map[string] interface{}) string {
     return "DATA";
 }
