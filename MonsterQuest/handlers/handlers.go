@@ -8,6 +8,7 @@ import (
     "database/sql"
     _ "github.com/go-sql-driver/mysql"
     "regexp"
+    "html/template"
 )
 
 func loginAction(hash map[string] interface{}) string {
@@ -52,3 +53,9 @@ func JsonHandler(w http.ResponseWriter, r *http.Request) {
     }
     fmt.Fprintf(w, "%s", response)
 }
+
+
+func MainHandler(w http.ResponseWriter, r *http.Request) {
+      t, _ := template.ParseFiles("index.html")
+      t.Execute(w, nil)
+ }
