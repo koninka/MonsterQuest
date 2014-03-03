@@ -6,17 +6,18 @@ function fetchData() {
 }
 
 function loginSuccess(data, textStatus, jqXHR) {
-    alert(data);
+    alert(JSON.stringify(data));
 }
 
 function registerSuccess(data, textStatus, jqXHR) {
-    alert(data)
+    alert(JSON.stringify(data));
 }
 
-function SendRequest(data, callback){
+function SendRequest(data, callback, url) {
+    var url = url || "/json";
     $.ajax({
         method : "POST",
-        url : "/json",
+        url : url,
         data : JSON.stringify(data),
         success : callback
     });
