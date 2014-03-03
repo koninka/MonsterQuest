@@ -2,16 +2,26 @@
     <head>
         <title>MonsterQuest</title>
         <script type="text/javascript" src="/require/jquery-1.11.0.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="/style/registration.css" />
+
     </head>
     <body>
 
         <form>
-            <label for="username">Username:</label>
-            <input id="username" type="text" />
-            <label for="password">Password:</label>
-            <input id="password" type="password" />
-            <input type="button" value="Login" id="loginBtn" />
-            <input type="button" value="Register" id="registerBtn" />
+            <div class="inset">
+                <p>
+                    <label for="username">Username:</label>
+                    <input id="username" type="text" />
+                </p>
+                <p>
+                    <label for="password">Password:</label>
+                    <input id="password" type="password" />
+                </p>
+            </div>
+            <p class="p-container">
+                <input type="button" value="Register" id="registerBtn" />
+                <input class="left" type="button" value="Login" id="loginBtn" />
+            </p>
         </form>
 
         <script type="text/javascript" src="/require/requester.js"></script>
