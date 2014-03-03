@@ -4,7 +4,7 @@ CREATE DATABASE monsterquest;
 use monsterquest;
 
 GRANT ALL
-ON `camerapeople`.*
+ON `monsterquest`.*
 TO `monster_user`@localhost IDENTIFIED BY 'qwerty';
 
 CREATE TABLE users (
@@ -13,8 +13,8 @@ CREATE TABLE users (
 	password VARCHAR(10) NOT NULL
 );
 
-CREATE TABLE securityId (
-	id      INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	user_id INT  NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-	sid     TEXT NOT NULL
+CREATE TABLE sessions (
+	id      INT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	user_id INT         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+	sid     VARCHAR(20) NOT NULL
 );
