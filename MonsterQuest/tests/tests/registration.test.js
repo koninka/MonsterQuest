@@ -19,7 +19,7 @@ var url;
 describe('Registration', function(){
     it('should fail register by badLogin[empty]', function(done){
         data = {
-            'login'    : '', 
+            'login'    : '',
             'password' : '',
             'action'   : 'register'
         }
