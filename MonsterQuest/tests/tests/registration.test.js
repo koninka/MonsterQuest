@@ -138,6 +138,8 @@ describe('Registration', function(){
     })
 })
 
+var sid = null;
+
 describe('Login', function(){
     it('should successfully login', function(done){
         data = {
@@ -147,6 +149,7 @@ describe('Login', function(){
         }
         CallBack = function (data){
             expect(data['result']).to.equal('ok');
+            sid = data['sid'];
             done();
         }
         SendRequest(data, CallBack, url);
@@ -173,6 +176,42 @@ describe('Login', function(){
         }
         CallBack = function (data){
             expect(data['result']).to.equal('invalidCredentials');
+            done();
+        }
+        SendRequest(data, CallBack, url);
+    })
+
+    it('should successfully logout', function(done){
+        data = {
+            'action' : 'logout',
+            'sid' : sid
+        }
+        CallBack = function (data){
+            expect(data['result']).to.equal('ok');
+            done();
+        }
+        SendRequest(data, CallBack, url);
+    })
+
+    it('should fail logout by badSid', function(done){
+        data = {
+            'action' : 'logout',
+            'sid' : sid
+        }
+        CallBack = function (data){
+            expect(data['result']).to.equal('badSid');
+            done();
+        }
+        SendRequest(data, CallBack, url);
+    })
+
+    it('should fail logout by badSid', function(done){
+        data = {
+            'action' : 'logout',
+            'sid' : ''
+        }
+        CallBack = function (data){
+            expect(data['result']).to.equal('badSid');
             done();
         }
         SendRequest(data, CallBack, url);
