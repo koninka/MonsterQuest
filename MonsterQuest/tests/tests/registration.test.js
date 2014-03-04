@@ -177,7 +177,6 @@ describe('Login', function(){
         }
         SendRequest(data, CallBack, url);
     })
-
 })
 
 /*describe('Registration', function(){
