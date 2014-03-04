@@ -10,7 +10,8 @@ TO `monster_user`@localhost IDENTIFIED BY 'qwerty';
 CREATE TABLE users (
 	id       INT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	login    VARCHAR(10) NOT NULL,
-	password VARCHAR(10) NOT NULL
+	password VARCHAR(10) NOT NULL,
+   UNIQUE KEY(login)
 );
 
 CREATE TABLE sessions (
