@@ -51,7 +51,6 @@ func logoutAction(u4 string) string {
 
 func loginAction(login, pass string) string {
     result := map[string] string{"result": "invalidCredentials"}
-    fmt.Println(32)
     if isExistUser(login, pass) {
         db := connect.CreateConnect()
         u4, _ := uuid.NewV4()
@@ -59,7 +58,6 @@ func loginAction(login, pass string) string {
         defer connect.CloseDB(db, stmt)
         _, err := stmt.Exec(login, u4)
         if err == nil {
-            fmt.Println(u4.String())
             result["sid"] = u4.String()
             result["result"] = "ok";
         }
@@ -80,9 +78,7 @@ func registerAction(login, pass string) string {
         } else {
             db := connect.CreateConnect()
             stmt, _ := db.Prepare("INSERT INTO users(login, password) VALUES(?, ?)")
-            res, _ := stmt.Exec(login, pass)
-            lastId, _ := res.LastInsertId()
-            fmt.Printf("last insert id = %d\n", lastId)
+            stmt.Exec(login, pass)
         }
     }
     resJSON, _ := json.Marshal(result)
