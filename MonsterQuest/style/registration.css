@@ -7,15 +7,31 @@ body {
   background:#333 ;
 }
 
+div.form {
+    width:300px;
+    margin:200px auto;
+}
+
 form {
  	background:#111; 
-  width:300px;
+  /*width:300px;
   margin:200px auto;
-  border-radius:0.4em;
+  */border-radius:0.4em;
   border:1px solid #191919;
   overflow:hidden;
   position:relative;
   box-shadow: 0 5px 10px 5px rgba(0,0,0,0.2);
+}
+
+#message {
+    position: relative;
+    top: 10;
+    width: 100%;
+    text-align: center;
+}
+
+#message.Err {
+    color: red;
 }
 
 form:after {
@@ -77,6 +93,7 @@ label {
   padding-bottom:9px;
 }
 
+input[type=url],
 input[type=text],
 input[type=password] {
  	width:100%;
@@ -87,18 +104,7 @@ input[type=password] {
     0 1px 0 rgba(255,255,255,0.1);
   border-radius:0.3em;
   margin-bottom:20px;
-}
-
-label[for=remember]{
- 	color:white;
-  display:inline-block;
-  padding-bottom:0;
-  padding-top:5px;
-}
-
-input[type=checkbox] {
- 	display:inline-block;
-  vertical-align:top;
+  color: white;
 }
 
 .p-container {
@@ -141,6 +147,7 @@ input[type=button]:hover {
     inset 0 -10px 10px rgba(255,255,255,0.1);
 }
 
+input[type=url]:hover,
 input[type=text]:hover,
 input[type=password]:hover,
 label:hover ~ input[type=text],

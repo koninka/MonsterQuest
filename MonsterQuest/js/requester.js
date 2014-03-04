@@ -1,17 +1,3 @@
-function fetchData() {
-    return {
-        "login" : $("#username").val(),
-        "password" : $("#password").val()
-    };
-}
-
-function loginSuccess(data, textStatus, jqXHR) {
-    alert(JSON.stringify(data));
-}
-
-function registerSuccess(data, textStatus, jqXHR) {
-    alert(JSON.stringify(data));
-}
 
 function SendRequest(data, callback, url) {
     var url = url || "/json";
@@ -22,16 +8,4 @@ function SendRequest(data, callback, url) {
         success : callback
     });
 }
-
-$("#loginBtn").click(function() {
-    var data = fetchData();
-    data["action"] = "login";
-    SendRequest(data, loginSucces);
-});
-
-$("#registerBtn").click(function () {
-    var data = fetchData();
-    data["action"] = "register";
-    SendRequest(data, registerSuccess);
-});
 
