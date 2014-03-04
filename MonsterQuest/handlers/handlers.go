@@ -55,19 +55,25 @@ func loginAction(login, pass string) string {
     return string(resJSON)
 }
 
-    if rows.Next() {
-        data["result"] = "loginExists"
-    } else if !appropriateLogin {
-        data["result"] = "badLogin"
-    } else if !appropriatePassword {
-        data["result"] = "badPassword"
+func registerAction(login, pass string) string {
+    result := map[string] string{"result": "ok"}
+    if isExistUser(login, "") {
+        result["result"] = "loginExists"
     } else {
-        db.Query("insert into users(login, password) values(?, ?)", hash["login"], hash["password"])
-        data["result"] = "ok"
+        if !matchRegexp("^([a-z]|[A-Z]|[0-9]){2,36}$", login) {
+            result["result"] = "badLogin"
+        } else if !matchRegexp("^.{6,36}$", pass) {
+            result["result"] = "badPassword"
+        } else {
+            db := connect.CreateConnect()
+            stmt, _ := db.Prepare("INSERT INTO users(login, password) VALUES(?, ?)")
+            res, _ := stmt.Exec(login, pass)
+            lastId, _ := res.LastInsertId()
+            fmt.Printf("last insert id = %d\n", lastId)
+        }
     }
-
-    res, _ := json.Marshal(data)
-    return string(res)
+    resJSON, _ := json.Marshal(result)
+    return string(resJSON)
 }
 
 func JsonHandler(w http.ResponseWriter, r *http.Request) {
