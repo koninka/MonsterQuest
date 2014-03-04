@@ -11,8 +11,22 @@ import (
     "regexp"
 )
 
-func loginAction(hash map[string] interface{}) string {
-    return "DATA";
+func isExistUser(login, pass string) bool {
+    db := connect.CreateConnect()
+    var (
+        where string = "login = ?"
+        isLogin bool
+    )
+    if isLogin = pass != ""; isLogin {
+        where = where + " AND password = ?"
+    }
+    stmt, _ := db.Prepare(connect.MakeSelect("users", where, "id"))
+    defer connect.CloseDB(db, stmt)
+    if isLogin {
+        return stmt.QueryRow(login, pass).Scan() != sql.ErrNoRows
+    } else {
+        return stmt.QueryRow(login).Scan() != sql.ErrNoRows
+    }
 }
 
 func registerAction(hash map[string] interface{}) string {
