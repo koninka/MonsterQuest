@@ -93,10 +93,11 @@ func JsonHandler(w http.ResponseWriter, r *http.Request) {
     var rawData interface{}
     json.Unmarshal(body, &rawData)
     data := rawData.(map[string] interface{})
+    login, pass := data["login"].(string), data["password"].(string)
     var response string
     switch data["action"] {
-        case "login": response = loginAction(data)
-        case "register": response = registerAction(data)
+        case "login":    response = loginAction(login, pass)
+        case "register": response = registerAction(login, pass)
     }
     fmt.Fprintf(w, "%s", response)
 }
