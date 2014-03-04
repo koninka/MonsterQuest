@@ -3,7 +3,8 @@ $(function() {
     var conn;
     var msg = $("#msg");
     var log = $("#log");
-
+    var sid = getQueryVariable('sid');
+    var uri = getQueryVariable('soсket');
     function appendLog(msg) {
         var d = log[0]
         var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
@@ -20,13 +21,13 @@ $(function() {
         if (!msg.val()) {
             return false;
         }
-        conn.send(msg.val());
+        conn.send(JSON.stringify({msg:msg.val()}));
         msg.val("");
         return false
     });
 
     if (window["WebSocket"]) {
-        conn = new WebSocket("ws://localhost:8080/websocket");
+        conn = new WebSocket("ws://" + uri);
         conn.onclose = function(evt) {
             appendLog($("<div><b>Connection closed.</b></div>"))
         }
