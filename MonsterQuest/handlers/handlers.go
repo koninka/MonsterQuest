@@ -29,12 +29,23 @@ func isExistUser(login, pass string) bool {
     }
 }
 
-func registerAction(hash map[string] interface{}) string {
-    data := make(map[string] string)
-    db, _ := sql.Open("mysql", "monster_user:qwerty@/monsterquest")
-    defer db.Close()
-    rows, _ := db.Query("select id from users where login = ?", hash["login"])
-    defer rows.Close()
+func matchRegexp(pattern, str string) bool {
+    result, _ := regexp.MatchString(pattern, str)
+    return result
+}
+
+func logoutAction(u4 string) string {
+    result := map[string] string{"result": "ok"}
+    db := connect.CreateConnect()
+    stmt, _ := db.Prepare("DELETE FROM sessions WHERE sid = ?")
+    defer connect.CloseDB(db, stmt)
+    res, _ := stmt.Exec(u4)
+    if amount, _ := res.RowsAffected(); amount != 1 {
+        result["result"] = "badSid"
+    }
+    resJSON, _ := json.Marshal(result)
+    return string(resJSON)
+}
 
 func loginAction(login, pass string) string {
     result := map[string] string{"result": "invalidCredentials"}
