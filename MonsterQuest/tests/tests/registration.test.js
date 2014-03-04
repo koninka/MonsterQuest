@@ -15,12 +15,12 @@ var password = randstring();
 var CallBack;
 var data;
 var url;
-    
+
 describe('Registration', function(){
-    
+
     it('should successfully register', function(done){
         data = {
-            'login'    : login, 
+            'login'    : login,
             'password' : password,
             'action'   : 'register'
         }
@@ -34,7 +34,7 @@ describe('Registration', function(){
 
     it('should fail register by loginExists', function(done){
         data = {
-            'login'    : login, 
+            'login'    : login,
             'password' : password,
             'action'   : 'register'
         }
@@ -44,10 +44,10 @@ describe('Registration', function(){
         }
         SendRequest(data, CallBack, url);
     })
-    
+
     it('should fail register by badLogin', function(done){
         data = {
-            'login'    : 'e', 
+            'login'    : 'e',
             'password' : password,
             'action'   : 'register'
         }
@@ -57,7 +57,7 @@ describe('Registration', function(){
         }
         SendRequest(data, CallBack, url);
     })
-    
+
     it('should fail register by badLogin', function(done){
         data['login'] = '+e';
         data['password'] = '112345';
@@ -132,7 +132,7 @@ describe('Registration', function(){
 describe('Login', function(){
     it('should successfully login', function(done){
         data = {
-            'login'    : login, 
+            'login'    : login,
             'password' : password,
             'action'   : 'login'
         }
@@ -142,10 +142,10 @@ describe('Login', function(){
         }
         SendRequest(data, CallBack, url);
     })
-    
+
     it('should fail login by invalidCredentials[wrong login]', function(done){
         data = {
-            'login'    : '_', 
+            'login'    : '_',
             'password' : password,
             'action'   : 'login'
         }
@@ -155,10 +155,10 @@ describe('Login', function(){
         }
         SendRequest(data, CallBack, url);
     })
-    
+
     it('should fail login by invalidCredentials[wrong password]', function(done){
         data = {
-            'login'    : login, 
+            'login'    : login,
             'password' : '_',
             'action'   : 'login'
         }
@@ -168,7 +168,7 @@ describe('Login', function(){
         }
         SendRequest(data, CallBack, url);
     })
-    
+
 })
 
 /*describe('Registration', function(){
