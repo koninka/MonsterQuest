@@ -16,6 +16,18 @@ var CallBack;
 var data;
     
 describe('Registration', function(){
+    it('should fail register by badLogin', function(done){
+        data = {
+            'login'    : '', 
+            'password' : '',
+            'action'   : 'register'
+        }
+        CallBack = function (data){
+            expect(data['result']).to.equal('badLogin');
+            done();
+        }
+        SendRequest(data, CallBack);
+    })
     
     it('should successfully register', function(done){
         data = {
