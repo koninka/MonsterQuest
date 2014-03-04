@@ -9,6 +9,8 @@ import (
     "MonsterQuest/MonsterQuest/connect"
     "github.com/nu7hatch/gouuid"
     "regexp"
+    "html/template"
+    "code.google.com/p/go.net/websocket"
 )
 
 func isExistUser(login, pass string) bool {
@@ -66,12 +68,19 @@ func loginAction(login, pass string) string {
     return string(resJSON)
 }
 
+type Message struct {
+    RequestID      int
+    Command        string
+    SomeOtherThing string
+    Success        bool
+}
+
 func registerAction(login, pass string) string {
     result := map[string] string{"result": "ok"}
     if isExistUser(login, "") {
         result["result"] = "loginExists"
     } else {
-        if !matchRegexp("^([a-z]|[A-Z]|[0-9]){2,36}$", login) {
+        if !matchRegexp("^[a-zA-Z0-9]{2,36}$", login) {
             result["result"] = "badLogin"
         } else if !matchRegexp("^.{6,36}$", pass) {
             result["result"] = "badPassword"
@@ -100,4 +109,34 @@ func JsonHandler(w http.ResponseWriter, r *http.Request) {
         case "register": response = registerAction(login, pass)
     }
     fmt.Fprintf(w, "%s", response)
+}
+
+
+func MainHandler(w http.ResponseWriter, r *http.Request) {
+    t, _ := template.ParseFiles("index.html")
+    t.Execute(w, nil)
+}
+
+func Echo(ws *websocket.Conn) {
+    var err error
+    for {
+        var reply map[string] string
+
+        if err = websocket.JSON.Receive(ws, &reply); err != nil {
+            fmt.Println("Can't receive")
+            fmt.Println(err)
+            break
+        }
+        fmt.Println(reply)
+
+        msg := reply
+        msg["result"] = "ok"
+        fmt.Println(msg)
+
+        if err = websocket.JSON.Send(ws, msg); err != nil {
+            fmt.Println("Can't send")
+            fmt.Println(err)
+            break
+        }
+    }
 }

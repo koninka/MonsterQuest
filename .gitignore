@@ -1,1 +1,3 @@
 *.exe
+MonsterQuest/tests/mocha/*
+MonsterQuest/tests/chai/*
