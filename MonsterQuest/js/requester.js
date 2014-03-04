@@ -8,4 +8,3 @@ function SendRequest(data, callback, url) {
         success : callback
     });
 }
-

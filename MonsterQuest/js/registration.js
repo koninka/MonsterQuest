@@ -7,7 +7,7 @@ function fetchData() {
 
 function loginSuccess(data, textStatus, jqXHR) {
     if(data['result'] == 'ok'){
-        $('#message').text('Регистрация прошла успешно').removeClass("Err");    
+        $('#message').text('Вы успешно авторизованы!').removeClass("Err");
     } else if(data['result'] == 'invalidCredentials'){
         $('#message').text('Неверный логин или пароль').addClass("Err");
     } else {
@@ -17,11 +17,11 @@ function loginSuccess(data, textStatus, jqXHR) {
 
 function registerSuccess(data, textStatus, jqXHR) {
     if(data['result'] == 'ok'){
-        $('#message').text('Регистрация прошла успешно').removeClass("Err");    
+        $('#message').text('Регистрация прошла успешно').removeClass("Err");
     } else if(data['result'] == 'loginExists'){
-        $('#message').text('Такой логин существует').addClass("Err");   
+        $('#message').text('Такой логин существует').addClass("Err");
     } else if(data['result'] == 'badLogin'){
-        $('#message').text('Логин должен состоять из букв и/или цифр, длинной от 2 до 36 символов').addClass("Err"); 
+        $('#message').text('Логин должен состоять из букв и/или цифр, длинной от 2 до 36 символов').addClass("Err");
     } else if(data['result'] == 'badPassword'){
         $('#message').text('Пароль должен быть длинной от 2 до 36').addClass("Err"); // something else
     } else {
