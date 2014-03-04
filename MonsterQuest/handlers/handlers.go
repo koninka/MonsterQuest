@@ -36,8 +36,24 @@ func registerAction(hash map[string] interface{}) string {
     rows, _ := db.Query("select id from users where login = ?", hash["login"])
     defer rows.Close()
 
-    appropriateLogin, _ := regexp.MatchString("^([a-z]|[A-Z]|[0-9]){2,36}$", hash["login"].(string))
-    appropriatePassword, _ := regexp.MatchString("^.{6,36}$", hash["password"].(string))
+func loginAction(login, pass string) string {
+    result := map[string] string{"result": "invalidCredentials"}
+    fmt.Println(32)
+    if isExistUser(login, pass) {
+        db := connect.CreateConnect()
+        u4, _ := uuid.NewV4()
+        stmt, _ := db.Prepare("CALL add_session(?, ?)")
+        defer connect.CloseDB(db, stmt)
+        _, err := stmt.Exec(login, u4)
+        if err == nil {
+            fmt.Println(u4.String())
+            result["sid"] = u4.String()
+            result["result"] = "ok";
+        }
+    }
+    resJSON, _ := json.Marshal(result)
+    return string(resJSON)
+}
 
     if rows.Next() {
         data["result"] = "loginExists"
