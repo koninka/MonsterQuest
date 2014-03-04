@@ -51,13 +51,12 @@ func logoutAction(u4 string) string {
 
 func loginAction(login, pass string) string {
     result := map[string] string{"result": "invalidCredentials"}
-    fmt.Println(32)
     if isExistUser(login, pass) {
         db := connect.CreateConnect()
         u4, _ := uuid.NewV4()
-        stmt, _ := db.Prepare("CALL add_session(?, ?)")
+        stmt, _ := db.Prepare("CALL add_user_session(?, ?)")
         defer connect.CloseDB(db, stmt)
-        _, err := stmt.Exec(login, u4)
+        _, err := stmt.Exec(login, u4.String())
         if err == nil {
             fmt.Println(u4.String())
             result["sid"] = u4.String()
