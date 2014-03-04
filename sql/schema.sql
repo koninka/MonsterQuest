@@ -17,7 +17,8 @@ CREATE TABLE users (
 CREATE TABLE sessions (
 	id      INT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	user_id INT         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-	sid     VARCHAR(20) NOT NULL
+	sid     VARCHAR(20) NOT NULL,
+   UNIQUE KEY(sid)
 );
 
 
