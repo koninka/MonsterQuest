@@ -17,7 +17,7 @@ var data;
 var url;
     
 describe('Registration', function(){
-    it('should fail register by badLogin', function(done){
+    it('should fail register by badLogin[empty]', function(done){
         data = {
             'login'    : '', 
             'password' : '',
@@ -27,7 +27,7 @@ describe('Registration', function(){
             expect(data['result']).to.equal('badLogin');
             done();
         }
-        SendRequest(data, CallBack);
+        SendRequest(data, CallBack, url);
     })
     
     it('should successfully register', function(done){
@@ -57,7 +57,7 @@ describe('Registration', function(){
         SendRequest(data, CallBack, url);
     })
     
-    it('should fail register by badLogin', function(done){
+    it('should fail register by badLogin[short]', function(done){
         data = {
             'login'    : 'e', 
             'password' : password,
@@ -70,7 +70,7 @@ describe('Registration', function(){
         SendRequest(data, CallBack, url);
     })
     
-    it('should fail register by badLogin', function(done){
+    it('should fail register by badLogin[short]', function(done){
         data['login'] = '+e';
         data['password'] = '112345';
         CallBack = function (data){
@@ -80,7 +80,7 @@ describe('Registration', function(){
         SendRequest(data, CallBack, url)
     })
 
-    it('should fail register by badLogin', function(done){
+    it('should fail register by badLogin[long]', function(done){
         data['login'] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         data['password'] = '-------------';
         CallBack = function (data){
@@ -90,7 +90,7 @@ describe('Registration', function(){
         SendRequest(data, CallBack, url)
     })
 
-    it('should fail register by badLogin', function(done){
+    it('should fail register by badLogin[unsupported chars]', function(done){
         data['login'] = '+-/:::-;-*&^';
         data['password'] = '-------------';
         CallBack = function (data){
@@ -100,7 +100,7 @@ describe('Registration', function(){
         SendRequest(data, CallBack, url)
     })
 
-    it('should fail register by badLogin', function(done){
+    it('should fail register by badLogin[long]', function(done){
         data['login'] = '1111111111111111111111111111111111111';
         data['password'] = '-------------';
         CallBack = function (data){
@@ -110,7 +110,7 @@ describe('Registration', function(){
         SendRequest(data, CallBack, url)
     })
 
-    it('should fail register by badLogin', function(done){
+    it('should fail register by badLogin[long]', function(done){
         data['login'] = '1111111111111111111111111111111111111';
         data['password'] = '-------------';
         CallBack = function (data){
@@ -120,7 +120,7 @@ describe('Registration', function(){
         SendRequest(data, CallBack)
     })
 
-    it('should fail register by badPassword', function(done){
+    it('should fail register by badPassword[short]', function(done){
         data['login'] = login + 1;
         data['password'] = 'c';
         CallBack = function (data){
@@ -130,7 +130,7 @@ describe('Registration', function(){
         SendRequest(data, CallBack, url);
     })
 
-    it('should fail register by badPassword', function(done){
+    it('should fail register by badPassword[long]', function(done){
         data['login'] = login + 1;
         data['password'] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         CallBack = function (data){
