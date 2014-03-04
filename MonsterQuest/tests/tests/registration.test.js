@@ -14,6 +14,7 @@ var login = 'tester' + randstring();
 var password = randstring();
 var CallBack;
 var data;
+var url;
     
 describe('Registration', function(){
     it('should fail register by badLogin', function(done){
@@ -39,59 +40,10 @@ describe('Registration', function(){
             expect(data['result']).to.equal('ok');
             done();
         }
-        SendRequest(data, CallBack);
+        SendRequest(data, CallBack, url);
     })
 
-    it('should successfully register', function(done){
-        data['login'] = '--';
-        data['password'] = '-------------';
-        CallBack = function (data){
-            expect(data['result']).to.equal('ok');
-            done();
-        }
-        SendRequest(data, CallBack)
-    })
 
-    it('should successfully register', function(done){
-        data['login'] = 'shepard\'sSon';
-        data['password'] = '-------------';
-        CallBack = function (data){
-            expect(data['result']).to.equal('ok');
-            done();
-        }
-        SendRequest(data, CallBack)
-    })
-
-    it('should successfully register', function(done){
-        data['login'] = '-\'';
-        data['password'] = '-------------';
-        CallBack = function (data){
-            expect(data['result']).to.equal('ok');
-            done();
-        }
-        SendRequest(data, CallBack)
-    })
-
-    it('should successfully register', function(done){
-        data['login'] = '-\'\'-';
-        data['password'] = '-------------';
-        CallBack = function (data){
-            expect(data['result']).to.equal('ok');
-            done();
-        }
-        SendRequest(data, CallBack)
-    })
-
-    it('should successfully register', function(done){
-        data['login'] = 'D\'Artanian';
-        data['password'] = '\'\'-11345';
-        CallBack = function (data){
-            expect(data['result']).to.equal('ok');
-            done();
-        }
-        SendRequest(data, CallBack)
-    })
-    
     it('should fail register by loginExists', function(done){
         data = {
             'login'    : login, 
@@ -102,7 +54,7 @@ describe('Registration', function(){
             expect(data['result']).to.equal('loginExists');
             done();
         }
-        SendRequest(data, CallBack);
+        SendRequest(data, CallBack, url);
     })
     
     it('should fail register by badLogin', function(done){
@@ -115,7 +67,7 @@ describe('Registration', function(){
             expect(data['result']).to.equal('badLogin');
             done();
         }
-        SendRequest(data, CallBack);
+        SendRequest(data, CallBack, url);
     })
     
     it('should fail register by badLogin', function(done){
@@ -125,7 +77,7 @@ describe('Registration', function(){
             expect(data['result']).to.equal('badLogin');
             done();
         }
-        SendRequest(data, CallBack)
+        SendRequest(data, CallBack, url)
     })
 
     it('should fail register by badLogin', function(done){
@@ -135,7 +87,7 @@ describe('Registration', function(){
             expect(data['result']).to.equal('badLogin');
             done();
         }
-        SendRequest(data, CallBack)
+        SendRequest(data, CallBack, url)
     })
 
     it('should fail register by badLogin', function(done){
@@ -145,7 +97,17 @@ describe('Registration', function(){
             expect(data['result']).to.equal('badLogin');
             done();
         }
-        SendRequest(data, CallBack)
+        SendRequest(data, CallBack, url)
+    })
+
+    it('should fail register by badLogin', function(done){
+        data['login'] = '1111111111111111111111111111111111111';
+        data['password'] = '-------------';
+        CallBack = function (data){
+            expect(data['result']).to.equal('badLogin');
+            done();
+        }
+        SendRequest(data, CallBack, url)
     })
 
     it('should fail register by badLogin', function(done){
@@ -165,7 +127,7 @@ describe('Registration', function(){
             expect(data['result']).to.equal('badPassword');
             done();
         }
-        SendRequest(data, CallBack);
+        SendRequest(data, CallBack, url);
     })
 
     it('should fail register by badPassword', function(done){
@@ -175,7 +137,7 @@ describe('Registration', function(){
             expect(data['result']).to.equal('badPassword');
             done();
         }
-        SendRequest(data, CallBack);
+        SendRequest(data, CallBack, url);
     })
 })
 
@@ -190,7 +152,7 @@ describe('Login', function(){
             expect(data['result']).to.equal('ok');
             done();
         }
-        SendRequest(data, CallBack);
+        SendRequest(data, CallBack, url);
     })
     
     it('should fail login by invalidCredentials[wrong login]', function(done){
@@ -203,7 +165,7 @@ describe('Login', function(){
             expect(data['result']).to.equal('invalidCredentials');
             done();
         }
-        SendRequest(data, CallBack);
+        SendRequest(data, CallBack, url);
     })
     
     it('should fail login by invalidCredentials[wrong password]', function(done){
@@ -216,7 +178,7 @@ describe('Login', function(){
             expect(data['result']).to.equal('invalidCredentials');
             done();
         }
-        SendRequest(data, CallBack);
+        SendRequest(data, CallBack, url);
     })
     
 })
