@@ -31,6 +31,7 @@ describe('Registration', function(){
         SendRequest(data, CallBack, url);
     })
 
+
     it('should fail register by loginExists', function(done){
         data = {
             'login'    : login, 
@@ -95,6 +96,16 @@ describe('Registration', function(){
             done();
         }
         SendRequest(data, CallBack, url)
+    })
+
+    it('should fail register by badLogin', function(done){
+        data['login'] = '1111111111111111111111111111111111111';
+        data['password'] = '-------------';
+        CallBack = function (data){
+            expect(data['result']).to.equal('badLogin');
+            done();
+        }
+        SendRequest(data, CallBack)
     })
 
     it('should fail register by badPassword', function(done){
