@@ -17,7 +17,7 @@ CREATE TABLE users (
 CREATE TABLE sessions (
 	id      INT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	user_id INT         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-	sid     VARCHAR(400) NOT NULL,
+	sid     VARCHAR(50) NOT NULL,
    UNIQUE KEY(sid)
 );
 
@@ -25,7 +25,7 @@ CREATE TABLE sessions (
 DELIMITER //
 
 DROP PROCEDURE IF EXISTS `add_user_session` //
-CREATE PROCEDURE `add_user_session`(IN `ulogin` VARCHAR(36), IN `uuid` VARCHAR(400))
+CREATE PROCEDURE `add_user_session`(IN `ulogin` VARCHAR(36), IN `uuid` VARCHAR(50))
 BEGIN
    DECLARE uuser_id INT;
    SELECT `id` INTO uuser_id FROM `users` WHERE `login` = ulogin;
