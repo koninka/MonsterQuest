@@ -7,7 +7,10 @@ function fetchData() {
 
 function loginSuccess(data, textStatus, jqXHR) {
     if(data['result'] == 'ok'){
-        $('#message').text('Вы успешно авторизованы!').removeClass("Err");
+        $('#message').text('Вы успешно авторизованы! Через две секунды вас перебросит на страницу с игрой!').removeClass("Err");
+        setTimeout(function () {
+            window.location.href = "/game/?sid=" + data['sid'];
+        }, 2000);
     } else if(data['result'] == 'invalidCredentials'){
         $('#message').text('Неверный логин или пароль').addClass("Err");
     } else {
