@@ -106,6 +106,7 @@ func JsonHandler(w http.ResponseWriter, r *http.Request) {
     var response string
     switch data["action"] {
         case "login":    response = loginAction(login, pass)
+        case "logout":   response = logoutAction(data["sid"])
         case "register": response = registerAction(login, pass)
     }
     fmt.Fprintf(w, "%s", response)
