@@ -9,7 +9,15 @@ import (
     _ "github.com/go-sql-driver/mysql"
     "regexp"
     "html/template"
+    "code.google.com/p/go.net/websocket"
 )
+
+type Message struct {
+    RequestID      int
+    Command        string
+    SomeOtherThing string
+    Success        bool
+}
 
 func loginAction(hash map[string] interface{}) string {
     return "DATA";
@@ -56,6 +64,31 @@ func JsonHandler(w http.ResponseWriter, r *http.Request) {
 
 
 func MainHandler(w http.ResponseWriter, r *http.Request) {
-      t, _ := template.ParseFiles("index.html")
-      t.Execute(w, nil)
- }
+    t, _ := template.ParseFiles("index.html")
+    t.Execute(w, nil)
+}
+
+func Echo(ws *websocket.Conn) {
+    var err error
+    
+    for {
+        var reply map[string] string
+
+        if err = websocket.JSON.Receive(ws, &reply); err != nil {
+            fmt.Println("Can't receive")
+            fmt.Println(err)
+            break
+        }
+        fmt.Println(reply) 
+            
+        msg := reply
+        msg["result"] = "ok"
+        fmt.Println(msg)
+
+        if err = websocket.JSON.Send(ws, msg); err != nil {
+            fmt.Println("Can't send")
+            fmt.Println(err)
+            break
+        }
+    }
+}
