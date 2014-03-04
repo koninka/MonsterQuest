@@ -68,13 +68,6 @@ func loginAction(login, pass string) string {
     return string(resJSON)
 }
 
-type Message struct {
-    RequestID      int
-    Command        string
-    SomeOtherThing string
-    Success        bool
-}
-
 func registerAction(login, pass string) string {
     result := map[string] string{"result": "ok"}
     if isExistUser(login, "") {
