@@ -28,9 +28,11 @@ DROP PROCEDURE IF EXISTS `add_user_session` //
 CREATE PROCEDURE `add_user_session`(IN `ulogin` VARCHAR(10), IN `uuid` VARCHAR(20))
 BEGIN
    DECLARE uuser_id INT;
-   SELECT `id` INTO uuser_id FROM `users` WHERE `login` = 'fsd';
+   SELECT `id` INTO uuser_id FROM `users` WHERE `login` = ulogin;
    DELETE FROM `sessions` WHERE `user_id` = uuser_id;
-   INSERT INTO `sessions`(`user_id`, `sid`) VALUES(uuser_id, uuid);
+   IF uuser_id is NOT NULL THEN
+      INSERT INTO `sessions`(`user_id`, `sid`) VALUES(uuser_id, uuid);
+   END IF;
 END//
 
 DELIMITER ;
