@@ -19,3 +19,17 @@ CREATE TABLE sessions (
 	user_id INT         NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 	sid     VARCHAR(20) NOT NULL
 );
+
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS `add_user_session` //
+CREATE PROCEDURE `add_user_session`(IN `ulogin` VARCHAR(10), IN `uuid` VARCHAR(20))
+BEGIN
+   DECLARE uuser_id INT;
+   SELECT `id` INTO uuser_id FROM `users` WHERE `login` = 'fsd';
+   DELETE FROM `sessions` WHERE `user_id` = uuser_id;
+   INSERT INTO `sessions`(`user_id`, `sid`) VALUES(uuser_id, uuid);
+END//
+
+DELIMITER ;
