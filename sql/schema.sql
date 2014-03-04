@@ -25,7 +25,7 @@ CREATE TABLE sessions (
 DELIMITER //
 
 DROP PROCEDURE IF EXISTS `add_user_session` //
-CREATE PROCEDURE `add_user_session`(IN `ulogin` VARCHAR(10), IN `uuid` VARCHAR(20))
+CREATE PROCEDURE `add_user_session`(IN `ulogin` VARCHAR(36), IN `uuid` VARCHAR(20))
 BEGIN
    DECLARE uuser_id INT;
    SELECT `id` INTO uuser_id FROM `users` WHERE `login` = ulogin;
