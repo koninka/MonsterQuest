@@ -6,7 +6,8 @@ import (
     "io/ioutil"
     "encoding/json"
     "database/sql"
-    _ "github.com/go-sql-driver/mysql"
+    "MonsterQuest/MonsterQuest/connect"
+    "github.com/nu7hatch/gouuid"
     "regexp"
 )
 
