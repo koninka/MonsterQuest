@@ -2,6 +2,7 @@ package handlers
 
 import (
     "fmt"
+    "os"
     "net/http"
     "io/ioutil"
     "encoding/json"
@@ -10,8 +11,10 @@ import (
     "github.com/nu7hatch/gouuid"
     "regexp"
     "html/template"
-    "code.google.com/p/go.net/websocket"
+    //"code.google.com/p/go.net/websocket"
 )
+
+var Port = ":8080"
 
 func isExistUser(login, pass string) bool {
     db := connect.CreateConnect()
@@ -58,8 +61,10 @@ func loginAction(login, pass string) string {
         defer connect.CloseDB(db, stmt)
         _, err := stmt.Exec(login, u4.String())
         if err == nil {
+            host, _ := os.Hostname()
             result["sid"] = u4.String()
-            result["result"] = "ok";
+            result["result"] = "ok"
+            result["soсket"] = host + Port + "/websocket"
         }
     }
     resJSON, _ := json.Marshal(result)
@@ -108,28 +113,4 @@ func JsonHandler(w http.ResponseWriter, r *http.Request) {
 func MainHandler(w http.ResponseWriter, r *http.Request) {
     t, _ := template.ParseFiles("index.html")
     t.Execute(w, nil)
-}
-
-func Echo(ws *websocket.Conn) {
-    var err error
-    for {
-        var reply map[string] string
-
-        if err = websocket.JSON.Receive(ws, &reply); err != nil {
-            fmt.Println("Can't receive")
-            fmt.Println(err)
-            break
-        }
-        fmt.Println(reply)
-
-        msg := reply
-        msg["result"] = "ok"
-        fmt.Println(msg)
-
-        if err = websocket.JSON.Send(ws, msg); err != nil {
-            fmt.Println("Can't send")
-            fmt.Println(err)
-            break
-        }
-    }
 }

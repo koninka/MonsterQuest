@@ -16,5 +16,5 @@ func main() {
     http.HandleFunc("/websocket", serveWs)
     http.HandleFunc("/", handlers.MainHandler)
     http.HandleFunc("/json", handlers.JsonHandler)
-    http.ListenAndServe(":8080", nil)
+    http.ListenAndServe(handlers.Port, nil)
 }
