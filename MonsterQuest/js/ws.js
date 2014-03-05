@@ -1,10 +1,7 @@
-<html>
-<head></head>
-<body>
-<script type="text/javascript" src="/require/jquery-1.11.0.min.js"></script>
-<script type="text/javascript">
+function WSConnect(wsuri){
+
     var sock = null;
-    var wsuri = "ws://localhost:80/websocket"; // <-- note new path
+    wsuri = wsuri || "ws://localhost:8080/websocket"; // <-- note new path
 
     window.onload = function() {
 
@@ -23,18 +20,11 @@
         sock.onmessage = function(e) {
             console.log("message received: " + e.data);
         }
-    };
-
-    function send(/*JSON*/ msg) {
+    }
+    
+    sock.sendJSON = function (/*JSON*/ msg) {
         sock.send(JSON.stringify());
     };
-</script>
-<h1>WebSocket Echo Test</h1>
-<form>
-    <p>
-        Message: <input id="message" type="text" value="Hello, world!">
-    </p>
-</form>
-<button onclick="send();">Send Message</button>
-</body>
-</html>
+    return sock;
+}
+
