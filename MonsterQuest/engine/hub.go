@@ -1,23 +1,16 @@
-package main
+package engine
 
-type hub struct {
-	connections map[*connection]bool
+type websocketHub struct {
+	connections map[*connection] bool
 
-	broadcast chan []byte
+	broadcast chan interface{}
 
 	register chan *connection
 
 	unregister chan *connection
 }
 
-var h = hub{
-	broadcast:   make(chan []byte),
-	register:    make(chan *connection),
-	unregister:  make(chan *connection),
-	connections: make(map[*connection]bool),
-}
-
-func (h *hub) run() {
+func (h *websocketHub) run() {
 	for {
 		select {
 		case c := <-h.register:

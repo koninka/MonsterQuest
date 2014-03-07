@@ -28,6 +28,9 @@ $(function() {
 
     if (window["WebSocket"]) {
         conn = new WebSocket("ws://" + uri);
+        conn.onopen = function(evt) {
+            appendLog($("<div><b>Connection opened.</b></div>"))
+        }
         conn.onclose = function(evt) {
             appendLog($("<div><b>Connection closed.</b></div>"))
         }
