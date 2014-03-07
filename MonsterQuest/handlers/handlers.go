@@ -11,7 +11,6 @@ import (
     "github.com/nu7hatch/gouuid"
     "regexp"
     "html/template"
-    //"code.google.com/p/go.net/websocket"
 )
 
 var Port = ":8080"
