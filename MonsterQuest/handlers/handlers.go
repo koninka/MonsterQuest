@@ -11,7 +11,6 @@ import (
     "github.com/nu7hatch/gouuid"
     "regexp"
     "html/template"
-    //"code.google.com/p/go.net/websocket"
 )
 
 var Port = ":8080"
@@ -83,7 +82,9 @@ func registerAction(login, pass string) string {
         } else {
             db := connect.CreateConnect()
             stmt, _ := db.Prepare("INSERT INTO users(login, password) VALUES(?, ?)")
-            stmt.Exec(login, pass)
+            res, _ := stmt.Exec(login, pass)
+            lastId, _ := res.LastInsertId()
+            db.Exec("INSERT INTO actors(user_id, x, y) VALUES(?, ?, ?)", lastId, 0, 0)
         }
     }
     resJSON, _ := json.Marshal(result)
