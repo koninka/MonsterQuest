@@ -22,7 +22,7 @@ func GetInstance() *Game {
                 broadcast:   make(chan interface{}),
                 register:    make(chan *connection),
                 unregister:  make(chan *connection),
-                connections: make(map[*connection]bool),
+                connections: make(map[*connection] bool),
             },
             make(map[string] jsonType),
         }
@@ -69,7 +69,7 @@ func (g *Game) changeWorldWithPlayer(json jsonType) {
     db := connect.CreateConnect()
     switch action {
         case "move": 
-            row := db.QueryRow("select a.x, a.y from actors a inner join users as u on u.id = a.user_id inner join sessions as s on s.user_id = u.id where s.sid = ?", 
+            row := db.QueryRow("SELECT a.x, a.y FROM actors a INNER JOIN users AS u ON u.id = a.user_id INNER JOIN sessions AS s ON s.user_id = u.id WHERE s.sid = ?", 
                 json["sid"].(string))
             var x, y float64
             row.Scan(&x, &y)
@@ -80,13 +80,17 @@ func (g *Game) changeWorldWithPlayer(json jsonType) {
                 case "south": y -= 0.2
                 case "east": x += 0.2
             }
+            db.Exec("UPDATE actors SET x = ?, y = ? WHERE EXISTS(SELECT * FROM users AS u INNER JOIN sessions AS s ON s.user_id = u.id WHERE s.sid = ?)", 
             db.Exec("update actors set x = ?, y = ? where exists(select * from users as u inner join sessions as s on s.user_id = u.id where s.sid = ?)", 
                 x, y, json["sid"].(string))
     }
 }
 
 func (g *Game) IsSIDValid(sid string) bool {
-    return true 
+    db := connect.CreateConnect()
+    rows, _ := db.Query("SELECT * FROM sessions WHERE sid = ?", sid)
+    defer rows.Close()
+    return rows.Next()
 }
 
 func GameLoop() {
