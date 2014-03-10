@@ -92,6 +92,7 @@ func registerAction(login, pass string) string {
 }
 
 func JsonHandler(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Access-Control-Allow-Origin", "*")
     w.Header().Set("Content-type", "application/json")
     body, _ := ioutil.ReadAll(r.Body)
     var rawData interface{}
