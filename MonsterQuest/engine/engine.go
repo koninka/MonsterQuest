@@ -11,6 +11,7 @@ type jsonType map[string] interface{}
 
 type Game struct {
     websocketHub
+    field gameField
     sync synchronizer
     lastActions map[string] jsonType
 }
@@ -26,12 +27,16 @@ func GetInstance() *Game {
                 unregister:  make(chan *connection),
                 connections: make(map[*connection] bool),
             },
+            gameField{
+                field: make([][]byte, 1000),
+            },
             synchronizer{
                 make(map[int64] *player),
                 make(map[string] *player),
             },
             make(map[string] jsonType),
         }
+        gameInstance.field.loadFromFile("map.txt")
         go gameInstance.websocketHub.run()
         go gameInstance.sync.save()
     }
@@ -57,7 +62,7 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json jsonType) {
     action := json["action"].(string)
     switch action {
     case "getDictionary": conn.send <- g.getDictionaryAction()
-    case "look": conn.send <- g.lookAction()
+    case "look": conn.send <- g.lookAction(json["sid"].(string))
     case "examine": conn.send <- g.examineAction(json)
     case "move": g.lastActions[json["sid"].(string)] = json
     }
@@ -114,8 +119,29 @@ func (g *Game) examineAction(json jsonType) jsonType {
     return res
 }
 
-func (g *Game) lookAction() jsonType {
-    return nil
+func (g *Game) getVisibleSpace(coord, bound int) (v1 int, v2 int) {
+    if coord - VISION_RADIUS < 0 {
+        v1 = 0
+    } else {
+        v1 = coord - VISION_RADIUS
+    }
+    if coord + VISION_RADIUS >= bound {
+        v2 = bound - 1
+    } else {
+        v2 = coord + VISION_RADIUS
+    }
+    return
+}
+
+func (g *Game) lookAction(sid string) jsonType {
+    res := make(jsonType)
+    player := g.sync.getPlayerBySession(sid)
+    x, y := int(player.x), int(player.y)
+    l, r := g.getVisibleSpace(x, g.field.width)
+    t, b := g.getVisibleSpace(y, g.field.height)
+    res["map"] = g.field.field[l:r][t:b]
+    res["actors"] = make(jsonType)
+    return res
 }
 
 func (g *Game) changeWorldWithPlayer(json jsonType) {
