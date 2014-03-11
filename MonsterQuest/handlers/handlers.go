@@ -8,6 +8,7 @@ import (
     "encoding/json"
     "database/sql"
     "MonsterQuest/MonsterQuest/connect"
+    "MonsterQuest/MonsterQuest/utils"
     "github.com/nu7hatch/gouuid"
     "regexp"
     "html/template"
@@ -66,7 +67,7 @@ func loginAction(login, pass string) string {
             result["sid"] = u4.String()
             result["result"] = "ok"
             result["soсket"] = host + Port + "/websocket"
-            result["id"] = id
+            result["id"] = utils.GetActorID()
         }
     }
     resJSON, _ := json.Marshal(result)
