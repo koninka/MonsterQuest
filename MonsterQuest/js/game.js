@@ -4,10 +4,10 @@ function Point(x, y) {
 }
 
 function Actor(id) {
-   this.id    = id;
-   this.pt    = null;
-   this.type  = null;
-   this.login = null;
+   this.id     = id;
+   this.pt     = null;
+   this.type   = null;
+   this.login  = null;
 }
 
 Actor.prototype.move = function(direct) {
@@ -22,12 +22,18 @@ Actor.prototype.examineSuccess = function(data) {
 }
 
 function Game(sid, wsuri, srv, tick) {
-   this.sid   = sid;
-   this.srv   = srv;
-   this.sock  = null;
-   this.dict  = null;
-   this.tick  = tick;
-   this.wsuri = "ws://" + wsuri;
+   this.sid      = sid;
+   this.srv      = srv;
+   this.sock     = null;
+   this.dict     = null;
+   this.tick     = tick;
+   this.stage    = null;
+   this.wsuri    = "ws://" + wsuri;
+   this.RADIUS_X = 3;
+   this.RADIUS_Y = 5;
+   this.BG_SIZE  = 120;
+   this.renderer = null;
+   this.textures = null;
 }
 
 var actor = new Actor(parseInt(getQueryVariable('id')));
@@ -98,9 +104,38 @@ $(function(){
                actor.examineSuccess(data);
                break
             case "getDictionary":
-               game.dict = data;
+               for (var i in game.dictionary) {
+                  game.textures[i] = PIXI.Texture.fromImage("/img/" + game.dictionary[i] + ".jpg");
+               }
+               break;
+            case "look":
+               game.map = data.map;
+               game.actors = data.actors;
                break;
          }
       }
    }
+
+   game.renderer = PIXI.autoDetectRenderer(
+      2 * game.BG_SIZE * game.RADIUS_Y,
+      2 * game.BG_SIZE * game.RADIUS_X,
+      document.getElementById("game-canvas")
+   );
+   // var farTexture = PIXI.Texture.fromImage("/img/grass.jpg");
+   // game.far = new PIXI.TilingSprite(farTexture, 512, 256);
+   // game.far.position.x = 230;
+   // game.far.position.y = 0;
+   // game.far.tilePosition.x = 0;
+   // game.far.tilePosition.y = 0
+   // game.stage.addChild(game.far)
+   // game.renderer.render(game.stage);
+   requestAnimFrame(update);
 });
+
+function update() {
+   game = new PIXI.Stage(0x66BB99)
+
+   game.renderer.render(game.stage);
+
+   requestAnimFrame(update);
+}
