@@ -4,6 +4,7 @@ import (
     "database/sql"
     "time"
     "MonsterQuest/MonsterQuest/connect"
+    "MonsterQuest/MonsterQuest/consts"
 )
 
 type jsonType map[string] interface{}
@@ -75,42 +76,40 @@ func (g *Game) examineAction(json jsonType) jsonType {
     res := make(jsonType)
     id := int64(json["id"].(float64))
     sid := json["sid"].(string)
-    res["result"] = "ok"
     res["action"] = "examine"
+    setSuccesResult := func (login string, x, y float64) {
+        res["x"]      = x
+        res["y"]      = y
+        res["id"]     = id
+        res["type"]   = "player"
+        res["login"]  = login
+        res["result"] = "ok"
+    }
     if (g.sync.isExists(id)) {
-        res["type"] = "player"
-        res["id"] = id
-        res["login"], res["x"], res["y"] = g.sync.getPlayerInfo(id)
+        setSuccesResult(g.sync.getPlayerInfo(id))
     } else {
         db := connect.CreateConnect()
         stmt, _ := db.Prepare(`
-            SELECT
-               u.id,
-               u.login,
-               IFNULL((SELECT up.X FROM users_position up WHERE up.user_id = s.user_id), -1) as pos_x,
-               IFNULL((SELECT up.Y FROM users_position up WHERE up.user_id = s.user_id), -1) as pos_y
+            SELECT u.login
             FROM users u
             INNER JOIN sessions s ON s.user_id = u.id AND s.sid = ?
         `)
         defer connect.CloseDB(db, stmt)
-        var (
-            x, y float64
-            login string
-            user_id int
-        )
-        stmt.QueryRow(sid).Scan(&user_id, &login, &x, &y)
-        res["type"] = "player"
-        res["login"] = login
-        res["id"] = id
-        if x == -1 || y == -1 {
-            stmt, _ := db.Prepare("INSERT INTO users_position(user_id, x, y) VALUES(?, ?, ?)")
-            defer stmt.Close()
-            x, y = DEFAULT_PLAYER_POS_X, DEFAULT_PLAYER_POS_Y
-            stmt.Exec(user_id, x, y)
+        var login string
+        err := stmt.QueryRow(sid).Scan(&login)
+        if err != sql.ErrNoRows {
+            stmt, _ := db.Prepare("SELECT X, Y FROM users_position WHERE id = ?")
+            var x, y float64
+            err = stmt.QueryRow(id).Scan(&x, &y)
+            if err != sql.ErrNoRows {
+                setSuccesResult(login, x, y)
+                g.sync.add(json["sid"].(string), login, x, y, id)
+            } else {
+                res["result"] = "badId"
+            }
+        } else {
+            res["result"] = "badSid"
         }
-        res["x"] = x
-        res["y"] = y
-        g.sync.add(json["sid"].(string), login, x, y, id)
     }
     return res
 }
@@ -144,6 +143,6 @@ func GameLoop() {
             delete(gameInstance.lastActions, k)
         }
         gameInstance.sendTick(tick)
-        time.Sleep(TICK_DURATION)
+        time.Sleep(consts.TICK_DURATION)
     }
 }

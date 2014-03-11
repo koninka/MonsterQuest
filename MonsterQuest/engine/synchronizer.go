@@ -2,6 +2,7 @@ package engine
 
 import (
     "MonsterQuest/MonsterQuest/connect"
+    "MonsterQuest/MonsterQuest/consts"
     "time"
 )
 
@@ -12,10 +13,10 @@ type player struct {
 
 func (p *player) move(dir string) {
     switch dir {
-    case "north": p.y += PLAYER_SPEED
-    case "south": p.y -= PLAYER_SPEED
-    case "west": p.x -= PLAYER_SPEED
-    case "east": p.x += PLAYER_SPEED
+    case "north": p.y += consts.PLAYER_SPEED
+    case "south": p.y -= consts.PLAYER_SPEED
+    case "west":  p.x -= consts.PLAYER_SPEED
+    case "east":  p.x += consts.PLAYER_SPEED
     }
 }
 
@@ -33,7 +34,7 @@ func (s *synchronizer) save() {
         for id, p := range s.players {
             stmnt.Exec(p.x, p.y, id)
         }
-        time.Sleep(DATABASE_TICK_DURATION)
+        time.Sleep(consts.DATABASE_TICK_DURATION)
     }
 }
 

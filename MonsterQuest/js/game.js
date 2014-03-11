@@ -35,7 +35,8 @@ var game  = new Game(getQueryVariable('sid'), getQueryVariable('soсket'));
 
 function SendViaWS(hash) {
    hash["sid"] = game.sid;
-   game.sock.send(JSON.stringify(hash))
+   game.sock.send(JSON.stringify(hash));
+   console.log("request " + JSON.stringify(hash));
 }
 
 document.onkeydown = function(e) {
@@ -82,7 +83,7 @@ $(function(){
    game.sock.onmessage = function(e) {
       var data = JSON.parse(e.data);
       if (!data["tick"])
-         console.log(e.data);
+         console.log("response " + e.data);
       var result = data["result"];
       var action = data["action"];
       if (data["tick"]) {

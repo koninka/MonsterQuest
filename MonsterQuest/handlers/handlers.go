@@ -8,7 +8,7 @@ import (
     "encoding/json"
     "database/sql"
     "MonsterQuest/MonsterQuest/connect"
-    "MonsterQuest/MonsterQuest/utils"
+    "MonsterQuest/MonsterQuest/consts"
     "github.com/nu7hatch/gouuid"
     "regexp"
     "html/template"
@@ -62,12 +62,16 @@ func loginAction(login, pass string) string {
         _, err := stmt.Exec(login, u4.String())
         if err == nil {
             var id int64
-            db.QueryRow("SELECT a.id FROM actors a INNER JOIN users u ON u.id = a.user_id WHERE u.login = ?", login).Scan(&id)
+            db.QueryRow(`
+                SELECT a.id
+                FROM users_position a
+                INNER JOIN users u ON u.id = a.user_id
+                WHERE u.login = ?`, login).Scan(&id)
             host, _ := os.Hostname()
             result["sid"] = u4.String()
             result["result"] = "ok"
             result["soсket"] = host + Port + "/websocket"
-            result["id"] = utils.GetActorID()
+            result["id"] = id
         }
     }
     resJSON, _ := json.Marshal(result)
@@ -86,7 +90,12 @@ func registerAction(login, pass string) string {
         } else {
             db := connect.CreateConnect()
             stmt, _ := db.Prepare("INSERT INTO users(login, password) VALUES(?, ?)")
-            stmt.Exec(login, pass)
+            defer stmt.Close()
+            res, _ := stmt.Exec(login, pass)
+            user_id, _ := res.LastInsertId()
+            stmt, _ = db.Prepare("INSERT INTO users_position(user_id, x, y) VALUES(?, ?, ?)")
+            defer stmt.Close()
+            stmt.Exec(user_id, consts.DEFAULT_PLAYER_POS_X, consts.DEFAULT_PLAYER_POS_Y)
         }
     }
     resJSON, _ := json.Marshal(result)
