@@ -5,6 +5,7 @@ window.onload = function() {
     var log = $("#log");
     var sid = getQueryVariable('sid');
     var uri = getQueryVariable('soсket');
+<<<<<<< HEAD
     var aid = parseInt(getQueryVariable('id'));
     var tick, x, y, dictionary;
 

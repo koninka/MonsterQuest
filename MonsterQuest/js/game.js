@@ -97,7 +97,6 @@ function InitSocket() {
                break;
          }
       }
-      
    }
 }
 
