@@ -9,3 +9,8 @@ function getQueryVariable(variable) {
    }
    return null
 }
+
+function GameShutDown(message) {
+   alert("Game is going shutdown due to " + message);
+   window.location.assign("/");
+}

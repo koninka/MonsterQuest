@@ -54,11 +54,6 @@ document.onkeydown = function(e) {
    }
 };
 
-function GameShutDown(message) {
-   alert("Game is going shutdown due to " + message);
-   window.location.assign("/");
-}
-
 function InitSocket() {
    gameSock = new WebSocket(wsuri);
 
