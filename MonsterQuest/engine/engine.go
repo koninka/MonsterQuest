@@ -6,12 +6,16 @@ import (
     "fmt"
 )
 
-type jsonType map[string] interface{} 
+type jsonType map[string] interface{}
 
 type Game struct {
     websocketHub
     lastActions map[string] jsonType
 }
+
+const (
+    OFFSET = 0.2;
+)
 
 var gameInstance *Game
 
@@ -50,7 +54,7 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json jsonType) {
     action := json["action"].(string)
     switch action {
     case "getDictionary": conn.send <- g.getDictionaryAction()
-    case "look": 
+    case "look":
     case "examine":
     case "move":    g.lastActions[json["sid"].(string)] = json
     }
@@ -68,31 +72,31 @@ func (g *Game) changeWorldWithPlayer(json jsonType) {
     action := json["action"].(string)
     db := connect.CreateConnect()
     switch action {
-        case "move": 
-            row := db.QueryRow("select a.x, a.y from actors a inner join users as u on u.id = a.user_id inner join sessions as s on s.user_id = u.id where s.sid = ?", 
+        case "move":
+            row := db.QueryRow("select a.x, a.y from actors a inner join users as u on u.id = a.user_id inner join sessions as s on s.user_id = u.id where s.sid = ?",
                 json["sid"].(string))
             var x, y float64
             row.Scan(&x, &y)
             fmt.Println(x, y)
             switch json["direction"].(string) {
-                case "north": y += 0.2
-                case "west": x -= 0.2
-                case "south": y -= 0.2
-                case "east": x += 0.2
+                case "north": y += OFFSET
+                case "west":  x -= OFFSET
+                case "south": y -= OFFSET
+                case "east":  x += OFFSET
             }
-            db.Exec("update actors set x = ?, y = ? where exists(select * from users as u inner join sessions as s on s.user_id = u.id where s.sid = ?)", 
+            db.Exec("update actors set x = ?, y = ? where exists(select * from users as u inner join sessions as s on s.user_id = u.id where s.sid = ?)",
                 x, y, json["sid"].(string))
     }
 }
 
 func (g *Game) IsSIDValid(sid string) bool {
-    return true 
+    return true
 }
 
 func GameLoop() {
 
     gameInstance = GetInstance()
-    var tick int64  
+    var tick int64
     for {
         tick++
 
@@ -100,7 +104,7 @@ func GameLoop() {
             gameInstance.changeWorldWithPlayer(v)
             delete(gameInstance.lastActions, k)
         }
-        
+
         gameInstance.sendTick(tick)
         time.Sleep(100 * time.Millisecond)
     }

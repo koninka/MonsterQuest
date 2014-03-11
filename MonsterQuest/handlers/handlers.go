@@ -107,7 +107,7 @@ func JsonHandler(w http.ResponseWriter, r *http.Request) {
             case "login":    response = loginAction(login, pass)
             case "register": response = registerAction(login, pass)
         }
-    }   
+    }
     fmt.Fprintf(w, "%s", response)
 }
 
