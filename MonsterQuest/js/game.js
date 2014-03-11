@@ -1,9 +1,3 @@
-var sid = getQueryVariable('sid');
-var wsuri = "ws://" + getQueryVariable('soсket');
-var dict = null;
-var gameSock = null;
-var tick = null;
-
 function Point(x, y) {
    this.x = x;
    this.y = y;
@@ -16,16 +10,9 @@ function Actor(id) {
    this.login = null;
 }
 
-var actor = new Actor(parseInt(getQueryVariable('id')));
-
-function SendViaWS(hash) {
-   hash["sid"] = sid;
-   gameSock.send(JSON.stringify(hash))
-}
-
 Actor.prototype.move = function(direct) {
-   SendViaWS({action: "move", direction: direct, tick: tick});
-   console.log(JSON.stringify({action: "move", direction: direct, tick: tick}));
+   SendViaWS({action: "move", direction: direct, tick: game.tick});
+   console.log(JSON.stringify({action: "move", direction: direct, tick: game.tick}));
 };
 
 Actor.prototype.examineSuccess = function(data) {
@@ -34,8 +21,25 @@ Actor.prototype.examineSuccess = function(data) {
    this.login = data["login"];
 }
 
+function Game(sid, wsuri, srv, tick) {
+   this.sid   = sid;
+   this.srv   = srv;
+   this.sock  = null;
+   this.dict  = null;
+   this.tick  = tick;
+   this.wsuri = "ws://" + wsuri;
+}
+
+var actor = new Actor(parseInt(getQueryVariable('id')));
+var game  = new Game(getQueryVariable('sid'), getQueryVariable('soсket'));
+
+function SendViaWS(hash) {
+   hash["sid"] = game.sid;
+   game.sock.send(JSON.stringify(hash))
+}
+
 document.onkeydown = function(e) {
-   if (!gameSock || gameSock.readyState != 1)
+   if (!game.sock || game.sock.readyState != 1)
       return;
    e = e || event
    switch(e.keyCode) {
@@ -54,15 +58,20 @@ document.onkeydown = function(e) {
    }
 };
 
-function InitSocket() {
-   gameSock = new WebSocket(wsuri);
+$(function(){
+   if (!game.sid) {
+      GameShutDown();
+      return;
+   }
+   game.sock = new WebSocket(game.wsuri);
 
-   gameSock.onopen = function() {
-      console.log("connected to " + wsuri);
-      InitGame();
+   game.sock.onopen = function() {
+      console.log("connected to " + game.wsuri);
+      SendViaWS({action: "examine", id: actor.id});
+      SendViaWS({action: "getDictionary"});
    }
 
-   gameSock.onclose = function(e) {
+   game.sock.onclose = function(e) {
       alert('Выход через 3 сек.');
       setTimeout(function () {
          window.location.href = "/game/?sid=" + data['sid'];
@@ -70,14 +79,14 @@ function InitSocket() {
       console.log("connection closed (" + e.code + ") reason("+ e.reason +")");
    }
 
-   gameSock.onmessage = function(e) {
+   game.sock.onmessage = function(e) {
       var data = JSON.parse(e.data);
       if (!data["tick"])
          console.log(e.data);
       var result = data["result"];
       var action = data["action"];
       if (data["tick"]) {
-         tick = data["tick"];
+         game.tick = data["tick"];
       } else if (result == "badSid") {
          GameShutDown("Bad user's security ID");
       } else if (result == "badId") {
@@ -88,22 +97,9 @@ function InitSocket() {
                actor.examineSuccess(data);
                break
             case "getDictionary":
-               dict = data;
+               game.dict = data;
                break;
          }
       }
    }
-}
-
-function InitGame() {
-   SendViaWS({action: "examine", id: actor.id});
-   SendViaWS({action: "getDictionary"});
-}
-
-$(function(){
-   if (!sid) {
-      GameShutDown();
-      return;
-   }
-   InitSocket();
 });
