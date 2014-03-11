@@ -21,11 +21,12 @@ CREATE TABLE sessions (
    UNIQUE KEY(sid)
 );
 
-CREATE TABLE actors (
-   id       INT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
-   user_id  INT      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-   X        FLOAT     NOT NULL,
-   Y        FLOAT     NOT NULL
+CREATE TABLE users_position (
+   id       INT    NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   user_id  INT    NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+   X        FLOAT  NOT NULL,
+   Y        FLOAT  NOT NULL,
+   UNIQUE KEY(user_id)
 );
 
 DELIMITER //
