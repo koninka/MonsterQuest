@@ -39,11 +39,11 @@ func (c *connection) readPump() {
             break
         }
         if GetInstance().IsSIDValid(json["sid"].(string)) {
-            GetInstance().CheckOutPlayersAction(c, json)    
+            GetInstance().CheckOutPlayersAction(c, json)
         } else {
             badSidResponse := map[string] string {"result" : "badSid"}
             c.send <- badSidResponse
-        }        
+        }
     }
 }
 

@@ -39,7 +39,7 @@ func (s *synchronizer) save() {
 
 func (s *synchronizer) add(sid, login string, x, y float64, id int64) {
 	p := player{login, x, y}
-	s.players[id] = &p	
+	s.players[id] = &p
 	s.sessions[sid] = &p
 }
 
