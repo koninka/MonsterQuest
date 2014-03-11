@@ -1,11 +1,13 @@
-$(function() {
+window.onload = function() {
 
     var conn;
     var msg = $("#msg");
     var log = $("#log");
     var sid = getQueryVariable('sid');
     var uri = getQueryVariable('soсket');
-    var tick;
+    var aid = parseInt(getQueryVariable('id'));
+    var tick, x, y, dictionary;
+
     function appendLog(msg) {
         var d = log[0]
         var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
@@ -27,12 +29,20 @@ $(function() {
         return false
     });
 
-
-
     if (window["WebSocket"]) {
         conn = new WebSocket("ws://" + uri);
         conn.onopen = function(evt) {
             appendLog($("<div><b>Connection opened.</b></div>"))
+            conn.send(JSON.stringify({
+                'sid' : sid,
+                'action' : "getDictionary"
+            }));
+     
+            conn.send(JSON.stringify({
+                'sid' : sid,
+                'action' : "examine",
+                'id' : parseInt(aid)
+            }));
         }
         conn.onclose = function(evt) {
             appendLog($("<div><b>Connection closed.</b></div>"))
@@ -42,7 +52,19 @@ $(function() {
             var data = JSON.parse(evt.data);
             if (data["tick"])
                 tick = data["tick"];
-        }
+            if (data["action"] == "examine")
+            {
+                if (data["result"] == "badSid")
+                    alert("Неверный идентификатор сессии");
+                else if (data["result"] == "badId")
+                    alert("Неверный id игрока");
+                x = data["x"]
+                y = data["y"]
+            } else if (data["action"] == "getDictionary") {
+                dictionary = data;
+            }
+        };
+
         $(this).keydown(function(event) {
             var data = {};
             data["sid"] = sid;
@@ -66,4 +88,4 @@ $(function() {
     } else {
         appendLog($("<div><b>Your browser does not support WebSockets.</b></div>"))
     }
-});
+}
