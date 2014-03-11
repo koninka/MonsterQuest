@@ -1,6 +1,7 @@
 package engine
 
 import (
+    "database/sql"
     "time"
     "MonsterQuest/MonsterQuest/connect"
 )
@@ -14,7 +15,9 @@ type Game struct {
 }
 
 const (
-    OFFSET = 0.2;
+    OFFSET = 0.2
+    DEFAULT_PLAYER_POS_X = 5
+    DEFAULT_PLAYER_POS_Y = 5
 )
 
 var gameInstance *Game
@@ -77,6 +80,7 @@ func (g *Game) getDictionaryAction() jsonType {
 func (g *Game) examineAction(json jsonType) jsonType {
     res := make(jsonType)
     id := int64(json["id"].(float64))
+    sid := json["sid"].(string)
     res["result"] = "ok"
     res["action"] = "examine"
     if (g.sync.isExists(id)) {
@@ -85,21 +89,34 @@ func (g *Game) examineAction(json jsonType) jsonType {
         res["login"], res["x"], res["y"] = g.sync.getPlayerInfo(id)
     } else {
         db := connect.CreateConnect()
-        defer db.Close()
-        rows, _ := db.Query("SELECT u.login, a.x, a.y FROM actors a INNER JOIN users AS u ON u.id = a.user_id WHERE a.id = ?", id)
-        if rows.Next() {
-            var login string
-            var x, y float64
-            rows.Scan(&login, &x, &y)
-            res["type"] = "player"
-            res["login"] = login
-            res["id"] = id
-            res["x"] = x
-            res["y"] = y
-             g.sync.add(json["sid"].(string), login, x, y, id)
-        } else {
-            res["result"] = "badId"
+        stmt, _ := db.Prepare(`
+            SELECT
+               u.id,
+               u.login,
+               IFNULL((SELECT up.X FROM users_position up WHERE up.user_id = s.user_id), -1) as pos_x,
+               IFNULL((SELECT up.Y FROM users_position up WHERE up.user_id = s.user_id), -1) as pos_y
+            FROM users u
+            INNER JOIN sessions s ON s.user_id = u.id AND s.sid = ?
+        `)
+        defer connect.CloseDB(db, stmt)
+        var (
+            x, y float64
+            login string
+            user_id int
+        )
+        _ = stmt.QueryRow(sid).Scan(&user_id, &login, &x, &y)
+        res["type"] = "player"
+        res["login"] = login
+        res["id"] = id
+        if x == -1 || y == -1 {
+            stmt, _ := db.Prepare("INSERT INTO users_position(user_id, x, y) VALUES(?, ?, ?)")
+            defer stmt.Close()
+            x, y = DEFAULT_PLAYER_POS_X, DEFAULT_PLAYER_POS_Y
+            _, _ = stmt.Exec(user_id, x, y)
         }
+        res["x"] = x
+        res["y"] = y
+        g.sync.add(json["sid"].(string), login, x, y, id)
     }
     return res
 }
@@ -124,7 +141,6 @@ func (g *Game) IsSIDValid(sid string) bool {
 }
 
 func GameLoop() {
-
     gameInstance = GetInstance()
     var tick int64
     for {
@@ -136,6 +152,4 @@ func GameLoop() {
         gameInstance.sendTick(tick)
         time.Sleep(tickDuration)
     }
-
-
 }
