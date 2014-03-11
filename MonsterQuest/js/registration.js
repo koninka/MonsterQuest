@@ -9,7 +9,7 @@ function loginSuccess(data, textStatus, jqXHR) {
     if(data['result'] == 'ok'){
         $('#message').text('Вы успешно авторизованы! Через две секунды вас перебросит на страницу с игрой!').removeClass("Err");
         setTimeout(function () {
-            window.location.href = "/game/?sid=" + data['sid'] + "&soсket=" + data['soсket'] +"&id=" + data['id'];
+            window.location.href = "/game/?sid=" + data['sid'] + "&soсket=" + data['soсket'] +"&id=" + data['id'] + '&srv=' + $('#server').val();
         }, 2000);
     } else if(data['result'] == 'invalidCredentials'){
         $('#message').text('Неверный логин или пароль').addClass("Err");
