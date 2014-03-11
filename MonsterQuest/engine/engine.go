@@ -118,9 +118,9 @@ func (g *Game) changeWorldWithPlayer(json jsonType) {
 
 func (g *Game) IsSIDValid(sid string) bool {
     db := connect.CreateConnect()
-    rows, _ := db.Query("SELECT * FROM sessions WHERE sid = ?", sid)
-    defer rows.Close()
-    return rows.Next()
+    stmt, _ := db.Prepare(connect.MakeSelect("sessions", "sid = ?", "id"))
+    defer connect.CloseDB(db, stmt)
+    return stmt.QueryRow(sid).Scan() != sql.ErrNoRows
 }
 
 func GameLoop() {
