@@ -1,7 +1,8 @@
+var sid = getQueryVariable('sid');
+var wsuri = "ws://" + getQueryVariable('soсket');
 var dict = null;
-var wsuri = "ws://localhost:8080/websocket";
-var gameSock = null
-
+var gameSock = null;
+var tick = null;
 
 function Point(x, y) {
    this.x = x;
@@ -15,39 +16,47 @@ function Actor(id) {
    this.login = null;
 }
 
-var actor = new Actor()
+var actor = new Actor(parseInt(getQueryVariable('id')));
+
+function SendViaWS(hash) {
+   hash["sid"] = sid;
+   gameSock.send(JSON.stringify(hash))
+}
 
 Actor.prototype.move = function(direct) {
-   gameSock.send(JSON.stringify({action: move, direction: direct, tick: 1}));
+   SendViaWS({action: "move", direction: direct, tick: tick});
+   console.log(JSON.stringify({action: "move", direction: direct, tick: tick}));
 };
 
+Actor.prototype.examineSuccess = function(data) {
+   this.pt = new Point(data["x"], data["y"]);
+   this.type = data["type"];
+   this.login = data["login"];
+}
+
 document.onkeydown = function(e) {
+   if (!gameSock || gameSock.readyState != 1)
+      return;
    e = e || event
    switch(e.keyCode) {
       case 37: // left
-         actor.move(west);
+         actor.move("west");
          break;
       case 38: // up
-         actor.move(north);
+         actor.move("north");
          break;
       case 39: // right
-         actor.move(east);
+         actor.move("east");
          break;
       case 40: // down
-         actor.move(south);
+         actor.move("south");
          break;
    }
-}
+};
 
-
-var actor = {}
-
-function ExamineSuccess(data) {
-   console.log("examine success to " + data.result);
-   // if (data.result != 'ok') {
-   //    window.location.assign("/")
-   // }
-
+function GameShutDown(message) {
+   alert("Game is going shutdown due to " + message);
+   window.location.assign("/");
 }
 
 function InitSocket() {
@@ -55,6 +64,7 @@ function InitSocket() {
 
    gameSock.onopen = function() {
       console.log("connected to " + wsuri);
+      InitGame();
    }
 
    gameSock.onclose = function(e) {
@@ -62,46 +72,43 @@ function InitSocket() {
       setTimeout(function () {
          window.location.href = "/game/?sid=" + data['sid'];
       }, 3000);
-      console.log("connection closed (" + e.code + ") reason("+e.reason+")");
+      console.log("connection closed (" + e.code + ") reason("+ e.reason +")");
    }
 
    gameSock.onmessage = function(e) {
-      console.log("message received: " + e.data);
-      switch (e.data.action) {
-         case examine:
-            ExamineSuccess(e.data);
-            break
-         case getDictionary:
-            dict = e.data.dictionary;
-            break;
-         // case
+      var data = JSON.parse(e.data);
+      if (!data["tick"])
+         console.log(e.data);
+      var result = data["result"];
+      var action = data["action"];
+      if (data["tick"]) {
+         tick = data["tick"];
+      } else if (result == "badSid") {
+         GameShutDown("Bad user's security ID");
+      } else if (result == "badId") {
+         GameShutDown("Bad ID");
+      } else {
+         switch (action) {
+            case "examine":
+               actor.examineSuccess(data);
+               break
+            case "getDictionary":
+               dict = data;
+               break;
+         }
       }
    }
 }
 
 function InitGame() {
-   gameSock.send(JSON.stringify({action: examine, id: actor.id}));
-   gameSock.send(JSON.stringify({action: getDictionary}));
+   SendViaWS({action: "examine", id: actor.id});
+   SendViaWS({action: "getDictionary"});
 }
 
 $(function(){
-   var sid = getQueryVariable('sid');
    if (!sid) {
-      window.location.assign("/");
+      GameShutDown();
+      return;
    }
-   $.post(
-      "/json",
-      {
-         uid : sid,
-         action: 'getActorID'
-      },
-      function(data) {
-         if (data['result']) {
-            actor.id = data.actor_id;
-            InitSocket();
-            InitGame();
-         }
-      },
-      "json"
-   );
+   InitSocket();
 });

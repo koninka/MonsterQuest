@@ -52,7 +52,7 @@ func logoutAction(u4 string) string {
 }
 
 func loginAction(login, pass string) string {
-    result := map[string] string{"result": "invalidCredentials"}
+    result := map[string] interface{} {"result": "invalidCredentials"}
     if isExistUser(login, pass) {
         db := connect.CreateConnect()
         u4, _ := uuid.NewV4()
@@ -60,10 +60,13 @@ func loginAction(login, pass string) string {
         defer connect.CloseDB(db, stmt)
         _, err := stmt.Exec(login, u4.String())
         if err == nil {
+            var id int64
+            db.QueryRow("SELECT a.id FROM actors a INNER JOIN users u ON u.id = a.user_id WHERE u.login = ?", login).Scan(&id)
             host, _ := os.Hostname()
             result["sid"] = u4.String()
             result["result"] = "ok"
             result["soсket"] = host + Port + "/websocket"
+            result["id"] = id
         }
     }
     resJSON, _ := json.Marshal(result)
