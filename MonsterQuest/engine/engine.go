@@ -14,12 +14,6 @@ type Game struct {
     lastActions map[string] jsonType
 }
 
-const (
-    OFFSET = 0.2
-    DEFAULT_PLAYER_POS_X = 5
-    DEFAULT_PLAYER_POS_Y = 5
-)
-
 var gameInstance *Game
 
 func GetInstance() *Game {
@@ -104,7 +98,7 @@ func (g *Game) examineAction(json jsonType) jsonType {
             login string
             user_id int
         )
-        _ = stmt.QueryRow(sid).Scan(&user_id, &login, &x, &y)
+        stmt.QueryRow(sid).Scan(&user_id, &login, &x, &y)
         res["type"] = "player"
         res["login"] = login
         res["id"] = id
@@ -112,7 +106,7 @@ func (g *Game) examineAction(json jsonType) jsonType {
             stmt, _ := db.Prepare("INSERT INTO users_position(user_id, x, y) VALUES(?, ?, ?)")
             defer stmt.Close()
             x, y = DEFAULT_PLAYER_POS_X, DEFAULT_PLAYER_POS_Y
-            _, _ = stmt.Exec(user_id, x, y)
+            stmt.Exec(user_id, x, y)
         }
         res["x"] = x
         res["y"] = y
@@ -150,6 +144,6 @@ func GameLoop() {
             delete(gameInstance.lastActions, k)
         }
         gameInstance.sendTick(tick)
-        time.Sleep(tickDuration)
+        time.Sleep(TICK_DURATION)
     }
 }
