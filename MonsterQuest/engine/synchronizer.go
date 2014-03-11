@@ -27,7 +27,7 @@ type synchronizer struct {
 func (s *synchronizer) save() {
     db := connect.CreateConnect()
     defer db.Close()
-    stmnt, _ := db.Prepare("UPDATE actors SET x = ?, y = ? WHERE id = ?")
+    stmnt, _ := db.Prepare("UPDATE users_position SET x = ?, y = ? WHERE id = ?")
     defer stmnt.Close()
     for {
         for id, p := range s.players {
