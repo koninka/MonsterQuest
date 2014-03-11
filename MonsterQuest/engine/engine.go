@@ -14,12 +14,6 @@ type Game struct {
     lastActions map[string] jsonType
 }
 
-const (
-    OFFSET = 0.2
-    DEFAULT_PLAYER_POS_X = 5
-    DEFAULT_PLAYER_POS_Y = 5
-)
-
 var gameInstance *Game
 
 func GetInstance() *Game {
@@ -150,6 +144,6 @@ func GameLoop() {
             delete(gameInstance.lastActions, k)
         }
         gameInstance.sendTick(tick)
-        time.Sleep(tickDuration)
+        time.Sleep(TICK_DURATION)
     }
 }
