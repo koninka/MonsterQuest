@@ -5,6 +5,7 @@ import (
     "time"
     "MonsterQuest/MonsterQuest/connect"
     "MonsterQuest/MonsterQuest/consts"
+    //"fmt"
 )
 
 type jsonType map[string] interface{}
@@ -28,7 +29,7 @@ func GetInstance() *Game {
                 connections: make(map[*connection] bool),
             },
             gameField{
-                field: make([][]byte, 1000),
+                field: make([]string, 1000),
             },
             synchronizer{
                 make(map[int64] *player),
@@ -120,15 +121,15 @@ func (g *Game) examineAction(json jsonType) jsonType {
 }
 
 func (g *Game) getVisibleSpace(coord, bound int) (v1 int, v2 int) {
-    if coord - VISION_RADIUS < 0 {
+    if coord - consts.VISION_RADIUS < 0 {
         v1 = 0
     } else {
-        v1 = coord - VISION_RADIUS
+        v1 = coord - consts.VISION_RADIUS
     }
-    if coord + VISION_RADIUS >= bound {
+    if coord + consts.VISION_RADIUS >= bound {
         v2 = bound - 1
     } else {
-        v2 = coord + VISION_RADIUS
+        v2 = coord + consts.VISION_RADIUS
     }
     return
 }
@@ -139,8 +140,27 @@ func (g *Game) lookAction(sid string) jsonType {
     x, y := int(player.x), int(player.y)
     l, r := g.getVisibleSpace(x, g.field.width)
     t, b := g.getVisibleSpace(y, g.field.height)
-    res["map"] = g.field.field[l:r][t:b]
-    res["actors"] = make(jsonType)
+    visibleSpace := make([][]string, b - t + 1)
+    for i := t; i <= b; i++ {
+        visibleSpace[i - t] = make([]string, r - l + 1)
+        for j := l; j <= r; j++ {
+            visibleSpace[i - t][j - l] = string(g.field.field[i][j])
+        }
+    }
+    res["map"] = visibleSpace
+    visiblePlayers := make([]jsonType, 0, 1000)
+    requester := g.sync.getPlayerBySession(sid)
+    for id, p := range g.sync.players {
+        if p.x > float64(l) && p.x < float64(r) && p.y > float64(t) && p.y < float64(b) && p != requester {
+            json := make(jsonType)
+            json["type"] = "player"
+            json["id"] = id
+            json["x"] = p.x
+            json["y"] = p.y
+            visiblePlayers = append(visiblePlayers, json)
+        }
+    }
+    res["actors"] = visiblePlayers
     return res
 }
 

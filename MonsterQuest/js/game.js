@@ -70,6 +70,9 @@ $(function(){
       console.log("connected to " + game.wsuri);
       SendViaWS({action: "examine", id: actor.id});
       SendViaWS({action: "getDictionary"});
+      setTimeout(function () {
+         SendViaWS({action: "look"});
+      }, 300);
    }
 
    game.sock.onclose = function(e) {
