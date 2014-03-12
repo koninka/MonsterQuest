@@ -9,6 +9,7 @@ import (
 func main() {
     http.Handle("/require/", http.StripPrefix("/require/", http.FileServer(http.Dir("./js"))))
     http.Handle("/style/",   http.FileServer(http.Dir("./")))
+    http.Handle("/img/",   http.FileServer(http.Dir("./")))
     http.Handle("/game/",   http.FileServer(http.Dir("./")))
     http.Handle("/tests/",   http.FileServer(http.Dir("./")))
     http.Handle("/wsTest/",   http.FileServer(http.Dir("./")))
