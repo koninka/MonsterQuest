@@ -136,7 +136,7 @@ func (g *Game) getVisibleSpace(coord, bound int) (v1 int, v2 int) {
 
 func (g *Game) lookAction(sid string) jsonType {
     res := make(jsonType)
-    player := g.sync.getPlayerBySession(sid)
+    /*player := g.sync.getPlayerBySession(sid)
     x, y := int(player.x), int(player.y)
     l, r := g.getVisibleSpace(x, g.field.width)
     t, b := g.getVisibleSpace(y, g.field.height)
@@ -160,7 +160,7 @@ func (g *Game) lookAction(sid string) jsonType {
             visiblePlayers = append(visiblePlayers, json)
         }
     }
-    res["actors"] = visiblePlayers
+    res["actors"] = visiblePlayers*/
     return res
 }
 
