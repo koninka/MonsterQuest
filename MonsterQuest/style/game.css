@@ -58,3 +58,7 @@ body {
     width: 100%;
     overflow: hidden;
 }
+
+#view{
+    text-align: center;
+}

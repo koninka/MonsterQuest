@@ -12,6 +12,7 @@ func main() {
     http.Handle("/game/",   http.FileServer(http.Dir("./")))
     http.Handle("/tests/",   http.FileServer(http.Dir("./")))
     http.Handle("/wsTest/",   http.FileServer(http.Dir("./")))
+    http.Handle("/resourses/",   http.FileServer(http.Dir("./")))
     http.HandleFunc("/websocket", engine.ServeWs)
     http.HandleFunc("/", handlers.MainHandler)
     http.HandleFunc("/json", handlers.JsonHandler)

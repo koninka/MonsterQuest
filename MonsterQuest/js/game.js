@@ -71,7 +71,7 @@ $(function(){
       SendViaWS({action: "examine", id: actor.id});
       SendViaWS({action: "getDictionary"});
       setTimeout(function () {
-         SendViaWS({action: "look"});
+         //SendViaWS({action: "look"});
       }, 300);
    }
 
@@ -101,7 +101,12 @@ $(function(){
                actor.examineSuccess(data);
                break
             case "getDictionary":
+               graphic.setDictionary(data);
                game.dict = data;
+               break;
+            case "look":
+               graphic.setMap(data['map'])
+               graphic.setActors(data['actors'])
                break;
          }
       }
