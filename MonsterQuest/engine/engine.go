@@ -13,7 +13,7 @@ type jsonType map[string] interface{}
 type Game struct {
     websocketHub
     field gameField
-    sync synchronizer
+    sync playerList
     lastActions map[string] jsonType
 }
 
@@ -31,7 +31,7 @@ func GetInstance() *Game {
             gameField{
                 field: make([]string, 1000),
             },
-            synchronizer{
+			playerList{
                 make(map[int64] *player),
                 make(map[string] *player),
             },

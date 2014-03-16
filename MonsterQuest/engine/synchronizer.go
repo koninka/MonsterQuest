@@ -20,12 +20,12 @@ func (p *player) move(dir string) {
     }
 }
 
-type synchronizer struct {
+type playerList struct {
     players map[int64] *player
     sessions map[string] *player
 }
 
-func (s *synchronizer) save() {
+func (s *playerList) save() {
     db := connect.CreateConnect()
     defer db.Close()
     stmnt, _ := db.Prepare("UPDATE users_position SET x = ?, y = ? WHERE id = ?")
@@ -38,29 +38,29 @@ func (s *synchronizer) save() {
     }
 }
 
-func (s *synchronizer) add(sid, login string, x, y float64, id int64) {
+func (s *playerList) add(sid, login string, x, y float64, id int64) {
 	p := player{login, x, y}
 	s.players[id] = &p
 	s.sessions[sid] = &p
 }
 
-func (s *synchronizer) isExists(id int64) bool {
+func (s *playerList) isExists(id int64) bool {
     return s.players[id] != nil
 }
 
-func (s *synchronizer) isExistsSession(sid string) bool {
+func (s *playerList) isExistsSession(sid string) bool {
     return s.sessions[sid] != nil
 }
 
-func (s *synchronizer) getPlayerInfo(id int64) (string, float64, float64) {
+func (s *playerList) getPlayerInfo(id int64) (string, float64, float64) {
     p := s.players[id]
     return p.login, p.x, p.y
 }
 
-func (s *synchronizer) getPlayerById(id int64) *player {
+func (s *playerList) getPlayerById(id int64) *player {
     return s.players[id]
 }
 
-func (s *synchronizer) getPlayerBySession(sid string) *player {
+func (s *playerList) getPlayerBySession(sid string) *player {
     return s.sessions[sid]
 }
