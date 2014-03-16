@@ -25,15 +25,35 @@ function Game(sid, wsuri, srv, tick) {
    this.sid      = sid;
    this.srv      = srv;
    this.sock     = null;
-   this.dict     = null;
    this.tick     = tick;
-   this.stage    = null;
    this.wsuri    = "ws://" + wsuri;
    this.RADIUS_X = 3;
    this.RADIUS_Y = 5;
    this.BG_SIZE  = 120;
    this.renderer = null;
-   this.textures = null;
+   this.graphic  = new Graphic();
+
+   this.setDictionary = function(dict) {
+      this.graphic.setDictionary(dict);
+   }
+
+   this.setMap = function(map) {
+      this.graphic.setMap(map);
+   }
+
+   this.setActors = function(actors) {
+      this.graphic.setActors(actors);
+   }
+
+   this.initGraphic = function() {
+      this.graphic.map = testTerrain;
+      this.graphic.renderer = PIXI.autoDetectRenderer(WIDTH, HEIGHT);
+      $("#view").append(this.graphic.renderer.view);
+      this.graphic.stage = new PIXI.Stage;
+      this.graphic.Init();
+      this.graphic.refreshView();
+      requestAnimFrame(renderScene);
+   }
 }
 
 var actor = new Actor(parseInt(getQueryVariable('id')));
@@ -107,37 +127,19 @@ $(function(){
                actor.examineSuccess(data);
                break
             case "getDictionary":
-               graphic.setDictionary(data);
-               game.dict = data;
+               game.setDictionary(data);
                break;
             case "look":
-               graphic.setMap(data['map'])
-               graphic.setActors(data['actors'])
+               game.setMap(data['map']);
+               game.setActors(data['actors']);
                break;
          }
       }
    }
-
-   game.renderer = PIXI.autoDetectRenderer(
-      2 * game.BG_SIZE * game.RADIUS_Y,
-      2 * game.BG_SIZE * game.RADIUS_X,
-      document.getElementById("game-canvas")
-   );
-   // var farTexture = PIXI.Texture.fromImage("/img/grass.jpg");
-   // game.far = new PIXI.TilingSprite(farTexture, 512, 256);
-   // game.far.position.x = 230;
-   // game.far.position.y = 0;
-   // game.far.tilePosition.x = 0;
-   // game.far.tilePosition.y = 0
-   // game.stage.addChild(game.far)
-   // game.renderer.render(game.stage);
-   requestAnimFrame(update);
+   game.initGraphic();
 });
 
-function update() {
-   game = new PIXI.Stage(0x66BB99)
-
-   game.renderer.render(game.stage);
-
-   requestAnimFrame(update);
+function renderScene() {
+   game.graphic.renderer.render(game.graphic.stage);
+   requestAnimationFrame(renderScene);
 }
