@@ -1,70 +1,87 @@
+var TAIL_SIZE = 32; //px
+var WIDTH = 1200;
+var HEIGHT = 600;
 
-var tail_size = 32; //px
+function Graphic() {
+    this.stage = null,
+    this.renderer = null,
+    this.dictionary = {'.':'grass', '#':'wall'},
+    this.map = [],
+    this.actors = [{"type":"player","x":5,"y":5}], //test
+    this.atlas = null,
+    this.tileMethods = {}
+    this.textures = {},
 
-var graphic = {
-    stage : undefined,
-    dictionary : {'.':'grass', '#':'wall'},
-    map : [],
-    actors : [{"type":"player","x":5,"y":5}], //test
-    textures : {
-        'grass' : PIXI.Texture.fromImage('/resourses/grass_1.png'),
-        'wall'  : PIXI.Texture.fromImage('/resourses/stone_1.png'),
-        'actor' : PIXI.Texture.fromImage('/resourses/bunny.png'),
+    this.clearView = function(){
+        this.stage = new PIXI.Stage;
     },
-    clearView : function(){
-        graphic.stage.children = [];
-    },
 
-    drawActors : function (actors) {
+    this.drawActors = function (actors) {
+        var th = this;
         actors = actors || this.actors;
         $(actors).each(function(key, val){
-        
-            graphic.tileMethods['actor'](val.x, val.y)
+            th.tileMethods['actor'](val.x, val.y)
         })
     },
 
-    refreshView : function(){
-        graphic.clearView();
-        graphic.drawMap();
-        graphic.drawActors();
+    this.refreshView = function(){
+        this.clearView();
+        this.drawMap();
+        this.drawActors();
     },
 
-    setMap : function (map){
-        graphic.map = map;
-        graphic.refreshView();
+    this.setMap = function (map){
+        this.map = map;
+        this.refreshView();
     },
 
-    setDictionary : function (dict){
-        graphic.dictionary = dict;
+    this.setDictionary = function (dict){
+        this.dictionary = dict;
     },
 
-    setActors : function(actrs){
-    	graphic.actors = actrs;
-    	graphic.refreshView();
+    this.setActors = function(actrs){
+    	this.actors = actrs;
+    	this.refreshView();
     },
 
-    drawMap : function (map) {
+    this.drawMap = function (map) {
         var tileType, x, y;
-        map = map || graphic.map;
+        map = map || this.map;
         for (var i = 0, iL = map.length; i < iL; i++) {
             for (var j = 0, jL = map[i].length; j < jL; j++) {
                 x = j * 32;
                 y = i * 32;
-                tileType = graphic.dictionary[map[i][j]];
-                drawTile = graphic.tileMethods[tileType];
+                tileType = this.dictionary[map[i][j]];
+                drawTile = this.tileMethods[tileType];
                 drawTile(x, y);
             }
         }
+    },
+
+    this.TileMethod = function (texture){
+        var th = this;
+        return function(x, y){
+            var tile = new PIXI.Sprite(texture);
+            tile.position.x = x;
+            tile.position.y = y;
+            th.stage.addChild(tile);
+        }
+    },
+
+    this.Init = function() {
+        this.atlas = PIXI.BaseTexture.fromImage('/resourses/atlas.png');
+        this.textures = {
+            'grass' : new PIXI.Texture(this.atlas, new PIXI.Rectangle(0, 480, 32, 32)),
+            'wall'  : new PIXI.Texture(this.atlas, new PIXI.Rectangle(544, 448, 32, 32)),
+            'actor' : PIXI.Texture.fromImage('/resourses/bunny.png')
+        }
+        this.tileMethods = {
+            'grass' : this.TileMethod(this.textures['grass']),
+            'wall'  : this.TileMethod(this.textures['wall']),
+            'actor' : this.TileMethod(this.textures['actor'])
+        }
     }
 }
-
-graphic.tileMethods = {
-    'grass' : TileMethod(graphic.textures['grass']),
-    'wall'  : TileMethod(graphic.textures['wall']),
-    'actor' : TileMethod(graphic.textures['actor'])
-}
-
-
 
 var testTerrain = [
     ['#','#','#','#','#','#','#'],
@@ -75,31 +92,3 @@ var testTerrain = [
     ['#','.','.','.','.','.','#'],
     ['#','#','#','#','#','#','#']
 ]
-
-function TileMethod(texture){
-    return function(x, y){
-        var tile = new PIXI.Sprite(texture);
-        tile.position.x = x;
-        tile.position.y = y;
-        graphic.stage.addChild(tile);
-    }
-}
-
-
-
-
-
-$(document).ready(function(){
-	var WIDTH = 1200;
-    var HEIGHT = 600;
-    graphic.map = testTerrain;
-    graphic.renderer = PIXI.autoDetectRenderer(WIDTH, HEIGHT);
-    $("#view").append(graphic.renderer.view);
-    graphic.stage = new PIXI.Stage;
-    requestAnimationFrame(animate);
-    graphic.refreshView();
-    function animate() {
-        graphic.renderer.render(graphic.stage);
-        requestAnimationFrame(animate);
-    }
-})
