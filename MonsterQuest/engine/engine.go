@@ -13,7 +13,7 @@ type jsonType map[string] interface{}
 type Game struct {
     websocketHub
     field gameField
-    sync playerList
+    players playerList
     lastActions map[string] jsonType
 }
 
@@ -39,7 +39,7 @@ func GetInstance() *Game {
         }
         gameInstance.field.loadFromFile("map.txt")
         go gameInstance.websocketHub.run()
-        go gameInstance.sync.save()
+        go gameInstance.players.save()
     }
     return gameInstance
 }
@@ -91,8 +91,8 @@ func (g *Game) examineAction(json jsonType) jsonType {
         res["login"]  = login
         res["result"] = "ok"
     }
-    if (g.sync.isExists(id)) {
-        setSuccesResult(g.sync.getPlayerInfo(id))
+    if info, isExist := g.players.getPlayerInfo(id); isExist {
+        setSuccesResult(info.login, info.x, info.y)
     } else {
         db := connect.CreateConnect()
         stmt, _ := db.Prepare(`
@@ -109,7 +109,7 @@ func (g *Game) examineAction(json jsonType) jsonType {
             err = stmt.QueryRow(id).Scan(&x, &y)
             if err != sql.ErrNoRows {
                 setSuccesResult(login, x, y)
-                g.sync.add(json["sid"].(string), login, x, y, id)
+                g.players.add(json["sid"].(string), login, x, y, id)
             } else {
                 res["result"] = "badId"
             }
@@ -136,7 +136,7 @@ func (g *Game) getVisibleSpace(coord, bound int) (v1 int, v2 int) {
 
 func (g *Game) lookAction(sid string) jsonType {
     res := make(jsonType)
-    /*player := g.sync.getPlayerBySession(sid)
+    /*player := g.players.getPlayerBySession(sid)
     x, y := int(player.x), int(player.y)
     l, r := g.getVisibleSpace(x, g.field.width)
     t, b := g.getVisibleSpace(y, g.field.height)
@@ -149,8 +149,8 @@ func (g *Game) lookAction(sid string) jsonType {
     }
     res["map"] = visibleSpace
     visiblePlayers := make([]jsonType, 0, 1000)
-    requester := g.sync.getPlayerBySession(sid)
-    for id, p := range g.sync.players {
+    requester := g.players.getPlayerBySession(sid)
+    for id, p := range g.players.players {
         if p.x > float64(l) && p.x < float64(r) && p.y > float64(t) && p.y < float64(b) && p != requester {
             json := make(jsonType)
             json["type"] = "player"
@@ -168,7 +168,7 @@ func (g *Game) changeWorldWithPlayer(json jsonType) {
     action := json["action"].(string)
     switch action {
         case "move":
-            g.sync.getPlayerBySession(json["sid"].(string)).move(json["direction"].(string))
+            g.players.getPlayerBySession(json["sid"].(string)).move(json["direction"].(string))
     }
 }
 

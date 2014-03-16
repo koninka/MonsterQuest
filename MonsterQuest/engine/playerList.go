@@ -52,9 +52,16 @@ func (s *playerList) isExistsSession(sid string) bool {
     return s.sessions[sid] != nil
 }
 
-func (s *playerList) getPlayerInfo(id int64) (string, float64, float64) {
-    p := s.players[id]
-    return p.login, p.x, p.y
+func (s *playerList) getPlayerInfo(id int64) (player, bool) {
+    var (
+        pl player;
+        isExist bool = s.players[id] != nil;
+    )
+    if isExist {
+        p := s.players[id]
+        pl = player{p.login, p.x, p.y};
+    }
+    return pl, isExist
 }
 
 func (s *playerList) getPlayerById(id int64) *player {
