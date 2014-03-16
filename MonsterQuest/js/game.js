@@ -77,7 +77,7 @@ $(function(){
       SendViaWS({action: "examine", id: actor.id});
       SendViaWS({action: "getDictionary"});
       setTimeout(function () {
-         SendViaWS({action: "look"});
+         //SendViaWS({action: "look"});
       }, 300);
    }
 
@@ -107,13 +107,12 @@ $(function(){
                actor.examineSuccess(data);
                break
             case "getDictionary":
-               for (var i in game.dictionary) {
-                  game.textures[i] = PIXI.Texture.fromImage("/img/" + game.dictionary[i] + ".jpg");
-               }
+               graphic.setDictionary(data);
+               game.dict = data;
                break;
             case "look":
-               game.map = data.map;
-               game.actors = data.actors;
+               graphic.setMap(data['map'])
+               graphic.setActors(data['actors'])
                break;
          }
       }
