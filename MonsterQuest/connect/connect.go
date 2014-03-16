@@ -11,17 +11,13 @@ type DBComps interface {
     Close() error
 }
 
-func CreateConnect() *sql.DB {
-    db, _ := sql.Open("mysql", "monster_user:qwerty@/monsterquest")
-    return db
-}
+var db *sql.DB = nil
 
-func CloseDB(comps ...DBComps) {
-    for _, comp := range comps {
-        if comp != nil {
-            comp.Close()
-        }
-    }
+func CreateConnect() *sql.DB {
+	if db == nil {
+		db, _ = sql.Open("mysql", "monster_user:qwerty@/monsterquest")
+	}
+    return db
 }
 
 func MakeSelect(from, where string, fields ...string) string {

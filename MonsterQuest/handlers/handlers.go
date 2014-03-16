@@ -26,7 +26,7 @@ func isExistUser(login, pass string) bool {
         where = where + " AND password = ?"
     }
     stmt, _ := db.Prepare(connect.MakeSelect("users", where, "id"))
-    defer connect.CloseDB(db, stmt)
+    defer stmt.Close()
     if isLogin {
         return stmt.QueryRow(login, pass).Scan() != sql.ErrNoRows
     } else {
@@ -43,7 +43,7 @@ func logoutAction(u4 string) string {
     result := map[string] string{"result": "ok"}
     db := connect.CreateConnect()
     stmt, _ := db.Prepare("DELETE FROM sessions WHERE sid = ?")
-    defer connect.CloseDB(db, stmt)
+    defer stmt.Close()
     res, _ := stmt.Exec(u4)
     if amount, _ := res.RowsAffected(); amount != 1 {
         result["result"] = "badSid"
@@ -58,7 +58,7 @@ func loginAction(login, pass string) string {
         db := connect.CreateConnect()
         u4, _ := uuid.NewV4()
         stmt, _ := db.Prepare("CALL add_user_session(?, ?)")
-        defer connect.CloseDB(db, stmt)
+        defer stmt.Close()
         _, err := stmt.Exec(login, u4.String())
         if err == nil {
             var id int64

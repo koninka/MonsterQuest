@@ -100,7 +100,7 @@ func (g *Game) examineAction(json jsonType) jsonType {
             FROM users u
             INNER JOIN sessions s ON s.user_id = u.id AND s.sid = ?
         `)
-        defer connect.CloseDB(db, stmt)
+        defer stmt.Close()
         var login string
         err := stmt.QueryRow(sid).Scan(&login)
         if err != sql.ErrNoRows {
@@ -175,7 +175,7 @@ func (g *Game) changeWorldWithPlayer(json jsonType) {
 func (g *Game) IsSIDValid(sid string) bool {
     db := connect.CreateConnect()
     stmt, _ := db.Prepare(connect.MakeSelect("sessions", "sid = ?", "id"))
-    defer connect.CloseDB(db, stmt)
+    defer stmt.Close()
     return stmt.QueryRow(sid).Scan() != sql.ErrNoRows
 }
 
