@@ -38,7 +38,6 @@ function Graphic(scene) {
         { 
             preload: PreloadResourses, 
             update: function(){
-                I.game.add.sprite(50,50,'bunny');
                 scene.Draw(I); 
             }   
         }
