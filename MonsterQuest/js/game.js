@@ -15,6 +15,13 @@ Actor.prototype.move = function(direct) {
    console.log(JSON.stringify({action: "move", direction: direct, tick: game.tick}));
 };
 
+Actor.prototype.Draw = function(graphic) {
+   var tile = new PIXI.Sprite(graphic.getTexture('player'));
+   tile.position.x = this.x;
+   tile.position.y = this.y;
+   graphic.addChild(tile);
+}
+
 Actor.prototype.examineSuccess = function(data) {
    this.pt = new Point(data["x"], data["y"]);
    this.type = data["type"];
@@ -27,11 +34,8 @@ function Game(sid, wsuri, srv, tick) {
    this.sock     = null;
    this.tick     = tick;
    this.wsuri    = "ws://" + wsuri;
-   this.RADIUS_X = 3;
-   this.RADIUS_Y = 5;
-   this.BG_SIZE  = 120;
-   this.renderer = null;
    this.graphic  = new Graphic();
+   this.scene = new Scene();
 
    this.setDictionary = function(dict) {
       this.graphic.setDictionary(dict);
@@ -48,9 +52,12 @@ function Game(sid, wsuri, srv, tick) {
    this.initGraphic = function() {
       this.graphic.renderer = PIXI.autoDetectRenderer(WIDTH, HEIGHT);
       $("#view").append(this.graphic.renderer.view);
-      // this.graphic.map = testTerrain;
       this.graphic.stage = new PIXI.Stage;
       this.graphic.Init();
+   }
+
+   this.Start = function() {
+      this.scene.Draw();
    }
 }
 
@@ -94,9 +101,7 @@ $(function(){
       console.log("connected to " + game.wsuri);
       SendViaWS({action: "examine", id: actor.id});
       SendViaWS({action: "getDictionary"});
-      setTimeout(function () {
-         SendViaWS({action: "look"});
-      }, 300);
+      SendViaWS({action: "look"});
    }
 
    game.sock.onclose = function(e) {
@@ -130,16 +135,18 @@ $(function(){
             case "look":
                game.setMap(data['map']);
                game.setActors(data['actors']);
-               requestAnimFrame(renderScene);
+               //game.()//requestAnimFrame(renderScene);
                break;
          }
       }
    }
    game.initGraphic();
+   game.Start();
 });
 
-function renderScene() {
+/*function renderScene() {
    game.graphic.refreshView();
    game.graphic.renderer.render(game.graphic.stage);
    requestAnimationFrame(renderScene);
-}
+}*/
+

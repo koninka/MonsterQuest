@@ -5,8 +5,6 @@ import (
     "time"
     "MonsterQuest/MonsterQuest/connect"
     "MonsterQuest/MonsterQuest/consts"
-    "log"
-    //"fmt"
 )
 
 type jsonType map[string] interface{}
