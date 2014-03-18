@@ -8,6 +8,7 @@ function Player(id) {
    this.pt     = null;
    this.type   = null;
    this.login  = null;
+   this.tile   = null;
 }
 
 Player.prototype.move = function(direct) {
@@ -16,10 +17,10 @@ Player.prototype.move = function(direct) {
 };
 
 Player.prototype.Draw = function(graphic) {
-   var tile = new PIXI.Sprite(graphic.getTexture('player'));
-   tile.position.x = this.x;
-   tile.position.y = this.y;
-   graphic.addChild(tile);
+   graphic.DrawObj(this.tile, this.x, this.y, 'player')
+   //tile.position.x = this.x;
+   //tile.position.y = this.y;
+   //graphic.addChild(tile);
 }
 
 Player.prototype.examineSuccess = function(data) {
