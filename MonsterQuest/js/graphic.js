@@ -2,19 +2,20 @@ var TILE_SIZE = 32;
 var WIDTH = 1200;
 var HEIGHT = 600;
 
-function Atlas()
+/*function Atlas()
 {
+
     this.atlas = PIXI.BaseTexture.fromImage('/resourses/atlas.png');
     this.textures = {
         'grass' : new PIXI.Texture(this.atlas, new PIXI.Rectangle(0 * TILE_SIZE, 15 * TILE_SIZE, TILE_SIZE, TILE_SIZE)),
         'wall'  : new PIXI.Texture(this.atlas, new PIXI.Rectangle(17 * TILE_SIZE, 14 * TILE_SIZE, TILE_SIZE, TILE_SIZE)),
         'actor' : new PIXI.Texture(this.atlas, new PIXI.Rectangle(18 * TILE_SIZE, 9 * TILE_SIZE, TILE_SIZE, TILE_SIZE)),
     };
-    this.tileMethods = {
+    /*this.tileMethods = {
         'grass' : this.TileMethod(this.textures['grass']),
         'wall'  : this.TileMethod(this.textures['wall']),
         'actor' : this.TileMethod(this.textures['actor']),
-    };
+    }; //
 }
 
 Atlas.prototype.TileMethod = function (texture) {
@@ -26,28 +27,60 @@ Atlas.prototype.TileMethod = function (texture) {
         th.stage.addChild(tile);
     }
 };
-
-function Graphic() {
-    this.stage = null;
-    this.renderer = null;
-    this.dictionary = {'.':'grass', '#':'wall'};
-    this.map = [];
-    this.actors = [];
-    this.atlas = new Atlas();
-    this.tileMethods = {};
-    this.textures = {};
+*/
+var Atlas = {
+    player : "/resourses/player",
+    grass  : "/resourses/grass",
+    wall   : "/resourses/wall"
 }
 
-Graphic.prototype.clearView = function() {
-    this.stage = new PIXI.Stage;
-};
+function Graphic(scene) {
+    //this.stage = null;
+    //this.renderer = null;
+    //this.dictionary = {'.':'grass', '#':'wall'};
+    //this.map = [];
+    //this.actors = [];
+    this.atlas = //new Atlas();
+        {
+            player : "/resourses/bunny.png",
+            grass  : "/resourses/grass_1.png",
+            wall   : "/resourses/stone_1.png"
+        }
+    this.tileMethods = {};
+    this.textures = {};
+    var I = this;
+    var PreloadResourses = function (){
+        //I.game.load.image('bunny', '/resousres/bunny.png');
+        for(var name in I.atlas){
+            I.game.load.image(name, I.atlas[name]);
+            //console.log(name);
+            //onsole.log(I.atlas[name]);
+        }
 
-Graphic.prototype.drawActors = function (actors) {
-    var th = this;
-    actors = actors || this.actors;
-    $(actors).each(function(key, val){
-        th.tileMethods['actor'](val.x, val.y)
-    });
+    }
+    
+    this.game = new Phaser.Game(1000, 600, Phaser.AUTO, 'view', 
+        { 
+            preload: PreloadResourses, 
+            update: function(){
+                I.game.add.sprite(50,50,'bunny');
+                scene.Draw(I); 
+            }   
+        }
+    )
+}
+
+Graphic.prototype = Object.create(Phaser);
+
+Graphic.prototype.DrawObj = function(obj, x, y, sprite_name){
+    if(obj)
+        obj.destroy();
+    
+    return obj = this.game.add.sprite(x, y, sprite_name);
+}
+
+/*Graphic.prototype.clearView = function() {
+    this.stage = new PIXI.Stage;
 };
 
 Graphic.prototype.refreshView = function() {
@@ -82,3 +115,4 @@ Graphic.prototype.drawMap = function () {
         }
     }
 };
+*/
