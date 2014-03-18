@@ -43,7 +43,7 @@ Scene.prototype.setMap = function(map){
 	this.background.map = map;
 }
 
-Scene.prototype.getDictionary = function(dict){
+Scene.prototype.setDictionary = function(dict){
 	this.background.dictionary = dict;
 }
 
