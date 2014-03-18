@@ -17,7 +17,7 @@ Player.prototype.move = function(direct) {
 };
 
 Player.prototype.Draw = function(graphic) {
-   graphic.DrawObj(this.tile, this.x, this.y, 'player')
+   this.tile = graphic.DrawObj(this.tile, this.pt.x, this.pt.y, 'player')
    //tile.position.x = this.x;
    //tile.position.y = this.y;
    //graphic.addChild(tile);
