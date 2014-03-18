@@ -5,6 +5,7 @@ import (
     "time"
     "MonsterQuest/MonsterQuest/connect"
     "MonsterQuest/MonsterQuest/consts"
+    "log"
     //"fmt"
 )
 
@@ -136,10 +137,13 @@ func (g *Game) getVisibleSpace(coord, bound int) (v1 int, v2 int) {
 
 func (g *Game) lookAction(sid string) jsonType {
     res := make(jsonType)
-    /*player := g.players.getPlayerBySession(sid)
+    res["action"] = "look"
+    player := g.players.getPlayerBySession(sid)
     x, y := int(player.x), int(player.y)
+    log.Println("get player info")
     l, r := g.getVisibleSpace(x, g.field.width)
     t, b := g.getVisibleSpace(y, g.field.height)
+    log.Println("get visible space")
     visibleSpace := make([][]string, b - t + 1)
     for i := t; i <= b; i++ {
         visibleSpace[i - t] = make([]string, r - l + 1)
@@ -160,7 +164,8 @@ func (g *Game) lookAction(sid string) jsonType {
             visiblePlayers = append(visiblePlayers, json)
         }
     }
-    res["actors"] = visiblePlayers*/
+    res["actors"] = visiblePlayers
+    log.Println("go from look")
     return res
 }
 

@@ -46,13 +46,11 @@ function Game(sid, wsuri, srv, tick) {
    }
 
    this.initGraphic = function() {
-      this.graphic.map = testTerrain;
       this.graphic.renderer = PIXI.autoDetectRenderer(WIDTH, HEIGHT);
       $("#view").append(this.graphic.renderer.view);
+      // this.graphic.map = testTerrain;
       this.graphic.stage = new PIXI.Stage;
       this.graphic.Init();
-      this.graphic.refreshView();
-      requestAnimFrame(renderScene);
    }
 }
 
@@ -97,7 +95,7 @@ $(function(){
       SendViaWS({action: "examine", id: actor.id});
       SendViaWS({action: "getDictionary"});
       setTimeout(function () {
-         //SendViaWS({action: "look"});
+         SendViaWS({action: "look"});
       }, 300);
    }
 
@@ -132,6 +130,7 @@ $(function(){
             case "look":
                game.setMap(data['map']);
                game.setActors(data['actors']);
+               requestAnimFrame(renderScene);
                break;
          }
       }
@@ -140,6 +139,7 @@ $(function(){
 });
 
 function renderScene() {
+   game.graphic.refreshView();
    game.graphic.renderer.render(game.graphic.stage);
    requestAnimationFrame(renderScene);
 }
