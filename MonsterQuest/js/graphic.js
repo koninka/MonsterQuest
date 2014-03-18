@@ -15,6 +15,7 @@ function Atlas()
         'wall'  : this.TileMethod(this.textures['wall']),
         'actor' : this.TileMethod(this.textures['actor']),
     };
+    this.stage = null;
 }
 
 Atlas.prototype.TileMethod = function (texture) {
@@ -24,61 +25,5 @@ Atlas.prototype.TileMethod = function (texture) {
         tile.position.x = x;
         tile.position.y = y;
         th.stage.addChild(tile);
-    }
-};
-
-function Graphic() {
-    this.stage = null;
-    this.renderer = null;
-    this.dictionary = {'.':'grass', '#':'wall'};
-    this.map = [];
-    this.actors = [];
-    this.atlas = new Atlas();
-    this.tileMethods = {};
-    this.textures = {};
-}
-
-Graphic.prototype.clearView = function() {
-    this.stage = new PIXI.Stage;
-};
-
-Graphic.prototype.drawActors = function (actors) {
-    var th = this;
-    actors = actors || this.actors;
-    $(actors).each(function(key, val){
-        th.tileMethods['actor'](val.x, val.y)
-    });
-};
-
-Graphic.prototype.refreshView = function() {
-    this.clearView();
-    this.drawMap();
-    this.drawActors();
-};
-
-Graphic.prototype.setMap = function (map) {
-    this.map = map;
-    this.refreshView();
-};
-
-Graphic.prototype.setDictionary = function (dict) {
-    this.dictionary = dict;
-};
-
-Graphic.prototype.setActors = function(actors) {
-    this.actors = actors;
-    this.refreshView();
-};
-
-Graphic.prototype.drawMap = function () {
-    var tileType, x, y;
-    for (var i = 0, iL = this.map.length; i < iL; i++) {
-        for (var j = 0, jL = this.map[i].length; j < jL; j++) {
-            x = j * TILE_SIZE;
-            y = i * TILE_SIZE;
-            tileType = this.dictionary[this.map[i][j]];
-            drawTile = this.tileMethods[tileType];
-            drawTile(x, y);
-        }
     }
 };

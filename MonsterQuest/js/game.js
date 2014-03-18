@@ -12,15 +12,8 @@ function Player(id) {
 
 Player.prototype.move = function(direct) {
    SendViaWS({action: "move", direction: direct, tick: game.tick});
-   console.log(JSON.stringify({action: "move", direction: direct, tick: game.tick}));
+  // console.log(JSON.stringify({action: "move", direction: direct, tick: game.tick}));
 };
-
-Player.prototype.Draw = function(graphic) {
-   var tile = new PIXI.Sprite(graphic.getTexture('player'));
-   tile.position.x = this.x;
-   tile.position.y = this.y;
-   graphic.addChild(tile);
-}
 
 Player.prototype.examineSuccess = function(data) {
    this.pt = new Point(data["x"], data["y"]);
@@ -28,44 +21,46 @@ Player.prototype.examineSuccess = function(data) {
    this.login = data["login"];
 }
 
-function Game(sid, wsuri, srv, tick) {
+function Game(sid, wsuri) {
    this.sid      = sid;
-   this.srv      = srv;
    this.sock     = null;
-   this.tick     = tick;
+   this.tick     = null;
    this.wsuri    = "ws://" + wsuri;
-   this.graphic  = new Graphic();
-   this.scene    = new Scene();
    this.player   = new Player(parseInt(getQueryVariable('id')));
+   this.scene    = new Scene(this.player);
    this.renderer = new Renderer(this.scene);
+   this.firstLook = true;
 }
 
 Game.prototype.setDictionary = function(dict) {
-   this.graphic.setDictionary(dict);
+   this.renderer.dict = dict;
 };
 
 Game.prototype.setMap = function(map) {
-   this.graphic.setMap(map);
+   this.scene.background = map;
 };
 
 Game.prototype.setActors = function(actors) {
-   this.graphic.setActors(actors);
+   this.scene.players = actors;
 };
 
 Game.prototype.initGraphic = function() {
-   this.graphic.renderer = PIXI.autoDetectRenderer(WIDTH, HEIGHT);
-   $("#view").append(this.graphic.renderer.view);
-   this.graphic.stage = new PIXI.Stage;
+   $("#view").append(this.renderer.renderer.view);
 };
 
-Game.prototype.Start = function() {
-   this.scene.Draw();
+function Render() {
+   game.renderer.Render();
+   requestAnimationFrame(Render);
+}
+
+Game.prototype.lookOut = function() {
+   SendViaWS({action: "look"});   
 };
 
 function SendViaWS(hash) {
    hash["sid"] = game.sid;
    game.sock.send(JSON.stringify(hash));
-   console.log("request " + JSON.stringify(hash));
+  //console.log("request " + JSON.stringify(hash));
 }
 
 document.onkeydown = function(e) {
@@ -73,17 +68,17 @@ document.onkeydown = function(e) {
       return;
    e = e || event
    switch(e.keyCode) {
-      case 37: // left
-         actor.move("west");
+      case 37: 
+         game.player.move("west");
          break;
-      case 38: // up
-         actor.move("north");
+      case 38: 
+         game.player.move("north");
          break;
-      case 39: // right
-         actor.move("east");
+      case 39: 
+         game.player.move("east");
          break;
-      case 40: // down
-         actor.move("south");
+      case 40: 
+         game.player.move("south");
          break;
    }
 };
@@ -98,8 +93,8 @@ $(function(){
    game.sock = new WebSocket(game.wsuri);
 
    game.sock.onopen = function() {
-      console.log("connected to " + game.wsuri);
-      SendViaWS({action: "examine", id: actor.id});
+     // console.log("connected to " + game.wsuri);
+      SendViaWS({action: "examine", id: game.player.id});
       SendViaWS({action: "getDictionary"});
       SendViaWS({action: "look"});
    };
@@ -114,8 +109,8 @@ $(function(){
 
    game.sock.onmessage = function(e) {
       var data = JSON.parse(e.data);
-      if (!data["tick"])
-         console.log("response " + e.data);
+      //if (!data["tick"])
+        // console.log("response " + e.data);
       var result = data["result"];
       var action = data["action"];
       if (data["tick"]) {
@@ -127,7 +122,8 @@ $(function(){
       } else {
          switch (action) {
             case "examine":
-               this.player.examineSuccess(data);
+               game.player.examineSuccess(data);
+               setInterval(game.lookOut, 300);
                break
             case "getDictionary":
                game.setDictionary(data);
@@ -135,13 +131,17 @@ $(function(){
             case "look":
                game.setMap(data['map']);
                game.setActors(data['actors']);
+               if (game.firstLook)
+               {
+                  game.firstLook = false;
+                  requestAnimationFrame(Render);
+               }
                break;
          }
       }
    };
 
    game.initGraphic();
-   game.Start();
 });
 
 /*function renderScene() {
