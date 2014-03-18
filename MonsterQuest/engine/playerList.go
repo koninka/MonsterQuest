@@ -13,8 +13,8 @@ type player struct {
 
 func (p *player) move(dir string) {
     switch dir {
-    case "north": p.y += consts.PLAYER_SPEED
-    case "south": p.y -= consts.PLAYER_SPEED
+    case "north": p.y -= consts.PLAYER_SPEED
+    case "south": p.y += consts.PLAYER_SPEED
     case "west":  p.x -= consts.PLAYER_SPEED
     case "east":  p.x += consts.PLAYER_SPEED
     }
