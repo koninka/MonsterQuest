@@ -23,24 +23,44 @@ Background.prototype.Draw = function(graphic){
 		}
 	}
 }
+
+function Scene(player)
 {
-	this.player = null;
+	this.player = player;
 	this.players = [];
-	this.background = null;
+	this.players_sprite = [] //<- это надо куда то запихать возможно потипу background'a
+	this.background = new Background();
 }
 
-Scene.prototype.Draw = function()
-{
-	this.Clear();
-	this.background.Draw();
-	for (player in players) {
-		player.Draw();
+Scene.prototype.setActors = function(players){
+	for(var i = 0; i < this.players_sprite; ++i){
+		this.players_sprite[i].destroy();
 	}
-	this.player.Draw();   
-    graphic.renderer.render(graphic.stage);
-    requestAnimationFrame(this.Draw);
+	this.players = players;
 }
 
-Scene.prototype.Clear = function(){
-	graphic.refreshView();
+Scene.prototype.setMap = function(map){
+	this.background.map = map;
 }
+
+Scene.prototype.getDictionary = function(dict){
+	this.background.dictionary = dict;
+}
+
+Scene.prototype.Draw = function(graphic)
+{
+	//this.Clear();
+	this.background.Draw(graphic);
+	for (var i = 0; i < this.players.length; ++i) {
+		graphic.DrawObj(this.players_sprite[i], this.players[i].x, this.players[i].y, this.players[i]);
+		//player.Draw();
+	}
+	this.player.Draw(graphic);
+	//this.render();
+    //graphic.renderer.render(graphic.stage);
+    //requestAnimationFrame(this.Draw);
+}
+
+//Scene.prototype.Clear = function(){
+//	graphic.refreshView();
+//}
