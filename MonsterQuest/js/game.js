@@ -35,8 +35,8 @@ function Game(sid, wsuri) {
    this.tick     = null;
    this.wsuri    = "ws://" + wsuri;
    //this.graphic  = new Graphic();
-   //this.player   = new Player(parseInt(getQueryVariable('id')));
-   //this.scene    = new Scene(this.player);
+   this.player   = new Player(parseInt(getQueryVariable('id')));
+   this.scene    = new Scene(this.player);
    //this.renderer = new Renderer(this.scene);
 }
 
@@ -61,8 +61,8 @@ Game.prototype.initGraphic = function() {
 
 Game.prototype.Start = function() {
    //this.scene.Draw();
-   this.player   = new Player(parseInt(getQueryVariable('id')));
-   this.scene    = new Scene(this.player);
+   //this.player   = new Player(parseInt(getQueryVariable('id')));
+   //this.scene    = new Scene(this.player);
    //this.renderer = new Renderer(this.scene);
    this.firstLook = true;
 }
