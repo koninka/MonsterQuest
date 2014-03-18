@@ -1,30 +1,19 @@
-function WSConnect(wsuri){
+function WSConnect(wsuri, onload, onopen, onclose, onmessage){
 
     var sock = null;
-    wsuri = wsuri || "ws://localhost:8080/websocket"; // <-- note new path
-
-    window.onload = function() {
-
-        console.log("onload");
-
-        sock = new WebSocket(wsuri);
-
-        sock.onopen = function() {
-            console.log("connected to " + wsuri);
-        }
-
-        sock.onclose = function(e) {
-            console.log("connection closed (" + e.code + ") reason("+e.reason+")");
-        }
-
-        sock.onmessage = function(e) {
-            console.log("message received: " + e.data);
-        }
+    if(wsuri){
+        wsuri = 'ws://'+wsuri;
     }
-    
+    //wsuri = wsuri || "ws://localhost:8080/websocket"; // <-- note new path
+
+    sock = new WebSocket(wsuri);
+    sock.onopen = onopen;
+    sock.onclose = onclose;
+    sock.onmessage = onmessage;
     sock.sendJSON = function (/*JSON*/ msg) {
         sock.send(JSON.stringify());
     };
+    
     return sock;
 }
 
