@@ -35,32 +35,33 @@ function Game(sid, wsuri, srv, tick) {
    this.sock     = null;
    this.tick     = tick;
    this.wsuri    = "ws://" + wsuri;
-   this.graphic  = new Graphic();
-   this.scene    = new Scene();
+   //this.graphic  = new Graphic();
    this.player   = new Player(parseInt(getQueryVariable('id')));
-   this.renderer = new Renderer(this.scene);
+   this.scene    = new Scene(this.player);
+   //this.renderer = new Renderer(this.scene);
 }
 
 Game.prototype.setDictionary = function(dict) {
-   this.graphic.setDictionary(dict);
+   this.scene.setDictionary(dict);
 };
 
 Game.prototype.setMap = function(map) {
-   this.graphic.setMap(map);
+   this.scene.setMap(map);
 };
 
 Game.prototype.setActors = function(actors) {
-   this.graphic.setActors(actors);
+   this.scene.setActors(actors);
 };
 
-Game.prototype.initGraphic = function() {
-   this.graphic.renderer = PIXI.autoDetectRenderer(WIDTH, HEIGHT);
-   $("#view").append(this.graphic.renderer.view);
-   this.graphic.stage = new PIXI.Stage;
+Game.prototype.initGraphic = function() { 
+   //this.graphic.renderer = PIXI.autoDetectRenderer(WIDTH, HEIGHT); // должно быть в Graphic()
+   //$("#view").append(this.graphic.renderer.view);
+   //this.graphic.stage = new PIXI.Stage;
+   this.graphic = new Graphic(this.scene);
 };
 
 Game.prototype.Start = function() {
-   this.scene.Draw();
+   //this.scene.Draw();
 };
 
 function SendViaWS(hash) {
@@ -70,6 +71,7 @@ function SendViaWS(hash) {
 }
 
 document.onkeydown = function(e) {
+   var actor = game.player;
    if (!game.sock || game.sock.readyState != 1)
       return;
    e = e || event
