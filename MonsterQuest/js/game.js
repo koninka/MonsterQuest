@@ -3,26 +3,26 @@ function Point(x, y) {
    this.y = y;
 }
 
-function Actor(id) {
+function Player(id) {
    this.id     = id;
    this.pt     = null;
    this.type   = null;
    this.login  = null;
 }
 
-Actor.prototype.move = function(direct) {
+Player.prototype.move = function(direct) {
    SendViaWS({action: "move", direction: direct, tick: game.tick});
    console.log(JSON.stringify({action: "move", direction: direct, tick: game.tick}));
 };
 
-Actor.prototype.Draw = function(graphic) {
+Player.prototype.Draw = function(graphic) {
    var tile = new PIXI.Sprite(graphic.getTexture('player'));
    tile.position.x = this.x;
    tile.position.y = this.y;
    graphic.addChild(tile);
 }
 
-Actor.prototype.examineSuccess = function(data) {
+Player.prototype.examineSuccess = function(data) {
    this.pt = new Point(data["x"], data["y"]);
    this.type = data["type"];
    this.login = data["login"];
@@ -35,34 +35,32 @@ function Game(sid, wsuri, srv, tick) {
    this.tick     = tick;
    this.wsuri    = "ws://" + wsuri;
    this.graphic  = new Graphic();
-   this.scene = new Scene();
-
-   this.setDictionary = function(dict) {
-      this.graphic.setDictionary(dict);
-   }
-
-   this.setMap = function(map) {
-      this.graphic.setMap(map);
-   }
-
-   this.setActors = function(actors) {
-      this.graphic.setActors(actors);
-   }
-
-   this.initGraphic = function() {
-      this.graphic.renderer = PIXI.autoDetectRenderer(WIDTH, HEIGHT);
-      $("#view").append(this.graphic.renderer.view);
-      this.graphic.stage = new PIXI.Stage;
-      this.graphic.Init();
-   }
-
-   this.Start = function() {
-      this.scene.Draw();
-   }
+   this.scene    = new Scene();
+   this.player   = new Player(parseInt(getQueryVariable('id')));
+   this.renderer = new Renderer(this.scene);
 }
 
-var actor = new Actor(parseInt(getQueryVariable('id')));
-var game  = new Game(getQueryVariable('sid'), getQueryVariable('soсket'));
+Game.prototype.setDictionary = function(dict) {
+   this.graphic.setDictionary(dict);
+};
+
+Game.prototype.setMap = function(map) {
+   this.graphic.setMap(map);
+};
+
+Game.prototype.setActors = function(actors) {
+   this.graphic.setActors(actors);
+};
+
+Game.prototype.initGraphic = function() {
+   this.graphic.renderer = PIXI.autoDetectRenderer(WIDTH, HEIGHT);
+   $("#view").append(this.graphic.renderer.view);
+   this.graphic.stage = new PIXI.Stage;
+};
+
+Game.prototype.Start = function() {
+   this.scene.Draw();
+};
 
 function SendViaWS(hash) {
    hash["sid"] = game.sid;
@@ -90,6 +88,8 @@ document.onkeydown = function(e) {
    }
 };
 
+var game  = new Game(getQueryVariable('sid'), getQueryVariable('soсket'));
+
 $(function(){
    if (!game.sid) {
       GameShutDown();
@@ -102,15 +102,15 @@ $(function(){
       SendViaWS({action: "examine", id: actor.id});
       SendViaWS({action: "getDictionary"});
       SendViaWS({action: "look"});
-   }
+   };
 
    game.sock.onclose = function(e) {
-      alert('Выход через 3 сек.');
+      alert('Logout after 3 seconds');
       setTimeout(function () {
          window.location.href = "/game/?sid=" + data['sid'];
       }, 3000);
       console.log("connection closed (" + e.code + ") reason("+ e.reason +")");
-   }
+   };
 
    game.sock.onmessage = function(e) {
       var data = JSON.parse(e.data);
@@ -127,7 +127,7 @@ $(function(){
       } else {
          switch (action) {
             case "examine":
-               actor.examineSuccess(data);
+               this.player.examineSuccess(data);
                break
             case "getDictionary":
                game.setDictionary(data);
@@ -135,11 +135,11 @@ $(function(){
             case "look":
                game.setMap(data['map']);
                game.setActors(data['actors']);
-               //game.()//requestAnimFrame(renderScene);
                break;
          }
       }
-   }
+   };
+
    game.initGraphic();
    game.Start();
 });

@@ -1,6 +1,6 @@
 function Scene()
 {
-	this.actor = null;
+	this.player = null;
 	this.players = [];
 	this.background = null;
 }
@@ -12,7 +12,7 @@ Scene.prototype.Draw = function()
 	for (player in players) {
 		player.Draw();
 	}
-	this.actor.Draw();   
+	this.player.Draw();   
     graphic.renderer.render(graphic.stage);
     requestAnimationFrame(this.Draw);
 }
