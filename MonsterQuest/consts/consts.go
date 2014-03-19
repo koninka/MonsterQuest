@@ -10,5 +10,4 @@ const (
 	DEFAULT_PLAYER_POS_Y = 5
 	VISION_RADIUS = 10
 	PATH_TO_MAPS = "maps/"
-	TILE_SIZE = 32
 )
