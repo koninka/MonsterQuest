@@ -7,6 +7,8 @@ import (
     "time"
 )
 
+const offset = 0.5
+
 func getShiftByDirection(dir string) (mx int, my int) {
     switch dir {
     case "north": mx, my = 0, -1
@@ -28,6 +30,15 @@ func (p *player) move(dir string) {
     p.y = pos.Y
 }
 
+func (p *player) getRectangle() geometry.Rectangle {
+    var lt, rb geometry.Point
+    lt = geometry.Point{p.x, p.y}
+    rb = lt
+    lt.Move(-offset, -offset)
+    rb.Move(offset, offset)
+    return geometry.Rectangle{lt, rb}
+}
+
 func (p *player) getShiftedCenter(dir string) geometry.Point {
     x := p.x
     y := p.y
@@ -41,7 +52,6 @@ func (p *player) getCollisionableSide(dir string) geometry.Segment {
     var p1, p2 geometry.Point
     p1 = p.getShiftedCenter(dir)
     p2 = p1
-    offset := 0.5
     switch dir {
         case "north": 
             p1.Move(-offset, -offset)
@@ -77,10 +87,11 @@ func (s *playerList) save() {
     }
 }
 
-func (s *playerList) add(sid, login string, x, y float64, id int64) {
+func (s *playerList) add(sid, login string, x, y float64, id int64) *player {
 	p := player{login, x, y}
 	s.players[id] = &p
 	s.sessions[sid] = &p
+    return &p
 }
 
 func (s *playerList) isExists(id int64) bool {

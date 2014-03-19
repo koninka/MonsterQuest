@@ -4,12 +4,12 @@ import (
     "bufio"
     "os"
     "MonsterQuest/MonsterQuest/consts"
-    "MonsterQuest/MonsterQuest/geometry"
 )
 
 type gameField struct {
     width, height int
     field []string
+    players [][]map[*player]bool
 }
 
 func (f *gameField) loadFromFile(fileName string) {
@@ -36,12 +36,4 @@ func (f *gameField) isBlocked(col, row int) bool {
     } else {
         return f.field[col][row] == '#'
     }
-}
-
-func (f *gameField) getTileRectangle(col, row int) geometry.Rectangle {
-    var x, y float64
-    x, y = float64(col * consts.TILE_SIZE), float64(row * consts.TILE_SIZE)   
-    lt := geometry.Point{x, y}
-    rb := geometry.Point{x + consts.TILE_SIZE, y + consts.TILE_SIZE}
-    return geometry.Rectangle{lt, rb}
 }

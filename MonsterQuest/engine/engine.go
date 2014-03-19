@@ -29,12 +29,19 @@ func GetInstance() *Game {
             },
             gameField{
                 field: make([]string, 1000),
+                players: make([][]map[*player]bool, 1000),
             },
 			playerList{
                 make(map[int64] *player),
                 make(map[string] *player),
             },
             make(map[string] jsonType),
+        }
+        for i := range gameInstance.field.field {
+            gameInstance.field.players[i] = make([]map[*player]bool, 1000)
+            for j := range gameInstance.field.players[i] {
+                gameInstance.field.players[i][j] = make(map[*player]bool)
+            }
         }
         gameInstance.field.loadFromFile("map.txt")
         go gameInstance.websocketHub.run()
@@ -77,6 +84,26 @@ func (g *Game) getDictionaryAction() jsonType {
     return res
 }
 
+func (g *Game) linkPlayerToCells(p *player) {
+    r := p.getRectangle()
+    ltc, ltr := int(r.LeftTop.X), int(r.LeftTop.Y)
+    rbc, rbr := int(r.RightBottom.X), int(r.RightBottom.Y)
+    g.field.players[ltr][ltc][p] = true
+    g.field.players[ltr][rbc][p] = true
+    g.field.players[rbr][rbc][p] = true
+    g.field.players[rbr][ltc][p] = true
+}
+
+func (g *Game) unlinkPlayerFromCells(p *player) {
+    r := p.getRectangle()
+    ltc, ltr := int(r.LeftTop.X), int(r.LeftTop.Y)
+    rbc, rbr := int(r.RightBottom.X), int(r.RightBottom.Y)
+    delete(g.field.players[ltr][ltc], p)
+    delete(g.field.players[ltr][rbc], p)
+    delete(g.field.players[rbr][rbc], p)
+    delete(g.field.players[rbr][ltc], p)
+}
+
 func (g *Game) examineAction(json jsonType) jsonType {
     res := make(jsonType)
     id := int64(json["id"].(float64))
@@ -108,7 +135,8 @@ func (g *Game) examineAction(json jsonType) jsonType {
             err = stmt.QueryRow(id).Scan(&x, &y)
             if err != sql.ErrNoRows {
                 setSuccesResult(login, x, y)
-                g.players.add(json["sid"].(string), login, x, y, id)
+                p := g.players.add(json["sid"].(string), login, x, y, id)
+                g.linkPlayerToCells(p)
             } else {
                 res["result"] = "badId"
             }
@@ -175,7 +203,9 @@ func (g *Game) updateWorld() {
             col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
             col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
             if !g.field.isBlocked(col1, row1) && !g.field.isBlocked(col2, row2) {
+                g.unlinkPlayerFromCells(p)
                 p.move(dir)
+                g.linkPlayerToCells(p)
             } 
         }
         delete(g.lastActions, k)
