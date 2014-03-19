@@ -5,7 +5,6 @@ import (
     "time"
     "MonsterQuest/MonsterQuest/connect"
     "MonsterQuest/MonsterQuest/consts"
-    "fmt"
 )
 
 type jsonType map[string] interface{}
@@ -140,10 +139,10 @@ func (g *Game) lookAction(sid string) jsonType {
     player := g.players.getPlayerBySession(sid)
     l, r := g.getVisibleSpace(int(player.x), g.field.width - 1)
     t, b := g.getVisibleSpace(int(player.y), g.field.height - 1)
-    visibleSpace := make([][]string, b - t + 1)
-    for i := t; i <= b; i++ {
-        visibleSpace[i - t] = make([]string, r - l + 1)
-        for j := l; j <= r; j++ {
+    visibleSpace := make([][]string, b - t)
+    for i := t; i < b; i++ {
+        visibleSpace[i - t] = make([]string, r - l)
+        for j := l; j < r; j++ {
             visibleSpace[i - t][j - l] = string(g.field.field[i][j])
         }
     }
@@ -172,22 +171,12 @@ func (g *Game) updateWorld() {
         dir := v["direction"].(string)
         p := g.players.sessions[k]
         if action == "move" {
-            dcol, drow := getShiftByDirection(dir)
-            col := int(p.x) / consts.TILE_SIZE + dcol
-            row := int(p.y) / consts.TILE_SIZE + drow
-            if !g.field.isBlocked(col, row) {
+            segment := p.getCollisionableSide(dir)
+            col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
+            col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
+            if !g.field.isBlocked(col1, row1) && !g.field.isBlocked(col2, row2) {
                 p.move(dir)
-            } else {
-                side := p.getCollisionableSide(dir)
-                wall := g.field.getTileRectangle(col, row)
-				fmt.Println(col, row)
-                fmt.Println(side)
-                fmt.Println(wall)
-                fmt.Println(wall.CrossedBySegment(&side))
-                if !wall.CrossedBySegment(&side) {
-                    p.move(dir)
-                }
-            }
+            } 
         }
         delete(g.lastActions, k)
     }

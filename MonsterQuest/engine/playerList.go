@@ -41,7 +41,7 @@ func (p *player) getCollisionableSide(dir string) geometry.Segment {
     var p1, p2 geometry.Point
     p1 = p.getShiftedCenter(dir)
     p2 = p1
-    offset := float64(consts.TILE_SIZE / 2)
+    offset := 0.5
     switch dir {
         case "north": 
             p1.Move(-offset, -offset)
