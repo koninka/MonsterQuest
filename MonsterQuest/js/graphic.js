@@ -1,6 +1,6 @@
 var TILE_SIZE = 32;
-var WIDTH = 1200;
-var HEIGHT = 600;
+var WIDTH = 20 * TILE_SIZE;
+var HEIGHT = 20 * TILE_SIZE;
 
 
 var Atlas = {

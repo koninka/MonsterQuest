@@ -5,6 +5,7 @@ import (
     "time"
     "MonsterQuest/MonsterQuest/connect"
     "MonsterQuest/MonsterQuest/consts"
+    "fmt"
 )
 
 type jsonType map[string] interface{}
@@ -125,8 +126,8 @@ func (g *Game) getVisibleSpace(coord, bound int) (v1 int, v2 int) {
     } else {
         v1 = coord - consts.VISION_RADIUS
     }
-    if coord + consts.VISION_RADIUS >= bound {
-        v2 = bound - 1
+    if coord + consts.VISION_RADIUS > bound {
+        v2 = bound
     } else {
         v2 = coord + consts.VISION_RADIUS
     }
@@ -138,12 +139,13 @@ func (g *Game) lookAction(sid string) jsonType {
     res["action"] = "look"
     player := g.players.getPlayerBySession(sid)
     x, y := int(player.x), int(player.y)
-    l, r := g.getVisibleSpace(x, g.field.width)
-    t, b := g.getVisibleSpace(y, g.field.height)
+    l, r := g.getVisibleSpace(x, g.field.width - 1)
+    t, b := g.getVisibleSpace(y, g.field.height - 1)
     visibleSpace := make([][]string, b - t + 1)
-    for i := t; i <= b; i++ {
+    for i := t; i < b; i++ {
         visibleSpace[i - t] = make([]string, r - l + 1)
-        for j := l; j <= r; j++ {
+        for j := l; j < r; j++ {
+            fmt.Println(i - t, j - l)
             visibleSpace[i - t][j - l] = string(g.field.field[i][j])
         }
     }
