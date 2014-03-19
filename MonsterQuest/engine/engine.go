@@ -138,14 +138,12 @@ func (g *Game) lookAction(sid string) jsonType {
     res := make(jsonType)
     res["action"] = "look"
     player := g.players.getPlayerBySession(sid)
-    x, y := int(player.x), int(player.y)
-    l, r := g.getVisibleSpace(x, g.field.width - 1)
-    t, b := g.getVisibleSpace(y, g.field.height - 1)
+    l, r := g.getVisibleSpace(int(player.x), g.field.width - 1)
+    t, b := g.getVisibleSpace(int(player.y), g.field.height - 1)
     visibleSpace := make([][]string, b - t + 1)
-    for i := t; i < b; i++ {
+    for i := t; i <= b; i++ {
         visibleSpace[i - t] = make([]string, r - l + 1)
-        for j := l; j < r; j++ {
-            fmt.Println(i - t, j - l)
+        for j := l; j <= r; j++ {
             visibleSpace[i - t][j - l] = string(g.field.field[i][j])
         }
     }
@@ -163,14 +161,35 @@ func (g *Game) lookAction(sid string) jsonType {
         }
     }
     res["actors"] = visiblePlayers
+	res["x"] = player.x
+	res["y"] = player.y
     return res
 }
 
-func (g *Game) changeWorldWithPlayer(json jsonType) {
-    action := json["action"].(string)
-    switch action {
-        case "move":
-            g.players.getPlayerBySession(json["sid"].(string)).move(json["direction"].(string))
+func (g *Game) updateWorld() {
+    for k, v := range g.lastActions {
+        action := v["action"].(string)
+        dir := v["direction"].(string)
+        p := g.players.sessions[k]
+        if action == "move" {
+            dcol, drow := getShiftByDirection(dir)
+            col := int(p.x) / consts.TILE_SIZE + dcol
+            row := int(p.y) / consts.TILE_SIZE + drow
+            if !g.field.isBlocked(col, row) {
+                p.move(dir)
+            } else {
+                side := p.getCollisionableSide(dir)
+                wall := g.field.getTileRectangle(col, row)
+				fmt.Println(col, row)
+                fmt.Println(side)
+                fmt.Println(wall)
+                fmt.Println(wall.CrossedBySegment(&side))
+                if !wall.CrossedBySegment(&side) {
+                    p.move(dir)
+                }
+            }
+        }
+        delete(g.lastActions, k)
     }
 }
 
@@ -186,10 +205,7 @@ func GameLoop() {
     var tick int64
     for {
         tick++
-        for k, v := range gameInstance.lastActions {
-            gameInstance.changeWorldWithPlayer(v)
-            delete(gameInstance.lastActions, k)
-        }
+        gameInstance.updateWorld()
         gameInstance.sendTick(tick)
         time.Sleep(consts.TICK_DURATION)
     }

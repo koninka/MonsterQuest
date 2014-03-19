@@ -145,8 +145,8 @@ $(function(){
 
    game.sock.onmessage = function(e) {
       var data = JSON.parse(e.data);
-      //if (!data["tick"])
-        // console.log("response " + e.data);
+      if (!data["tick"])
+         console.log("response " + e.data);
       var result = data["result"];
       var action = data["action"];
       if (data["tick"]) {
@@ -159,7 +159,7 @@ $(function(){
          switch (action) {
             case "examine":
                game.player.examineSuccess(data);
-               setInterval(game.lookOut, 300);
+               setInterval(game.lookOut, 1000);
                break
             case "getDictionary":
                game.setDictionary(data);

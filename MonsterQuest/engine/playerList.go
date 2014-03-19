@@ -3,8 +3,19 @@ package engine
 import (
     "MonsterQuest/MonsterQuest/connect"
     "MonsterQuest/MonsterQuest/consts"
+    "MonsterQuest/MonsterQuest/geometry"
     "time"
 )
+
+func getShiftByDirection(dir string) (mx int, my int) {
+    switch dir {
+    case "north": mx, my = 0, -1
+    case "south": mx, my = 0, 1
+    case "east":  mx, my = 1, 0
+    case "west":  mx, my = -1, 0
+    }
+    return
+}
 
 type player struct {
     login string
@@ -12,12 +23,40 @@ type player struct {
 }
 
 func (p *player) move(dir string) {
+    pos := p.getShiftedCenter(dir)
+    p.x = pos.X
+    p.y = pos.Y
+}
+
+func (p *player) getShiftedCenter(dir string) geometry.Point {
+    x := p.x
+    y := p.y
+    mx, my := getShiftByDirection(dir)
+    x += float64(mx) * consts.PLAYER_SPEED
+    y += float64(my) * consts.PLAYER_SPEED
+    return geometry.Point{x, y}
+}
+
+func (p *player) getCollisionableSide(dir string) geometry.Segment {
+    var p1, p2 geometry.Point
+    p1 = p.getShiftedCenter(dir)
+    p2 = p1
+    offset := float64(consts.TILE_SIZE / 2)
     switch dir {
-    case "north": p.y -= consts.PLAYER_SPEED
-    case "south": p.y += consts.PLAYER_SPEED
-    case "west":  p.x -= consts.PLAYER_SPEED
-    case "east":  p.x += consts.PLAYER_SPEED
+        case "north": 
+            p1.Move(-offset, -offset)
+            p2.Move(offset, -offset)
+        case "south":
+            p1.Move(-offset, offset)
+            p2.Move(offset, offset)
+        case "east":
+            p1.Move(offset, -offset)
+            p2.Move(offset, offset)
+        case "west":
+            p1.Move(-offset, -offset)
+            p2.Move(-offset, offset)
     }
+    return geometry.Segment{p1, p2}
 }
 
 type playerList struct {
