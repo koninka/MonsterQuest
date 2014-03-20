@@ -1,15 +1,16 @@
 package gameObjects
 
-<<<<<<< HEAD
-
-=======
 import "MonsterQuest/MonsterQuest/geometry"
 
 type Mob struct {
+	id int64
 	ActiveObject
 }
 
-func NewMob(x, y float64) Mov {
-	return Mob{ActiveObject{geometry.Point{x, y}}}
+func NewMob(id int64, x, y float64) Mob {
+	return Mob{id, ActiveObject{geometry.Point{x, y}}}
 }
->>>>>>> collisionDetection
+
+func (m *Mob) Do() {
+	// do something
+}

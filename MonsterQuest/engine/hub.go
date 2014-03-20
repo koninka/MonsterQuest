@@ -22,9 +22,9 @@ func (h *websocketHub) run() {
 			for c := range h.connections {
 				select {
 				case c.send <- m:
-				default:
-					close(c.send)
-					delete(h.connections, c)
+				//default:
+					//close(c.send)
+					//delete(h.connections, c)
 				}
 			}
 		}

@@ -29,6 +29,12 @@ CREATE TABLE users_position (
    UNIQUE KEY(user_id)
 );
 
+CREATE TABLE mobs_position (
+	id       INT    NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	X        FLOAT  NOT NULL,
+	Y        FLOAT  NOT NULL, 
+);
+
 DELIMITER //
 
 DROP PROCEDURE IF EXISTS `add_user_session` //

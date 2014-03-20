@@ -14,6 +14,7 @@ type Game struct {
     websocketHub
     field gameField
     players playerList
+    mobs mobList
     lastActions map[string] jsonType
 }
 
@@ -30,21 +31,24 @@ func GetInstance() *Game {
             },
             gameField{
                 field: make([]string, 1000),
-                players: make([][]map[*gameObjects.Player]bool, 1000),
+                players: make([][]map[string]bool, 1000),
             },
 			playerList{
                 make(map[int64] *gameObjects.Player),
                 make(map[string] *gameObjects.Player),
             },
+            mobList{
+                make(map[int64] *gameObjects.Mob),
+            },
             make(map[string] jsonType),
         }
         for i := range gameInstance.field.field {
-            gameInstance.field.players[i] = make([]map[*gameObjects.Player]bool, 1000)
+            gameInstance.field.players[i] = make([]map[string]bool, 1000)
             for j := range gameInstance.field.players[i] {
-                gameInstance.field.players[i][j] = make(map[*gameObjects.Player]bool)
+                gameInstance.field.players[i][j] = make(map[string]bool)
             }
         }
-        gameInstance.field.loadFromFile("map.txt")
+        gameInstance.field.loadFromFile("map.txt", &gameInstance.mobs)
         go gameInstance.websocketHub.run()
         go gameInstance.players.save()
     }
@@ -177,9 +181,8 @@ func (g *Game) lookAction(sid string) jsonType {
     }
     res["map"] = visibleSpace
     visiblePlayers := make([]jsonType, 0, 1000)
-    requester := g.players.getPlayerBySession(sid)
     for id, p := range g.players.players {
-        if p.Center.X > float64(l) && p.Center.X < float64(r) && p.Center.Y > float64(t) && p.Center.Y < float64(b) && p != requester {
+        if p.Center.X > float64(l) && p.Center.X < float64(r) && p.Center.Y > float64(t) && p.Center.Y < float64(b) && p != player {
             json := make(jsonType)
             json["type"] = "player"
             json["id"] = id
@@ -203,17 +206,19 @@ func (g *Game) checkCollisionWithWalls(p *gameObjects.Player, dir string) bool {
 
 func (g *Game) checkCollisionWithPlayers(p *gameObjects.Player, dir string) bool {
     res := true
-    segment := p.getCollisionableSide(dir)
+    segment := p.GetCollisionableSide(dir)
     col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
     col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
     for k, _ := range g.field.players[row1][col1] {
-        if (k != p) {
-            res = res && g.players.getPlayerBySession(k).getRectangle().CrossedBySegment(&segment)
+        if (k != p.SID) {
+            r := g.players.getPlayerBySession(k).GetRectangle()
+            res = res && r.CrossedBySegment(&segment)
         }
     }
     for k, _ := range g.field.players[row2][col2] {
-        if (k != p) {
-            res = res && g.players.getPlayerBySession(k).getRectangle().CrossedBySegment(&segment)
+        if (k != p.SID) {
+            r := g.players.getPlayerBySession(k).GetRectangle()
+            res = res && r.CrossedBySegment(&segment)
         }
     }
     return res
@@ -223,7 +228,7 @@ func (g *Game) updateWorld() {
     for k, v := range g.lastActions {
         action := v["action"].(string)
         dir := v["direction"].(string)
-        p := g.players.sessions[k]
+        p := g.players.getPlayerBySession(k)
         if action == "move" {
             if g.checkCollisionWithWalls(p, dir) && g.checkCollisionWithPlayers(p, dir) {
                 g.unlinkPlayerFromCells(p)
@@ -232,6 +237,9 @@ func (g *Game) updateWorld() {
             } 
         }
         delete(g.lastActions, k)
+    }
+    for _, v := range g.mobs.mobs {
+        v.Do()
     }
 }
 
