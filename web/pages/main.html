@@ -1,0 +1,32 @@
+<html>
+<head>
+  <title>MonsterQuest - Main!</title>
+  <link rel="stylesheet" type="text/css" href="/style/registration.css" />
+  <script data-main="/js/apps/main_app" src="/js/require.js"></script>
+</head>
+<body>
+  <div class="form">
+    <form>
+    <div class="inset">
+      <p>
+        <label for="server">Server:</label>
+        <input id="server" type="url" value="/json"/>
+      </p>
+      <p>
+        <label for="username">Username:</label>
+        <input id="username" type="text" />
+      </p>
+      <p>
+        <label for="password">Password:</label>
+        <input id="password" type="password" />
+      </p>
+    </div>
+    <p class="p-container">
+      <input type="button" value="Register" id="registerBtn" />
+      <input class="left" type="button" value="Login" id="loginBtn" />
+    </p>
+    </form>
+    <p id="message">Hello</p>
+  </div>
+</body>
+</html>
