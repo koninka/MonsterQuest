@@ -18,9 +18,6 @@ Player.prototype.move = function(direct) {
 
 Player.prototype.Draw = function(graphic) {
    this.tile = graphic.DrawObj(this.tile, this.pt.x, this.pt.y, 'player')
-   //tile.position.x = this.x;
-   //tile.position.y = this.y;
-   //graphic.addChild(tile);
 }
 
 Player.prototype.examineSuccess = function(data) {
@@ -34,10 +31,8 @@ function Game(sid, wsuri) {
    this.sock     = null;
    this.tick     = null;
    this.wsuri    = "ws://" + wsuri;
-   //this.graphic  = new Graphic();
    this.player   = new Player(parseInt(getQueryVariable('id')));
    this.scene    = new Scene(this.player);
-   //this.renderer = new Renderer(this.scene);
 }
 
 Game.prototype.setDictionary = function(dict) {
@@ -52,10 +47,7 @@ Game.prototype.setActors = function(actors) {
    this.scene.setActors(actors);
 };
 
-Game.prototype.initGraphic = function() { 
-   //this.graphic.renderer = PIXI.autoDetectRenderer(WIDTH, HEIGHT); // должно быть в Graphic()
-   //$("#view").append(this.graphic.renderer.view);
-   //this.graphic.stage = new PIXI.Stage;
+Game.prototype.initGraphic = function() {
    this.graphic = new Graphic(this.scene);
 };
 
@@ -66,30 +58,9 @@ Game.prototype.Start = function() {
    //this.renderer = new Renderer(this.scene);
    this.firstLook = true;
 }
-/*
-Game.prototype.setDictionary = function(dict) {
-   this.renderer.dict = dict;
-};
 
-Game.prototype.setMap = function(map) {
-   this.scene.background = map;
-};
-
-Game.prototype.setActors = function(actors) {
-   this.scene.players = actors;
-};
-
-Game.prototype.initGraphic = function() {
-   $("#view").append(this.renderer.renderer.view);
-};
-
-function Render() {
-   game.renderer.Render();
-   requestAnimationFrame(Render);
-}
-*/
 Game.prototype.lookOut = function() {
-   SendViaWS({action: "look"});   
+   SendViaWS({action: "look"});
 };
 
 function SendViaWS(hash) {
@@ -104,16 +75,16 @@ document.onkeydown = function(e) {
       return;
    e = e || event
    switch(e.keyCode) {
-      case 37: 
+      case 37:
          game.player.move("west");
          break;
-      case 38: 
+      case 38:
          game.player.move("north");
          break;
-      case 39: 
+      case 39:
          game.player.move("east");
          break;
-      case 40: 
+      case 40:
          game.player.move("south");
          break;
    }
@@ -145,10 +116,7 @@ $(function(){
 
    game.sock.onmessage = function(e) {
       var data = JSON.parse(e.data);
-      //if (!data["tick"])
-        // console.log("response " + e.data);
       var result = data["result"];
-      var action = data["action"];
       if (data["tick"]) {
          game.tick = data["tick"];
       } else if (result == "badSid") {
@@ -156,7 +124,7 @@ $(function(){
       } else if (result == "badId") {
          GameShutDown("Bad ID");
       } else {
-         switch (action) {
+         switch (data["action"]) {
             case "examine":
                game.player.examineSuccess(data);
                setInterval(game.lookOut, 300);
@@ -167,8 +135,7 @@ $(function(){
             case "look":
                game.setMap(data['map']);
                game.setActors(data['actors']);
-               if (game.firstLook)
-               {
+               if (game.firstLook) {
                   game.firstLook = false;
                   requestAnimationFrame(Render);
                }
@@ -176,7 +143,6 @@ $(function(){
          }
       }
    };
-
    game.initGraphic();
 });
 

@@ -1,60 +1,62 @@
+var WIDTH     = 1200;
+var HEIGHT    = 600;
 var TILE_SIZE = 32;
-var WIDTH = 1200;
-var HEIGHT = 600;
 
 
 var Atlas = {
-    player : "/resourses/player",
-    grass  : "/resourses/grass",
-    wall   : "/resourses/wall"
+   player : "/resourses/player",
+   grass  : "/resourses/grass",
+   wall   : "/resourses/wall"
 }
 
 function Graphic(scene) {
-    //this.stage = null;
-    //this.renderer = null;
-    //this.dictionary = {'.':'grass', '#':'wall'};
-    //this.map = [];
-    //this.actors = [];
-    this.atlas = //new Atlas();
-        {
-            player : "/resourses/bunny.png",
-            grass  : "/resourses/grass_1.png",
-            wall   : "/resourses/stone_1.png"
-        }
-    this.tileMethods = {};
-    this.textures = {};
-    var I = this;
-    var PreloadResourses = function (){
-        //I.game.load.image('bunny', '/resousres/bunny.png');
-        for(var name in I.atlas){
-            I.game.load.image(name, I.atlas[name]);
-            //console.log(name);
-            //onsole.log(I.atlas[name]);
-        }
+   //this.stage = null;
+   //this.renderer = null;
+   //this.dictionary = {'.':'grass', '#':'wall'};
+   //this.map = [];
+   //this.actors = [];
+   this.atlas = //new Atlas();
+   {
+      player : "/resourses/bunny.png",
+      grass  : "/resourses/grass_1.png",
+      wall   : "/resourses/stone_1.png"
+   }
+   this.tileMethods = {};
+   this.textures = {};
+   var I = this;
+   var PreloadResourses = function () {
+      //I.game.load.image('bunny', '/resousres/bunny.png');
+      for(var name in I.atlas) {
+         I.game.load.image(name, I.atlas[name]);
+         //console.log(name);
+         //onsole.log(I.atlas[name]);
+      }
+   }
 
-    }
-    
-    this.game = new Phaser.Game(1000, 600, Phaser.AUTO, 'view', 
-        { 
-            preload: PreloadResourses, 
-            update: function(){
-                scene.Draw(I); 
-            }   
-        }
-    )
+   this.game = new Phaser.Game(
+      1000,
+      600,
+      Phaser.AUTO,
+      'view',
+      {
+         preload: PreloadResourses,
+         update: function() {
+            scene.Draw(I);
+         }
+      }
+   )
 }
 
 Graphic.prototype = Object.create(Phaser);
 
 Graphic.prototype.DrawObj = function(obj, x, y, sprite_name){
-    if(obj)
-        obj.destroy();
-    
-    return obj = this.game.add.sprite(x, y, sprite_name);
+   if(obj)
+      obj.destroy();
+   return obj = this.game.add.sprite(x, y, sprite_name);
 }
 
 /*Graphic.prototype.clearView = function() {
-    this.stage = new PIXI.Stage;
+   this.stage = new PIXI.Stage;
 };
 
 Graphic.prototype.refreshView = function() {
