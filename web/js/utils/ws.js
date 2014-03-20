@@ -16,7 +16,5 @@ define(function() {
       return sock;
    }
 
-   return {
-      getNewSocket: WSConnect
-   }
+   return WSConnect;
 });

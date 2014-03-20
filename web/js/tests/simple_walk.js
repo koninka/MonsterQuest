@@ -39,17 +39,6 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
             done();
          });
       });
-      //onload = function(){
-      //    done();
-      //}
-      //onmessage = function(){
-      //    var data = JSON.parse(e.data);
-      //    if(data['ticks'])
-      //        done();
-      //}
-      //onclose = function(e){
-      //
-      //}
       it('should successfully connected via websocet', function(done) {
          console.log("ok");
          onopen = function() {
@@ -57,7 +46,7 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
             done();
             ws.close();
          }
-         ws = wsock.getNewSocket(wsuri, null, onopen, null, null);
+         ws = wsock(wsuri, null, onopen, null, null);
       });
       var ticks;
       it('should successfully get tick', function(done) {
@@ -68,7 +57,7 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
                ws.close();
             }
          }
-         ws = wsock.getNewSocket(wsuri, null, null, null, onmessage);
+         ws = wsock(wsuri, null, null, null, onmessage);
       });
       it('should fail get dictionary by badSid', function(done) {
          onopen = function(e) {
@@ -82,7 +71,7 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
                done();
             }
          }
-         ws = wsock.getNewSocket(wsuri, null, onopen, null, onmessage);
+         ws = wsock(wsuri, null, onopen, null, onmessage);
       });
       it('should successfully get dictionary', function(done) {
          onopen = function(e) {
@@ -97,7 +86,7 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
                done();
             }
          }
-         ws = wsock.getNewSocket(wsuri, null, onopen, null, onmessage);
+         ws = wsock(wsuri, null, onopen, null, onmessage);
       });
       it('should fail examine by badSid', function(done) {
          onopen = function(e) {
@@ -111,7 +100,7 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
                done();
             }
          }
-         ws = wsock.getNewSocket(wsuri, null, onopen, null, onmessage);
+         ws = wsock(wsuri, null, onopen, null, onmessage);
       });
       it('should fail examine by badId', function(done) {
          onopen = function(e) {
@@ -125,7 +114,7 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
                done();
             }
          }
-         ws = wsock.getNewSocket(wsuri, null, onopen, null, onmessage);
+         ws = wsock(wsuri, null, onopen, null, onmessage);
       });
       it('should successfully examine ', function(done) {
          onopen = function(e) {
@@ -139,7 +128,7 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
                done();
             }
          }
-         ws = wsock.getNewSocket(wsuri, null, onopen, null, onmessage);
+         ws = wsock(wsuri, null, onopen, null, onmessage);
       });
       it('should successfully examine and login not be empty', function(done) {
          onopen = function(e) {
@@ -154,7 +143,7 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
                done();
             }
          }
-         ws = wsock.getNewSocket(wsuri, null, onopen, null, onmessage);
+         ws = wsock(wsuri, null, onopen, null, onmessage);
       });
       it('should successfully examine and type must be player', function(done) {
          onopen = function(e) {
@@ -169,7 +158,7 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
                done();
             }
          }
-         ws = wsock.getNewSocket(wsuri, null, onopen, null, onmessage);
+         ws = wsock(wsuri, null, onopen, null, onmessage);
       });
       it('should successfully examine and coordinates must be positive', function(done) {
          onopen = function(e) {
@@ -185,7 +174,7 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
                done();
             }
          }
-         ws = wsock.getNewSocket(wsuri, null, onopen, null, onmessage);
+         ws = wsock(wsuri, null, onopen, null, onmessage);
       });
       it('should fail look by badSid', function(done) {
          onopen = function(e) {
@@ -199,7 +188,7 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
                done();
             }
          }
-         ws = wsock.getNewSocket(wsuri, null, onopen, null, onmessage);
+         ws = wsock(wsuri, null, onopen, null, onmessage);
       });
       it('should successfully look and should contain positive player coordinates', function(done) {
          onopen = function(e) {
@@ -214,7 +203,7 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
                done();
             }
          }
-         ws = wsock.getNewSocket(wsuri, null, onopen, null, onmessage);
+         ws = wsock(wsuri, null, onopen, null, onmessage);
       });
       it('should successfully look and should contain map and actors keys', function(done) {
          onopen = function(e) {
@@ -223,13 +212,13 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
          onmessage = function(e) {
             var data = JSON.parse(e.data);
             if (!data['tick']) {
-               expect(data['map']).to.not.be.empty;
-               expect(data['actors']).to.not.be.empty;
+               expect(data).to.have.property('map');
+               expect(data).to.have.property('actors')
                ws.close();
                done();
             }
          }
-         ws = wsock.getNewSocket(wsuri, null, onopen, null, onmessage);
+         ws = wsock(wsuri, null, onopen, null, onmessage);
       });
    });
 
