@@ -9,7 +9,7 @@ import (
 type gameField struct {
     width, height int
     field []string
-    players [][]map[string]bool
+    actors [][]map[int64]bool
 }
 
 func (f *gameField) loadFromFile(fileName string, ml *mobList) {

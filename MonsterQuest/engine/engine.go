@@ -32,7 +32,7 @@ func GetInstance() *Game {
             },
             gameField{
                 field: make([]string, 1000),
-                players: make([][]map[string]bool, 1000),
+                actors: make([][]map[int64]bool, 1000),
             },
 			playerList{
                 make(map[int64] *gameObjects.Player),
@@ -44,9 +44,9 @@ func GetInstance() *Game {
             make(map[string] jsonType),
         }
         for i := range gameInstance.field.field {
-            gameInstance.field.players[i] = make([]map[string]bool, 1000)
-            for j := range gameInstance.field.players[i] {
-                gameInstance.field.players[i][j] = make(map[string]bool)
+            gameInstance.field.actors[i] = make([]map[int64]bool, 1000)
+            for j := range gameInstance.field.actors[i] {
+                gameInstance.field.actors[i][j] = make(map[int64]bool)
             }
         }
         gameInstance.field.loadFromFile("map.txt", &gameInstance.mobs)
@@ -90,24 +90,26 @@ func (g *Game) getDictionaryAction() jsonType {
     return res
 }
 
-func (g *Game) linkPlayerToCells(p *gameObjects.Player) {
-    r := p.GetRectangle()
+func (g *Game) linkActorToCells(obj gameObjects.Activer) {
+    r := obj.GetRectangle()
     ltc, ltr := int(r.LeftTop.X), int(r.LeftTop.Y)
     rbc, rbr := int(r.RightBottom.X), int(r.RightBottom.Y)
-    g.field.players[ltr][ltc][p.SID] = true
-    g.field.players[ltr][rbc][p.SID] = true
-    g.field.players[rbr][rbc][p.SID] = true
-    g.field.players[rbr][ltc][p.SID] = true
+    id := obj.GetID()
+    g.field.actors[ltr][ltc][id] = true
+    g.field.actors[ltr][rbc][id] = true
+    g.field.actors[rbr][rbc][id] = true
+    g.field.actors[rbr][ltc][id] = true
 }
 
-func (g *Game) unlinkPlayerFromCells(p *gameObjects.Player) {
-    r := p.GetRectangle()
+func (g *Game) unlinkActorFromCells(obj gameObjects.Activer) {
+    r := obj.GetRectangle()
     ltc, ltr := int(r.LeftTop.X), int(r.LeftTop.Y)
     rbc, rbr := int(r.RightBottom.X), int(r.RightBottom.Y)
-    delete(g.field.players[ltr][ltc], p.SID)
-    delete(g.field.players[ltr][rbc], p.SID)
-    delete(g.field.players[rbr][rbc], p.SID)
-    delete(g.field.players[rbr][ltc], p.SID)
+    id := obj.GetID()
+    delete(g.field.actors[ltr][ltc], id)
+    delete(g.field.actors[ltr][rbc], id)
+    delete(g.field.actors[rbr][rbc], id)
+    delete(g.field.actors[rbr][ltc], id)
 }
 
 func (g *Game) examineAction(json jsonType) jsonType {
@@ -142,7 +144,7 @@ func (g *Game) examineAction(json jsonType) jsonType {
             if err != sql.ErrNoRows {
                 setSuccesResult(login, x, y)
                 p := g.players.add(json["sid"].(string), login, x, y, id)
-                g.linkPlayerToCells(p)
+                g.linkActorToCells(p)
             } else {
                 res["result"] = "badId"
             }
@@ -221,15 +223,16 @@ func (g *Game) checkCollisionWithPlayers(p *gameObjects.Player, dir string) bool
     segment := p.GetCollisionableSide(dir)
     col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
     col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
-    for k, _ := range g.field.players[row1][col1] {
-        if (k != p.SID) {
-            r := g.players.getPlayerBySession(k).GetRectangle()
+    id := p.GetID()
+    for k, _ := range g.field.actors[row1][col1] {
+        if (k != id) {
+            r := g.players.getPlayerById(k).GetRectangle()
             res = res && r.CrossedBySegment(&segment)
         }
     }
-    for k, _ := range g.field.players[row2][col2] {
-        if (k != p.SID) {
-            r := g.players.getPlayerBySession(k).GetRectangle()
+    for k, _ := range g.field.actors[row2][col2] {
+        if (k != id) {
+            r := g.players.getPlayerById(k).GetRectangle()
             res = res && r.CrossedBySegment(&segment)
         }
     }
@@ -243,9 +246,9 @@ func (g *Game) updateWorld() {
         p := g.players.getPlayerBySession(k)
         if action == "move" {
             if g.checkCollisionWithWalls(p, dir) && g.checkCollisionWithPlayers(p, dir) {
-                g.unlinkPlayerFromCells(p)
+                g.unlinkActorFromCells(p)
                 p.Move(dir)
-                g.linkPlayerToCells(p)
+                g.linkActorToCells(p)
             } 
         }
         delete(g.lastActions, k)

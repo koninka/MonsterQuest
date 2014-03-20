@@ -8,6 +8,6 @@ type Player struct {
     ActiveObject
 }
 
-func NewPlayer(login, sid string, x, y float64) Player {
-	return Player{login, sid, ActiveObject{geometry.Point{x, y}}}
+func NewPlayer(id int64, login, sid string, x, y float64) Player {
+	return Player{login, sid, ActiveObject{id, geometry.Point{x, y}}}
 }
