@@ -193,16 +193,38 @@ func (g *Game) lookAction(sid string) jsonType {
     return res
 }
 
+func (g *Game) checkCollisionWithWalls(p *player, dir string) bool {
+    segment := p.getCollisionableSide(dir)
+    col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
+    col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
+    return !g.field.isBlocked(col1, row1) && !g.field.isBlocked(col2, row2)   
+}
+
+func (g *Game) checkCollisionWithPlayers(p *player, dir string) bool {
+    res := true
+    /*segment := p.getCollisionableSide(dir)
+    col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
+    col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
+    for k, _ := range g.field.players[row1][col1] {
+        if (k != p) {
+            res = res && k.getRectangle().CrossedBySegment(&segment)
+        }
+    }
+    for k, _ := range g.field.players[row2][col2] {
+        if (k != p) {
+            res = res && k.getRectangle().CrossedBySegment(&segment)
+        }
+    }*/
+    return res
+}
+
 func (g *Game) updateWorld() {
     for k, v := range g.lastActions {
         action := v["action"].(string)
         dir := v["direction"].(string)
         p := g.players.sessions[k]
         if action == "move" {
-            segment := p.getCollisionableSide(dir)
-            col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
-            col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
-            if !g.field.isBlocked(col1, row1) && !g.field.isBlocked(col2, row2) {
+            if g.checkCollisionWithWalls(p, dir) && g.checkCollisionWithPlayers(p, dir) {
                 g.unlinkPlayerFromCells(p)
                 p.move(dir)
                 g.linkPlayerToCells(p)
