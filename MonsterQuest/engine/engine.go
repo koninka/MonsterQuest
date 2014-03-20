@@ -6,6 +6,7 @@ import (
     "MonsterQuest/MonsterQuest/connect"
     "MonsterQuest/MonsterQuest/consts"
     "MonsterQuest/MonsterQuest/gameObjects"
+    "MonsterQuest/MonsterQuest/geometry"
 )
 
 type jsonType map[string] interface{}
@@ -181,8 +182,9 @@ func (g *Game) lookAction(sid string) jsonType {
     }
     res["map"] = visibleSpace
     visiblePlayers := make([]jsonType, 0, 1000)
+    area := geometry.Rectangle{geometry.Point{float64(l), float64(t)}, geometry.Point{float64(r), float64(b)}}
     for id, p := range g.players.players {
-        if p.Center.X > float64(l) && p.Center.X < float64(r) && p.Center.Y > float64(t) && p.Center.Y < float64(b) && p != player {
+        if area.In(&p.Center) && p != player {
             json := make(jsonType)
             json["type"] = "player"
             json["id"] = id
