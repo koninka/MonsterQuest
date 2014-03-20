@@ -3,7 +3,7 @@ package engine
 import (
     "bufio"
     "os"
-    "MonsterQuest/MonsterQuest/consts"
+    "MonsterQuest/consts"
 )
 
 type gameField struct {

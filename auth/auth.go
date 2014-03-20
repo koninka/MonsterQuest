@@ -1,4 +1,4 @@
-package handlers
+package auth
 
 import (
     "fmt"
@@ -7,14 +7,12 @@ import (
     "io/ioutil"
     "encoding/json"
     "database/sql"
-    "MonsterQuest/MonsterQuest/connect"
-    "MonsterQuest/MonsterQuest/consts"
+    "MonsterQuest/connect"
+    "MonsterQuest/consts"
     "github.com/nu7hatch/gouuid"
     "regexp"
-    "html/template"
+    // "html/template"
 )
-
-var Port = ":8080"
 
 func isExistUser(login, pass string) bool {
     db := connect.CreateConnect()
@@ -70,7 +68,7 @@ func loginAction(login, pass string) string {
             host, _ := os.Hostname()
             result["sid"] = u4.String()
             result["result"] = "ok"
-            result["soсket"] = host + Port + "/websocket"
+            result["soсket"] = host + consts.SERVER_PORT + "/websocket"
             result["id"] = id
         }
     }
@@ -121,10 +119,4 @@ func JsonHandler(w http.ResponseWriter, r *http.Request) {
         }
     }
     fmt.Fprintf(w, "%s", response)
-}
-
-
-func MainHandler(w http.ResponseWriter, r *http.Request) {
-    t, _ := template.ParseFiles("index.html")
-    t.Execute(w, nil)
 }

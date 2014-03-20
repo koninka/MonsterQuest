@@ -3,8 +3,8 @@ package engine
 import (
     "database/sql"
     "time"
-    "MonsterQuest/MonsterQuest/connect"
-    "MonsterQuest/MonsterQuest/consts"
+    "MonsterQuest/connect"
+    "MonsterQuest/consts"
 )
 
 type jsonType map[string] interface{}
