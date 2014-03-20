@@ -181,7 +181,7 @@ func (g *Game) lookAction(sid string) jsonType {
         }
     }
     res["map"] = visibleSpace
-    visiblePlayers := make([]jsonType, 0, 1000)
+    visibleActors := make([]jsonType, 0, 1000)
     area := geometry.Rectangle{geometry.Point{float64(l), float64(t)}, geometry.Point{float64(r), float64(b)}}
     for id, p := range g.players.players {
         if area.In(&p.Center) && p != player {
@@ -190,10 +190,20 @@ func (g *Game) lookAction(sid string) jsonType {
             json["id"] = id
             json["x"] = p.Center.X
             json["y"] = p.Center.Y
-            visiblePlayers = append(visiblePlayers, json)
+            visibleActors = append(visibleActors, json)
         }
     }
-    res["actors"] = visiblePlayers
+    for id, m := range g.mobs.mobs {
+        if area.In(&m.Center) {
+            json := make(jsonType)
+            json["type"] = "mob"
+            json["id"] = id
+            json["x"] = m.Center.X
+            json["y"] = m.Center.Y
+            visibleActors = append(visibleActors, json)
+        }
+    }
+    res["actors"] = visibleActors
 	res["x"] = player.Center.X
 	res["y"] = player.Center.Y
     return res
