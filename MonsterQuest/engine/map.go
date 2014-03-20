@@ -9,7 +9,7 @@ import (
 type gameField struct {
     width, height int
     field []string
-    players [][]map[*player]bool
+    players [][]map[string]bool
 }
 
 func (f *gameField) loadFromFile(fileName string) {

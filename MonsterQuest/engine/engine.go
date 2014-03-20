@@ -88,20 +88,20 @@ func (g *Game) linkPlayerToCells(p *player) {
     r := p.getRectangle()
     ltc, ltr := int(r.LeftTop.X), int(r.LeftTop.Y)
     rbc, rbr := int(r.RightBottom.X), int(r.RightBottom.Y)
-    g.field.players[ltr][ltc][p] = true
-    g.field.players[ltr][rbc][p] = true
-    g.field.players[rbr][rbc][p] = true
-    g.field.players[rbr][ltc][p] = true
+    g.field.players[ltr][ltc][p.SID] = true
+    g.field.players[ltr][rbc][p.SID] = true
+    g.field.players[rbr][rbc][p.SID] = true
+    g.field.players[rbr][ltc][p.SID] = true
 }
 
 func (g *Game) unlinkPlayerFromCells(p *player) {
     r := p.getRectangle()
     ltc, ltr := int(r.LeftTop.X), int(r.LeftTop.Y)
     rbc, rbr := int(r.RightBottom.X), int(r.RightBottom.Y)
-    delete(g.field.players[ltr][ltc], p)
-    delete(g.field.players[ltr][rbc], p)
-    delete(g.field.players[rbr][rbc], p)
-    delete(g.field.players[rbr][ltc], p)
+    delete(g.field.players[ltr][ltc], p.SID)
+    delete(g.field.players[ltr][rbc], p.SID)
+    delete(g.field.players[rbr][rbc], p.SID)
+    delete(g.field.players[rbr][ltc], p.SID)
 }
 
 func (g *Game) examineAction(json jsonType) jsonType {
@@ -202,19 +202,19 @@ func (g *Game) checkCollisionWithWalls(p *player, dir string) bool {
 
 func (g *Game) checkCollisionWithPlayers(p *player, dir string) bool {
     res := true
-    /*segment := p.getCollisionableSide(dir)
+    segment := p.getCollisionableSide(dir)
     col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
     col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
     for k, _ := range g.field.players[row1][col1] {
         if (k != p) {
-            res = res && k.getRectangle().CrossedBySegment(&segment)
+            res = res && g.players.getPlayerBySession(k).getRectangle().CrossedBySegment(&segment)
         }
     }
     for k, _ := range g.field.players[row2][col2] {
         if (k != p) {
-            res = res && k.getRectangle().CrossedBySegment(&segment)
+            res = res && g.players.getPlayerBySession(k).getRectangle().CrossedBySegment(&segment)
         }
-    }*/
+    }
     return res
 }
 
