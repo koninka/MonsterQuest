@@ -1,27 +1,34 @@
 package main
 
 import (
-    "MonsterQuest/MonsterQuest/engine"
-    "MonsterQuest/MonsterQuest/handlers"
+    "fmt"
+    "MonsterQuest/engine"
+    "MonsterQuest/auth"
+    "MonsterQuest/consts"
     "net/http"
     "os"
+    "html/template"
 )
+
+func makeHandler(name string) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        template.Must(template.ParseFiles(fmt.Sprintf("web/pages/%s.html", name))).Execute(w, nil)
+    }
+}
 
 func main() {
     var test = len(os.Args) > 1 && os.Args[1] == "test";
-    http.Handle("/require/", http.StripPrefix("/require/", http.FileServer(http.Dir("./js"))))
-    http.Handle("/style/", http.FileServer(http.Dir("./")))
-    http.Handle("/img/", http.FileServer(http.Dir("./")))
-    http.Handle("/game/", http.FileServer(http.Dir("./")))
-    http.Handle("/resourses/", http.FileServer(http.Dir("./")))
+    http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("./web/js"))))
+    http.Handle("/style/", http.FileServer(http.Dir("./web/")))
+    http.Handle("/imgs/", http.StripPrefix("/imgs/", http.FileServer(http.Dir("./resourses/imgs/"))))
     http.HandleFunc("/websocket", engine.ServeWs)
-    http.HandleFunc("/", handlers.MainHandler)
-    http.HandleFunc("/json", handlers.JsonHandler)
-    if(test){
-        http.Handle("/tests/", http.FileServer(http.Dir("./")))
-	    http.Handle("/wsTest/", http.FileServer(http.Dir("./")))
+    http.HandleFunc("/", makeHandler("main"))
+    http.HandleFunc("/tests/", makeHandler("tests"))
+    http.Handle("/game/", makeHandler("game"))
+    http.HandleFunc("/json", auth.JsonHandler)
+    if(test) {
+        // http.Handle("/wsTest/", http.FileServer(http.Dir("./")))
     }
     go engine.GameLoop()
-    http.ListenAndServe(handlers.Port, nil)
+    http.ListenAndServe(consts.SERVER_PORT, nil)
 }
-
