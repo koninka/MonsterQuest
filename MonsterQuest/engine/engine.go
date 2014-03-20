@@ -5,6 +5,7 @@ import (
     "time"
     "MonsterQuest/MonsterQuest/connect"
     "MonsterQuest/MonsterQuest/consts"
+    "MonsterQuest/MonsterQuest/gameObjects"
 )
 
 type jsonType map[string] interface{}
@@ -29,18 +30,18 @@ func GetInstance() *Game {
             },
             gameField{
                 field: make([]string, 1000),
-                players: make([][]map[*player]bool, 1000),
+                players: make([][]map[*gameObjects.Player]bool, 1000),
             },
 			playerList{
-                make(map[int64] *player),
-                make(map[string] *player),
+                make(map[int64] *gameObjects.Player),
+                make(map[string] *gameObjects.Player),
             },
             make(map[string] jsonType),
         }
         for i := range gameInstance.field.field {
-            gameInstance.field.players[i] = make([]map[*player]bool, 1000)
+            gameInstance.field.players[i] = make([]map[*gameObjects.Player]bool, 1000)
             for j := range gameInstance.field.players[i] {
-                gameInstance.field.players[i][j] = make(map[*player]bool)
+                gameInstance.field.players[i][j] = make(map[*gameObjects.Player]bool)
             }
         }
         gameInstance.field.loadFromFile("map.txt")
@@ -84,8 +85,8 @@ func (g *Game) getDictionaryAction() jsonType {
     return res
 }
 
-func (g *Game) linkPlayerToCells(p *player) {
-    r := p.getRectangle()
+func (g *Game) linkPlayerToCells(p *gameObjects.Player) {
+    r := p.GetRectangle()
     ltc, ltr := int(r.LeftTop.X), int(r.LeftTop.Y)
     rbc, rbr := int(r.RightBottom.X), int(r.RightBottom.Y)
     g.field.players[ltr][ltc][p] = true
@@ -94,8 +95,8 @@ func (g *Game) linkPlayerToCells(p *player) {
     g.field.players[rbr][ltc][p] = true
 }
 
-func (g *Game) unlinkPlayerFromCells(p *player) {
-    r := p.getRectangle()
+func (g *Game) unlinkPlayerFromCells(p *gameObjects.Player) {
+    r := p.GetRectangle()
     ltc, ltr := int(r.LeftTop.X), int(r.LeftTop.Y)
     rbc, rbr := int(r.RightBottom.X), int(r.RightBottom.Y)
     delete(g.field.players[ltr][ltc], p)
@@ -118,7 +119,7 @@ func (g *Game) examineAction(json jsonType) jsonType {
         res["result"] = "ok"
     }
     if info, isExist := g.players.getPlayerInfo(id); isExist {
-        setSuccesResult(info.login, info.x, info.y)
+        setSuccesResult(info.Login, info.Center.X, info.Center.Y)
     } else {
         db := connect.CreateConnect()
         stmt, _ := db.Prepare(`
@@ -165,8 +166,8 @@ func (g *Game) lookAction(sid string) jsonType {
     res := make(jsonType)
     res["action"] = "look"
     player := g.players.getPlayerBySession(sid)
-    l, r := g.getVisibleSpace(int(player.x), g.field.width - 1)
-    t, b := g.getVisibleSpace(int(player.y), g.field.height - 1)
+    l, r := g.getVisibleSpace(int(player.Center.X), g.field.width - 1)
+    t, b := g.getVisibleSpace(int(player.Center.Y), g.field.height - 1)
     visibleSpace := make([][]string, b - t)
     for i := t; i < b; i++ {
         visibleSpace[i - t] = make([]string, r - l)
@@ -178,29 +179,29 @@ func (g *Game) lookAction(sid string) jsonType {
     visiblePlayers := make([]jsonType, 0, 1000)
     requester := g.players.getPlayerBySession(sid)
     for id, p := range g.players.players {
-        if p.x > float64(l) && p.x < float64(r) && p.y > float64(t) && p.y < float64(b) && p != requester {
+        if p.Center.X > float64(l) && p.Center.X < float64(r) && p.Center.Y > float64(t) && p.Center.Y < float64(b) && p != requester {
             json := make(jsonType)
             json["type"] = "player"
             json["id"] = id
-            json["x"] = p.x
-            json["y"] = p.y
+            json["x"] = p.Center.X
+            json["y"] = p.Center.Y
             visiblePlayers = append(visiblePlayers, json)
         }
     }
     res["actors"] = visiblePlayers
-	res["x"] = player.x
-	res["y"] = player.y
+	res["x"] = player.Center.X
+	res["y"] = player.Center.Y
     return res
 }
 
-func (g *Game) checkCollisionWithWalls(p *player, dir string) bool {
-    segment := p.getCollisionableSide(dir)
+func (g *Game) checkCollisionWithWalls(p *gameObjects.Player, dir string) bool {
+    segment := p.GetCollisionableSide(dir)
     col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
     col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
     return !g.field.isBlocked(col1, row1) && !g.field.isBlocked(col2, row2)   
 }
 
-func (g *Game) checkCollisionWithPlayers(p *player, dir string) bool {
+func (g *Game) checkCollisionWithPlayers(p *gameObjects.Player, dir string) bool {
     res := true
     /*segment := p.getCollisionableSide(dir)
     col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
@@ -226,7 +227,7 @@ func (g *Game) updateWorld() {
         if action == "move" {
             if g.checkCollisionWithWalls(p, dir) && g.checkCollisionWithPlayers(p, dir) {
                 g.unlinkPlayerFromCells(p)
-                p.move(dir)
+                p.Move(dir)
                 g.linkPlayerToCells(p)
             } 
         }
