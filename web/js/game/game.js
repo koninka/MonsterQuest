@@ -1,4 +1,4 @@
-define(['utils/utils', 'player', 'scene', 'graphic'], function(utils, Player, Scene, Graphic) {
+define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils, Player, Scene, Graphic, OPTIONS) {
    function Game(sid, wsuri) {
       this.sid      = sid;
       this.sock     = null;
@@ -54,9 +54,13 @@ define(['utils/utils', 'player', 'scene', 'graphic'], function(utils, Player, Sc
       var th = this
       this.sock.onopen = function() {
         // console.log("connected to " + game.wsuri);
+         th.firstLook = true;
          th.sendViaWS({action: "examine", id: th.player.id});
          th.sendViaWS({action: "getDictionary"});
+         //th.sendViaWS({action: "getOptions"});
          th.sendViaWS({action: "look"});
+         th.initGraphic();
+         
       };
 
       this.sock.onclose = function(e) {
@@ -84,6 +88,8 @@ define(['utils/utils', 'player', 'scene', 'graphic'], function(utils, Player, Sc
                      th.sendViaWS({action: "look"});
                   }, 300);
                   break
+               case "getOptions":
+                  th.setOptions(data['options']);
                case "getDictionary":
                   th.setDictionary(data);
                   break;
@@ -93,14 +99,14 @@ define(['utils/utils', 'player', 'scene', 'graphic'], function(utils, Player, Sc
                   th.setPlayerCoords(data.x, data.y);
                   if (th.firstLook) {
                      th.firstLook = false;
+                     th.defineRadiusFromMap();
                      // requestAnimationFrame(Render);
                   }
                   break;
             }
          }
       };
-      this.initGraphic();
-      this.firstLook = true;
+      
    }
 
    var game  = new Game(utils.getQueryVariable('sid'), utils.getQueryVariable('soсket'));
