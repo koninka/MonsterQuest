@@ -38,7 +38,7 @@ define(['utils/utils', 'player', 'scene', 'graphic'], function(utils, Player, Sc
      //console.log("request " + JSON.stringify(hash));
    }
 
-   Game.prototype.setPalyerCoors = function(x, y){
+   Game.prototype.setPlayerCoords = function(x, y){
       this.player.pt.x = x;
       this.player.pt.y = y;
    }
@@ -90,7 +90,7 @@ define(['utils/utils', 'player', 'scene', 'graphic'], function(utils, Player, Sc
                case "look":
                   th.setMap(data['map']);
                   th.setActors(data['actors']);
-                  //th.setPlayerCoords(data.x, data.y);
+                  th.setPlayerCoords(data.x, data.y);
                   if (th.firstLook) {
                      th.firstLook = false;
                      // requestAnimationFrame(Render);
