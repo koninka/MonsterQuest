@@ -12,16 +12,20 @@ define(['consts'], function(consts) {
       this.dictionary = {'.':'grass', '#':'wall'};
    }
 
-   Background.prototype.Draw = function(graphic){
-      //this.cells = [];
+   Background.prototype.Draw = function(graphic, pt){
+      off_x = CONSTS.screenColumnCount / 2;
+      off_y = CONSTS.screenRowCount    / 2;
+
       this.cells = [];
+      y = (-pt.y % 1 - off_y) * TILE_SIZE;
       for(var i = 0; i < this.map.length; ++i){
          this.cells.push([]);
+         x = (-pt.x % 1- off_x) * TILE_SIZE;
          for(var j = 0; j < this.map[i].length; ++j){
-            x = j * consts.TILE_SIZE;
-            y = i * consts.TILE_SIZE;
             this.cells[i].push(graphic.DrawObj(null, x, y, this.dictionary[this.map[i][j]]))
+            x += consts.TILE_SIZE;
          }
+         y += consts.TILE_SIZE;
       }
    }
 
@@ -37,10 +41,12 @@ define(['consts'], function(consts) {
       for(var i = 0; i < this.players_sprite; ++i){
          this.players_sprite[i].destroy();
       }
+      this.players_sprite = []
       this.players = players;
    }
 
    Scene.prototype.setMap = function(map){
+
       this.background.map = map;
    }
 
@@ -48,16 +54,15 @@ define(['consts'], function(consts) {
       this.background.dictionary = dict;
    }
 
-   Scene.prototype.Draw = function(graphic)
-   {
-      this.background.Draw(graphic);
+   Scene.prototype.Draw = function(graphic) {
+      this.background.Draw(graphic, this.player.pt);
       for (var i = 0; i < this.players.length; ++i) {
          console.log("draw");
          var x = this.players[i].x;
          var y = this.players[i].y;
          var playerGroup = graphic.game.add.group();
-         playerGroup.x = x + 40;
-         playerGroup.y = y;
+         playerGroup.x = (this.players[i].x - this.player.pt.x) * TILE_SIZE;
+         playerGroup.y = (this.players[i].y - this.player.pt.y) * TILE_SIZE;
          var tile = playerGroup.create(0, 0, 'player');
          var login = this.players[i].login || ("actor_" + this.players[i].id);
          var txt = new Phaser.Text(
@@ -70,6 +75,7 @@ define(['consts'], function(consts) {
          txt.x = (tile.width - txt.width) / 2 + 2;
          playerGroup.add(txt);
       }
+
       this.player.Draw(graphic);
    }
 

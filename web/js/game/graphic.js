@@ -1,8 +1,8 @@
 define(function() {
-   var WIDTH     = 1200;
-   var HEIGHT    = 600;
 
    function Graphic(scene) {
+      this.WIDTH = 1000;
+      this.HEIGHT = 600;
       this.atlas = {
          player : "/imgs/bunny.png",
          grass  : "/imgs/grass_1.png",
@@ -18,8 +18,8 @@ define(function() {
       }
 
       this.game = new Phaser.Game(
-         1000,
-         600,
+         this.WIDTH,
+         this.HEIGHT,
          Phaser.AUTO,
          'view',
          {
@@ -37,7 +37,7 @@ define(function() {
       if(obj) {
          obj.destroy();
       }
-      return obj = this.game.add.sprite(x, y, sprite_name);;
+      return obj = this.game.add.sprite(x + this.game.width / 2 , y + this.game.height / 2, sprite_name);
    }
 
    return Graphic;
