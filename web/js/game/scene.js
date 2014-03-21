@@ -1,4 +1,4 @@
-define(function() {
+define(['consts'], function(CONSTS) {
    var TILE_SIZE = 32;
 
    function Background(){
@@ -18,8 +18,6 @@ define(function() {
       off_x = CONSTS.screenColumnCount / 2;
       off_y = CONSTS.screenRowCount    / 2;
 
-   Background.prototype.Draw = function(graphic){
-      //this.cells = [];
       this.cells = [];
       y = (-pt.y % 1 - off_y) * TILE_SIZE;
       for(var i = 0; i < this.map.length; ++i){
@@ -45,10 +43,12 @@ define(function() {
       for(var i = 0; i < this.players_sprite; ++i){
          this.players_sprite[i].destroy();
       }
+      this.players_sprite = []
       this.players = players;
    }
 
    Scene.prototype.setMap = function(map){
+
       this.background.map = map;
    }
 
@@ -62,9 +62,16 @@ define(function() {
       //this.players_sprite = []
       this.background.Draw(graphic, this.player.pt);
       for (var i = 0; i < this.players.length; ++i) {
-         graphic.DrawObj(this.players_sprite[i], this.players[i].x, this.players[i].y, this.players[i]);
+         this.players_sprite.push(graphic.DrawObj(
+            null, 
+            (this.players[i].x - this.player.pt.x) * TILE_SIZE, 
+            (this.players[i].y - this.player.pt.y) * TILE_SIZE, 
+            'player'
+         ));
+         //console.log(this.players_sprite[i]);
          //player.Draw();
       }
+
       this.player.Draw(graphic);
       //this.render();
        //graphic.renderer.render(graphic.stage);
