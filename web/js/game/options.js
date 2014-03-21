@@ -1,5 +1,5 @@
 define(function(){
-   var CONSTS = {
+   var OPTIONS = {
      "playerVelocity": 1.0,
      "slideThreshold": 0.1,
      "ticksPerSecond": 60,
@@ -7,5 +7,5 @@ define(function(){
      "screenColumnCount": 9,
      "tileSize": 32
    }
-   return CONSTS;
+   return OPTIONS;
 })
