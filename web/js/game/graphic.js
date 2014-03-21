@@ -1,6 +1,4 @@
 define(function() {
-   var WIDTH     = 1200;
-   var HEIGHT    = 600;
 
    var Atlas = {
       player : "/resourses/player",
@@ -14,6 +12,8 @@ define(function() {
       //this.dictionary = {'.':'grass', '#':'wall'};
       //this.map = [];
       //this.actors = [];
+      this.WIDTH = 1000;
+      this.HEIGHT = 600;
       this.atlas = //new Atlas();
       {
          player : "/imgs/bunny.png",
@@ -33,8 +33,8 @@ define(function() {
       }
 
       this.game = new Phaser.Game(
-         1000,
-         600,
+         this.WIDTH,
+         this.HEIGHT,
          Phaser.AUTO,
          'view',
          {
