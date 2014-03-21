@@ -1,6 +1,4 @@
-define(function() {
-   var TILE_SIZE = 32;
-
+define(['consts'], function(consts) {
    function Background(){
       this.map = [
          ['.', '.','.','.','.'],
@@ -20,9 +18,9 @@ define(function() {
       for(var i = 0; i < this.map.length; ++i){
          this.cells.push([]);
          for(var j = 0; j < this.map[i].length; ++j){
-            x = j * TILE_SIZE;
-               y = i * TILE_SIZE;
-               this.cells[i].push(graphic.DrawObj(null, x, y, this.dictionary[this.map[i][j]]))
+            x = j * consts.TILE_SIZE;
+            y = i * consts.TILE_SIZE;
+            this.cells[i].push(graphic.DrawObj(null, x, y, this.dictionary[this.map[i][j]]))
          }
       }
    }
