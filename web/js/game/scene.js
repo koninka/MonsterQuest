@@ -1,4 +1,4 @@
-define(['consts'], function(CONSTS) {
+define(['options'], function(OPTIONS) {
    var TILE_SIZE = 32;
 
    function Background(){
@@ -10,17 +10,15 @@ define(['consts'], function(CONSTS) {
          ['.', '.','.','.','.'],
          ['.', '.','.','.','.']
       ]   // map from look
-      this.cells = [] // sprites objects
       this.dictionary = {'.':'grass', '#':'wall'};
    }
 
    Background.prototype.Draw = function(graphic, pt){
-      off_x = CONSTS.screenColumnCount / 2;
-      off_y = CONSTS.screenRowCount    / 2;
+      off_x = OPTIONS.screenColumnCount / 2;
+      off_y = OPTIONS.screenRowCount    / 2;
 
       if (pt == null) return "WTF";
       
-      this.cells = [];
       y = (-pt.y % 1 - off_y) * TILE_SIZE;
       for(var i = 0; i < this.map.length; ++i){
          x = (-pt.x % 1 - off_x) * TILE_SIZE;
@@ -36,15 +34,10 @@ define(['consts'], function(CONSTS) {
    {
       this.player = player;
       this.players = [];
-      this.players_sprite = [] //<- это надо куда то запихать возможно потипу background'a
       this.background = new Background();
    }
 
    Scene.prototype.setActors = function(players){
-      for(var i = 0; i < this.players_sprite; ++i){
-         this.players_sprite[i].destroy();
-      }
-      this.players_sprite = []
       this.players = players;
    }
 
@@ -59,16 +52,17 @@ define(['consts'], function(CONSTS) {
 
    Scene.prototype.Draw = function(graphic)
    {
-      //this.Clear();
+      //this.Clear(graphic);
       //this.players_sprite = []
+      graphic.Clear();
       this.background.Draw(graphic, this.player.pt);
       for (var i = 0; i < this.players.length; ++i) {
-         this.players_sprite.push(graphic.DrawObj(
+         graphic.DrawObj(
             null, 
             (this.players[i].x - this.player.pt.x) * TILE_SIZE, 
             (this.players[i].y - this.player.pt.y) * TILE_SIZE, 
             'player'
-         ));
+         );
          //console.log(this.players_sprite[i]);
          //player.Draw();
       }
@@ -77,6 +71,18 @@ define(['consts'], function(CONSTS) {
       //this.render();
        //graphic.renderer.render(graphic.stage);
        //requestAnimationFrame(this.Draw);
+   }
+
+   Scene.prototype.Clear = function(graphic){
+      graphic.Clear();
+   }
+
+   Scene.prototype.defineRadiusFromMap = function(){
+      var map = this.background.map;
+      OPTIONS.screenRowCount = map.length;
+      if(map[0] == undefined)
+         alert("Смените сервак он харкается фигней")
+      OPTIONS.screenColumnCount = map[0].length;
    }
 
    return Scene;
