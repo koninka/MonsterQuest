@@ -78,6 +78,8 @@ define(['options'], function(OPTIONS) {
          );
       }
       this.player.Draw(graphic);
+      var text = "x : " + this.player.pt.x + "\ny : " +  this.player.pt.y;
+      graphic.game.add.text(20, 20, text, {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'white'})
       this.DrawImaginaryBounds(graphic);
    }
 
