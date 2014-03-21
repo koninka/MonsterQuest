@@ -3,6 +3,7 @@ package engine
 import (
     "database/sql"
     "time"
+    // "log"
     "MonsterQuest/connect"
     "MonsterQuest/consts"
 )
@@ -137,6 +138,9 @@ func (g *Game) lookAction(sid string) jsonType {
     res := make(jsonType)
     res["action"] = "look"
     player := g.players.getPlayerBySession(sid)
+    // log.Printf("look head x = %d, y = %d", player.x, player.y);
+    res["x"] = player.x;
+    res["y"] = player.y;
     x, y := int(player.x), int(player.y)
     l, r := g.getVisibleSpace(x, g.field.width)
     t, b := g.getVisibleSpace(y, g.field.height)

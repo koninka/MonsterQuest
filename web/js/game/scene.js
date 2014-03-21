@@ -12,12 +12,13 @@ define(['consts'], function(consts) {
       this.dictionary = {'.':'grass', '#':'wall'};
    }
 
-   Background.prototype.Draw = function(graphic, pt){
+   Background.prototype.Draw = function(graphic, pt) {
       off_x = consts.screenColumnCount / 2;
       off_y = consts.screenRowCount    / 2;
 
       this.cells = [];
       y = (-pt.y % 1 - off_y) * consts.TILE_SIZE;
+      // console.log("y = " + y + "| " + pt.y);
       for(var i = 0; i < this.map.length; ++i){
          this.cells.push([]);
          x = (-pt.x % 1- off_x) * consts.TILE_SIZE;
