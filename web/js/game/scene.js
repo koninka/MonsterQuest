@@ -13,6 +13,7 @@ define(['options'], function(OPTIONS) {
       this.dictionary = {'.':'grass', '#':'wall'};
    }
 
+
    Background.prototype.Draw = function(graphic, pt){
       off_x = OPTIONS.screenColumnCount / 2;
       off_y = OPTIONS.screenRowCount    / 2;
@@ -26,7 +27,7 @@ define(['options'], function(OPTIONS) {
             graphic.DrawObj(null, x, y, this.dictionary[this.map[i][j]])
             x += TILE_SIZE;
          }
-         y += TILE_SIZE;
+         y += consts.TILE_SIZE;
       }
    }
 
@@ -57,20 +58,26 @@ define(['options'], function(OPTIONS) {
       graphic.Clear();
       this.background.Draw(graphic, this.player.pt);
       for (var i = 0; i < this.players.length; ++i) {
-         graphic.DrawObj(
-            null, 
-            (this.players[i].x - this.player.pt.x) * TILE_SIZE, 
-            (this.players[i].y - this.player.pt.y) * TILE_SIZE, 
-            'player'
+         console.log("draw");
+         var playerGroup = graphic.game.add.group();
+         var tile = playerGroup.create(0, 0, 'player');
+         var login = this.players[i].login || ("actor_" + this.players[i].id);
+         var txt = new graphic.Text(
+            graphic.game,
+            0,
+            consts.TILE_SIZE + 7,
+            login,
+            {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'black'}
          );
-         //console.log(this.players_sprite[i]);
-         //player.Draw();
+         txt.x = (tile.width - txt.width) / 2 + 2;
+         playerGroup.add(txt);
+         graphic.drawGroup(
+            playerGroup,
+            (this.players[i].x - this.player.pt.x) * consts.TILE_SIZE,
+            (this.players[i].y - this.player.pt.y) * consts.TILE_SIZE
+         );
       }
-
       this.player.Draw(graphic);
-      //this.render();
-       //graphic.renderer.render(graphic.stage);
-       //requestAnimationFrame(this.Draw);
    }
 
    Scene.prototype.Clear = function(graphic){

@@ -38,7 +38,7 @@ define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils,
      //console.log("request " + JSON.stringify(hash));
    }
 
-   Game.prototype.setPlayerCoords = function(x, y){
+   Game.prototype.setPlayerCoords = function(x, y) {
       this.player.pt.x = x;
       this.player.pt.y = y;
    }
@@ -86,7 +86,7 @@ define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils,
                   th.player.examineSuccess(data);
                   setInterval(function() {
                      th.sendViaWS({action: "look"});
-                  }, 300);
+                  }, 100);
                   break
                case "getOptions":
                   th.setOptions(data['options']);
@@ -94,6 +94,7 @@ define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils,
                   th.setDictionary(data);
                   break;
                case "look":
+                  console.log(e.data);
                   th.setMap(data['map']);
                   th.setActors(data['actors']);
                   th.setPlayerCoords(data.x, data.y);
