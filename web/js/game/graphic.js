@@ -18,12 +18,14 @@ define(function() {
       {
          player : "/imgs/bunny.png",
          grass  : "/imgs/grass_1.png",
-         wall   : "/imgs/stone_1.png"
+         wall   : "/imgs/stone_1.png",
+         //empty  : "/imgs/stone_1.png",
       }
       this.tileMethods = {};
       this.textures = {};
       var I = this;
       var PreloadResourses = function () {
+         I.game.load.atlas('space', '/imgs/space.spritesheet.png', '/imgs/space.spritesheet.json');
          //I.game.load.image('bunny', '/resousres/bunny.png');
          for(var name in I.atlas) {
             I.game.load.image(name, I.atlas[name]);
