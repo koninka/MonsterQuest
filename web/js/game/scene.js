@@ -13,14 +13,14 @@ define(['consts'], function(consts) {
    }
 
    Background.prototype.Draw = function(graphic, pt){
-      off_x = CONSTS.screenColumnCount / 2;
-      off_y = CONSTS.screenRowCount    / 2;
+      off_x = consts.screenColumnCount / 2;
+      off_y = consts.screenRowCount    / 2;
 
       this.cells = [];
-      y = (-pt.y % 1 - off_y) * TILE_SIZE;
+      y = (-pt.y % 1 - off_y) * consts.TILE_SIZE;
       for(var i = 0; i < this.map.length; ++i){
          this.cells.push([]);
-         x = (-pt.x % 1- off_x) * TILE_SIZE;
+         x = (-pt.x % 1- off_x) * consts.TILE_SIZE;
          for(var j = 0; j < this.map[i].length; ++j){
             this.cells[i].push(graphic.DrawObj(null, x, y, this.dictionary[this.map[i][j]]))
             x += consts.TILE_SIZE;
@@ -58,11 +58,7 @@ define(['consts'], function(consts) {
       this.background.Draw(graphic, this.player.pt);
       for (var i = 0; i < this.players.length; ++i) {
          console.log("draw");
-         var x = this.players[i].x;
-         var y = this.players[i].y;
          var playerGroup = graphic.game.add.group();
-         playerGroup.x = (this.players[i].x - this.player.pt.x) * TILE_SIZE;
-         playerGroup.y = (this.players[i].y - this.player.pt.y) * TILE_SIZE;
          var tile = playerGroup.create(0, 0, 'player');
          var login = this.players[i].login || ("actor_" + this.players[i].id);
          var txt = new Phaser.Text(
@@ -74,6 +70,11 @@ define(['consts'], function(consts) {
          );
          txt.x = (tile.width - txt.width) / 2 + 2;
          playerGroup.add(txt);
+         graphic.drawGroup(
+            playerGroup,
+            (this.players[i].x - this.player.pt.x) * consts.TILE_SIZE,
+            (this.players[i].y - this.player.pt.y) * consts.TILE_SIZE
+         );
       }
 
       this.player.Draw(graphic);

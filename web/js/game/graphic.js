@@ -40,5 +40,11 @@ define(function() {
       return obj = this.game.add.sprite(x + this.game.width / 2 , y + this.game.height / 2, sprite_name);
    }
 
+   Graphic.prototype.drawGroup = function(group, x, y) {
+      group.x = x + this.game.width  / 2;
+      group.y = y + this.game.height / 2;
+      this.game.world.add(group);
+   }
+
    return Graphic;
 });
