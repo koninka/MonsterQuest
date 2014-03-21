@@ -18,13 +18,14 @@ define(['consts'], function(CONSTS) {
       off_x = CONSTS.screenColumnCount / 2;
       off_y = CONSTS.screenRowCount    / 2;
 
+      if (pt == null) return "WTF";
+      
       this.cells = [];
       y = (-pt.y % 1 - off_y) * TILE_SIZE;
       for(var i = 0; i < this.map.length; ++i){
-         this.cells.push([]);
-         x = (-pt.x % 1- off_x) * TILE_SIZE;
+         x = (-pt.x % 1 - off_x) * TILE_SIZE;
          for(var j = 0; j < this.map[i].length; ++j){
-            this.cells[i].push(graphic.DrawObj(null, x, y, this.dictionary[this.map[i][j]]))
+            graphic.DrawObj(null, x, y, this.dictionary[this.map[i][j]])
             x += TILE_SIZE;
          }
          y += TILE_SIZE;

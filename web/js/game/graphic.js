@@ -51,9 +51,18 @@ define(function() {
    Graphic.prototype = Object.create(Phaser);
 
    Graphic.prototype.DrawObj = function(obj, x, y, sprite_name){
-      if(obj)
-         obj.destroy();
+      //if(obj)
+      //   obj.destroy();
       return obj = this.game.add.sprite(x + this.game.width / 2 , y + this.game.height / 2, sprite_name);
+   }
+
+   Graphic.prototype.Clear = function(){
+
+      //this.game.stage = new Phaser.Stage(this.game, this.game.width, this.game.height);
+      //this.game.world.stage = this.game.stage;
+      //this.game.add.world = this.game.world;
+      //PIXI.Stage.call(this.game.stage, 0x000000, false);
+      this.game.world.children = []
    }
 
    return Graphic;
