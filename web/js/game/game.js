@@ -24,6 +24,10 @@ define(['utils/utils', 'player', 'scene', 'graphic'], function(utils, Player, Sc
       this.sendViaWS({action: "move", direction: direct, tick: this.tick});
    }
 
+   Game.prototype.defineRadiusFromMap = function(){
+      this.scene.defineRadiusFromMap();
+   }
+
    Game.prototype.initGraphic = function() {
       this.graphic = new Graphic(this.scene);
    };
