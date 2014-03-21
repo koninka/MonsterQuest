@@ -20,8 +20,8 @@ define(function(){
       this.tile = graphic.DrawObj(null, 0, 0, 'player');
       this.tile.position.x -= this.tile.texture.width / 2;
       this.tile.position.y -= this.tile.texture.height / 2;      
-      graphic.game.debug.spriteInfo(this.tile, 32, 32);
-
+      //graphic.game.debug.spriteInfo(this.tile, 32, 32);
+      
    }
 
    Player.prototype.examineSuccess = function(data) {
