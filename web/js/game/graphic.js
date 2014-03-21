@@ -51,7 +51,7 @@ define(function() {
    Graphic.prototype.DrawObj = function(obj, x, y, sprite_name){
       if(obj)
          obj.destroy();
-      return obj = this.game.add.sprite(x, y, sprite_name);
+      return obj = this.game.add.sprite(x + this.game.width / 2 , y + this.game.height / 2, sprite_name);
    }
 
    return Graphic;
