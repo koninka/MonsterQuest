@@ -65,7 +65,7 @@ define(['options'], function(OPTIONS) {
          var txt = new graphic.Text(
             graphic.game,
             0,
-            consts.TILE_SIZE + 7,
+            OPTIONS.TILE_SIZE + 7,
             login,
             {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'black'}
          );
@@ -73,8 +73,8 @@ define(['options'], function(OPTIONS) {
          playerGroup.add(txt);
          graphic.drawGroup(
             playerGroup,
-            (this.players[i].x - this.player.pt.x) * consts.TILE_SIZE,
-            (this.players[i].y - this.player.pt.y) * consts.TILE_SIZE
+            (this.players[i].x - this.player.pt.x) * OPTIONS.TILE_SIZE,
+            (this.players[i].y - this.player.pt.y) * OPTIONS.TILE_SIZE
          );
       }
       this.player.Draw(graphic);
