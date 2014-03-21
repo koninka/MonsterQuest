@@ -94,7 +94,7 @@ define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils,
                   th.setDictionary(data);
                   break;
                case "look":
-                  console.log(e.data);
+                  //console.log(e.data);
                   th.setMap(data['map']);
                   th.setActors(data['actors']);
                   th.setPlayerCoords(data.x, data.y);
