@@ -18,8 +18,8 @@ Renderer.prototype.Render = function() {
 	this.atlas.stage = new PIXI.Stage;
 	this.drawMap(scene.background);
 	for (player in scene.players)
-		this.atlas.tileMethods['actor'](player.pt.x, player.pt.y);
-	this.atlas.tileMethods['actor'](scene.player.pt.x, scene.player.pt.y);
+		this.atlas.tileMethods['actor'](WIDTH / 2, HEIGHT / 2);
+	this.atlas.tileMethods['actor'](WIDTH / 2, HEIGHT / 2);
 	this.renderer.render(this.atlas.stage);
 };
 
@@ -32,7 +32,7 @@ Renderer.prototype.drawMap = function (map) {
             y = i * TILE_SIZE;
             tileType = this.dict[map[i][j]];
             drawTile = this.atlas.tileMethods[tileType];
-            drawTile(x, y, this.stage);
+            drawTile(x, y);
         }
     }
 };*/

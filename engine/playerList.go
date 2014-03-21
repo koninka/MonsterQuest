@@ -1,28 +1,15 @@
 package engine
 
 import (
-    "MonsterQuest/connect"
-    "MonsterQuest/consts"
+    "MonsterQuest/MonsterQuest/connect"
+    "MonsterQuest/MonsterQuest/consts"
+    "MonsterQuest/MonsterQuest/gameObjects"
     "time"
 )
 
-type player struct {
-    login string
-    x, y float64
-}
-
-func (p *player) move(dir string) {
-    switch dir {
-    case "north": p.y -= consts.PLAYER_SPEED
-    case "south": p.y += consts.PLAYER_SPEED
-    case "west":  p.x -= consts.PLAYER_SPEED
-    case "east":  p.x += consts.PLAYER_SPEED
-    }
-}
-
 type playerList struct {
-    players map[int64] *player
-    sessions map[string] *player
+    players map[int64] *gameObjects.Player
+    sessions map[string] *gameObjects.Player
 }
 
 func (s *playerList) save() {
@@ -32,16 +19,17 @@ func (s *playerList) save() {
     defer stmnt.Close()
     for {
         for id, p := range s.players {
-            stmnt.Exec(p.x, p.y, id)
+            stmnt.Exec(p.Center.X, p.Center.Y, id)
         }
         time.Sleep(consts.DATABASE_TICK_DURATION)
     }
 }
 
-func (s *playerList) add(sid, login string, x, y float64, id int64) {
-	p := player{login, x, y}
+func (s *playerList) add(sid, login string, x, y float64, id int64) *gameObjects.Player {
+	p := gameObjects.NewPlayer(id, login, sid, x, y)
 	s.players[id] = &p
 	s.sessions[sid] = &p
+    return &p
 }
 
 func (s *playerList) isExists(id int64) bool {
@@ -52,22 +40,22 @@ func (s *playerList) isExistsSession(sid string) bool {
     return s.sessions[sid] != nil
 }
 
-func (s *playerList) getPlayerInfo(id int64) (player, bool) {
+func (s *playerList) getPlayerInfo(id int64) (gameObjects.Player, bool) {
     var (
-        pl player;
+        pl gameObjects.Player;
         isExist bool = s.players[id] != nil;
     )
     if isExist {
         p := s.players[id]
-        pl = player{p.login, p.x, p.y};
+        pl = gameObjects.NewPlayer(id, p.Login, p.SID, p.Center.X, p.Center.Y);
     }
     return pl, isExist
 }
 
-func (s *playerList) getPlayerById(id int64) *player {
+func (s *playerList) getPlayerById(id int64) *gameObjects.Player {
     return s.players[id]
 }
 
-func (s *playerList) getPlayerBySession(sid string) *player {
+func (s *playerList) getPlayerBySession(sid string) *gameObjects.Player {
     return s.sessions[sid]
 }
