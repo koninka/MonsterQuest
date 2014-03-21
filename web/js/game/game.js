@@ -78,7 +78,7 @@ define(['utils/utils', 'player', 'scene', 'graphic'], function(utils, Player, Sc
                   th.player.examineSuccess(data);
                   setInterval(function() {
                      th.sendViaWS({action: "look"});
-                  }, 300);
+                  }, 100);
                   break
                case "getDictionary":
                   th.setDictionary(data);
