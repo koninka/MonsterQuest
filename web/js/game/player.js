@@ -17,7 +17,9 @@ define(function(){
    }
 
    Player.prototype.Draw = function(graphic) {
-      this.tile = graphic.DrawObj(null, 0, 0, 'player')
+      this.tile = graphic.DrawObj(null, -16, -16, 'player')    
+      graphic.game.debug.spriteInfo(this.tile, 32, 32);
+
    }
 
    Player.prototype.examineSuccess = function(data) {
