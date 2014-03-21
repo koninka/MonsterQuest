@@ -32,7 +32,7 @@ CREATE TABLE users_position (
 CREATE TABLE mobs_position (
 	id       INT    NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	X        FLOAT  NOT NULL,
-	Y        FLOAT  NOT NULL, 
+	Y        FLOAT  NOT NULL 
 );
 
 DELIMITER //
