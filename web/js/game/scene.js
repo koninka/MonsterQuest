@@ -50,16 +50,27 @@ define(['consts'], function(consts) {
 
    Scene.prototype.Draw = function(graphic)
    {
-      //this.Clear();
       this.background.Draw(graphic);
       for (var i = 0; i < this.players.length; ++i) {
-         graphic.DrawObj(this.players_sprite[i], this.players[i].x, this.players[i].y, this.players[i]);
-         //player.Draw();
+         console.log("draw");
+         var x = this.players[i].x;
+         var y = this.players[i].y;
+         var playerGroup = graphic.game.add.group();
+         playerGroup.x = x + 40;
+         playerGroup.y = y;
+         var tile = playerGroup.create(0, 0, 'player');
+         var login = this.players[i].login || ("actor_" + this.players[i].id);
+         var txt = new Phaser.Text(
+            graphic.game,
+            0,
+            consts.TILE_SIZE + 7,
+            login,
+            {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'black'}
+         );
+         txt.x = (tile.width - txt.width) / 2 + 2;
+         playerGroup.add(txt);
       }
       this.player.Draw(graphic);
-      //this.render();
-       //graphic.renderer.render(graphic.stage);
-       //requestAnimationFrame(this.Draw);
    }
 
    return Scene;
