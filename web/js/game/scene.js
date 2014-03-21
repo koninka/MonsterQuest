@@ -14,16 +14,22 @@ define(function() {
       this.dictionary = {'.':'grass', '#':'wall'};
    }
 
+   Background.prototype.Draw = function(graphic, pt){
+      off_x = CONSTS.screenColumnCount / 2;
+      off_y = CONSTS.screenRowCount    / 2;
+
    Background.prototype.Draw = function(graphic){
       //this.cells = [];
       this.cells = [];
+      y = (-pt.y % 1 - off_y) * TILE_SIZE;
       for(var i = 0; i < this.map.length; ++i){
          this.cells.push([]);
+         x = (-pt.x % 1- off_x) * TILE_SIZE;
          for(var j = 0; j < this.map[i].length; ++j){
-            x = j * TILE_SIZE;
-               y = i * TILE_SIZE;
-               this.cells[i].push(graphic.DrawObj(null, x, y, this.dictionary[this.map[i][j]]))
+            this.cells[i].push(graphic.DrawObj(null, x, y, this.dictionary[this.map[i][j]]))
+            x += TILE_SIZE;
          }
+         y += TILE_SIZE;
       }
    }
 
@@ -53,7 +59,8 @@ define(function() {
    Scene.prototype.Draw = function(graphic)
    {
       //this.Clear();
-      this.background.Draw(graphic);
+      //this.players_sprite = []
+      this.background.Draw(graphic, this.player.pt);
       for (var i = 0; i < this.players.length; ++i) {
          graphic.DrawObj(this.players_sprite[i], this.players[i].x, this.players[i].y, this.players[i]);
          //player.Draw();
