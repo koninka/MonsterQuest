@@ -4,7 +4,7 @@ import "time"
 
 const (
    SERVER_PORT = ":8080"
-	PLAYER_SPEED = 0.2
+	PLAYER_SPEED = 0.12
 	TICK_DURATION = 100 * time.Millisecond
 	DATABASE_TICK_DURATION = 5 * time.Second
 	DEFAULT_PLAYER_POS_X = 5
