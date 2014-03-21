@@ -27,7 +27,7 @@ define(['options'], function(OPTIONS) {
             graphic.DrawObj(null, x, y, this.dictionary[this.map[i][j]])
             x += TILE_SIZE;
          }
-         y += consts.TILE_SIZE;
+         y += OPTIONS.TILE_SIZE;
       }
    }
 
