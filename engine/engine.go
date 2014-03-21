@@ -3,6 +3,7 @@ package engine
 import (
     "database/sql"
     "time"
+    "strconv"
     // "log"
     "MonsterQuest/connect"
     "MonsterQuest/consts"
@@ -139,8 +140,8 @@ func (g *Game) lookAction(sid string) jsonType {
     res["action"] = "look"
     player := g.players.getPlayerBySession(sid)
     // log.Printf("look head x = %d, y = %d", player.x, player.y);
-    res["x"] = player.x;
-    res["y"] = player.y;
+    res["x"] = strconv.FormatFloat(player.x, 'f', 2, 64)
+    res["y"] = strconv.FormatFloat(player.y, 'f', 2, 64)
     x, y := int(player.x), int(player.y)
     l, r := g.getVisibleSpace(x, g.field.width)
     t, b := g.getVisibleSpace(y, g.field.height)
@@ -159,8 +160,8 @@ func (g *Game) lookAction(sid string) jsonType {
             json := make(jsonType)
             json["type"] = "player"
             json["id"] = id
-            json["x"] = p.x
-            json["y"] = p.y
+            json["x"] = strconv.FormatFloat(p.x, 'f', 2, 64)
+            json["y"] = strconv.FormatFloat(p.y, 'f', 2, 64)
             visiblePlayers = append(visiblePlayers, json)
         }
     }
