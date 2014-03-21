@@ -3,10 +3,11 @@ package engine
 import (
     "database/sql"
     "time"
-    "MonsterQuest/MonsterQuest/connect"
-    "MonsterQuest/MonsterQuest/consts"
-    "MonsterQuest/MonsterQuest/gameObjects"
-    "MonsterQuest/MonsterQuest/geometry"
+    "MonsterQuest/connect"
+    "MonsterQuest/consts"
+    "MonsterQuest/gameObjects"
+    "MonsterQuest/geometry"
+    "fmt"
 )
 
 type jsonType map[string] interface{}
@@ -113,6 +114,7 @@ func (g *Game) unlinkActorFromCells(obj gameObjects.Activer) {
 }
 
 func (g *Game) examineAction(json jsonType) jsonType {
+    fmt.Println("examine")
     res := make(jsonType)
     id := int64(json["id"].(float64))
     sid := json["sid"].(string)

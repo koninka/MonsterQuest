@@ -1,8 +1,8 @@
 package engine
 
 import (
-	"MonsterQuest/MonsterQuest/gameObjects"
-	"MonsterQuest/MonsterQuest/connect"
+	"MonsterQuest/gameObjects"
+	"MonsterQuest/connect"
 )
 
 type mobList struct {

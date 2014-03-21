@@ -1,6 +1,6 @@
 package gameObjects
 
-import "MonsterQuest/MonsterQuest/geometry"
+import "MonsterQuest/geometry"
 
 type Mob struct {
 	ActiveObject

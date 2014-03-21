@@ -1,9 +1,9 @@
 package engine
 
 import (
-    "MonsterQuest/MonsterQuest/connect"
-    "MonsterQuest/MonsterQuest/consts"
-    "MonsterQuest/MonsterQuest/gameObjects"
+    "MonsterQuest/connect"
+    "MonsterQuest/consts"
+    "MonsterQuest/gameObjects"
     "time"
 )
 

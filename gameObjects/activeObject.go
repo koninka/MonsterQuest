@@ -1,8 +1,8 @@
 package gameObjects
 
 import (
-    "MonsterQuest/MonsterQuest/geometry"
-    "MonsterQuest/MonsterQuest/consts"
+    "MonsterQuest/geometry"
+    "MonsterQuest/consts"
 )
 
 func GetShiftByDirection(dir string) (mx int, my int) {
