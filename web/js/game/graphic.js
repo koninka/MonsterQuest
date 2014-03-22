@@ -45,7 +45,11 @@ define(function() {
    Graphic.prototype = Object.create(Phaser);
 
    Graphic.prototype.DrawObj = function(obj, x, y, sprite_name){
-      return obj = this.game.add.sprite(x + this.game.width / 2 , y + this.game.height / 2, sprite_name);
+      var obj = this.game.add.sprite(x + this.game.width / 2 , y + this.game.height / 2, sprite_name);
+      //if(this.tileMethods[sprite_name]){
+      //   this.tileMethods[sprite_name](obj)
+      //}
+      return obj;
    }
 
    Graphic.prototype.Clear = function(){
