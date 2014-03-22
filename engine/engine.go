@@ -10,6 +10,7 @@ import (
     "MonsterQuest/gameObjects"
     "MonsterQuest/geometry"
     "fmt"
+    "math"
 )
 
 type jsonType map[string] interface{}
@@ -215,16 +216,65 @@ func (g *Game) lookAction(sid string) jsonType {
     return res
 }
 
-func (g *Game) checkCollisionWithWalls(p *gameObjects.Player, dir string) bool {
-    segment := p.GetCollisionableSide(dir)
-    col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
-    col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
-    return !g.field.isBlocked(col1, row1) && !g.field.isBlocked(col2, row2)   
+func (g *Game) checkCollisionWithWalls(p *gameObjects.Player, dir string) (bool, geometry.Point) {
+    var near float64
+    pos := p.GetShiftedFrontSide(dir)
+    if (g.field.isBlocked(int(pos.X), int(pos.Y))){
+        switch dir {
+        case "north": 
+            pos.Y = math.Ceil(pos.Y) + consts.OBJECT_HALF;
+        case "south":
+            pos.Y = math.Floor(pos.Y) - consts.OBJECT_HALF;
+        case "east":
+            pos.X = math.Floor(pos.X) - consts.OBJECT_HALF;
+        case "west":
+            pos.X = math.Ceil(pos.X) + consts.OBJECT_HALF;
+        }
+        return false, pos
+    }
+    eps := 2.0
+    side, pos := p.GetCollisionableSide(dir)
+    col1, row1 := int(side.Point1.X), int(side.Point1.Y)
+    col2, row2 := int(side.Point2.X), int(side.Point2.Y)
+    res1 := g.field.isBlocked(col1, row1)
+    res2 := g.field.isBlocked(col2, row2)
+    //fmt.Println(dir, side, res1, res2)
+    if (res1 || res2){
+        switch dir {
+        case "north","south":
+            if res1 {
+                near = math.Ceil(side.Point1.X) - side.Point1.X;
+            } else {
+                near = math.Floor(side.Point1.X) - side.Point1.X;
+            }
+            if(math.Abs(near) < eps){
+                side.Point1.X = side.Point1.X + near;
+                side.Point2.X = side.Point2.X + near;
+            } else {
+                return false, p.Center
+            }
+            pos.X = (side.Point1.X + side.Point2.X) / 2;
+        case "east", "west":
+            if res1 {
+                near = math.Ceil(side.Point1.Y) - side.Point1.Y;
+            } else {
+                near = math.Floor(side.Point1.Y) - side.Point1.Y;
+            }
+            if(math.Abs(near) < eps){
+                side.Point1.Y = side.Point1.Y + near;
+                side.Point2.Y = side.Point2.Y + near;
+            } else {
+                return false, p.Center
+            }
+            pos.Y = (side.Point1.Y + side.Point2.Y) / 2;
+        }
+    }
+    return true, pos 
 }
 
-func (g *Game) checkCollisionWithPlayers(p *gameObjects.Player, dir string) bool {
+func (g *Game) checkCollisionWithPlayers(p *gameObjects.Player, dir string) (bool, geometry.Point) {
     res := true
-    segment := p.GetCollisionableSide(dir)
+    segment, pos := p.GetCollisionableSide(dir)
     col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
     col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
     id := p.GetID()
@@ -240,7 +290,11 @@ func (g *Game) checkCollisionWithPlayers(p *gameObjects.Player, dir string) bool
             res = res && r.CrossedBySegment(&segment)
         }
     }
-    return res
+    if(!res){
+        //p.Move(dir)
+        pos = p.Center;
+    }
+    return res, pos
 }
 
 func (g *Game) updateWorld() {
@@ -249,11 +303,16 @@ func (g *Game) updateWorld() {
         dir := v["direction"].(string)
         p := g.players.getPlayerBySession(k)
         if action == "move" {
-            if g.checkCollisionWithWalls(p, dir) && g.checkCollisionWithPlayers(p, dir) {
-                g.unlinkActorFromCells(p)
-                p.Move(dir)
-                g.linkActorToCells(p)
-            } 
+            ok, new_center1 := g.checkCollisionWithWalls(p, dir)
+            if ok {
+               // ok, new_center2 := g.checkCollisionWithPlayers(p, dir)
+                //if(!ok){
+                //    new_center1 = new_center2
+                //}
+            }
+            g.unlinkActorFromCells(p)
+            p.ForcePlace(new_center1)
+            g.linkActorToCells(p)
         }
         delete(g.lastActions, k)
     }
