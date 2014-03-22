@@ -44,6 +44,13 @@ func (obj *ActiveObject) GetShiftedCenter(dir string) geometry.Point {
     return point
 }
 
+func (obj *ActiveObject) GetShiftedFrontSide(dir string) geometry.Point{
+    mx, my := GetShiftByDirection(dir)
+    point := obj.Center
+    point.Move(float64(mx) * (consts.OBJECT_HALF + consts.VELOCITY), float64(my) * (consts.OBJECT_HALF + consts.VELOCITY))
+    return point;
+}
+
 func (obj *ActiveObject) Move(dir string) {
     obj.Center = obj.GetShiftedCenter(dir)
 }
