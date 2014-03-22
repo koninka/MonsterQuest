@@ -37,7 +37,7 @@ func (obj *ActiveObject) GetRectangle() geometry.Rectangle {
     return geometry.Rectangle{lt, rb}
 }
 
-func (obj *ActiveObject) getShiftedCenter(dir string) geometry.Point {
+func (obj *ActiveObject) GetShiftedCenter(dir string) geometry.Point {
     mx, my := GetShiftByDirection(dir)
     point := obj.Center
     point.Move(float64(mx) * consts.VELOCITY, float64(my) * consts.VELOCITY)
@@ -45,12 +45,13 @@ func (obj *ActiveObject) getShiftedCenter(dir string) geometry.Point {
 }
 
 func (obj *ActiveObject) Move(dir string) {
-    obj.Center = obj.getShiftedCenter(dir)
+    obj.Center = obj.GetShiftedCenter(dir)
 }
 
 func (obj *ActiveObject) GetCollisionableSide(dir string) geometry.Segment {
     var p1, p2 geometry.Point
     p1 = obj.getShiftedCenter(dir)
+    p1 = obj.GetShiftedCenter(dir)
     p2 = p1
     switch dir {
         case "north": 
