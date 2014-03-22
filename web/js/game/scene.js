@@ -78,6 +78,18 @@ define(['options'], function(OPTIONS) {
          );
       }
       this.player.Draw(graphic);
+      this.DrawImaginaryBounds(graphic);
+   }
+
+   Scene.prototype.DrawImaginaryBounds = function(graphic){
+      var off_x = (OPTIONS.screenColumnCount  + 1) / 2 * OPTIONS.TILE_SIZE;
+      var off_y = (OPTIONS.screenRowCount     + 1) / 2 * OPTIONS.TILE_SIZE;
+      var w = OPTIONS.screenColumnCount * OPTIONS.TILE_SIZE
+      var h = OPTIONS.screenRowCount * OPTIONS.TILE_SIZE
+      var c = { x: graphic.game.width / 2 , y : graphic.game.height / 2 };
+      var g = graphic.game.add.graphics(0, 0);
+      g.lineStyle(OPTIONS.TILE_SIZE, 0x000000, 1);
+      g.drawRect(c.x - off_x, c.y - off_y, w, h);
    }
 
    Scene.prototype.Clear = function(graphic){
