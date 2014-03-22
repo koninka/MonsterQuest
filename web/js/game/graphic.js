@@ -10,13 +10,19 @@ define(function() {
          player : "/imgs/bunny.png",
          grass  : "/imgs/grass_1.png",
          wall   : "/imgs/stone_1.png",
+         space  : "/imgs/space_1.png"
          //empty  : "/imgs/stone_1.png",
       }
-      this.tileMethods = {};
+      this.tileMethods = {
+         //space : function(sprite){
+         //   sprite.frameName = 'space_' + getRandomInt(1, 4) + '.png'; 
+         //}
+      };
       this.textures = {};
       var I = this;
       var PreloadResourses = function () {
-         I.game.load.atlas('space', '/imgs/space.spritesheet.png', '/imgs/space.spritesheet.json');
+         //I.game.
+         //I.game.load.atlas('space', '/imgs/space.spritesheet.png', '/imgs/space.spritesheet.json');
          for(var name in I.atlas) {
             I.game.load.image(name, I.atlas[name]);
          }
