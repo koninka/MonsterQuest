@@ -13,7 +13,7 @@ define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils,
    };
 
    Game.prototype.setMap = function(map) {
-      this.scene.setMap(map);
+      this.scene.setMap(map, this.player.pt);
    };
 
    Game.prototype.setActors = function(actors) {
@@ -95,12 +95,15 @@ define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils,
                   break;
                case "look":
                   //console.log(e.data);
-                  th.setMap(data['map']);
-                  th.setActors(data['actors']);
                   th.setPlayerCoords(data.x, data.y);
+                  th.setMap(data['map'], th.player.pt);
+                  th.setActors(data['actors']);
+                  th.defineRadiusFromMap();
                   if (th.firstLook) {
                      th.firstLook = false;
-                     th.defineRadiusFromMap();
+                     /*setTimeout(function(){
+                        th.defineRadiusFromMap();
+                     }, 300);*/
                      // requestAnimationFrame(Render);
                   }
                   break;
