@@ -55,6 +55,10 @@ func (obj *ActiveObject) Move(dir string) {
     obj.Center = obj.GetShiftedCenter(dir)
 }
 
+func (obj *ActiveObject) ForcePlace(point geometry.Point) {
+    obj.Center = point
+}
+
 func (obj *ActiveObject) GetCollisionableSide(dir string) geometry.Segment {
     var p1, p2 geometry.Point
     p1 = obj.getShiftedCenter(dir)
