@@ -42,12 +42,33 @@ define(['options'], function(OPTIONS) {
       this.players = players;
    }
 
-   Scene.prototype.setMap = function(map){
-
+   Scene.prototype.setMap = function(map, player_pos){
       this.background.map = map;
+      this.fixMap(player_pos);
+   }
+
+   Scene.prototype.fixMap = function(player_pos){
+      var map = this.background.map;
+      var worldbound;
+      if(map.length < OPTIONS.screenRowCount){
+         var push = player_pos.y < OPTIONS.screenRowCount ? "unshift" : "push";
+         while(map.length < OPTIONS.screenRowCount){
+            var row = []
+            while(row.length < OPTIONS.screenColumnCount)
+               row.push('space');
+            map[push](row);   
+         }
+      }
+      if(map[Math.floor(map.length / 2)].length < OPTIONS.screenColumnCount){
+         var push = player_pos.x < OPTIONS.screenColumnCount ? "unshift" : "push";
+         for(var i = 0; i < map.length; ++i)
+            while(map[i].length < OPTIONS.screenColumnCount)
+               map[i][push]('space');
+      }
    }
 
    Scene.prototype.setDictionary = function(dict){
+      dict['space'] = 'space';
       this.background.dictionary = dict;
    }
 
