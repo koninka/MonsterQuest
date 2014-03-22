@@ -59,11 +59,11 @@ func (obj *ActiveObject) ForcePlace(point geometry.Point) {
     obj.Center = point
 }
 
-func (obj *ActiveObject) GetCollisionableSide(dir string) geometry.Segment {
-    var p1, p2 geometry.Point
-    p1 = obj.getShiftedCenter(dir)
+func (obj *ActiveObject) GetCollisionableSide(dir string) (geometry.Segment, geometry.Point) {
+    var p1, p2, p3 geometry.Point
     p1 = obj.GetShiftedCenter(dir)
     p2 = p1
+    p3 = p1
     switch dir {
         case "north": 
             p1.Move(-consts.OBJECT_HALF, -consts.OBJECT_HALF)
@@ -78,5 +78,6 @@ func (obj *ActiveObject) GetCollisionableSide(dir string) geometry.Segment {
             p1.Move(-consts.OBJECT_HALF, -consts.OBJECT_HALF)
             p2.Move(-consts.OBJECT_HALF, consts.OBJECT_HALF)
     }
-    return geometry.Segment{p1, p2}
+    return geometry.Segment{p1, p2}, p3
 }
+
