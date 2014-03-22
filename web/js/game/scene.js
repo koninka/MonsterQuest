@@ -73,8 +73,8 @@ define(['options'], function(OPTIONS) {
          playerGroup.add(txt);
          graphic.drawGroup(
             playerGroup,
-            (this.players[i].x - this.player.pt.x) * OPTIONS.TILE_SIZE,
-            (this.players[i].y - this.player.pt.y) * OPTIONS.TILE_SIZE
+            (this.players[i].x - this.player.pt.x) * OPTIONS.TILE_SIZE - tile.texture.width / 2,
+            (this.players[i].y - this.player.pt.y) * OPTIONS.TILE_SIZE - tile.texture.height / 2
          );
       }
       this.player.Draw(graphic);
