@@ -10,7 +10,7 @@ import (
 type gameField struct {
     width, height int
     field []string
-    actors [][]map[int64] *gameObjects.Activer
+    actors [][]map[int64] gameObjects.Activer
 }
 
 func (f *gameField) loadFromFile(fileName string, ml *mobList) {
@@ -23,7 +23,8 @@ func (f *gameField) loadFromFile(fileName string, ml *mobList) {
         line, _, err := reader.ReadLine()
         for j := 0; j < len(line); j++ {
             if line[j] == 'M' {
-                ml.addMob(float64(j), float64(i))
+                mob := ml.addMob(float64(j), float64(i))
+                f.actors[i][j][mob.GetID()] = mob 
                 line[j] = '.'
             }
         }

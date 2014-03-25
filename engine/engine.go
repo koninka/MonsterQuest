@@ -36,7 +36,7 @@ func GetInstance() *Game {
             },
             gameField{
                 field: make([]string, 1000),
-                actors: make([][]map[int64] *gameObjects.Activer, 1000),
+                actors: make([][]map[int64] gameObjects.Activer, 1000),
             },
 			playerList{
                 make(map[int64] *gameObjects.Player),
@@ -48,9 +48,9 @@ func GetInstance() *Game {
             make(map[string] jsonType),
         }
         for i := range gameInstance.field.field {
-            gameInstance.field.actors[i] = make([]map[int64] *gameObjects.Activer, 1000)
+            gameInstance.field.actors[i] = make([]map[int64] gameObjects.Activer, 1000)
             for j := range gameInstance.field.actors[i] {
-                gameInstance.field.actors[i][j] = make(map[int64] *gameObjects.Activer)
+                gameInstance.field.actors[i][j] = make(map[int64] gameObjects.Activer)
             }
         }
         gameInstance.field.loadFromFile("map.txt", &gameInstance.mobs)
@@ -99,10 +99,10 @@ func (g *Game) linkActorToCells(obj gameObjects.Activer) {
     ltc, ltr := int(r.LeftTop.X), int(r.LeftTop.Y)
     rbc, rbr := int(r.RightBottom.X), int(r.RightBottom.Y)
     id := obj.GetID()
-    g.field.actors[ltr][ltc][id] = &obj
-    g.field.actors[ltr][rbc][id] = &obj
-    g.field.actors[rbr][rbc][id] = &obj
-    g.field.actors[rbr][ltc][id] = &obj
+    g.field.actors[ltr][ltc][id] = obj
+    g.field.actors[ltr][rbc][id] = obj
+    g.field.actors[rbr][rbc][id] = obj
+    g.field.actors[rbr][ltc][id] = obj
 }
 
 func (g *Game) unlinkActorFromCells(obj gameObjects.Activer) {
@@ -283,7 +283,7 @@ func (g *Game) checkCollisionWithWalls(p *gameObjects.Player, dir string) (bool,
 func (g *Game) checkCollisionWithActorsInCell(col, row int, segment *geometry.Segment) bool {
     res := false
     for _, actor := range g.field.actors[row][col] {
-        r := (*actor).GetRectangle()
+        r := actor.GetRectangle()
         res = res || r.CrossedBySegment(segment)
     }
     return res
@@ -319,8 +319,8 @@ func (g *Game) updateWorld() {
         }
         delete(g.lastActions, k)
     }
-    for _, v := range g.mobs.mobs {
-        v.Do()
+    for _, m := range g.mobs.mobs {
+        m.Do()
     }
 }
 
