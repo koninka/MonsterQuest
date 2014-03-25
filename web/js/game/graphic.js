@@ -1,4 +1,7 @@
 define(function() {
+   function getRandomInt (min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+   }
 
    function Graphic(scene) {
       this.WIDTH = 1000;
@@ -7,13 +10,19 @@ define(function() {
          player : "/imgs/bunny.png",
          grass  : "/imgs/grass_1.png",
          wall   : "/imgs/stone_1.png",
+         space  : "/imgs/space_1.png"
          //empty  : "/imgs/stone_1.png",
       }
-      this.tileMethods = {};
+      this.tileMethods = {
+         //space : function(sprite){
+         //   sprite.frameName = 'space_' + getRandomInt(1, 4) + '.png'; 
+         //}
+      };
       this.textures = {};
       var I = this;
       var PreloadResourses = function () {
-         I.game.load.atlas('space', '/imgs/space.spritesheet.png', '/imgs/space.spritesheet.json');
+         //I.game.
+         //I.game.load.atlas('space', '/imgs/space.spritesheet.png', '/imgs/space.spritesheet.json');
          for(var name in I.atlas) {
             I.game.load.image(name, I.atlas[name]);
          }
@@ -36,7 +45,11 @@ define(function() {
    Graphic.prototype = Object.create(Phaser);
 
    Graphic.prototype.DrawObj = function(obj, x, y, sprite_name){
-      return obj = this.game.add.sprite(x + this.game.width / 2 , y + this.game.height / 2, sprite_name);
+      var obj = this.game.add.sprite(x + this.game.width / 2 , y + this.game.height / 2, sprite_name);
+      //if(this.tileMethods[sprite_name]){
+      //   this.tileMethods[sprite_name](obj)
+      //}
+      return obj;
    }
 
    Graphic.prototype.Clear = function(){

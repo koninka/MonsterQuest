@@ -37,9 +37,5 @@ func (f *gameField) loadFromFile(fileName string, ml *mobList) {
 }
 
 func (f *gameField) isBlocked(col, row int) bool {
-    if col < 0 || col >= f.width || row < 0 || row >= f.height {
-        return true
-    } else {
-        return f.field[row][col] == '#'
-    }
+    return col < 0 || col >= f.width || row < 0 || row >= f.height || f.field[row][col] == '#'
 }

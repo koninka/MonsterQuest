@@ -37,21 +37,33 @@ func (obj *ActiveObject) GetRectangle() geometry.Rectangle {
     return geometry.Rectangle{lt, rb}
 }
 
-func (obj *ActiveObject) getShiftedCenter(dir string) geometry.Point {
+func (obj *ActiveObject) GetShiftedCenter(dir string) geometry.Point {
     mx, my := GetShiftByDirection(dir)
     point := obj.Center
     point.Move(float64(mx) * consts.VELOCITY, float64(my) * consts.VELOCITY)
     return point
 }
 
-func (obj *ActiveObject) Move(dir string) {
-    obj.Center = obj.getShiftedCenter(dir)
+func (obj *ActiveObject) GetShiftedFrontSide(dir string) geometry.Point{
+    mx, my := GetShiftByDirection(dir)
+    point := obj.Center
+    point.Move(float64(mx) * (consts.OBJECT_HALF + consts.VELOCITY), float64(my) * (consts.OBJECT_HALF + consts.VELOCITY))
+    return point;
 }
 
-func (obj *ActiveObject) GetCollisionableSide(dir string) geometry.Segment {
-    var p1, p2 geometry.Point
-    p1 = obj.getShiftedCenter(dir)
+func (obj *ActiveObject) Move(dir string) {
+    obj.Center = obj.GetShiftedCenter(dir)
+}
+
+func (obj *ActiveObject) ForcePlace(point geometry.Point) {
+    obj.Center = point
+}
+
+func (obj *ActiveObject) GetCollisionableSide(dir string) (geometry.Segment, geometry.Point) {
+    var p1, p2, p3 geometry.Point
+    p1 = obj.GetShiftedCenter(dir)
     p2 = p1
+    p3 = p1
     switch dir {
         case "north": 
             p1.Move(-consts.OBJECT_HALF, -consts.OBJECT_HALF)
@@ -66,5 +78,6 @@ func (obj *ActiveObject) GetCollisionableSide(dir string) geometry.Segment {
             p1.Move(-consts.OBJECT_HALF, -consts.OBJECT_HALF)
             p2.Move(-consts.OBJECT_HALF, consts.OBJECT_HALF)
     }
-    return geometry.Segment{p1, p2}
+    return geometry.Segment{p1, p2}, p3
 }
+

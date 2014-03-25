@@ -29,9 +29,9 @@ func (c *connection) readPump() {
         GetInstance().unregister <- c
         c.ws.Close()
     }()
-    c.ws.SetReadLimit(maxMessageSize)
-    c.ws.SetReadDeadline(time.Now().Add(pongWait))
-    c.ws.SetPongHandler(func(string) error { c.ws.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+    //c.ws.SetReadLimit(maxMessageSize)
+    //c.ws.SetReadDeadline(time.Now().Add(pongWait))
+    //c.ws.SetPongHandler(func(string) error { c.ws.SetReadDeadline(time.Now().Add(pongWait)); return nil })
     for {
         var json map[string] interface{}
         err := c.ws.ReadJSON(&json)
@@ -48,7 +48,7 @@ func (c *connection) readPump() {
 }
 
 func (c *connection) write(mt int, payload []byte) error {
-    c.ws.SetWriteDeadline(time.Now().Add(writeWait))
+    //c.ws.SetWriteDeadline(time.Now().Add(writeWait))
     return c.ws.WriteMessage(mt, payload)
 }
 
@@ -60,18 +60,18 @@ func (c *connection) writePump() {
     }()
     for {
         select {
-        case message, ok := <-c.send:
-            if !ok {
-                c.write(websocket.CloseMessage, []byte{})
-                return
-            }
+        case message := <-c.send:
+            //if !ok {
+            //    c.write(websocket.CloseMessage, []byte{})
+            //    return
+            //}
             if err := c.ws.WriteJSON(message); err != nil {
                 return
             }
-        case <-ticker.C:
-            if err := c.write(websocket.PingMessage, []byte{}); err != nil {
-                return
-            }
+        //case <-ticker.C:
+        //    if err := c.write(websocket.PingMessage, []byte{}); err != nil {
+        //        return
+        //    }
         }
     }
 }
