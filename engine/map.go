@@ -4,12 +4,13 @@ import (
     "bufio"
     "os"
     "MonsterQuest/consts"
+    "MonsterQuest/gameObjects"
 )
 
 type gameField struct {
     width, height int
     field []string
-    actors [][]map[int64]bool
+    actors [][]map[int64] *gameObjects.Activer
 }
 
 func (f *gameField) loadFromFile(fileName string, ml *mobList) {
