@@ -160,16 +160,19 @@ func (g *Game) examineAction(json jsonType) jsonType {
     return res
 }
 
-func (g *Game) getVisibleSpace(coord, bound int) (v1 int, v2 int) {
-    if coord - consts.VISION_RADIUS < 0 {
+func (g *Game) getVisibleSpace(coord, bound int) (v1 int, v2 int, shift int) {
+    shift = 0
+    r := consts.VISION_RADIUS + 1
+    if coord - r < 0 {
         v1 = 0
+        shift = - (coord - r)
     } else {
-        v1 = coord - consts.VISION_RADIUS
+        v1 = coord - r
     }
-    if coord + consts.VISION_RADIUS > bound {
+    if coord + r > bound {
         v2 = bound
     } else {
-        v2 = coord + consts.VISION_RADIUS
+        v2 = coord + r
     }
     return
 }
@@ -178,13 +181,19 @@ func (g *Game) lookAction(sid string) jsonType {
     res := make(jsonType)
     res["action"] = "look"
     player := g.players.getPlayerBySession(sid)
-    l, r := g.getVisibleSpace(int(player.Center.X), g.field.width - 1)
-    t, b := g.getVisibleSpace(int(player.Center.Y), g.field.height - 1)
-    visibleSpace := make([][]string, b - t)
+    visibleSpaceSide := 2 * (consts.VISION_RADIUS + 1)
+    visibleSpace := make([][]string, visibleSpaceSide)
+    for i := 0; i < visibleSpaceSide; i++ {
+        visibleSpace[i] = make([]string, visibleSpaceSide)
+        for j := 0; j < visibleSpaceSide; j++ {
+            visibleSpace[i][j] = "#"
+        }
+    }
+    l, r, scol := g.getVisibleSpace(int(player.Center.X), g.field.width - 1)
+    t, b, srow := g.getVisibleSpace(int(player.Center.Y), g.field.height - 1)
     for i := t; i < b; i++ {
-        visibleSpace[i - t] = make([]string, r - l)
         for j := l; j < r; j++ {
-            visibleSpace[i - t][j - l] = string(g.field.field[i][j])
+            visibleSpace[i - t + srow][j - l + scol] = string(g.field.field[i][j])
         }
     }
     res["map"] = visibleSpace
