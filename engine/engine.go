@@ -36,7 +36,7 @@ func GetInstance() *Game {
             },
             gameField{
                 field: make([]string, 1000),
-                actors: make([][]map[int64]bool, 1000),
+                actors: make([][]map[int64] gameObjects.Activer, 1000),
             },
 			playerList{
                 make(map[int64] *gameObjects.Player),
@@ -48,9 +48,9 @@ func GetInstance() *Game {
             make(map[string] jsonType),
         }
         for i := range gameInstance.field.field {
-            gameInstance.field.actors[i] = make([]map[int64]bool, 1000)
+            gameInstance.field.actors[i] = make([]map[int64] gameObjects.Activer, 1000)
             for j := range gameInstance.field.actors[i] {
-                gameInstance.field.actors[i][j] = make(map[int64]bool)
+                gameInstance.field.actors[i][j] = make(map[int64] gameObjects.Activer)
             }
         }
         gameInstance.field.loadFromFile("map.txt", &gameInstance.mobs)
@@ -99,10 +99,10 @@ func (g *Game) linkActorToCells(obj gameObjects.Activer) {
     ltc, ltr := int(r.LeftTop.X), int(r.LeftTop.Y)
     rbc, rbr := int(r.RightBottom.X), int(r.RightBottom.Y)
     id := obj.GetID()
-    g.field.actors[ltr][ltc][id] = true
-    g.field.actors[ltr][rbc][id] = true
-    g.field.actors[rbr][rbc][id] = true
-    g.field.actors[rbr][ltc][id] = true
+    g.field.actors[ltr][ltc][id] = obj
+    g.field.actors[ltr][rbc][id] = obj
+    g.field.actors[rbr][rbc][id] = obj
+    g.field.actors[rbr][ltc][id] = obj
 }
 
 func (g *Game) unlinkActorFromCells(obj gameObjects.Activer) {
@@ -160,16 +160,19 @@ func (g *Game) examineAction(json jsonType) jsonType {
     return res
 }
 
-func (g *Game) getVisibleSpace(coord, bound int) (v1 int, v2 int) {
-    if coord - consts.VISION_RADIUS < 0 {
+func (g *Game) getVisibleSpace(coord, bound int) (v1 int, v2 int, shift int) {
+    shift = 0
+    r := consts.VISION_RADIUS + 1
+    if coord - r < 0 {
         v1 = 0
+        shift = - (coord - r)
     } else {
-        v1 = coord - consts.VISION_RADIUS
+        v1 = coord - r
     }
-    if coord + consts.VISION_RADIUS > bound {
+    if coord + r > bound {
         v2 = bound
     } else {
-        v2 = coord + consts.VISION_RADIUS
+        v2 = coord + r
     }
     return
 }
@@ -178,13 +181,19 @@ func (g *Game) lookAction(sid string) jsonType {
     res := make(jsonType)
     res["action"] = "look"
     player := g.players.getPlayerBySession(sid)
-    l, r := g.getVisibleSpace(int(player.Center.X), g.field.width - 1)
-    t, b := g.getVisibleSpace(int(player.Center.Y), g.field.height - 1)
-    visibleSpace := make([][]string, b - t)
+    visibleSpaceSide := 2 * (consts.VISION_RADIUS + 1)
+    visibleSpace := make([][]string, visibleSpaceSide)
+    for i := 0; i < visibleSpaceSide; i++ {
+        visibleSpace[i] = make([]string, visibleSpaceSide)
+        for j := 0; j < visibleSpaceSide; j++ {
+            visibleSpace[i][j] = "#"
+        }
+    }
+    l, r, scol := g.getVisibleSpace(int(player.Center.X), g.field.width - 1)
+    t, b, srow := g.getVisibleSpace(int(player.Center.Y), g.field.height - 1)
     for i := t; i < b; i++ {
-        visibleSpace[i - t] = make([]string, r - l)
         for j := l; j < r; j++ {
-            visibleSpace[i - t][j - l] = string(g.field.field[i][j])
+            visibleSpace[i - t + srow][j - l + scol] = string(g.field.field[i][j])
         }
     }
     res["map"] = visibleSpace
@@ -238,7 +247,6 @@ func (g *Game) checkCollisionWithWalls(p *gameObjects.Player, dir string) (bool,
     col2, row2 := int(side.Point2.X), int(side.Point2.Y)
     res1 := g.field.isBlocked(col1, row1)
     res2 := g.field.isBlocked(col2, row2)
-    //fmt.Println(dir, side, res1, res2)
     if (res1 || res2){
         switch dir {
         case "north","south":
@@ -272,26 +280,21 @@ func (g *Game) checkCollisionWithWalls(p *gameObjects.Player, dir string) (bool,
     return true, pos 
 }
 
-func (g *Game) checkCollisionWithPlayers(p *gameObjects.Player, dir string) (bool, geometry.Point) {
-    res := true
+func (g *Game) checkCollisionWithActorsInCell(col, row int, segment *geometry.Segment) bool {
+    res := false
+    for _, actor := range g.field.actors[row][col] {
+        r := actor.GetRectangle()
+        res = res || r.CrossedBySegment(segment)
+    }
+    return res
+}
+
+func (g *Game) checkCollisionWithActors(p *gameObjects.Player, dir string) (bool, geometry.Point) {
     segment, pos := p.GetCollisionableSide(dir)
     col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
     col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
-    id := p.GetID()
-    for k, _ := range g.field.actors[row1][col1] {
-        if (k != id) {
-            r := g.players.getPlayerById(k).GetRectangle()
-            res = res && r.CrossedBySegment(&segment)
-        }
-    }
-    for k, _ := range g.field.actors[row2][col2] {
-        if (k != id) {
-            r := g.players.getPlayerById(k).GetRectangle()
-            res = res && r.CrossedBySegment(&segment)
-        }
-    }
-    if(!res){
-        //p.Move(dir)
+    res := g.checkCollisionWithActorsInCell(col1, row1, &segment) || g.checkCollisionWithActorsInCell(col2, row2, &segment)    
+    if res {
         pos = p.Center;
     }
     return res, pos
@@ -305,10 +308,10 @@ func (g *Game) updateWorld() {
         if action == "move" {
             ok, new_center1 := g.checkCollisionWithWalls(p, dir)
             if ok {
-               // ok, new_center2 := g.checkCollisionWithPlayers(p, dir)
-                //if(!ok){
-                //    new_center1 = new_center2
-                //}
+                ok, new_center2 := g.checkCollisionWithActors(p, dir)
+                if ok {
+                    new_center1 = new_center2
+                }
             }
             g.unlinkActorFromCells(p)
             p.ForcePlace(new_center1)
@@ -316,8 +319,8 @@ func (g *Game) updateWorld() {
         }
         delete(g.lastActions, k)
     }
-    for _, v := range g.mobs.mobs {
-        v.Do()
+    for _, m := range g.mobs.mobs {
+        m.Do()
     }
 }
 

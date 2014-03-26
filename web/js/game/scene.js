@@ -82,7 +82,7 @@ define(['options'], function(OPTIONS) {
          console.log("draw");
          var playerGroup = graphic.game.add.group();
          var tile = playerGroup.create(0, 0, 'player');
-         var login = this.players[i].login || ("actor_" + this.players[i].id);
+         var login = this.players[i].login || (this.players[i].type + this.players[i].id);
          var txt = new graphic.Text(
             graphic.game,
             0,
