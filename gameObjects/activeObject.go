@@ -21,6 +21,7 @@ type Activer interface {
     GetRectangle() geometry.Rectangle
     GetShiftedFrontSide(dir string) geometry.Point
     GetCollisionableSide(dir string) (geometry.Segment, geometry.Point)
+    ForcePlace(point geometry.Point)
 }
 
 type ActiveObject struct {
