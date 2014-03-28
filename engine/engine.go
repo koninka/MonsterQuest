@@ -299,22 +299,38 @@ func (g *Game) checkCollisionWithActors(obj gameObjects.Activer, dir string) (bo
     return res, pos
 }
 
+func (g *Game) calcNewCenterForActor(obj gameObjects.Activer, dir string) (bool, geometry.Point) {
+    collisionOccured := false
+    noCollisionWithWall, res := g.checkCollisionWithWalls(obj, dir)
+    if noCollisionWithWall {
+        collisionWithActorOccured, alternativeRes := g.checkCollisionWithActors(obj, dir)
+        if collisionWithActorOccured {
+            res = alternativeRes
+            collisionOccured = true
+        }
+    } else {
+        collisionOccured = true
+    }
+    return collisionOccured, res
+}
+
+func (g *Game) moveActor(obj gameObjects.Activer, dir string) bool {
+    if len(dir) == 0 {
+        return false
+    }
+    collisionOccured, newCenter := g.calcNewCenterForActor(obj, dir)
+    g.unlinkActorFromCells(obj)
+    obj.ForcePlace(newCenter)
+    g.linkActorToCells(obj)
+    return collisionOccured
+}
+
 func (g *Game) updateWorld() {
     for k, v := range g.lastActions {
         action := v["action"].(string)
-        dir := v["direction"].(string)
         p := g.players.getPlayerBySession(k)
         if action == "move" {
-            ok, new_center1 := g.checkCollisionWithWalls(p, dir)
-            if ok {
-                ok, new_center2 := g.checkCollisionWithActors(p, dir)
-                if ok {
-                    new_center1 = new_center2
-                }
-            }
-            g.unlinkActorFromCells(p)
-            p.ForcePlace(new_center1)
-            g.linkActorToCells(p)
+            g.moveActor(p, v["direction"].(string))
         }
         delete(g.lastActions, k)
     }
