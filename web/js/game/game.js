@@ -3,7 +3,7 @@ define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils,
       this.sid      = sid;
       this.sock     = null;
       this.tick     = null;
-      this.wsuri    = "ws://" + wsuri;
+      this.wsuri    = wsuri;
       this.player   = new Player(parseInt(utils.getQueryVariable('id')));
       this.scene    = new Scene(this.player);
    }
