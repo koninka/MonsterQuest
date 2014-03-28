@@ -203,26 +203,22 @@ func (g *Game) lookAction(sid string) jsonType {
     }
     res["map"] = visibleSpace
     visibleActors := make([]jsonType, 0, 1000)
-    area := geometry.Rectangle{geometry.Point{float64(l), float64(t)}, geometry.Point{float64(r), float64(b)}}
-    for id, p := range g.players.players {
-        if area.In(&p.Center) && p != player {
-            json := make(jsonType)
-            json["type"] = "player"
-            json["id"] = id
-            json["x"] = p.Center.X
-            json["y"] = p.Center.Y
-            visibleActors = append(visibleActors, json)
-        }
-    }
-    for id, m := range g.mobs.mobs {
-        center := m.GetCenter()
-        if area.In(&center) {
-            json := make(jsonType)
-            json["type"] = "mob"
-            json["id"] = id
-            json["x"] = center.X
-            json["y"] = center.Y
-            visibleActors = append(visibleActors, json)
+    for i := t; i < b; i++ {
+        for j := l; j < r; j++ {
+            for id, obj := range g.field.actors[i][j] {
+                json := make(jsonType)
+                center := obj.GetCenter()
+                json["id"] = id
+                json["x"] = center.X
+                json["y"] = center.Y
+                switch obj.(type) {
+                case gameObjects.Mober:
+                    json["type"] = "mob"
+                case gameObjects.Activer:
+                    json["type"] = "player"
+                }
+                visibleActors = append(visibleActors, json)    
+            }
         }
     }
     res["actors"] = visibleActors
