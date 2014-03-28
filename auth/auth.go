@@ -68,7 +68,7 @@ func loginAction(login, pass string) string {
             host, _ := os.Hostname()
             result["sid"] = u4.String()
             result["result"] = "ok"
-            result["soсket"] = host + consts.SERVER_PORT + "/websocket"
+            result["webSoсket"] = "ws://" + host + consts.SERVER_PORT + "/websocket"
             result["id"] = id
         }
     }

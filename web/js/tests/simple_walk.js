@@ -34,7 +34,7 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
          tester.send(data, function (data) {
             expect(data['result']).to.equal('ok');
             ssid     = data['sid'];
-            wsuri    = data['soсket'];
+            wsuri    = data['webSocket'];
             actor_id = data['id'];
             done();
          });

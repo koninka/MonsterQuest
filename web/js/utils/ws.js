@@ -2,7 +2,7 @@ define(function() {
    function WSConnect(wsuri, onload, onopen, onclose, onmessage) {
       var sock = null;
       if(wsuri) {
-         wsuri = 'ws://'+wsuri;
+         wsuri = wsuri;
       }
       //wsuri = wsuri || "ws://localhost:8080/websocket"; // <-- note new path
       sock = new WebSocket(wsuri);
