@@ -24,6 +24,10 @@ func (m *Mob) Do() {}
 
 func (m *Mob) NotifyAboutCollision() {}
 
+func (m *Mob) GetType() string {
+    return "mob"
+}
+
 type NumbMob struct {
     Mob
 }

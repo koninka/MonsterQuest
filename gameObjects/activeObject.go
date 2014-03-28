@@ -22,6 +22,7 @@ type Activer interface {
     GetShiftedFrontSide(dir string) geometry.Point
     GetCollisionableSide(dir string) (geometry.Segment, geometry.Point)
     ForcePlace(point geometry.Point)
+    GetType() string
 }
 
 type ActiveObject struct {
@@ -65,6 +66,10 @@ func (obj *ActiveObject) Move(dir string) {
 
 func (obj *ActiveObject) ForcePlace(point geometry.Point) {
     obj.Center = point
+}
+
+func (obj *ActiveObject) GetType() string {
+    return ""
 }
 
 func (obj *ActiveObject) GetCollisionableSide(dir string) (geometry.Segment, geometry.Point) {

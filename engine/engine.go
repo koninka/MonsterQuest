@@ -211,12 +211,7 @@ func (g *Game) lookAction(sid string) jsonType {
                 json["id"] = id
                 json["x"] = center.X
                 json["y"] = center.Y
-                switch obj.(type) {
-                case gameObjects.Mober:
-                    json["type"] = "mob"
-                case gameObjects.Activer:
-                    json["type"] = "player"
-                }
+                json["type"] = obj.GetType()
                 visibleActors = append(visibleActors, json)    
             }
         }
