@@ -55,5 +55,9 @@ func (m *WalkingMob) Do() {
 }
 
 func NewMob(id int64, x, y float64) Mober {
-    return &NumbMob{Mob{ActiveObject{id, geometry.Point{x, y}}}}
+    if gen.Int() % 2 != 0 {
+        return &NumbMob{Mob{ActiveObject{id, geometry.Point{x, y}}}}
+    } else {
+        return &WalkingMob{Mob{ActiveObject{id, geometry.Point{x, y}}}, getRandomDir(), getRandomDir(), throw4Dice1()}
+    }
 }
