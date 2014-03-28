@@ -1,6 +1,9 @@
 package gameObjects
 
-import "MonsterQuest/geometry"
+import (
+    "math/rand"
+    "MonsterQuest/geometry"
+)
 
 type Mober interface {
     Activer
