@@ -41,7 +41,7 @@ func (c *connection) readPump() {
         if GetInstance().IsSIDValid(json["sid"].(string)) {
             GetInstance().CheckOutPlayersAction(c, json)
         } else {
-            badSidResponse := map[string] string {"result" : "badSid"}
+            badSidResponse := map[string] string {"result" : "badSid", "action" : json["action"].(string)}
             c.send <- badSidResponse
         }
     }
