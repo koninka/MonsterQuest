@@ -3,7 +3,6 @@ package engine
 import (
     "database/sql"
     "time"
-    "fmt"
     "math"
     "MonsterQuest/connect"
     "MonsterQuest/consts"
@@ -22,6 +21,12 @@ type Game struct {
 }
 
 var gameInstance *Game
+var lastId int64 = -1
+
+func GenerateId() int64 {
+    lastId++
+    return lastId
+}
 
 func GetInstance() *Game {
     if gameInstance == nil {
@@ -115,7 +120,6 @@ func (g *Game) unlinkActorFromCells(obj gameObjects.Activer) {
 }
 
 func (g *Game) examineAction(json jsonType) jsonType {
-    fmt.Println("examine")
     res := make(jsonType)
     id := int64(json["id"].(float64))
     sid := json["sid"].(string)
@@ -133,20 +137,23 @@ func (g *Game) examineAction(json jsonType) jsonType {
     } else {
         db := connect.CreateConnect()
         stmt, _ := db.Prepare(`
-            SELECT u.login
+            SELECT u.id, u.login
             FROM users u
             INNER JOIN sessions s ON s.user_id = u.id AND s.sid = ?
         `)
         defer stmt.Close()
-        var login string
-        err := stmt.QueryRow(sid).Scan(&login)
+        var (
+            login string
+            dbId int64
+        )
+        err := stmt.QueryRow(sid).Scan(&dbId, &login)
         if err != sql.ErrNoRows {
             stmt, _ := db.Prepare("SELECT X, Y FROM users_position WHERE id = ?")
             var x, y float64
-            err = stmt.QueryRow(id).Scan(&x, &y)
+            err = stmt.QueryRow(dbId).Scan(&x, &y)
             if err != sql.ErrNoRows {
                 setSuccesResult(login, x, y)
-                p := g.players.add(json["sid"].(string), login, x, y, id)
+                p := g.players.add(json["sid"].(string), login, x, y, id, dbId)
                 g.linkActorToCells(p)
             } else {
                 res["result"] = "badId"

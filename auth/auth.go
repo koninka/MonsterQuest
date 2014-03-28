@@ -71,7 +71,7 @@ func loginAction(login, pass string) string {
             result["sid"] = u4.String()
             result["result"] = "ok"
             result["webSoсket"] = "ws://" + host + consts.SERVER_PORT + "/websocket"
-            result["id"] = id
+            result["id"] = engine.GenerateId()
         }
     }
     resJSON, _ := json.Marshal(result)

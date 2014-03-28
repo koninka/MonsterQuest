@@ -8,11 +8,8 @@ type mobList struct {
 	mobs map[int64] gameObjects.Mober
 }
 
-var mobcounter int64 = 1000 
-
-func (ml *mobList) addMob(x, y float64) gameObjects.Mober {
-	mob := gameObjects.NewMob(mobcounter, x, y)
-	ml.mobs[mobcounter] = mob
-	mobcounter++
+func (ml *mobList) addMob(id int64, x, y float64) gameObjects.Mober {
+	mob := gameObjects.NewMob(id, x, y)
+	ml.mobs[id] = mob
 	return mob
 }

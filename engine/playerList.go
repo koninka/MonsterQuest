@@ -18,15 +18,15 @@ func (s *playerList) save() {
     stmnt, _ := db.Prepare("UPDATE users_position SET x = ?, y = ? WHERE id = ?")
     defer stmnt.Close()
     for {
-        for id, p := range s.players {
-            stmnt.Exec(p.Center.X, p.Center.Y, id)
+        for _, p := range s.players {
+            stmnt.Exec(p.Center.X, p.Center.Y, p.DBId)
         }
         time.Sleep(consts.DATABASE_TICK_DURATION)
     }
 }
 
-func (s *playerList) add(sid, login string, x, y float64, id int64) *gameObjects.Player {
-	p := gameObjects.NewPlayer(id, login, sid, x, y)
+func (s *playerList) add(sid, login string, x, y float64, id, dbId int64) *gameObjects.Player {
+	p := gameObjects.NewPlayer(id, dbId, login, sid, x, y)
 	s.players[id] = &p
 	s.sessions[sid] = &p
     return &p
@@ -40,16 +40,12 @@ func (s *playerList) isExistsSession(sid string) bool {
     return s.sessions[sid] != nil
 }
 
-func (s *playerList) getPlayerInfo(id int64) (gameObjects.Player, bool) {
-    var (
-        pl gameObjects.Player;
-        isExist bool = s.players[id] != nil;
-    )
-    if isExist {
-        p := s.players[id]
-        pl = gameObjects.NewPlayer(id, p.Login, p.SID, p.Center.X, p.Center.Y);
+func (s *playerList) getPlayerInfo(id int64) (*gameObjects.Player, bool) {
+    if s.players[id] != nil {
+        return s.players[id], true
+    } else {
+        return nil, false
     }
-    return pl, isExist
 }
 
 func (s *playerList) getPlayerById(id int64) *gameObjects.Player {
