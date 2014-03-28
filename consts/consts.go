@@ -3,7 +3,7 @@ package consts
 import "time"
 
 const (
-   SERVER_PORT = ":8080"
+    SERVER_PORT = ":8080"
 	VELOCITY = 0.12
 	TICK_DURATION = 100 * time.Millisecond
 	DATABASE_TICK_DURATION = 1 * time.Second
