@@ -3,14 +3,12 @@ package engine
 import (
     "database/sql"
     "time"
-    //"strconv"
-    // "log"
+    "fmt"
+    "math"
     "MonsterQuest/connect"
     "MonsterQuest/consts"
     "MonsterQuest/gameObjects"
     "MonsterQuest/geometry"
-    "fmt"
-    "math"
 )
 
 type jsonType map[string] interface{}
