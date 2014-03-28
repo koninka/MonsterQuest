@@ -19,7 +19,7 @@ define(['options'], function(OPTIONS) {
       off_y = OPTIONS.screenRowCount    / 2;
 
       if (pt == null) return "WTF";
-      
+
       y = (-pt.y % 1 - off_y) * TILE_SIZE;
       for(var i = 0; i < this.map.length; ++i){
          x = (-pt.x % 1 - off_x) * TILE_SIZE;

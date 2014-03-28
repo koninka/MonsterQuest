@@ -23,6 +23,7 @@ func (m *Mob) CurrDirection() string {
 func (m *Mob) Do() {}
 
 func (m *Mob) NotifyAboutCollision() {}
+
 type NumbMob struct {
     Mob
 }

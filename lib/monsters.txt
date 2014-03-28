@@ -1,0 +1,935 @@
+N:Grey mold
+G:m
+M:2
+F:NEVER_MOVE|IM_POIS|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP
+S:
+D:A small strange grey growth.
+C:s
+I:110
+W:1
+B:SPORE
+
+N:Grey mushroom patch
+G:,
+M:2
+F:IM_POIS|NEVER_MOVE|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP
+S:
+D:Yum!  It looks quite tasty.
+C:s
+I:110
+W:1
+B:SPORE
+
+N:Giant yellow centipede
+G:c
+M:5
+F:ANIMAL
+S:
+D:It is about four feet long and carnivorous.
+C:y
+I:110
+W:1
+B:STING
+
+N:Small kobold
+G:k
+M:1
+F:DROP_60|EVIL|IM_POIS
+S:
+D:It is a squat and ugly humanoid figure with a canine face.
+C:y
+I:110
+W:1
+B:HIT
+
+N:Floating eye
+G:e
+M:1
+F:NEVER_MOVE|HURT_LIGHT|NO_FEAR
+S:
+D:A disembodied eye, floating a few feet above the ground.
+C:o
+I:110
+W:1
+B:GAZE
+
+N:Rock lizard
+G:R
+M:5
+F:ANIMAL|HURT_COLD
+S:
+D:It is a small lizard with a hardened hide.
+C:U
+I:110
+W:1
+B:BITE
+
+N:Soldier ant
+G:a
+M:7
+F:ANIMAL
+S:
+D:A large ant with powerful mandibles.
+C:W
+I:110
+W:1
+B:BITE
+
+N:Fruit bat
+G:b
+M:4
+F:ANIMAL
+S:
+D:A fast-moving pest.
+C:o
+I:120
+W:1
+B:BITE
+
+N:Kobold
+G:k
+M:1
+F:DROP_60|EVIL|IM_POIS
+S:
+D:It is a small, dog-headed humanoid.
+C:G
+I:110
+W:2
+B:HIT
+
+N:Yellow mushroom patch
+G:,
+M:2
+F:NEVER_MOVE|IM_POIS|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP
+S:
+D:Yum!  It looks quite tasty.
+C:y
+I:110
+W:2
+B:SPORE
+
+N:White jelly
+G:j
+M:2
+F:NEVER_MOVE|HURT_LIGHT|IM_POIS|HURT_COLD|NO_CONF|NO_SLEEP|NO_FEAR
+S:
+D:It's a large pile of white flesh.
+C:w
+I:120
+W:2
+B:TOUCH
+
+N:Blue yeek
+G:y
+M:1
+F:DROP_60|ANIMAL|IM_ACID
+S:
+D:A small humanoid figure.
+C:b
+I:110
+W:2
+B:HIT
+
+N:Wild cat
+G:f
+M:6
+F:ANIMAL
+S:
+D:fistful of needles.
+C:U
+I:120
+W:2
+B:CLAW
+
+N:Crow
+G:B
+M:8
+F:ANIMAL
+S:
+D:It is a hooded crow, gray except for the black wings and head.
+C:s
+I:120
+W:2
+B:BITE
+
+N:Spotted mushroom patch
+G:,
+M:2
+F:NEVER_MOVE|IM_POIS|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP
+S:
+D:Yum!  It looks quite tasty.
+C:o
+I:110
+W:3
+B:SPORE
+
+N:Giant white ant
+G:a
+M:7
+F:ANIMAL
+S:
+D:It is about two feet long and has sharp pincers.
+C:w
+I:110
+W:3
+B:BITE
+
+N:Yellow mold
+G:m
+M:2
+F:NEVER_MOVE|IM_POIS|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP
+S:
+D:It is a strange yellow growth on the dungeon floor.
+C:y
+I:110
+W:3
+B:SPORE
+
+N:Cave lizard
+G:R
+M:5
+F:ANIMAL|HURT_COLD
+S:
+D:It is an armoured lizard with a powerful bite.
+C:u
+I:110
+W:4
+B:BITE
+
+N:Blue jelly
+G:j
+M:2
+F:COLD_BLOOD|NEVER_MOVE|HURT_LIGHT|IM_COLD|NO_CONF|NO_SLEEP|NO_FEAR
+S:
+D:It's a large pile of pulsing blue flesh.
+C:b
+I:110
+W:4
+B:TOUCH
+
+N:Raven
+G:B
+M:8
+F:ANIMAL
+S:
+D:Larger than a crow, and pitch black.
+C:D
+I:120
+W:4
+B:BITE
+
+N:Green jelly
+G:j
+M:2
+F:NEVER_MOVE|HURT_LIGHT|IM_ACID|HURT_COLD|NO_CONF|NO_SLEEP|NO_FEAR
+S:
+D:It is a large pile of pulsing green flesh.
+C:g
+I:120
+W:5
+B:TOUCH
+
+N:Large kobold
+G:k
+M:1
+F:DROP_60|EVIL|IM_POIS
+S:
+D:It is a man-sized figure with the all too recognizable face of a kobold.
+C:b
+I:110
+W:5
+B:HIT
+
+N:Skeleton kobold
+G:s
+M:9
+F:UNDEAD|EVIL|COLD_BLOOD|IM_COLD|IM_POIS|NO_FEAR|NO_CONF|NO_SLEEP|NO_STUN
+S:
+D:It is a small animated kobold skeleton.
+C:w
+I:110
+W:5
+B:HIT
+
+N:Rot jelly
+G:j
+M:2
+F:NEVER_MOVE|HURT_LIGHT|IM_POIS|HURT_COLD|NO_CONF|NO_SLEEP|NO_FEAR
+S:
+D:terrible smell it exudes is also very hard to get rid of...
+C:u
+I:120
+W:5
+B:TOUCH
+
+N:Purple mushroom patch
+G:,
+M:2
+F:NEVER_MOVE|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP
+S:
+D:Yum!  It looks quite tasty.
+C:P
+I:110
+W:6
+B:SPORE
+
+N:Brown mold
+G:m
+M:2
+F:NEVER_MOVE|IM_POIS|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP
+S:
+D:A strange brown growth on the dungeon floor.
+C:u
+I:110
+W:6
+B:SPORE
+
+N:Manes
+G:u
+M:1
+F:NO_FEAR|DEMON|EVIL|IM_FIRE
+S:
+D:It is a minor but aggressive demon.
+C:u
+I:110
+W:7
+B:HIT
+
+N:Red jelly
+G:j
+M:2
+F:NEVER_MOVE|HURT_LIGHT|HURT_COLD|NO_CONF|NO_SLEEP|NO_FEAR
+S:
+D:It is a large pulsating mound of red flesh.
+C:r
+I:110
+W:7
+B:TOUCH
+
+N:Zombified kobold
+G:z
+M:10
+F:NO_FEAR|UNDEAD|EVIL|COLD_BLOOD|IM_COLD|IM_POIS|HURT_FIRE|NO_CONF|NO_SLEEP|NO_STUN
+S:
+D:shambles forward.
+C:s
+I:110
+W:7
+B:HIT
+
+N:Night lizard
+G:R
+M:5
+F:ANIMAL|HURT_COLD
+S:
+D:It is a black lizard with overlapping scales and a powerful jaw.
+C:b
+I:110
+W:7
+B:BITE
+
+N:Brown yeek
+G:y
+M:1
+F:DROP_40|ANIMAL|IM_ACID
+S:
+D:It is a strange small humanoid.
+C:u
+I:110
+W:8
+B:HIT
+
+N:Green mold
+G:m
+M:2
+F:IM_ACID|NEVER_MOVE|IM_POIS|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP
+S:
+D:It is a strange growth on the dungeon floor.
+C:g
+I:110
+W:8
+B:SPORE
+
+N:Skeleton orc
+G:s
+M:9
+F:ORC|UNDEAD|EVIL|COLD_BLOOD|IM_COLD|IM_POIS|NO_FEAR|NO_CONF|NO_SLEEP|NO_STUN
+S:
+D:It is an animated orc skeleton.
+C:w
+I:110
+W:8
+B:HIT
+
+N:Lemure
+G:u
+M:1
+F:NO_FEAR|DEMON|EVIL|IM_FIRE
+S:
+D:It is the larval form of a major demon.
+C:U
+I:110
+W:8
+B:HIT
+
+N:Nighthawk
+G:B
+M:8
+F:NO_FEAR|ANIMAL
+S:
+D:Trained to hunt and kill without fear.
+C:u
+I:120
+W:8
+B:BITE
+
+N:Yeti
+G:Y
+M:1
+F:ANIMAL|IM_COLD
+S:
+D:A large white figure covered in shaggy fur.
+C:w
+I:110
+W:9
+B:BITE
+
+N:Giant red ant
+G:a
+M:7
+F:ANIMAL
+S:
+D:It is large and has venomous mandibles.
+C:r
+I:110
+W:9
+B:STING
+
+N:Giant spider
+G:S
+M:7
+F:ANIMAL|IM_POIS
+S:
+D:It is a vast black spider whose bulbous body is bloated with poison.
+C:v
+I:110
+W:10
+B:BITE
+
+N:Giant white tick
+G:S
+M:7
+F:ANIMAL|IM_POIS
+S:
+D:It is moving slowly towards you.
+C:w
+I:100
+W:10
+B:BITE
+
+N:Hairy mold
+G:m
+M:2
+F:NEVER_MOVE|IM_POIS|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP
+S:
+D:It is a strange hairy growth on the dungeon floor.
+C:o
+I:110
+W:10
+B:SPORE
+
+N:Panther
+G:f
+M:6
+F:ANIMAL
+S:
+D:A large black cat, stalking you with intent.  It thinks you're its next meal.
+C:u
+I:120
+W:10
+B:CLAW
+
+N:Hippogriff
+G:H
+M:1
+F:ANIMAL
+S:
+D:A strange hybrid of eagle and horse.  It looks weird.
+C:U
+I:110
+W:11
+B:BITE
+
+N:Zombified orc
+G:z
+M:10
+F:ORC|NO_FEAR|UNDEAD|EVIL|COLD_BLOOD|IM_COLD|IM_POIS|HURT_FIRE|NO_CONF|NO_SLEEP|NO_STUN
+S:
+D:It is a shambling orcish corpse leaving behind a trail of flesh.
+C:s
+I:110
+W:11
+B:HIT
+
+N:Skeleton human
+G:s
+M:9
+F:UNDEAD|EVIL|COLD_BLOOD|IM_COLD|IM_POIS|NO_FEAR|NO_CONF|NO_SLEEP|NO_STUN
+S:
+D:It is an animated human skeleton.
+C:w
+I:110
+W:12
+B:HIT
+
+N:Zombified human
+G:z
+M:10
+F:NO_FEAR|UNDEAD|EVIL|COLD_BLOOD|IM_COLD|IM_POIS|HURT_FIRE|NO_CONF|NO_SLEEP|NO_STUN
+S:
+D:It is a shambling human corpse dropping chunks of flesh behind it.
+C:s
+I:110
+W:12
+B:HIT
+
+N:Tiger
+G:f
+M:6
+F:ANIMAL
+S:
+D:towards you, ready to pounce.
+C:o
+I:120
+W:12
+B:BITE
+
+N:Stegocentipede
+G:c
+M:5
+F:ANIMAL
+S:
+D:It is a vast armoured centipede with massive mandibles and a spiked tail.
+C:u
+I:120
+W:12
+B:STING
+
+N:Spotted jelly
+G:j
+M:2
+F:COLD_BLOOD|NEVER_MOVE|HURT_LIGHT|IM_ACID|IM_POIS|HURT_COLD|NO_CONF|NO_SLEEP|NO_FEAR
+S:
+D:A strange jelly thing, covered in discoloured blotches.
+C:o
+I:120
+W:12
+B:TOUCH
+
+N:Killer brown beetle
+G:K
+M:7
+F:ANIMAL
+S:
+D:It is a vicious insect with a tough carapace.
+C:u
+I:110
+W:13
+B:BITE
+
+N:Ogre
+G:O
+M:1
+F:DROP_40|GIANT|EVIL
+S:
+D:A hideous, smallish giant that is often found near or with orcs.
+C:U
+I:110
+W:13
+B:HIT
+
+N:Ochre jelly
+G:j
+M:2
+F:COLD_BLOOD|TAKE_ITEM|IM_ACID|IM_POIS|HURT_COLD|NO_CONF|NO_SLEEP|NO_FEAR
+S:
+D:rests on.
+C:U
+I:120
+W:13
+B:TOUCH
+
+N:Giant tarantula
+G:S
+M:7
+F:ANIMAL|IM_POIS
+S:
+D:A giant spider with hairy black and red legs.
+C:o
+I:120
+W:15
+B:BITE
+
+N:Griffon
+G:H
+M:1
+F:ANIMAL
+S:
+D:It is half lion, half eagle.  It flies menacingly towards you.
+C:u
+I:110
+W:15
+B:BITE
+
+N:Homunculus
+G:u
+M:1
+F:NO_FEAR|DEMON|EVIL|IM_FIRE
+S:
+D:It is a small demonic spirit full of malevolence.
+C:y
+I:110
+W:15
+B:HIT
+
+N:Gelatinous cube
+G:j
+M:2
+F:COLD_BLOOD|DROP_4|TAKE_ITEM|IM_ACID|IM_COLD|IM_ELEC|IM_FIRE|IM_POIS|NO_CONF|NO_SLEEP|NO_FEAR
+S:
+D:well.
+C:G
+I:110
+W:16
+B:TOUCH
+
+N:Grizzly bear
+G:q
+M:4
+F:ANIMAL
+S:
+D:A huge, beastly bear, more savage than most of its kind.
+C:U
+I:110
+W:16
+B:CRUSH
+
+N:Giant red scorpion
+G:S
+M:7
+F:ANIMAL|IM_POIS
+S:
+D:It is fast and poisonous.
+C:r
+I:110
+W:17
+B:STING
+
+N:Red mold
+G:m
+M:2
+F:IM_FIRE|NEVER_MOVE|IM_POIS|NO_FEAR|NO_CONF|NO_SLEEP
+S:
+D:It is a strange red growth on the dungeon floor; it seems to burn with flame.
+C:r
+I:110
+W:19
+B:SPORE
+
+N:Sabre-tooth tiger
+G:f
+M:6
+F:ANIMAL
+S:
+D:the strongest armour.
+C:y
+I:120
+W:20
+B:BITE
+
+N:Sasquatch
+G:Y
+M:1
+F:ANIMAL|IM_COLD
+S:
+D:A tall shaggy, furry humanoid, it could call the yeti brother.
+C:g
+I:120
+W:20
+B:BITE
+
+N:Mummified orc
+G:z
+M:10
+F:ORC|DROP_20|NO_FEAR|UNDEAD|EVIL|COLD_BLOOD|IM_COLD|IM_POIS|HURT_FIRE|NO_CONF|NO_SLEEP|NO_STUN
+S:
+D:It is an orcish figure covered in wrappings.
+C:w
+I:110
+W:21
+B:HIT
+
+N:Giant yellow scorpion
+G:S
+M:7
+F:ANIMAL|IM_POIS
+S:
+D:It is a giant scorpion with a sharp stinger.
+C:y
+I:110
+W:22
+B:STING
+
+N:Werebear
+G:q
+M:4
+F:EVIL|ANIMAL|DROP_1
+S:
+D:dangerous enemy.
+C:D
+I:110
+W:24
+B:CRUSH
+
+N:Wereworm
+G:w
+M:1
+F:IM_ACID|ANIMAL
+S:
+D:monster that breeds on death.
+C:p
+I:110
+W:25
+B:BITE
+
+N:Giant brown tick
+G:S
+M:7
+F:ANIMAL|IM_POIS
+S:
+D:It is moving slowly towards you.
+C:u
+I:100
+W:25
+B:STING
+
+N:Displacer beast
+G:f
+M:6
+F:INVISIBLE|ANIMAL
+S:
+D:It is a huge black panther, clubbed tentacles sprouting from its shoulders.
+C:D
+I:110
+W:26
+B:HIT
+
+N:Cave ogre
+G:O
+M:1
+F:DROP_40|GIANT|EVIL
+S:
+D:A giant orc-like figure with an awesomely muscled frame.
+C:u
+I:110
+W:26
+B:HIT
+
+N:Killer fire beetle
+G:K
+M:7
+F:IM_FIRE|ANIMAL
+S:
+D:It is a giant beetle wreathed in flames.
+C:R
+I:110
+W:27
+B:SPIT
+
+N:Algroth
+G:T
+M:1
+F:REGENERATE|DROP_20|IM_POIS|TROLL|EVIL
+S:
+D:A powerful troll form.  Venom drips from its needlelike claws.
+C:o
+I:110
+W:27
+B:BITE
+
+N:Shimmering mold
+G:m
+M:2
+F:IM_ELEC|NEVER_MOVE|IM_POIS|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP
+S:
+D:sparks.
+C:b
+I:110
+W:27
+B:SPORE
+
+N:Purple worm
+G:w
+M:1
+F:IM_ACID|IM_POIS|ANIMAL
+S:
+D:poison.
+C:P
+I:110
+W:29
+B:STING
+
+N:Skeleton troll
+G:s
+M:9
+F:TROLL|REGENERATE|UNDEAD|EVIL|COLD_BLOOD|IM_COLD|IM_POIS|NO_FEAR|NO_CONF|NO_SLEEP|NO_STUN
+S:
+D:It is a troll skeleton animated by dark dweomers.
+C:w
+I:110
+W:30
+B:BITE
+
+N:Killer slicer beetle
+G:K
+M:7
+F:ANIMAL
+S:
+D:It is a beetle with deadly sharp cutting mandibles and a rock-hard carapace.
+C:y
+I:110
+W:30
+B:BITE
+
+N:Death watch beetle
+G:K
+M:7
+F:ANIMAL
+S:
+D:It is a giant beetle that produces a chilling sound.
+C:D
+I:110
+W:31
+B:WAIL
+
+N:Doombat
+G:b
+M:4
+F:IM_FIRE|ANIMAL
+S:
+D:flickering bright red flames.
+C:R
+I:120
+W:32
+B:BITE
+
+N:Skeleton ettin
+G:s
+M:9
+F:TROLL|REGENERATE|UNDEAD|EVIL|COLD_BLOOD|IM_COLD|IM_POIS|NO_FEAR|NO_CONF|NO_SLEEP|NO_STUN
+S:
+D:It is the animated form of a massive two-headed troll.
+C:w
+I:110
+W:33
+B:BITE
+
+N:Giant grey scorpion
+G:S
+M:7
+F:ANIMAL|IM_POIS
+S:
+D:It is a giant grey scorpion.  It looks poisonous.
+C:s
+I:120
+W:34
+B:STING
+
+N:Acidic cytoplasm
+G:j
+M:2
+F:COLD_BLOOD|DROP_4|TAKE_ITEM|IM_ACID|IM_COLD|IM_ELEC|IM_FIRE|IM_POIS|NO_CONF|NO_SLEEP|NO_FEAR
+S:
+D:A disgusting animated blob of destruction.  Flee its gruesome hunger!
+C:s
+I:120
+W:35
+B:TOUCH
+
+N:Mûmak
+G:q
+M:4
+F:ANIMAL
+S:
+D:A massive elephantine form with eyes twisted by madness.
+C:s
+I:110
+W:35
+B:CRUSH
+
+N:Olog
+G:T
+M:1
+F:REGENERATE|DROP_20|TROLL|EVIL
+S:
+D:It is a massive intelligent troll with needle-sharp fangs.
+C:y
+I:110
+W:36
+B:BITE
+
+N:Mummified troll
+G:z
+M:10
+F:TROLL|REGENERATE|DROP_20|NO_FEAR|UNDEAD|EVIL|COLD_BLOOD|IM_COLD|IM_POIS|HURT_FIRE|NO_CONF|NO_SLEEP|NO_STUN
+S:
+D:fists.
+C:w
+I:110
+W:37
+B:HIT
+
+N:Black pudding
+G:j
+M:2
+F:COLD_BLOOD|DROP_40|DROP_60|DROP_1|TAKE_ITEM|IM_ACID|IM_COLD|IM_ELEC|IM_FIRE|IM_POIS|NO_CONF|NO_SLEEP|NO_FEAR
+S:
+D:A lump of rotting black flesh that slurrrrrrrps across the dungeon floor.
+C:D
+I:110
+W:37
+B:TOUCH
+
+N:Eldrak
+G:T
+M:1
+F:DROP_40|TAKE_ITEM|NO_CONF|NO_SLEEP|TROLL|EVIL
+S:
+D:A massive troll, larger and stronger than many men together.
+C:r
+I:110
+W:37
+B:HIT
+
+N:Giant roc
+G:B
+M:8
+F:IM_ELEC|ANIMAL
+S:
+D:and its screech echoes through the many winding dungeon corridors.
+C:u
+I:110
+W:40
+B:HIT
+
+N:Minotaur
+G:H
+M:1
+F:EVIL
+S:
+D:It is a cross between a human and a bull.
+C:s
+I:130
+W:40
+B:BUTT
+
