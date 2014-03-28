@@ -348,6 +348,11 @@ func (g *Game) IsSIDValid(sid string) bool {
     return stmt.QueryRow(sid).Scan() != sql.ErrNoRows
 }
 
+func (g *Game) LogoutPlayer(sid string) {
+    g.unlinkActorFromCells(g.players.getPlayerBySession(sid))
+    g.players.deletePlayerBySession(sid)
+}
+
 func GameLoop() {
     gameInstance = GetInstance()
     var tick int64

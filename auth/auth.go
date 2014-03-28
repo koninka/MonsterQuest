@@ -9,9 +9,9 @@ import (
     "database/sql"
     "MonsterQuest/connect"
     "MonsterQuest/consts"
+    "MonsterQuest/engine"
     "github.com/nu7hatch/gouuid"
     "regexp"
-    // "html/template"
 )
 
 func isExistUser(login, pass string) bool {
@@ -45,6 +45,8 @@ func logoutAction(u4 string) string {
     res, _ := stmt.Exec(u4)
     if amount, _ := res.RowsAffected(); amount != 1 {
         result["result"] = "badSid"
+    } else {
+        engine.GetInstance().LogoutPlayer(u4)
     }
     resJSON, _ := json.Marshal(result)
     return string(resJSON)
