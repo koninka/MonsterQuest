@@ -335,6 +335,10 @@ func (g *Game) updateWorld() {
         delete(g.lastActions, k)
     }
     for _, m := range g.mobs.mobs {
+        dir := m.CurrDirection()
+        if g.moveActor(m, dir) {
+            m.NotifyAboutCollision()
+        }
         m.Do()
     }
 }

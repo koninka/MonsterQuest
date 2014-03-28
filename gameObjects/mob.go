@@ -6,6 +6,7 @@ type Mober interface {
     Activer
     CurrDirection() string
     Do()
+    NotifyAboutCollision()
 }
 
 type Mob struct {
@@ -18,6 +19,7 @@ func (m *Mob) CurrDirection() string {
 
 func (m *Mob) Do() {}
 
+func (m *Mob) NotifyAboutCollision() {}
 type NumbMob struct {
     Mob
 }
@@ -52,6 +54,12 @@ func (m *WalkingMob) Do() {
         m.nextDir = getRandomDir()
     }
 }
+
+func (m *WalkingMob) NotifyAboutCollision() {
+    collisionDir := m.currDir
+    for newDir := getRandomDir(); newDir != collisionDir; newDir = getRandomDir() {
+        m.currDir = newDir
+    }
 }
 
 func NewMob(id int64, x, y float64) Mober {
