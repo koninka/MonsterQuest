@@ -22,10 +22,23 @@ type NumbMob struct {
     Mob
 }
 
+var gen = rand.New(rand.NewSource(0))
+var directions = [...]string {"south", "east", "west", "north"}
+const CYCLE_DURATION_IN_TICKS = 10
+
+func throw4Dice1() int {
+    return gen.Int() % 4
+}
+
+func getRandomDir() string {
+    return directions[throw4Dice1()]
+}
+
 type WalkingMob struct {
     Mob
     currDir string
     nextDir string
+    cycleCounter int
 }
 
 func (m *WalkingMob) CurrDirection() string {
@@ -33,7 +46,12 @@ func (m *WalkingMob) CurrDirection() string {
 }
 
 func (m *WalkingMob) Do() {
-    // some logic 
+    m.cycleCounter = (m.cycleCounter + 1) % CYCLE_DURATION_IN_TICKS
+    if m.cycleCounter == 0 {
+        m.currDir = m.nextDir
+        m.nextDir = getRandomDir()
+    }
+}
 }
 
 func NewMob(id int64, x, y float64) Mober {
