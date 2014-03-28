@@ -15,18 +15,25 @@ func GetShiftByDirection(dir string) (mx int, my int) {
     return
 }
 
+type Activer interface {
+    GetID() int64
+    GetCenter() geometry.Point
+    GetRectangle() geometry.Rectangle
+    GetShiftedFrontSide(dir string) geometry.Point
+    GetCollisionableSide(dir string) (geometry.Segment, geometry.Point)
+}
+
 type ActiveObject struct {
     id int64
     Center geometry.Point
 }
 
-type Activer interface {
-    GetID() int64
-    GetRectangle() geometry.Rectangle
-}
-
 func (obj *ActiveObject) GetID() int64 {
     return obj.id
+}
+
+func (obj *ActiveObject) GetCenter() geometry.Point {
+    return obj.Center
 }
 
 func (obj *ActiveObject) GetRectangle() geometry.Rectangle {
