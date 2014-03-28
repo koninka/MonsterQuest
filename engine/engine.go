@@ -41,7 +41,7 @@ func GetInstance() *Game {
                 make(map[string] *gameObjects.Player),
             },
             mobList{
-                make(map[int64] *gameObjects.Mob),
+                make(map[int64] gameObjects.Mober),
             },
             make(map[string] jsonType),
         }
@@ -208,12 +208,13 @@ func (g *Game) lookAction(sid string) jsonType {
         }
     }
     for id, m := range g.mobs.mobs {
-        if area.In(&m.Center) {
+        center := m.GetCenter()
+        if area.In(&center) {
             json := make(jsonType)
             json["type"] = "mob"
             json["id"] = id
-            json["x"] = m.Center.X
-            json["y"] = m.Center.Y
+            json["x"] = center.X
+            json["y"] = center.Y
             visibleActors = append(visibleActors, json)
         }
     }
@@ -223,9 +224,9 @@ func (g *Game) lookAction(sid string) jsonType {
     return res
 }
 
-func (g *Game) checkCollisionWithWalls(p *gameObjects.Player, dir string) (bool, geometry.Point) {
+func (g *Game) checkCollisionWithWalls(obj gameObjects.Activer, dir string) (bool, geometry.Point) {
     var near float64
-    pos := p.GetShiftedFrontSide(dir)
+    pos := obj.GetShiftedFrontSide(dir)
     if (g.field.isBlocked(int(pos.X), int(pos.Y))){
         switch dir {
         case "north": 
@@ -240,7 +241,7 @@ func (g *Game) checkCollisionWithWalls(p *gameObjects.Player, dir string) (bool,
         return false, pos
     }
     eps := 2.0
-    side, pos := p.GetCollisionableSide(dir)
+    side, pos := obj.GetCollisionableSide(dir)
     col1, row1 := int(side.Point1.X), int(side.Point1.Y)
     col2, row2 := int(side.Point2.X), int(side.Point2.Y)
     res1 := g.field.isBlocked(col1, row1)
@@ -257,7 +258,7 @@ func (g *Game) checkCollisionWithWalls(p *gameObjects.Player, dir string) (bool,
                 side.Point1.X = side.Point1.X + near;
                 side.Point2.X = side.Point2.X + near;
             } else {
-                return false, p.Center
+                return false, obj.GetCenter()
             }
             pos.X = (side.Point1.X + side.Point2.X) / 2;
         case "east", "west":
@@ -270,7 +271,7 @@ func (g *Game) checkCollisionWithWalls(p *gameObjects.Player, dir string) (bool,
                 side.Point1.Y = side.Point1.Y + near;
                 side.Point2.Y = side.Point2.Y + near;
             } else {
-                return false, p.Center
+                return false, obj.GetCenter()
             }
             pos.Y = (side.Point1.Y + side.Point2.Y) / 2;
         }
@@ -287,13 +288,13 @@ func (g *Game) checkCollisionWithActorsInCell(col, row int, segment *geometry.Se
     return res
 }
 
-func (g *Game) checkCollisionWithActors(p *gameObjects.Player, dir string) (bool, geometry.Point) {
-    segment, pos := p.GetCollisionableSide(dir)
+func (g *Game) checkCollisionWithActors(obj gameObjects.Activer, dir string) (bool, geometry.Point) {
+    segment, pos := obj.GetCollisionableSide(dir)
     col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
     col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
     res := g.checkCollisionWithActorsInCell(col1, row1, &segment) || g.checkCollisionWithActorsInCell(col2, row2, &segment)    
     if res {
-        pos = p.Center;
+        pos = obj.GetCenter()
     }
     return res, pos
 }
