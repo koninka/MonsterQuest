@@ -4,7 +4,7 @@ import "MonsterQuest/geometry"
 
 type Mober interface {
     Activer
-    NextDir() string
+    CurrDirection() string
     Do()
 }
 
@@ -12,7 +12,7 @@ type Mob struct {
     ActiveObject
 }
 
-func (m *Mob) NextDir() string {
+func (m *Mob) CurrDirection() string {
     return ""
 }
 
@@ -28,8 +28,8 @@ type WalkingMob struct {
     nextDir string
 }
 
-func (m *WalkingMob) NextDir() string {
-    return m.nextDir
+func (m *WalkingMob) CurrDirection() string {
+    return m.currDir
 }
 
 func (m *WalkingMob) Do() {
