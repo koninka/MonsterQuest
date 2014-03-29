@@ -229,17 +229,17 @@ func (g *Game) lookAction(sid string) jsonType {
     return res
 }
 
-func (g *Game) checkCollisionWithWalls(obj gameObjects.Activer, dir string) (bool, geometry.Point) {
+func (g *Game) checkCollisionWithWalls(obj gameObjects.Activer, dir int) (bool, geometry.Point) {
     pos := obj.GetShiftedFrontSide(dir)
     if g.field.isBlocked(int(pos.X), int(pos.Y)) {
         switch dir {
-        case "north": 
+        case consts.NORTH_DIR: 
             pos.Y = math.Ceil(pos.Y) + consts.OBJECT_HALF
-        case "south":
+        case consts.SOUTH_DIR:
             pos.Y = math.Floor(pos.Y) - consts.OBJECT_HALF
-        case "east":
+        case consts.EAST_DIR:
             pos.X = math.Floor(pos.X) - consts.OBJECT_HALF
-        case "west":
+        case consts.WEST_DIR:
             pos.X = math.Ceil(pos.X) + consts.OBJECT_HALF
         }
         return false, pos
@@ -251,7 +251,7 @@ func (g *Game) checkCollisionWithWalls(obj gameObjects.Activer, dir string) (boo
     var near float64
     if res1 || res2 {
         switch dir {
-        case "north","south":
+        case consts.NORTH_DIR, consts.SOUTH_DIR:
             if res1 {
                 near = math.Ceil(side.Point1.X) - side.Point1.X
             } else {
@@ -264,7 +264,7 @@ func (g *Game) checkCollisionWithWalls(obj gameObjects.Activer, dir string) (boo
                 return false, obj.GetCenter()
             }
             pos.X = (side.Point1.X + side.Point2.X) / 2
-        case "east", "west":
+        case consts.EAST_DIR, consts.WEST_DIR:
             if res1 {
                 near = math.Ceil(side.Point1.Y) - side.Point1.Y
             } else {
@@ -291,7 +291,7 @@ func (g *Game) checkCollisionWithActorsInCell(col, row int, segment *geometry.Se
     return res
 }
 
-func (g *Game) checkCollisionWithActors(obj gameObjects.Activer, dir string) (bool, geometry.Point) {
+func (g *Game) checkCollisionWithActors(obj gameObjects.Activer, dir int) (bool, geometry.Point) {
     segment, pos := obj.GetCollisionableSide(dir)
     col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
     col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
@@ -302,7 +302,7 @@ func (g *Game) checkCollisionWithActors(obj gameObjects.Activer, dir string) (bo
     return res, pos
 }
 
-func (g *Game) calcNewCenterForActor(obj gameObjects.Activer, dir string) (bool, geometry.Point) {
+func (g *Game) calcNewCenterForActor(obj gameObjects.Activer, dir int) (bool, geometry.Point) {
     collisionOccured := false
     noCollisionWithWall, res := g.checkCollisionWithWalls(obj, dir)
     if noCollisionWithWall {
@@ -317,8 +317,8 @@ func (g *Game) calcNewCenterForActor(obj gameObjects.Activer, dir string) (bool,
     return collisionOccured, res
 }
 
-func (g *Game) moveActor(obj gameObjects.Activer, dir string) bool {
-    if len(dir) == 0 {
+func (g *Game) moveActor(obj gameObjects.Activer, dir int) bool {
+    if dir == -1 {
         return false
     }
     collisionOccured, newCenter := g.calcNewCenterForActor(obj, dir)
@@ -328,12 +328,23 @@ func (g *Game) moveActor(obj gameObjects.Activer, dir string) bool {
     return collisionOccured
 }
 
+func (g *Game) getIotaDir(dir string) int {
+    var res int
+    switch dir {
+    case "north": res = consts.NORTH_DIR
+    case "south": res = consts.SOUTH_DIR
+    case "west" : res = consts.WEST_DIR
+    case "east" : res = consts.EAST_DIR
+    }
+    return res
+}
+
 func (g *Game) updateWorld() {
     for k, v := range g.lastActions {
         action := v["action"].(string)
         p := g.players.getPlayerBySession(k)
         if action == "move" {
-            g.moveActor(p, v["direction"].(string))
+            g.moveActor(p, g.getIotaDir(v["direction"].(string)))
         }
         delete(g.lastActions, k)
     }

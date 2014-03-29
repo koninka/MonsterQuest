@@ -3,11 +3,12 @@ package gameObjects
 import (
     "math/rand"
     "MonsterQuest/geometry"
+    "MonsterQuest/consts"
 )
 
 type Mober interface {
     Activer
-    CurrDirection() string
+    CurrDirection() int
     Do()
     NotifyAboutCollision()
     SetID(id int64)
@@ -19,8 +20,8 @@ type Mob struct {
     kind int
 }
 
-func (m *Mob) CurrDirection() string {
-    return ""
+func (m *Mob) CurrDirection() int {
+    return -1
 }
 
 func (m *Mob) Do() {}
@@ -44,25 +45,25 @@ type NumbMob struct {
 }
 
 var gen = rand.New(rand.NewSource(0))
-var directions = [...]string {"south", "east", "west", "north"}
+var directions = [...]int {consts.SOUTH_DIR, consts.EAST_DIR, consts.WEST_DIR, consts.NORTH_DIR}
 const CYCLE_DURATION_IN_TICKS = 10
 
 func throw4Dice1() int {
     return gen.Int() % 4
 }
 
-func getRandomDir() string {
+func getRandomDir() int {
     return directions[throw4Dice1()]
 }
 
 type WalkingMob struct {
     Mob
-    currDir string
-    nextDir string
+    currDir int
+    nextDir int
     cycleCounter int
 }
 
-func (m *WalkingMob) CurrDirection() string {
+func (m *WalkingMob) CurrDirection() int {
     return m.currDir
 }
 
