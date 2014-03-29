@@ -58,6 +58,9 @@ define(function() {
       //this.game.world.stage = this.game.stage;
       //this.game.add.world = this.game.world;
       //PIXI.Stage.call(this.game.stage, 0x000000, false);
+      //for(var i = 0; i < this.game.world.children.length; ++i){
+      //   this.game.world.children[i].destroy();
+      //}
       this.game.world.children = []
    }
 
