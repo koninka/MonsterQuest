@@ -12,4 +12,8 @@ const (
 	VISION_RADIUS = 10
 	PATH_TO_MAPS = "resourses/maps/"
 	OBJECT_HALF = 0.5
+	NORTH_DIR = iota
+	SOUTH_DIR
+	EAST_DIR
+	WEST_DIR
 )

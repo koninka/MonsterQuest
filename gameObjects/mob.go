@@ -3,21 +3,25 @@ package gameObjects
 import (
     "math/rand"
     "MonsterQuest/geometry"
+    "MonsterQuest/consts"
 )
 
 type Mober interface {
     Activer
-    CurrDirection() string
+    CurrDirection() int
     Do()
     NotifyAboutCollision()
+    SetID(id int64)
+    GetKind() int
 }
 
 type Mob struct {
     ActiveObject
+    kind int
 }
 
-func (m *Mob) CurrDirection() string {
-    return ""
+func (m *Mob) CurrDirection() int {
+    return -1
 }
 
 func (m *Mob) Do() {}
@@ -28,30 +32,38 @@ func (m *Mob) GetType() string {
     return "mob"
 }
 
+func (m *Mob) SetID(id int64) {
+    m.id = id
+}
+
+func (m *Mob) GetKind() int {
+    return m.kind
+}
+
 type NumbMob struct {
     Mob
 }
 
 var gen = rand.New(rand.NewSource(0))
-var directions = [...]string {"south", "east", "west", "north"}
+var directions = [...]int {consts.SOUTH_DIR, consts.EAST_DIR, consts.WEST_DIR, consts.NORTH_DIR}
 const CYCLE_DURATION_IN_TICKS = 10
 
 func throw4Dice1() int {
     return gen.Int() % 4
 }
 
-func getRandomDir() string {
+func getRandomDir() int {
     return directions[throw4Dice1()]
 }
 
 type WalkingMob struct {
     Mob
-    currDir string
-    nextDir string
+    currDir int
+    nextDir int
     cycleCounter int
 }
 
-func (m *WalkingMob) CurrDirection() string {
+func (m *WalkingMob) CurrDirection() int {
     return m.currDir
 }
 
@@ -70,10 +82,10 @@ func (m *WalkingMob) NotifyAboutCollision() {
     }
 }
 
-func NewMob(id int64, x, y float64) Mober {
+func NewMob(kind int, x, y float64) Mober {
     if gen.Int() % 2 != 0 {
-        return &NumbMob{Mob{ActiveObject{id, geometry.Point{x, y}}}}
+        return &NumbMob{Mob{ActiveObject{-1, geometry.Point{x, y}}, kind}}
     } else {
-        return &WalkingMob{Mob{ActiveObject{id, geometry.Point{x, y}}}, getRandomDir(), getRandomDir(), throw4Dice1()}
+        return &WalkingMob{Mob{ActiveObject{-1, geometry.Point{x, y}}, kind}, getRandomDir(), getRandomDir(), throw4Dice1()}
     }
 }

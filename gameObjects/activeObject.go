@@ -5,12 +5,12 @@ import (
     "MonsterQuest/consts"
 )
 
-func GetShiftByDirection(dir string) (mx int, my int) {
+func GetShiftByDirection(dir int) (mx int, my int) {
     switch dir {
-    case "north": mx, my = 0, -1
-    case "south": mx, my = 0, 1
-    case "east":  mx, my = 1, 0
-    case "west":  mx, my = -1, 0
+    case consts.NORTH_DIR: mx, my = 0, -1
+    case consts.SOUTH_DIR: mx, my = 0, 1
+    case consts.EAST_DIR:  mx, my = 1, 0
+    case consts.WEST_DIR:  mx, my = -1, 0
     }
     return
 }
@@ -19,8 +19,8 @@ type Activer interface {
     GetID() int64
     GetCenter() geometry.Point
     GetRectangle() geometry.Rectangle
-    GetShiftedFrontSide(dir string) geometry.Point
-    GetCollisionableSide(dir string) (geometry.Segment, geometry.Point)
+    GetShiftedFrontSide(dir int) geometry.Point
+    GetCollisionableSide(dir int) (geometry.Segment, geometry.Point)
     ForcePlace(point geometry.Point)
     GetType() string
 }
@@ -46,21 +46,21 @@ func (obj *ActiveObject) GetRectangle() geometry.Rectangle {
     return geometry.Rectangle{lt, rb}
 }
 
-func (obj *ActiveObject) GetShiftedCenter(dir string) geometry.Point {
+func (obj *ActiveObject) GetShiftedCenter(dir int) geometry.Point {
     mx, my := GetShiftByDirection(dir)
     point := obj.Center
     point.Move(float64(mx) * consts.VELOCITY, float64(my) * consts.VELOCITY)
     return point
 }
 
-func (obj *ActiveObject) GetShiftedFrontSide(dir string) geometry.Point{
+func (obj *ActiveObject) GetShiftedFrontSide(dir int) geometry.Point{
     mx, my := GetShiftByDirection(dir)
     point := obj.Center
     point.Move(float64(mx) * (consts.OBJECT_HALF + consts.VELOCITY), float64(my) * (consts.OBJECT_HALF + consts.VELOCITY))
     return point;
 }
 
-func (obj *ActiveObject) Move(dir string) {
+func (obj *ActiveObject) Move(dir int) {
     obj.Center = obj.GetShiftedCenter(dir)
 }
 
@@ -72,22 +72,22 @@ func (obj *ActiveObject) GetType() string {
     return ""
 }
 
-func (obj *ActiveObject) GetCollisionableSide(dir string) (geometry.Segment, geometry.Point) {
+func (obj *ActiveObject) GetCollisionableSide(dir int) (geometry.Segment, geometry.Point) {
     var p1, p2, p3 geometry.Point
     p1 = obj.GetShiftedCenter(dir)
     p2 = p1
     p3 = p1
     switch dir {
-        case "north": 
+        case consts.NORTH_DIR: 
             p1.Move(-consts.OBJECT_HALF, -consts.OBJECT_HALF)
             p2.Move(consts.OBJECT_HALF, -consts.OBJECT_HALF)
-        case "south":
+        case consts.SOUTH_DIR:
             p1.Move(-consts.OBJECT_HALF, consts.OBJECT_HALF)
             p2.Move(consts.OBJECT_HALF, consts.OBJECT_HALF)
-        case "east":
+        case consts.EAST_DIR:
             p1.Move(consts.OBJECT_HALF, -consts.OBJECT_HALF)
             p2.Move(consts.OBJECT_HALF, consts.OBJECT_HALF)
-        case "west":
+        case consts.WEST_DIR:
             p1.Move(-consts.OBJECT_HALF, -consts.OBJECT_HALF)
             p2.Move(-consts.OBJECT_HALF, consts.OBJECT_HALF)
     }
