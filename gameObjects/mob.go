@@ -81,10 +81,10 @@ func (m *WalkingMob) NotifyAboutCollision() {
     }
 }
 
-func NewMob(x, y float64) Mober {
+func NewMob(kind int, x, y float64) Mober {
     if gen.Int() % 2 != 0 {
-        return &NumbMob{Mob{ActiveObject{-1, geometry.Point{x, y}}}}
+        return &NumbMob{Mob{ActiveObject{-1, geometry.Point{x, y}}, kind}}
     } else {
-        return &WalkingMob{Mob{ActiveObject{-1, geometry.Point{x, y}}}, getRandomDir(), getRandomDir(), throw4Dice1()}
+        return &WalkingMob{Mob{ActiveObject{-1, geometry.Point{x, y}}, kind}, getRandomDir(), getRandomDir(), throw4Dice1()}
     }
 }
