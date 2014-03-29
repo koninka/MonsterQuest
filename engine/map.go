@@ -71,3 +71,7 @@ func (f *gameField) loadFromFile(mapFile, areasFile string, ml *mobList) {
 func (f *gameField) isBlocked(col, row int) bool {
     return col < 0 || col >= f.width || row < 0 || row >= f.height || f.field[row][col] == '#'
 }
+
+func (f *gameField) isFree(col, row int) bool {
+    return !f.isBlocked(col, row) && len(f.actors[row][col]) == 0
+}
