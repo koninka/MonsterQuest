@@ -286,11 +286,16 @@ func (g *Game) checkCollisionWithActorsInCell(col, row int, segment *geometry.Se
 
 func (g *Game) checkCollisionWithActors(obj gameObjects.Activer, dir string) (bool, geometry.Point) {
     segment, pos := obj.GetCollisionableSide(dir)
-    col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
-    col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
-    res := g.checkCollisionWithActorsInCell(col1, row1, &segment) || g.checkCollisionWithActorsInCell(col2, row2, &segment)    
+    //pos := obj.GetShiftedFrontSide(dir)
+    res := false;
+    for i:= -1 ; i <= 1; i++ {
+        for j:= -1; j <= 1; j++ {
+            res = res || g.checkCollisionWithActorsInCell(int(pos.X) + i, int(pos.Y) + j, &segment)    
+        }
+    }
     if res {
         pos = obj.GetCenter()
+        //отступ от квадрата другого игрока/// чтобы можно было подходить в плотную
     }
     return res, pos
 }
