@@ -47,6 +47,8 @@ func GetInstance() *Game {
             },
             mobList{
                 make(map[int64] gameObjects.Mober),
+                make([]*mobGenerator, 0, 1000),
+                make(chan gameObjects.Mober),
             },
             make(map[string] jsonType),
         }
@@ -57,6 +59,7 @@ func GetInstance() *Game {
             }
         }
         gameInstance.field.loadFromFile("map.txt", "areas.txt", &gameInstance.mobs)
+        go gameInstance.mobs.run()
         go gameInstance.websocketHub.run()
         go gameInstance.players.save()
     }

@@ -10,10 +10,13 @@ type Mober interface {
     CurrDirection() string
     Do()
     NotifyAboutCollision()
+    SetID(id int64)
+    GetKind() int
 }
 
 type Mob struct {
     ActiveObject
+    kind int
 }
 
 func (m *Mob) CurrDirection() string {
@@ -26,6 +29,14 @@ func (m *Mob) NotifyAboutCollision() {}
 
 func (m *Mob) GetType() string {
     return "mob"
+}
+
+func (m *Mob) SetID(id int64) {
+    m.id = id
+}
+
+func (m *Mob) GetKind() int {
+    return m.kind
 }
 
 type NumbMob struct {
@@ -70,10 +81,10 @@ func (m *WalkingMob) NotifyAboutCollision() {
     }
 }
 
-func NewMob(id int64, x, y float64) Mober {
+func NewMob(x, y float64) Mober {
     if gen.Int() % 2 != 0 {
-        return &NumbMob{Mob{ActiveObject{id, geometry.Point{x, y}}}}
+        return &NumbMob{Mob{ActiveObject{-1, geometry.Point{x, y}}}}
     } else {
-        return &WalkingMob{Mob{ActiveObject{id, geometry.Point{x, y}}}, getRandomDir(), getRandomDir(), throw4Dice1()}
+        return &WalkingMob{Mob{ActiveObject{-1, geometry.Point{x, y}}}, getRandomDir(), getRandomDir(), throw4Dice1()}
     }
 }
