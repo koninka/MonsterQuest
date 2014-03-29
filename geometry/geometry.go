@@ -9,6 +9,10 @@ func (p *Point) Move(dx, dy float64) {
 	p.Y += dy
 }
 
+func MakePoint(x, y float64) *Point {
+	return &Point{x, y}
+}
+
 type Rectangle struct {
 	LeftTop, RightBottom Point
 } 
@@ -24,4 +28,8 @@ func (r *Rectangle) In(p *Point) bool {
 
 func (r *Rectangle) CrossedBySegment(s *Segment) bool {
 	return r.In(&s.Point1) || r.In(&s.Point2)
+}
+
+func MakeRectangle(lt, rb *Point) *Rectangle {
+	return &Rectangle{*lt, *rb}
 }
