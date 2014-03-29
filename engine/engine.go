@@ -210,16 +210,20 @@ func (g *Game) lookAction(sid string) jsonType {
     }
     res["map"] = visibleSpace
     visibleActors := make([]jsonType, 0, 1000)
+    var addedActors = map[int64] bool {player.GetID() : true}
     for i := t; i < b; i++ {
         for j := l; j < r; j++ {
             for id, obj := range g.field.actors[i][j] {
-                json := make(jsonType)
-                center := obj.GetCenter()
-                json["id"] = id
-                json["x"] = center.X
-                json["y"] = center.Y
-                json["type"] = obj.GetType()
-                visibleActors = append(visibleActors, json)    
+                if !addedActors[id] {
+                    json := make(jsonType)
+                    center := obj.GetCenter()
+                    json["id"] = id
+                    json["x"] = center.X
+                    json["y"] = center.Y
+                    json["type"] = obj.GetType()
+                    visibleActors = append(visibleActors, json)
+                    addedActors[id] = true    
+                }
             }
         }
     }
