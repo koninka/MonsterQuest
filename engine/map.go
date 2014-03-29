@@ -3,8 +3,11 @@ package engine
 import (
     "bufio"
     "os"
+    "strings"
+    "strconv"
     "MonsterQuest/consts"
     "MonsterQuest/gameObjects"
+    "MonsterQuest/geometry"
 )
 
 type gameField struct {
@@ -13,21 +16,30 @@ type gameField struct {
     actors [][]map[int64] gameObjects.Activer
 }
 
-func (f *gameField) loadFromFile(fileName string, ml *mobList) {
-    file, _ := os.Open(consts.PATH_TO_MAPS + fileName)
+func parseFloat(s string) float64 {
+    res, err := strconv.ParseFloat(s, 64)
+    if err != nil {
+        return 0 // panic will be here
+    }
+    return res
+}
+
+func parseInt(s string) int {
+    res, err := strconv.ParseInt(s, 10, 64)
+    if err != nil {
+        return 0 // same situation as above
+    }
+    return int(res)
+}
+
+func (f *gameField) loadFromFile(mapFile, areasFile string, ml *mobList) {
+    file, _ := os.Open(consts.PATH_TO_MAPS + mapFile)
     defer file.Close()
     reader := bufio.NewReader(file)
     read := true
     i := 0
     for ; read ; {
         line, _, err := reader.ReadLine()
-        for j := 0; j < len(line); j++ {
-            if line[j] == 'M' {
-                mob := ml.addMob(GenerateId(), float64(j), float64(i))
-                f.actors[i][j][mob.GetID()] = mob 
-                line[j] = '.'
-            }
-        }
         f.field[i] = string(line)
         read = err == nil
         i++
@@ -36,6 +48,24 @@ func (f *gameField) loadFromFile(fileName string, ml *mobList) {
         }
     }
     f.height = i
+    areas, _ := os.Open(consts.PATH_TO_MAPS + areasFile)
+    defer areas.Close()
+    reader = bufio.NewReader(areas)
+    read = true
+    for {
+        bytes, _, err := reader.ReadLine()
+        if err == nil {
+            data := strings.Split(string(bytes), ":")
+            l, r := parseFloat(data[0]), parseFloat(data[1])
+            t, b := parseFloat(data[2]), parseFloat(data[3])
+            mType := parseInt(data[4])
+            duration := parseFloat(data[5])
+            area := geometry.MakeRectangle(geometry.MakePoint(l, t), geometry.MakePoint(r, b))
+            ml.addGen(NewMobGenerator(mType, area, duration, ml.pipeline))
+        } else {
+            break
+        }
+    }
 }
 
 func (f *gameField) isBlocked(col, row int) bool {

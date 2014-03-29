@@ -56,7 +56,7 @@ func GetInstance() *Game {
                 gameInstance.field.actors[i][j] = make(map[int64] gameObjects.Activer)
             }
         }
-        gameInstance.field.loadFromFile("map.txt", &gameInstance.mobs)
+        gameInstance.field.loadFromFile("map.txt", "areas.txt", &gameInstance.mobs)
         go gameInstance.websocketHub.run()
         go gameInstance.players.save()
     }
