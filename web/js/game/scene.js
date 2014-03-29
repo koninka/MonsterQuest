@@ -79,7 +79,7 @@ define(['options'], function(OPTIONS) {
       graphic.Clear();
       this.background.Draw(graphic, this.player.pt);
       for (var i = 0; i < this.players.length; ++i) {
-         console.log("draw");
+         //console.log("draw");
          var playerGroup = graphic.game.add.group();
          var tile = playerGroup.create(0, 0, 'player');
          var login = this.players[i].login || (this.players[i].type + this.players[i].id);
