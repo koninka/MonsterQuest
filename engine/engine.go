@@ -360,7 +360,7 @@ func (g *Game) updateWorld() {
     for _, m := range g.mobs.mobs {
         dir := m.CurrDirection()
         if g.moveActor(m, dir) {
-            m.NotifyAboutCollision()
+            go m.NotifyAboutCollision()
         }
         m.Do()
     }
