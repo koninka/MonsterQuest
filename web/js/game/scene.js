@@ -24,7 +24,7 @@ define(['options'], function(OPTIONS) {
       for(var i = 0; i < this.map.length; ++i){
          x = (-pt.x % 1 - off_x) * TILE_SIZE;
          for(var j = 0; j < this.map[i].length; ++j){
-            graphic.DrawObj(null, x, y, this.dictionary[this.map[i][j]])
+            graphic.Draw(this.dictionary[this.map[i][j]], x, y)
             x += TILE_SIZE;
          }
          y += OPTIONS.TILE_SIZE;
