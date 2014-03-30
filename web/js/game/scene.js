@@ -104,18 +104,19 @@ define(['options'], function(OPTIONS) {
       this.player.Draw(graphic);
       //var text = "x : " + this.player.pt.x + "\ny : " +  this.player.pt.y;
       //graphic.game.add.text(20, 20, text, {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'white'})
-      //this.DrawImaginaryBounds(graphic);
+      this.DrawImaginaryBounds(graphic);
    }
 
    Scene.prototype.DrawImaginaryBounds = function(graphic){
-      var off_x = (OPTIONS.screenColumnCount  + 1) / 2 * OPTIONS.TILE_SIZE;
-      var off_y = (OPTIONS.screenRowCount     + 1) / 2 * OPTIONS.TILE_SIZE;
-      var w = OPTIONS.screenColumnCount * OPTIONS.TILE_SIZE
-      var h = OPTIONS.screenRowCount * OPTIONS.TILE_SIZE
-      var c = { x: graphic.game.width / 2 , y : graphic.game.height / 2 };
-      var g = graphic.game.add.graphics(0, 0);
-      g.lineStyle(OPTIONS.TILE_SIZE, 0x000000, 1);
+      var off_x = (OPTIONS.screenColumnCount) / 2 * OPTIONS.TILE_SIZE;
+      var off_y = (OPTIONS.screenRowCount   ) / 2 * OPTIONS.TILE_SIZE;
+      var w = (OPTIONS.screenColumnCount - 1) * OPTIONS.TILE_SIZE
+      var h = (OPTIONS.screenRowCount - 1) * OPTIONS.TILE_SIZE
+      var c = { x: graphic.width / 2, y : graphic.height / 2 };
+      var g = new PIXI.Graphics(0, 0);
+      g.beginFill(0);
       g.drawRect(c.x - off_x, c.y - off_y, w, h);
+      graphic.stage.mask = g;
    }
 
    Scene.prototype.Clear = function(graphic){
