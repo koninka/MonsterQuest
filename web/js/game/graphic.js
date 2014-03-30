@@ -1,11 +1,11 @@
-define(function() {
+define(['jquery'], function() {
    function getRandomInt (min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
    }
 
    function Graphic(scene) {
-      this.WIDTH = 1000;
-      this.HEIGHT = 600;
+      this.width = 1000;
+      this.height = 600;
       this.atlas = {
          player : "/imgs/bunny.png",
          grass  : "/imgs/grass_1.png",
@@ -19,55 +19,63 @@ define(function() {
          //}
       };
       this.textures = {};
+      this.renderer = PIXI.autoDetectRenderer(this.width, this.height);
+      this.dict = null;
+      this.stage = new PIXI.Stage('0x000000', true);
       var I = this;
       var PreloadResourses = function () {
-         //I.game.
-         //I.game.load.atlas('space', '/imgs/space.spritesheet.png', '/imgs/space.spritesheet.json');
          for(var name in I.atlas) {
-            I.game.load.image(name, I.atlas[name]);
+            I.textures[name] = PIXI.Texture.fromImage(I.atlas[name]);
          }
       }
+      $('#view').append(this.renderer.view);
+      PreloadResourses();
+      var animate = function(){
+         requestAnimFrame( animate );
+         scene.Draw(I);
+         I.renderer.render(I.stage);
+      }
 
-      this.game = new Phaser.Game(
-         this.WIDTH,
-         this.HEIGHT,
-         Phaser.AUTO,
-         'view',
-         {
-            preload: PreloadResourses,
-            update: function() {
-               scene.Draw(I);
-            }
-         }
-      )
+      requestAnimFrame( animate );
    }
 
-   Graphic.prototype = Object.create(Phaser);
+   Graphic.prototype.Sprite = function(texture){
+      return new PIXI.Sprite(this.textures[texture]);
+   }
 
-   Graphic.prototype.DrawObj = function(obj, x, y, sprite_name){
-      var obj = this.game.add.sprite(x + this.game.width / 2 , y + this.game.height / 2, sprite_name);
-      //if(this.tileMethods[sprite_name]){
-      //   this.tileMethods[sprite_name](obj)
-      //}
+   Graphic.prototype.DrawObj = function(obj, x, y){
+      if(x != undefined)
+         obj.position.x = x;
+      if(y != undefined)
+         obj.position.y = y;
+      obj.position.x += this.width  / 2;
+      obj.position.y += this.height / 2;
+      this.stage.addChild(obj);
       return obj;
    }
 
-   Graphic.prototype.Clear = function(){
+   Graphic.prototype.Draw = function(texture, x, y){
+      var tile = this.Sprite(texture);
+      return this.DrawObj(tile, x, y);
+   }
 
-      //this.game.stage = new Phaser.Stage(this.game, this.game.width, this.game.height);
-      //this.game.world.stage = this.game.stage;
-      //this.game.add.world = this.game.world;
-      //PIXI.Stage.call(this.game.stage, 0x000000, false);
-      //for(var i = 0; i < this.game.world.children.length; ++i){
-      //   this.game.world.children[i].destroy();
-      //}
-      this.game.world.children = []
+   Graphic.prototype.Clear = function(){
+      for (var i = this.stage.children.length - 1; i >= 0; i--) {
+         this.stage.removeChild(this.stage.children[i]);
+      };
    }
 
    Graphic.prototype.drawGroup = function(group, x, y) {
-      group.x = x + this.game.width  / 2;
-      group.y = y + this.game.height / 2;
-      this.game.world.add(group);
+      return this.DrawObj(group, x, y);
+   }
+
+   Graphic.prototype.Text = function(text, style, x, y){
+      var text = new PIXI.Text(text, style);
+      if(x != undefined)
+         text.position.x = x;
+      if(y != undefined)
+         text.position.y = y;
+      return text;
    }
 
    return Graphic;
