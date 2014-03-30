@@ -11,7 +11,7 @@ define(['jquery', 'utils/utils'], function($, utils) {
       if(data['result'] == 'ok'){
          $msg.text('Вы успешно авторизованы! Через две секунды вас перебросит на страницу с игрой!').removeClass("Err");
          setTimeout(function () {
-            window.location.href = "/game/?sid=" + data['sid'] + "&soсket=" + data['webSoсket'] +"&id=" + data['id'] + '&srv=' + $('#server').val();
+            window.location.href = "/game/?sid=" + data['sid'] + "&soсket=" + data['webSocket'] +"&id=" + data['id'] + '&srv=' + $('#server').val();
          }, 2000);
       } else if(data['result'] == 'invalidCredentials'){
          $msg.text('Неверный логин или пароль').addClass("Err");
