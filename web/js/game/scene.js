@@ -100,9 +100,7 @@ define(['options'], function(OPTIONS) {
             (this.players[i].x - this.player.pt.x) * OPTIONS.TILE_SIZE - tile.texture.width / 2 + (tile.width - txt.width) / 2 + 2,
             (this.players[i].y - this.player.pt.y) * OPTIONS.TILE_SIZE - tile.texture.height / 2 + OPTIONS.TILE_SIZE + 7
          )
-         //delete txt.canvas;
-         //delete txt.context;
-         txt.destroy(true);
+         //txt.destroy(true);
       }
       this.player.Draw(graphic);
       //var text = "x : " + this.player.pt.x + "\ny : " +  this.player.pt.y;

@@ -61,6 +61,8 @@ define(['jquery'], function() {
 
    Graphic.prototype.Clear = function(){
       for (var i = this.stage.children.length - 1; i >= 0; i--) {
+         if (this.stage.children[i].destroy)
+            this.stage.children[i].destroy(true); 
          this.stage.removeChild(this.stage.children[i]);
       };
    }
