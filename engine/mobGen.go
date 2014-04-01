@@ -8,7 +8,7 @@ import (
 )
 
 type mobGenerator struct {
-	mobType int
+	kind *gameObjects.MobKind
 	area *geometry.Rectangle
 	respawnDuration time.Duration
 	pipeline chan gameObjects.Mober
@@ -30,12 +30,12 @@ func (gen *mobGenerator) run() {
 			}
 		}
 		if placeFound {
-			gen.pipeline <- gameObjects.NewMob(gen.mobType, x, y)
+			gen.pipeline <- gameObjects.NewMob(gen.kind, x, y)
 		}
 		time.Sleep(gen.respawnDuration)
 	}
 }
 
-func NewMobGenerator(mobType int, area *geometry.Rectangle, respawnDuration float64, pipeline chan gameObjects.Mober) *mobGenerator {
-	return &mobGenerator{mobType, area, time.Duration(respawnDuration) * time.Second, pipeline}
+func NewMobGenerator(kind *gameObjects.MobKind, area *geometry.Rectangle, respawnDuration float64, pipeline chan gameObjects.Mober) *mobGenerator {
+	return &mobGenerator{kind, area, time.Duration(respawnDuration) * time.Second, pipeline}
 }

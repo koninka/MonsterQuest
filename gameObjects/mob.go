@@ -2,6 +2,7 @@ package gameObjects
 
 import (
     "math/rand"
+    "strings"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
 )
@@ -12,12 +13,30 @@ type Mober interface {
     Do()
     NotifyAboutCollision()
     SetID(id int64)
-    GetKind() int
+    GetKind() *MobKind
+    GetName() string
+    GetDescription() string
+    HasFlag(flag string) bool
+}
+
+type MobKind struct {
+    id int64
+    name string
+    description string
+    flags map[string] bool
+}
+
+func CreateMobKind(id int64, name, description, flagsStr string) *MobKind {
+    kind := MobKind{id, name, description, make(map[string] bool)}
+    for _, flag := range strings.Split(flagsStr, "|") {
+        kind.flags[flag] = true
+    }
+    return &kind
 }
 
 type Mob struct {
     ActiveObject
-    kind int
+    kind *MobKind
 }
 
 func (m *Mob) CurrDirection() int {
@@ -36,8 +55,20 @@ func (m *Mob) SetID(id int64) {
     m.id = id
 }
 
-func (m *Mob) GetKind() int {
+func (m *Mob) GetKind() *MobKind {
     return m.kind
+}
+
+func (m *Mob) GetName() string {
+    return m.kind.name
+}
+
+func (m *Mob) GetDescription() string {
+    return m.kind.description
+}
+
+func (m *Mob) HasFlag(flag string) bool {
+    return m.kind.flags[flag]
 }
 
 type NumbMob struct {
@@ -82,7 +113,7 @@ func (m *WalkingMob) NotifyAboutCollision() {
     }
 }
 
-func NewMob(kind int, x, y float64) Mober {
+func NewMob(kind *MobKind, x, y float64) Mober {
     if gen.Int() % 2 != 0 {
         return &NumbMob{Mob{ActiveObject{-1, geometry.Point{x, y}}, kind}}
     } else {

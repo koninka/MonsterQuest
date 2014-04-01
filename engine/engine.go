@@ -51,8 +51,9 @@ func GetInstance() *Game {
             },
             mobList{
                 make(map[int64] gameObjects.Mober),
-                make([]*mobGenerator, 0, 1000),
+                make([] *mobGenerator, 0, 1000),
                 make(chan gameObjects.Mober),
+                make(map[int64] *gameObjects.MobKind),
             },
             make(map[string] jsonType),
         }
@@ -62,6 +63,7 @@ func GetInstance() *Game {
                 gameInstance.field.actors[i][j] = make(map[int64] gameObjects.Activer)
             }
         }
+        gameInstance.mobs.initializeMobTypes()
         gameInstance.field.loadFromFile("map.txt", "areas.txt", &gameInstance.mobs)
         go gameInstance.mobs.run()
         go gameInstance.websocketHub.run()

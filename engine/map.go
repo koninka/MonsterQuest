@@ -61,7 +61,7 @@ func (f *gameField) loadFromFile(mapFile, areasFile string, ml *mobList) {
             mType := parseInt(data[4])
             duration := parseFloat(data[5])
             area := geometry.MakeRectangle(geometry.MakePoint(l, t), geometry.MakePoint(r, b))
-            ml.addGen(NewMobGenerator(mType, area, duration, ml.pipeline))
+            ml.addGen(NewMobGenerator(ml.mobKinds[mType], area, duration, ml.pipeline))
         } else {
             break
         }
