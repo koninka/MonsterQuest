@@ -126,47 +126,47 @@ func (g *Game) unlinkActorFromCells(obj gameObjects.Activer) {
     delete(g.field.actors[rbr][ltc], id)
 }
 
+func (g *Game) CreatePlayer(sid string) int64 {
+    db := connect.CreateConnect()
+    stmt, _ := db.Prepare(`
+        SELECT u.id, u.login, up.x, up.y
+        FROM users u
+        INNER JOIN users_position as up ON u.id = up.user_id
+        INNER JOIN sessions s ON s.user_id = u.id AND s.sid = ?
+    `)
+    defer stmt.Close()
+    var dbId int64
+    var login string
+    var x, y float64
+    stmt.QueryRow(sid).Scan(&dbId, &login, &x, &y)
+    return g.players.add(sid, login, x, y, GenerateId(), dbId).GetID()
+}
+
+func (g *Game) getObjectById(id int64) (gameObjects.Activer, bool) {
+    if g.players.players[id] != nil {
+        return g.players.players[id], true
+    } else if g.mobs.mobs[id] != nil {
+        return g.mobs.mobs[id], true
+    } else {
+        return nil, false
+    }
+}
+
 func (g *Game) examineAction(json jsonType) jsonType {
     res := make(jsonType)
     id := int64(json["id"].(float64))
-    sid := json["sid"].(string)
     res["action"] = "examine"
-    setSuccesResult := func (login string, x, y float64) {
-        res["x"]      = x
-        res["y"]      = y
-        res["id"]     = id
-        res["type"]   = "player"
-        res["login"]  = login
-        res["result"] = "ok"
-    }
-    if info, isExist := g.players.getPlayerInfo(id); isExist {
-        setSuccesResult(info.Login, info.Center.X, info.Center.Y)
+    obj, isExists := g.getObjectById(id)
+    if !isExists {
+        res["result"] = "badId"
     } else {
-        db := connect.CreateConnect()
-        stmt, _ := db.Prepare(`
-            SELECT u.id, u.login
-            FROM users u
-            INNER JOIN sessions s ON s.user_id = u.id AND s.sid = ?
-        `)
-        defer stmt.Close()
-        var (
-            login string
-            dbId int64
-        )
-        err := stmt.QueryRow(sid).Scan(&dbId, &login)
-        if err != sql.ErrNoRows {
-            stmt, _ := db.Prepare("SELECT X, Y FROM users_position WHERE id = ?")
-            var x, y float64
-            err = stmt.QueryRow(dbId).Scan(&x, &y)
-            if err != sql.ErrNoRows {
-                setSuccesResult(login, x, y)
-                p := g.players.add(json["sid"].(string), login, x, y, id, dbId)
-                g.linkActorToCells(p)
-            } else {
-                res["result"] = "badId"
-            }
-        } else {
-            res["result"] = "badSid"
+        center := obj.GetCenter()
+        res["type"] = obj.GetType()
+        res["id"] = id
+        res["x"] = center.X
+        res["y"] = center.Y
+        if p := obj.(*gameObjects.Player); p != nil {
+            res["login"] = p.Login
         }
     }
     return res
@@ -193,6 +193,9 @@ func (g *Game) lookAction(sid string) jsonType {
     res := make(jsonType)
     res["action"] = "look"
     player := g.players.getPlayerBySession(sid)
+    if player == nil {
+        return nil
+    }
     visibleSpaceSide := 2 * (consts.VISION_RADIUS + 1)
     visibleSpace := make([][]string, visibleSpaceSide)
     for i := 0; i < visibleSpaceSide; i++ {

@@ -61,17 +61,12 @@ func loginAction(login, pass string) string {
         defer stmt.Close()
         _, err := stmt.Exec(login, u4.String())
         if err == nil {
-            var id int64
-            db.QueryRow(`
-                SELECT a.id
-                FROM users_position a
-                INNER JOIN users u ON u.id = a.user_id
-                WHERE u.login = ?`, login).Scan(&id)
+            sid := u4.String()
             host, _ := os.Hostname()
-            result["sid"] = u4.String()
+            result["sid"] = sid
             result["result"] = "ok"
             result["webSocket"] = "ws://" + host + consts.SERVER_PORT + "/websocket"
-            result["id"] = engine.GenerateId()
+            result["id"] = engine.GetInstance().CreatePlayer(sid)
         }
     }
     resJSON, _ := json.Marshal(result)
