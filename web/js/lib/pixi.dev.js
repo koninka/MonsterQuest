@@ -2613,8 +2613,10 @@ PIXI.Text.prototype.wordWrap = function(text)
  */
 PIXI.Text.prototype.destroy = function(destroyTexture)
 {
-    this.texture.baseTexture.imageUrl = this.canvas._pixiId;
-    this.texture.destroy(destroyTexture);
+    if(destroyTexture)
+    {
+        this.texture.destroy();
+    }
 };
 
 PIXI.Text.heightCache = {};
