@@ -20,7 +20,12 @@ func (h *websocketHub) run() {
 			close(c.send)
 		case m := <-h.broadcast:
 			for c := range h.connections {
-				c.send <- m
+				select {
+				case c.send <- m:
+				default:
+					close(c.send)
+					delete(h.connections, c)
+				}
 			}
 		}
 	}
