@@ -24,12 +24,12 @@ func parseFloat(s string) float64 {
     return res
 }
 
-func parseInt(s string) int {
+func parseInt(s string) int64 {
     res, err := strconv.ParseInt(s, 10, 64)
     if err != nil {
         return 0 // same situation as above
     }
-    return int(res)
+    return res
 }
 
 func (f *gameField) loadFromFile(mapFile, areasFile string, ml *mobList) {
