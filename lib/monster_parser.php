@@ -338,23 +338,81 @@ function WriteLineToFile(&$f, $line = '')
 }
 
 
+printf("\nmonsters amount = %d\n===================================\n", count($mobs));
+
+$f = fopen('monsters_ins.txt', 'w');
+
+$ins = "\t" . '("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s")';
+WriteLineToFile($f, 'INSERT INTO mobs_types(name, blow_method, color, description, flags, symbol, info, spells, level_info) VALUES');
+
+$lines = [];
+foreach ($mobs as $name => &$info) {
+   $blow_methods = [];
+   foreach ($info['B'] as $desc) {
+      $blow_methods[] = implode('|', $desc);
+   }
+   $lines[] = sprintf(
+      $ins,
+      $name,
+      implode('@', $blow_methods),
+      $info['C'],
+      $info['D'],
+      implode('|', $info['F']),
+      $info['G'],
+      implode('|', $info['I']),
+      implode('|', $info['S']),
+      implode('|', $info['W'])
+   );
+   // $st->execute([
+   //    $name,
+   //    implode('@', $blow_methods),
+   //    $info['C'],
+   //    $info['D'],
+   //    implode('|', $info['F']),
+   //    $info['G'],
+   //    implode('|', $info['I']),
+   //    implode('|', $info['S']),
+   //    implode('|', $info['W'])
+   // ]);
+   // foreach ($info as $key => $value) {
+      // if ($key == 'T' || $key == 'SF') continue;
+   //    if ($key == 'F' || $key == 'S' || $key == 'I' || $key == 'W') {
+   //       WriteLineToFile($f, "$key:" . implode('|', $value));
+   //    } else if ($key == 'B') {
+   //       foreach ($value as $desc) {
+   //          WriteLineToFile($f, "$key:" .implode('|', $desc));
+   //       }
+   //    } else {
+   //       WriteLineToFile($f, "$key:$value");
+   //    }
+   // }
+   // WriteLineToFile($f);
+}
+
+WriteLineToFile($f, implode(",\n", $lines) . ';');
 // print_r($mobs);
 // exit;
-$f = fopen('monsters.txt', 'w');
-foreach ($mobs as $name => $info) {
-   WriteLineToFile($f, "N:$name");
-   foreach ($info as $key => $value) {
-      if ($key == 'T' || $key == 'SF') continue;
-      if ($key == 'F' || $key == 'S' || $key == 'I' || $key == 'W') {
-         WriteLineToFile($f, "$key:" . implode('|', $value));
-      } else if ($key == 'B') {
-         foreach ($value as $desc) {
-            WriteLineToFile($f, "$key:" .implode('|', $desc));
-         }
-      } else {
-         WriteLineToFile($f, "$key:$value");
-      }
-   }
-   WriteLineToFile($f);
-}
-printf("\nmonsters amount = %d\n===================================\n", count($mobs));
+
+
+
+
+   // public function Query($query, $params = Array())
+   // {
+   //    if (!$this->isConnected) return Array();
+   //   // echo "<br>";
+   //   // echo "<br>";
+   //   // echo $query;
+   //   // echo "<br>";
+   //   // print_r($params);
+   //   // echo "<br>";
+   //   // echo "<br>";
+   //   // echo "<br>";
+   //    $st = $this->link->prepare($query);
+   //    if (empty($st) || !$st->execute($params)) {
+   //       // echo "<br>";
+   //       // echo "EXCEPTION";
+   //       // echo "<br>";
+   //       throw new DBException(ERROR_QUERY);
+   //    }
+   //    return $st->fetchAll(PDO::FETCH_ASSOC);
+   // }
