@@ -37,8 +37,6 @@ $forbidden_flags = [
    'SEASONAL',
    'XXX11',
    'XXX12',
-   'RAND_25',
-   'RAND_50',
    'ONLY_GOLD',
    'ONLY_ITEM',
    'ATTR_FLICKE',
@@ -53,8 +51,6 @@ $forbidden_flags = [
    'XXX7',
    'XXX8',
    'XXX9',
-   'PASS_WALL',
-   'KILL_WALL',
    'MOVE_BODY',
    'KILL_BODY',
    'NONLIVING'
@@ -86,6 +82,8 @@ $mon_flags = [
    'GIANT',
    'DRAGON',
    'DEMON',
+   'RAND_25',
+   'RAND_50',
    'UNDEAD',
    'EVIL',
    'ANIMAL',
@@ -164,33 +162,40 @@ class MonParser
       'D' => 4
    ];
 
+   static private function _Explode($str, $delimiter)
+   {
+      return array_map('trim', explode($delimiter, trim($str)));
+   }
+
    static private function _ExplodeByPipe($str)
    {
-      return array_map('trim', explode('|', trim($str)));
+      return static::_Explode($str, '|');
+   }
+
+   static private function _ExplodeByColon($str)
+   {
+      return static::_Explode($str, ':');
+   }
+
+   static private function _GetPartAfterFirstColon($str)
+   {
+      return substr($str, strpos($str, ':') + 1);
    }
 
    static private function _ParseBaseTemplateFlag($line, &$result)
    {
       switch ($line[0]) {
          case 'G':
-            $result['G'] = GetValueByKey($line);
-            break;
-
          case 'M':
-            $result['M'] = GetValueByKey($line);
+         case 'D':
+            $result[$line[0]] = GetValueByKey($line);
             break;
 
          case 'F':
-            $result['F'] = array_merge($result['F'], static::_ExplodeByPipe(GetValueByKey($line)));
-            break;
-
          case 'S':
-            $result['S'] = array_merge($result['S'], static::_ExplodeByPipe(GetValueByKey($line)));
+            $result[$line[0]] = array_merge($result[$line[0]], static::_ExplodeByPipe(GetValueByKey($line)));
             break;
 
-         case 'D':
-            $result['D'] = GetValueByKey($line);
-            break;
       }
       return isset(static::$BASE_CONFORMITY[$line[0]]);
    }
@@ -211,7 +216,7 @@ class MonParser
    {
       $r = [
          'G' => null, 'M'  => null, 'F' => [],   'S'  => [],
-         'D' => null, 'C'  => null, 'I' => null, 'W'  => null,
+         'D' => null, 'C'  => null, 'I' => [], 'W'  => null,
          'B' => null, 'SF' => null, 'T' => null, '-F' => []
       ];
       while ($i < count($content) && !empty(trim($content[$i]))) {
@@ -219,23 +224,21 @@ class MonParser
          if (static::_ParseBaseTemplateFlag($line, $r)) continue;
          switch ($line[0]) {
             case 'C':
-               $r['C'] = GetValueByKey($line);
-               break;
-
             case 'T':
-               $r['T'] = GetValueByKey($line);
+               $r[$line[0]] = GetValueByKey($line);
                break;
 
             case 'I':
-               $r['I'] = GetValueByKey($line);
+               $r['I'] = static::_ExplodeByColon(static::_GetPartAfterFirstColon($line));
                break;
 
             case 'W':
-               $r['W'] = GetValueByKey($line);
+               $r['W'] = static::_ExplodeByColon(static::_GetPartAfterFirstColon($line));
+               if (isset($r['W'][2])) unset($r['W'][2]);
                break;
 
             case 'B':
-               $r['B'] = GetValueByKey($line);
+               $r['B'][] = static::_ExplodeByColon(static::_GetPartAfterFirstColon($line));
                break;
 
             default:
@@ -252,11 +255,11 @@ class MonParser
       ) {
          $r = [];
       } else {
-         $r['S']   = array_merge($r['S'], $t['S']);
+         $r['S'] = array_merge($r['S'], $t['S']);
          $r['F'] = array_diff(array_merge($r['F'], $t['F']), $r['-F']);
-         unset($r['-F']);
-         $r['M']  = $t['M'];
+         $r['M'] = $t['M'];
          $r['G'] = !empty($r['G']) ? $r['G'] : $t['G'];
+         unset($r['-F']);
       }
       return $r;
    }
@@ -306,7 +309,7 @@ while ($i < count($content)) {
 }
 
 $i = 0;
-echo "temaplate names:\n";
+echo "template names:\n";
 foreach ($templates as $key => $value) {
    echo "\t" . $i++ . " $key\n";
 }
@@ -334,17 +337,24 @@ function WriteLineToFile(&$f, $line = '')
    fwrite($f, "$line\n");
 }
 
+
+// print_r($mobs);
+// exit;
 $f = fopen('monsters.txt', 'w');
 foreach ($mobs as $name => $info) {
    WriteLineToFile($f, "N:$name");
    foreach ($info as $key => $value) {
       if ($key == 'T' || $key == 'SF') continue;
-      if ($key == 'F' || $key == 'S') {
+      if ($key == 'F' || $key == 'S' || $key == 'I' || $key == 'W') {
          WriteLineToFile($f, "$key:" . implode('|', $value));
+      } else if ($key == 'B') {
+         foreach ($value as $desc) {
+            WriteLineToFile($f, "$key:" .implode('|', $desc));
+         }
       } else {
          WriteLineToFile($f, "$key:$value");
       }
    }
    WriteLineToFile($f);
 }
-print_r(count($mobs));
+printf("\nmonsters amount = %d\n===================================\n", count($mobs));
