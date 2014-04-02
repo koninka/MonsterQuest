@@ -161,9 +161,9 @@
 
 ##### Non-race (contains the "player" picture) #####
 
-N:0:<player>
-T:player
-C:w
+#N:0:<player>
+#T:player
+#C:w
 
 
 ##### Monster races proper #####
