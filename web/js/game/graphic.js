@@ -81,18 +81,28 @@ define(['jquery'], function() {
       return text;
    }
 
-// pixi mem leak
-   PIXI.Text.prototype.destroy = function(destroyTexture)
-   {
+   //closed up pixi mem leak
+   PIXI.Text.prototype.destroy = function(destroyTexture){
        this.texture.baseTexture.imageUrl = this.canvas._pixiId;
        this.texture.destroy(destroyTexture);
    };
 
-   PIXI.DisplayObjectContainer.prototype.removeChild = function(child)
-   {
-      if (child.destroy)child.destroy(true);  //
+   PIXI.DisplayObjectContainer.prototype.removeChild = function(child){
       if(this.stage)child.removeStageReference();
       child.parent = undefined;
+   };
+
+   PIXI.DisplayObjectContainer.prototype.removeStageReference = function(){
+      if (this.destroy)this.destroy(true);  //
+
+      for(var i=0,j=this.children.length; i<j; i++){
+        var child = this.children[i];
+        child.removeStageReference();
+      }
+
+      if(this._interactive)this.stage.dirty = true;
+
+      this.stage = null;
    };
 
    // https://github.com/GoodBoyDigital/pixi.js/pull/647
