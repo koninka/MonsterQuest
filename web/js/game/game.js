@@ -40,8 +40,8 @@ define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils,
    }
 
    Game.prototype.initGraphic = function() {
-      this.graphic = new Graphic(this.scene);
-   };
+      this.graphic = new Graphic(this.scene, this);
+   }
 
    Game.prototype.sendViaWS = function(hash) {
       hash["sid"] = this.sid;

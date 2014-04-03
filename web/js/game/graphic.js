@@ -3,7 +3,7 @@ define(['jquery'], function() {
       return Math.floor(Math.random() * (max - min + 1)) + min;
    }
 
-   function Graphic(scene) {
+   function Graphic(scene, game) {
       this.width = 1000;
       this.height = 600;
       this.atlas = {
@@ -30,10 +30,16 @@ define(['jquery'], function() {
       }
       $('#view').append(this.renderer.view);
       PreloadResourses();
+      var prevtick;
       var animate = function(){
+         stats.begin();
+         if(game.tick != prevtick){  
+            prevtick = game.tick;
+            scene.Draw(I);
+            I.renderer.render(I.stage);
+         }
          requestAnimFrame( animate );
-         scene.Draw(I);
-         I.renderer.render(I.stage);
+         stats.end();
       }
 
       requestAnimFrame( animate );
