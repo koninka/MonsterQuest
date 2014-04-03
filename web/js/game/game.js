@@ -1,4 +1,5 @@
 define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils, Player, Scene, Graphic, OPTIONS) {
+
    function Game(sid, wsuri) {
       this.sid      = sid;
       this.sock     = null;
@@ -6,6 +7,8 @@ define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils,
       this.wsuri    = wsuri;
       this.player   = new Player(parseInt(utils.getQueryVariable('id')));
       this.scene    = new Scene(this.player);
+      this.dirsDown  = {};
+      //this.examine  = $('<div/>').draggable().hide();
    }
 
    Game.prototype.setDictionary = function(dict) {
@@ -26,6 +29,14 @@ define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils,
 
    Game.prototype.defineRadiusFromMap = function(){
       this.scene.defineRadiusFromMap();
+   }
+
+   Game.prototype.checkKeys = function(){
+      
+      if(this.dirsDown['west']) this.movePlayer('west');
+      if(this.dirsDown['north']) this.movePlayer('north');
+      if(this.dirsDown['east']) this.movePlayer('east');
+      if(this.dirsDown['south']) this.movePlayer('south');
    }
 
    Game.prototype.initGraphic = function() {
@@ -76,6 +87,7 @@ define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils,
          var result = data["result"];
          if (data["tick"]) {
             th.tick = data["tick"];
+            th.sendViaWS({action: "look"});
          } else if (result == "badSid") {
             utils.gameShutDown("Bad user's security ID");
          } else if (result == "badId") {
@@ -83,10 +95,14 @@ define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils,
          } else {
             switch (data["action"]) {
                case "examine":
-                  th.player.examineSuccess(data);
-                  setInterval(function() {
-                     th.sendViaWS({action: "look"});
-                  }, 100);
+                  if(!th.player.pt){
+                     th.player.examineSuccess(data);
+                     //setInterval(function() {
+                     //   th.sendViaWS({action: "look"});
+                     //}, 1);
+                  } else {
+                     this.ShowData(data);
+                  }
                   break
                case "getOptions":
                   th.setOptions(data['options']);
@@ -94,47 +110,50 @@ define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils,
                   th.setDictionary(data);
                   break;
                case "look":
-                  //console.log(e.data);
                   th.setPlayerCoords(data.x, data.y);
                   th.setMap(data['map'], th.player.pt);
                   th.setActors(data['actors']);
                   th.defineRadiusFromMap();
                   if (th.firstLook) {
                      th.firstLook = false;
-                     /*setTimeout(function(){
-                        th.defineRadiusFromMap();
-                     }, 300);*/
-                     // requestAnimationFrame(Render);
                   }
                   break;
             }
          }
       };
-      
+
+      KeyboardJS.on('up, w', function() {
+         game.dirsDown['north'] = true;
+      }, function(){
+         game.dirsDown['north'] = false;
+      })
+
+      KeyboardJS.on('right, d', function() {
+         game.dirsDown['east'] = true; 
+      }, function(){
+         game.dirsDown['east'] = false; 
+      })
+
+      KeyboardJS.on('down, s', function() {
+         game.dirsDown['south'] = true;
+      }, function(){
+         game.dirsDown['south'] = false; 
+      })
+
+      KeyboardJS.on('left, a', function() {
+         game.dirsDown['west'] = true;
+      }, function(){
+         game.dirsDown['west'] = false; 
+      })
+
+      setInterval(function(){
+         th.checkKeys()
+      }, 1)
+
+
    }
 
    var game  = new Game(utils.getQueryVariable('sid'), utils.getQueryVariable('soсket'));
-
-   document.onkeydown = function(e) {
-      var actor = game.player;
-      if (!game.sock || game.sock.readyState != 1)
-         return;
-      e = e || event
-      switch(e.keyCode) {
-         case 37:
-            game.movePlayer("west");
-            break;
-         case 38:
-            game.movePlayer("north");
-            break;
-         case 39:
-            game.movePlayer("east");
-            break;
-         case 40:
-            game.movePlayer("south");
-            break;
-      }
-   };
 
    return game;
 });
