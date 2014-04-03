@@ -11,13 +11,7 @@ define(['jquery'], function() {
          grass  : "/imgs/grass_1.png",
          wall   : "/imgs/stone_1.png",
          space  : "/imgs/space_1.png"
-         //empty  : "/imgs/stone_1.png",
       }
-      this.tileMethods = {
-         //space : function(sprite){
-         //   sprite.frameName = 'space_' + getRandomInt(1, 4) + '.png'; 
-         //}
-      };
       this.textures = {};
       this.renderer = PIXI.autoDetectRenderer(this.width, this.height);
       this.dict = null;
