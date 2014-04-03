@@ -3,10 +3,19 @@
   <title>MonsterQuest - Game!</title>
   <link rel="stylesheet" type="text/css" href="/style/game.css" />
   <script type="text/javascript" src="/js/lib/pixi.dev.js"></script>
+  <script type="text/javascript" src="/js/lib/Stats.js"></script>
   <script type="text/javascript" src="/js/lib/keyboard.js"></script>
   <script data-main="/js/apps/game_app" src="/js/require.js"></script>
 </head>
 <body>
+  <script type="text/javascript">
+      var stats = new Stats();
+      stats.setMode( 0 );
+      stats.domElement.style.position = 'absolute';
+      stats.domElement.style.right = '0px';
+      stats.domElement.style.top = '0px';
+      document.body.appendChild( stats.domElement );
+  </script>
   <div class="game">
     <div><button id="logout" class="btn">Выход</button></div>
     <div id="view"></div>
