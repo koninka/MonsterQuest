@@ -7,7 +7,7 @@ define(['jquery', 'utils/utils', 'player', 'scene', 'graphic', 'options'], funct
       this.wsuri    = wsuri;
       this.player   = new Player(parseInt(utils.getQueryVariable('id')));
       this.scene    = new Scene(this.player);
-      this.dirsDown  = {};
+      this.dirsDown  = [];
       //this.examine  = $('<div/>').draggable().hide();
    }
 
@@ -31,12 +31,24 @@ define(['jquery', 'utils/utils', 'player', 'scene', 'graphic', 'options'], funct
       this.scene.defineRadiusFromMap();
    }
 
+   Game.prototype.dirDown = function(dir){
+      game.dirsDown.push(dir);
+      /*game.dirsDown[dir] = true;
+      if (!game.dirsDown.first)
+         game.dirsDown.first = dir;*/
+   }
+
+   Game.prototype.dirUp = function(dir){
+      for(var i = 0; game.dirsDown.length; ++i){
+         if(game.dirsDown[i] == dir){
+            game.dirsDown.splice(i, 1);
+            return;
+         }
+      }
+   }
+
    Game.prototype.checkKeys = function(){
-      
-      if(this.dirsDown['west']) this.movePlayer('west');
-      if(this.dirsDown['north']) this.movePlayer('north');
-      if(this.dirsDown['east']) this.movePlayer('east');
-      if(this.dirsDown['south']) this.movePlayer('south');
+      if(this.dirsDown[0]) this.movePlayer(this.dirsDown[0]);
    }
 
    Game.prototype.initGraphic = function() {
@@ -120,27 +132,28 @@ define(['jquery', 'utils/utils', 'player', 'scene', 'graphic', 'options'], funct
       };
 
       KeyboardJS.on('up, w', function() {
-         game.dirsDown['north'] = true;
+         game.dirDown('north');
       }, function(){
-         game.dirsDown['north'] = false;
+         game.dirUp('north');
       })
 
       KeyboardJS.on('right, d', function() {
-         game.dirsDown['east'] = true; 
+         game.dirDown('east');
       }, function(){
-         game.dirsDown['east'] = false; 
+         game.dirUp('east');
       })
 
       KeyboardJS.on('down, s', function() {
-         game.dirsDown['south'] = true;
+         game.dirDown('south');
       }, function(){
-         game.dirsDown['south'] = false; 
+         game.dirUp('south');
       })
 
+
       KeyboardJS.on('left, a', function() {
-         game.dirsDown['west'] = true;
+         game.dirDown('west');
       }, function(){
-         game.dirsDown['west'] = false; 
+         game.dirUp('west');
       })
 
       KeyboardJS.on('ctrl > enter', function() {
