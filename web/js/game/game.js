@@ -1,4 +1,4 @@
-define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils, Player, Scene, Graphic, OPTIONS) {
+define(['jquery', 'utils/utils', 'player', 'scene', 'graphic', 'options'], function(JQuery, utils, Player, Scene, Graphic, OPTIONS) {
 
    function Game(sid, wsuri) {
       this.sid      = sid;
@@ -145,6 +145,14 @@ define(['utils/utils', 'player', 'scene', 'graphic', 'options'], function(utils,
       }, function(){
          game.dirsDown['west'] = false; 
       })
+
+      KeyboardJS.on('ctrl > enter', function() {
+         var e = $('#view').get(0);
+         if(e.webkitRequestFullScreen)
+            e.webkitRequestFullScreen();
+         else if(e.mozRequestFullScreen)
+            e.mozRequestFullScreen();
+      });
 
       setInterval(function(){
          th.checkKeys()
