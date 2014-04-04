@@ -1,4 +1,4 @@
-define(['jquery', 'utils/utils'], function(utils) {
+define(['jquery', 'utils/utils'], function(JQuery, utils) {
    function logoutSuccess(data, textStatus, jqXHR) {
       if(data['result'] == 'ok'){
          utils.gameShutDown("You have successfully logged out");
