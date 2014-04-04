@@ -97,9 +97,6 @@ define(['jquery', 'utils/utils', 'player', 'scene', 'graphic', 'options'], funct
                case "examine":
                   if(!th.player.pt){
                      th.player.examineSuccess(data);
-                     //setInterval(function() {
-                     //   th.sendViaWS({action: "look"});
-                     //}, 1);
                   } else {
                      this.ShowData(data);
                   }
