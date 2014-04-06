@@ -143,10 +143,11 @@ define(['options', 'actor', 'monster'], function(OPTIONS, Actor, Monster) {
          text.position.y = 20;
       }
    }
-   View.prototype.Draw = function(graphic){
+
+   View.prototype.Draw = function(graphic, game){
       graphic.Clear();
       this.background.Draw(graphic, this.player.pt);
-      this.DrawActors(graphic);
+      this.DrawActors(graphic, game);
       this.player.Draw(graphic);
       this.DrawImaginaryBounds(graphic);
       this.DrawExamine(graphic);
