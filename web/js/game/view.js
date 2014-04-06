@@ -33,13 +33,13 @@ define(['options', 'actor', 'monster'], function(OPTIONS, Actor, Monster) {
       }
    }
 
-   function Scene(player){
+   function View(player){
       this.player = player;
       this.actors = {};
       this.background = new Background();
    }
 
-   Scene.prototype.setActors = function(players){
+   View.prototype.setActors = function(players){
       var actors_on_scene = [];
       for(var i = 0; i < players.length; ++i){
          var id = players[i].id;
@@ -88,12 +88,12 @@ define(['options', 'actor', 'monster'], function(OPTIONS, Actor, Monster) {
             delete this.actors[i];
    }
 
-   Scene.prototype.setMap = function(map, player_pos){
+   View.prototype.setMap = function(map, player_pos){
       this.background.map = map;
       //this.fixMap(player_pos);
    }
 
-   Scene.prototype.fixMap = function(player_pos){
+   View.prototype.fixMap = function(player_pos){
       var map = this.background.map;
       var worldbound;
       if(map.length < OPTIONS.screenRowCount){
@@ -113,18 +113,18 @@ define(['options', 'actor', 'monster'], function(OPTIONS, Actor, Monster) {
       }
    }
 
-   Scene.prototype.setDictionary = function(dict){
+   View.prototype.setDictionary = function(dict){
       dict['space'] = 'space';
       this.background.dictionary = dict;
    }
 
-   Scene.prototype.DrawActors = function(graphic){
+   View.prototype.DrawActors = function(graphic){
       for (var i in this.actors) {
          this.actors[i].Draw(graphic, this.player)
       }   
    }
 
-   Scene.prototype.Draw = function(graphic){
+   View.prototype.Draw = function(graphic){
       graphic.Clear();
       this.background.Draw(graphic, this.player.pt);
       this.DrawActors(graphic);
@@ -132,7 +132,7 @@ define(['options', 'actor', 'monster'], function(OPTIONS, Actor, Monster) {
       this.DrawImaginaryBounds(graphic);
    }
 
-   Scene.prototype.DrawImaginaryBounds = function(graphic){
+   View.prototype.DrawImaginaryBounds = function(graphic){
       var off_x = (OPTIONS.screenColumnCount) / 2 * OPTIONS.TILE_SIZE;
       var off_y = (OPTIONS.screenRowCount   ) / 2 * OPTIONS.TILE_SIZE;
       var w = (OPTIONS.screenColumnCount - 1) * OPTIONS.TILE_SIZE
@@ -144,11 +144,11 @@ define(['options', 'actor', 'monster'], function(OPTIONS, Actor, Monster) {
       graphic.stage.mask = g;
    }
 
-   Scene.prototype.Clear = function(graphic){
+   View.prototype.Clear = function(graphic){
       graphic.Clear();
    }
 
-   Scene.prototype.defineRadiusFromMap = function(){
+   View.prototype.defineRadiusFromMap = function(){
       var map = this.background.map;
       OPTIONS.screenRowCount = map.length;
       if(map[0] == undefined)
@@ -156,5 +156,5 @@ define(['options', 'actor', 'monster'], function(OPTIONS, Actor, Monster) {
       OPTIONS.screenColumnCount = map[0].length;
    }
 
-   return Scene;
+   return View;
 })

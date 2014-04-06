@@ -3,7 +3,7 @@ define(['jquery', 'options'], function(JQuery, OPTIONS) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
    }
 
-   function Graphic(scene, game) {
+   function Graphic(view, game) {
       this.width = 1000;
       this.height = 600;
       this.atlas = {
@@ -59,7 +59,7 @@ define(['jquery', 'options'], function(JQuery, OPTIONS) {
          stats.begin();
          if(game.tick != prevtick){  
             prevtick = game.tick;
-            scene.Draw(I);
+            view.Draw(I);
             I.renderer.render(I.stage);
          }
          requestAnimFrame( animate );

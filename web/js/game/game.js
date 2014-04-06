@@ -1,4 +1,4 @@
-define(['jquery', 'utils/utils', 'player', 'scene', 'graphic', 'options'], function(JQuery, utils, Player, Scene, Graphic, OPTIONS) {
+define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options'], function(JQuery, utils, Player, View, Graphic, OPTIONS) {
 
    function Game(sid, wsuri) {
       this.sid      = sid;
@@ -6,21 +6,21 @@ define(['jquery', 'utils/utils', 'player', 'scene', 'graphic', 'options'], funct
       this.tick     = null;
       this.wsuri    = wsuri;
       this.player   = new Player(parseInt(utils.getQueryVariable('id')));
-      this.scene    = new Scene(this.player);
+      this.view    = new View(this.player);
       this.dirsDown  = [];
       //this.examine  = $('<div/>').draggable().hide();
    }
 
    Game.prototype.setDictionary = function(dict) {
-      this.scene.setDictionary(dict);
+      this.view.setDictionary(dict);
    };
 
    Game.prototype.setMap = function(map) {
-      this.scene.setMap(map, this.player.pt);
+      this.view.setMap(map, this.player.pt);
    };
 
    Game.prototype.setActors = function(actors) {
-      this.scene.setActors(actors);
+      this.view.setActors(actors);
    };
 
    Game.prototype.movePlayer = function(direct) {
@@ -28,7 +28,7 @@ define(['jquery', 'utils/utils', 'player', 'scene', 'graphic', 'options'], funct
    }
 
    Game.prototype.defineRadiusFromMap = function(){
-      this.scene.defineRadiusFromMap();
+      this.view.defineRadiusFromMap();
    }
 
    Game.prototype.dirDown = function(dir){
@@ -49,7 +49,8 @@ define(['jquery', 'utils/utils', 'player', 'scene', 'graphic', 'options'], funct
    }
 
    Game.prototype.initGraphic = function() {
-      this.graphic = new Graphic(this.scene, this);
+      this.graphic = new Graphic(this.view, this);
+   }
    }
 
    Game.prototype.sendViaWS = function(hash) {
