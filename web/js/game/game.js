@@ -156,8 +156,8 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options'], functi
 
       KeyboardJS.on('ctrl > enter', function() {
          var e = $('#view').get(0);
-         if(e.webkitRequestFullScreen)
-            e.webkitRequestFullScreen();
+         if(e.webkitRequestFullscreen)//webkitRequestFullScreen есть разница
+            e.webkitRequestFullscreen();
          else if(e.mozRequestFullScreen)
             e.mozRequestFullScreen();
       });
