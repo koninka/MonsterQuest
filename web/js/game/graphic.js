@@ -1,4 +1,4 @@
-define(['jquery'], function() {
+define(['jquery', 'options'], function(JQuery, OPTIONS) {
    function getRandomInt (min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
    }
@@ -28,6 +28,7 @@ define(['jquery'], function() {
       this.renderer = PIXI.autoDetectRenderer(this.width, this.height);
       this.dict = null;
       this.stage = new PIXI.Stage('0x000000', true);
+      this.pointer = {};
       var I = this;
       var PreloadResourses = function () {
          for(var name in I.atlas) {
@@ -47,6 +48,11 @@ define(['jquery'], function() {
          }
       }
       $('#view').append(this.renderer.view);
+      $(this.renderer.view).mousemove(function( event ) {
+         I.pointer.x = event.clientX - $(this).offset().left - I.width  / 2;
+         I.pointer.y = event.clientY - $(this).offset().top  - I.height / 2;
+      })
+
       PreloadResourses();
       var prevtick;
       var animate = function(){
