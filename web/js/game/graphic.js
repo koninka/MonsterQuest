@@ -7,10 +7,22 @@ define(['jquery'], function() {
       this.width = 1000;
       this.height = 600;
       this.atlas = {
-         player : "/imgs/bunny.png",
+         player : "/imgs/character.png",
          grass  : "/imgs/grass_1.png",
-         wall   : "/imgs/stone_1.png",
-         space  : "/imgs/space_1.png"
+         wall   : "/imgs/wall_1.png",
+         zombie : {
+            corpse: "/imgs/zombie/zombie_corpse_1.png",
+            legs  : [
+               "/imgs/zombie/zombie_legs_1.png",
+               "/imgs/zombie/zombie_legs_2.png",
+               "/imgs/zombie/zombie_legs_3.png",
+               "/imgs/zombie/zombie_legs_4.png",
+               "/imgs/zombie/zombie_legs_5.png",
+               "/imgs/zombie/zombie_legs_6.png",
+               "/imgs/zombie/zombie_legs_7.png",
+               "/imgs/zombie/zombie_legs_8.png"
+            ]
+         }
       }
       this.textures = {};
       this.renderer = PIXI.autoDetectRenderer(this.width, this.height);
@@ -19,7 +31,19 @@ define(['jquery'], function() {
       var I = this;
       var PreloadResourses = function () {
          for(var name in I.atlas) {
-            I.textures[name] = PIXI.Texture.fromImage(I.atlas[name]);
+            if(I.atlas[name] instanceof Object){
+               I.textures[name] = {}
+               for(var part in I.atlas[name]){
+                  
+                  if(I.atlas[name][part] instanceof Array){
+                     I.textures[name][part] = [];
+                     for(var i = 0; i < I.atlas[name][part].length; ++i)
+                        I.textures[name][part].push(PIXI.Texture.fromImage(I.atlas[name][part][i]));  
+                  } else
+                     I.textures[name][part] = PIXI.Texture.fromImage(I.atlas[name][part]);
+               }
+            } else 
+               I.textures[name] = PIXI.Texture.fromImage(I.atlas[name]);
          }
       }
       $('#view').append(this.renderer.view);
