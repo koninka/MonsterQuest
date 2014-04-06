@@ -59,7 +59,7 @@ define(['jquery', 'options'], function(JQuery, OPTIONS) {
          stats.begin();
          if(game.tick != prevtick){  
             prevtick = game.tick;
-            view.Draw(I);
+            view.Draw(I, game);
             I.renderer.render(I.stage);
          }
          requestAnimFrame( animate );
