@@ -64,6 +64,10 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options'], functi
       this.player.pt.y = y;
    }
 
+   Game.prototype.setExamineData = function(data){
+      this.view.examine = data;
+   }
+
    Game.prototype.Start = function() {
       if (!this.sid) {
          utils.gameShutDown();
@@ -108,7 +112,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options'], functi
                   if(!th.player.pt.x){
                      th.player.examineSuccess(data);
                   } else {
-                     this.ShowData(data);
+                     th.setExamineData(data);
                   }
                   break
                case "getOptions":
