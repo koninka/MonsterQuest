@@ -156,13 +156,14 @@ define(['options', 'actor', 'monster'], function(OPTIONS, Actor, Monster) {
    View.prototype.DrawImaginaryBounds = function(graphic){
       var off_x = (OPTIONS.screenColumnCount) / 2 * OPTIONS.TILE_SIZE;
       var off_y = (OPTIONS.screenRowCount   ) / 2 * OPTIONS.TILE_SIZE;
-      var w = (OPTIONS.screenColumnCount - 1) * OPTIONS.TILE_SIZE
-      var h = (OPTIONS.screenRowCount - 1) * OPTIONS.TILE_SIZE
       var c = { x: graphic.width / 2, y : graphic.height / 2 };
       var g = new PIXI.Graphics(0, 0);
       g.beginFill(0);
-      g.drawRect(c.x - off_x, c.y - off_y, w, h);
-      graphic.stage.mask = g;
+      g.drawRect(0, 0, c.x - off_x, graphic.height);
+      g.drawRect(0, 0, graphic.width,  c.y - off_y);
+      g.drawRect(0, graphic.height - c.y + off_y - OPTIONS.TILE_SIZE, graphic.width, c.y - off_y);
+      g.drawRect(graphic.width - c.x + off_x - OPTIONS.TILE_SIZE, 0, c.x - off_x, graphic.height);
+      graphic.stage.addChild(g);
    }
 
    View.prototype.Clear = function(graphic){
