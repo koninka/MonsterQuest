@@ -33,9 +33,6 @@ define(['jquery', 'utils/utils', 'player', 'scene', 'graphic', 'options'], funct
 
    Game.prototype.dirDown = function(dir){
       game.dirsDown.push(dir);
-      /*game.dirsDown[dir] = true;
-      if (!game.dirsDown.first)
-         game.dirsDown.first = dir;*/
    }
 
    Game.prototype.dirUp = function(dir){
