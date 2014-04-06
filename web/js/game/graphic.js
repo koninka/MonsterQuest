@@ -111,6 +111,12 @@ define(['jquery', 'options'], function(JQuery, OPTIONS) {
       return text;
    }
 
+   Graphic.prototype.angleToPointer = function(){
+      dx = this.pointer.x;
+      dy = this.pointer.y;
+      return Math.atan2(dy, dx);
+   }
+
    //closed up pixi mem leak
    PIXI.Text.prototype.destroy = function(destroyTexture){
        this.texture.baseTexture.imageUrl = this.canvas._pixiId;
