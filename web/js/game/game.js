@@ -104,7 +104,7 @@ define(['jquery', 'utils/utils', 'player', 'scene', 'graphic', 'options'], funct
          } else {
             switch (data["action"]) {
                case "examine":
-                  if(!th.player.pt){
+                  if(!th.player.pt.x){
                      th.player.examineSuccess(data);
                   } else {
                      this.ShowData(data);
