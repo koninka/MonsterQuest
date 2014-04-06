@@ -1,4 +1,4 @@
-define(['options'], function(OPTIONS) {
+define(['options', 'actor', 'monster'], function(OPTIONS, Actor, Monster) {
    var TILE_SIZE = 32;
 
    function Background(){
@@ -20,31 +20,77 @@ define(['options'], function(OPTIONS) {
 
       if (pt == null) return "WTF";
 
-      y = (-pt.y % 1 - off_y) * TILE_SIZE;
+      y = (-pt.y % 1 - off_y) * TILE_SIZE + TILE_SIZE / 2;
       for(var i = 0; i < this.map.length; ++i){
-         x = (-pt.x % 1 - off_x) * TILE_SIZE;
+         x = (-pt.x % 1 - off_x) * TILE_SIZE + TILE_SIZE / 2;
          for(var j = 0; j < this.map[i].length; ++j){
-            graphic.Draw(this.dictionary[this.map[i][j]], x, y)
+            var tile = graphic.Draw(this.dictionary[this.map[i][j]], x, y);
+            tile.anchor.x = 0.5;
+            tile.anchor.y = 0.5;
             x += TILE_SIZE;
          }
          y += OPTIONS.TILE_SIZE;
       }
    }
 
-   function Scene(player)
-   {
+   function Scene(player){
       this.player = player;
-      this.players = [];
+      this.actors = {};
       this.background = new Background();
    }
 
    Scene.prototype.setActors = function(players){
-      this.players = players;
+      var actors_on_scene = [];
+      for(var i = 0; i < players.length; ++i){
+         var id = players[i].id;
+         var x = players[i].x;
+         var y = players[i].y;
+         if(this.actors[id]){
+            var pt = this.actors[id].pt;
+            if(pt.x < x){
+               if(this.actors[id].dir == 0)
+                  this.actors[id].walk_anim++;
+               else
+                  this.actors[id].walk_anim = 0;
+               this.actors[id].dir = 0;
+            } else if(pt.x > x){
+               if(this.actors[id].dir == Math.PI)
+                  this.actors[id].walk_anim++;
+               else
+                  this.actors[id].walk_anim = 0;
+               this.actors[id].dir = Math.PI;
+            }
+            if(pt.y < y){
+               if(this.actors[id].dir == Math.PI / 2)
+                  this.actors[id].walk_anim++;
+               else
+                  this.actors[id].walk_anim = 0;
+               this.actors[id].dir = Math.PI / 2;
+            } else if(pt.y > y){
+               if(this.actors[id].dir == -Math.PI / 2)
+                  this.actors[id].walk_anim++;
+               else
+                  this.actors[id].walk_anim = 0;
+               this.actors[id].dir = -Math.PI / 2;
+            }
+            this.actors[id].pt.x = x;
+            this.actors[id].pt.y = y;
+         } else {
+            if(players[i].type == 'mob')
+               this.actors[id] = new Monster(id, x, y, 'zombie');
+            else
+               this.actors[id] = new Actor(id, x, y, players[i].type);
+         }
+         actors_on_scene[id] = true;
+      }
+      for(var i in this.actors)
+         if(!actors_on_scene[i])
+            delete this.actors[i];
    }
 
    Scene.prototype.setMap = function(map, player_pos){
       this.background.map = map;
-      this.fixMap(player_pos);
+      //this.fixMap(player_pos);
    }
 
    Scene.prototype.fixMap = function(player_pos){
@@ -73,33 +119,12 @@ define(['options'], function(OPTIONS) {
    }
 
    Scene.prototype.DrawActors = function(graphic){
-      for (var i = 0; i < this.players.length; ++i) {
-         this.DrawActor(graphic, this.players[i]);
+      for (var i in this.actors) {
+         this.actors[i].Draw(graphic, this.player)
       }   
    }
 
-   Scene.prototype.DrawActor = function(graphic, actor){
-      var playerGroup = new PIXI.DisplayObjectContainer();
-      var tile = graphic.Sprite('player');
-      var login = actor.login || (actor.type + actor.id);
-      var txt = graphic.Text( 
-         login, 
-         {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'black'},
-         0, 
-         OPTIONS.TILE_SIZE + 7
-      )
-      txt.position.x = (tile.width - txt.width) / 2 + 2;
-      playerGroup.addChild(tile);
-      playerGroup.addChild(txt);
-      graphic.DrawObj(
-         playerGroup,
-         (actor.x - this.player.pt.x) * OPTIONS.TILE_SIZE - tile.texture.width / 2,
-         (actor.y - this.player.pt.y) * OPTIONS.TILE_SIZE - tile.texture.height / 2
-      );
-   }
-
-   Scene.prototype.Draw = function(graphic)
-   {
+   Scene.prototype.Draw = function(graphic){
       graphic.Clear();
       this.background.Draw(graphic, this.player.pt);
       this.DrawActors(graphic);
