@@ -37,6 +37,7 @@ define(['options', 'actor', 'monster'], function(OPTIONS, Actor, Monster) {
       this.player = player;
       this.actors = {};
       this.background = new Background();
+      this.examine = null;
    }
 
    View.prototype.setActors = function(players){
@@ -124,12 +125,31 @@ define(['options', 'actor', 'monster'], function(OPTIONS, Actor, Monster) {
       }   
    }
 
+   View.prototype.DrawExamine = function(graphic){
+      if(this.examine){
+         var box = new PIXI.DisplayObjectContainer();
+         var txt = '';
+         delete this.examine.action;
+         for(var i in this.examine)
+            txt += i + ' : ' + this.examine[i] + "\n";
+         var text = graphic.Text( 
+            txt, 
+            {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'white'},
+            0, 
+            OPTIONS.TILE_SIZE + 7
+         )
+         text = graphic.DrawObj(text);
+         text.position.x = 20;
+         text.position.y = 20;
+      }
+   }
    View.prototype.Draw = function(graphic){
       graphic.Clear();
       this.background.Draw(graphic, this.player.pt);
       this.DrawActors(graphic);
       this.player.Draw(graphic);
       this.DrawImaginaryBounds(graphic);
+      this.DrawExamine(graphic);
    }
 
    View.prototype.DrawImaginaryBounds = function(graphic){
