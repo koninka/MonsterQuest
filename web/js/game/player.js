@@ -1,15 +1,13 @@
-define(function(){
-   function Point(x, y) {
-      this.x = x;
-      this.y = y;
-   }
+define(['actor'], function(Actor){
 
    function Player(id) {
-      this.id         = id;
-      this.pt         = null;
-      this.type       = null;
-      this.login      = null;
+      Actor.call(this, id);
+      this.type = 'player';
+      this.login = null;
    }
+
+   Player.prototype = Object.create(Actor.prototype);
+   Player.prototype.constructor = Player;
 
    Player.prototype.echo = function() {
       alert(this.login);
@@ -22,7 +20,8 @@ define(function(){
    }
 
    Player.prototype.examineSuccess = function(data) {
-      this.pt = new Point(data["x"], data["y"]);
+      this.pt.x = data["x"];
+      this.pt.y = data["y"];
       this.type = data["type"];
       this.login = data["login"];
    }
