@@ -7,13 +7,18 @@ define(['options'] ,function(OPTIONS){
       this.dir = null;
    }
 
-   Actor.prototype.Draw = function(graphic, player){
-      var playerGroup = new PIXI.DisplayObjectContainer();
+   Actor.prototype.DrawSpecial = function(graphic, actor){
       var tile = graphic.Sprite('player');
       tile.position.x = tile.position.y = OPTIONS.TILE_SIZE / 2;
       tile.anchor.x = 0.5;
       tile.anchor.y = 0.5;
       tile.rotation = this.dir;
+      actor.addChild(tile);
+   }
+
+   Actor.prototype.Draw = function(graphic, game, player){
+      var actor = new PIXI.DisplayObjectContainer();
+      this.DrawSpecial(graphic, actor);
       var login = this.login || (this.type + this.id);
       var txt = graphic.Text( 
          login, 
@@ -21,13 +26,17 @@ define(['options'] ,function(OPTIONS){
          0, 
          OPTIONS.TILE_SIZE + 7
       )
-      txt.position.x = (tile.width - txt.width) / 2 + 2;
-      playerGroup.addChild(tile);
-      playerGroup.addChild(txt);
+      txt.position.x = (OPTIONS.TILE_SIZE - txt.width) / 2 + 2;
+      actor.addChild(txt);
+      actor.interactive = true;
+      var m = this;
+      actor.mousedown = function(data){
+         game.sendViaWS({action: "examine", id: m.id});
+      }
       graphic.DrawObj(
-         playerGroup,
-         (this.pt.x - player.pt.x) * OPTIONS.TILE_SIZE - tile.texture.width / 2,
-         (this.pt.y - player.pt.y) * OPTIONS.TILE_SIZE - tile.texture.height / 2
+         actor,
+         (this.pt.x - player.pt.x) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2,
+         (this.pt.y - player.pt.y) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2
       );
    }
 
