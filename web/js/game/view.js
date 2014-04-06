@@ -118,9 +118,9 @@ define(['options', 'actor', 'monster'], function(OPTIONS, Actor, Monster) {
       this.background.dictionary = dict;
    }
 
-   View.prototype.DrawActors = function(graphic){
+   View.prototype.DrawActors = function(graphic, game){
       for (var i in this.actors) {
-         this.actors[i].Draw(graphic, this.player)
+         this.actors[i].Draw(graphic, game, this.player)
       }   
    }
 
