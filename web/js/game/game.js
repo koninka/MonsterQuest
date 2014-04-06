@@ -51,7 +51,6 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options'], functi
    Game.prototype.initGraphic = function() {
       this.graphic = new Graphic(this.view, this);
    }
-   }
 
    Game.prototype.sendViaWS = function(hash) {
       hash["sid"] = this.sid;
