@@ -1,6 +1,11 @@
 package consts
 
-import "time"
+import (
+    "time"
+    "flag"
+    "fmt"
+)
+
 
 const (
     SERVER_PORT = ":8080"
@@ -17,3 +22,13 @@ const (
 	EAST_DIR
 	WEST_DIR
 )
+
+var (
+    TEST = flag.Bool("test", false, "a bool")
+    TEST_MODE = false
+)
+
+func ParseCommandLine(){
+    flag.Parse()
+    fmt.Println(*TEST)
+}

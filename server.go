@@ -6,7 +6,6 @@ import (
     "MonsterQuest/auth"
     "MonsterQuest/consts"
     "net/http"
-    "os"
     "html/template"
 )
 
@@ -17,17 +16,16 @@ func makeHandler(name string) http.HandlerFunc {
 }
 
 func main() {
-    var test = len(os.Args) > 1 && os.Args[1] == "test";
+    consts.ParseCommandLine()
     http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("./web/js"))))
     http.Handle("/style/", http.FileServer(http.Dir("./web/")))
     http.Handle("/imgs/", http.StripPrefix("/imgs/", http.FileServer(http.Dir("./resourses/imgs/"))))
     http.HandleFunc("/websocket", engine.ServeWs)
     http.HandleFunc("/", makeHandler("main"))
-    http.HandleFunc("/tests/", makeHandler("tests"))
     http.Handle("/game/", makeHandler("game"))
     http.HandleFunc("/json", auth.JsonHandler)
-    if(test) {
-        // http.Handle("/wsTest/", http.FileServer(http.Dir("./")))
+    if(*consts.TEST) {
+        http.HandleFunc("/tests/", makeHandler("tests"))
     }
     go engine.GameLoop()
     http.ListenAndServe(consts.SERVER_PORT, nil)
