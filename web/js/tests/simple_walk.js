@@ -39,186 +39,118 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
             done();
          });
       });
-      it('should successfully connected via websocet', function(done) {
-         console.log("ok");
+      it('should successfully connected via websocket', function(done) {
          onopen = function() {
             console.log("ok");
             done();
-            ws.close();
          }
          ws = wsock(wsuri, null, onopen, null, null);
       });
       var ticks;
       it('should successfully get tick', function(done) {
-         onmessage = function(e) {
+         ws.onmessage = function(e) {
             var data = JSON.parse(e.data);
             if (data['tick']) {
+               ws.onmessage = undefined;
                done();
-               ws.close();
             }
          }
-         ws = wsock(wsuri, null, null, null, onmessage);
       });
       it('should fail get dictionary by badSid', function(done) {
-         onopen = function(e) {
-            ws.sendJSON({action: "getDictionary", sid: '1231'});
-         }
-         onmessage = function(e) {
+         ws.onmessage = function(e) {
             var data = JSON.parse(e.data);
-            if (!data['tick']) {
+            if (data['action'] == 'getDictionary') {
                expect(data['result']).to.equal('badSid');
-               ws.close();
+               ws.onmessage = undefined;
                done();
             }
          }
-         ws = wsock(wsuri, null, onopen, null, onmessage);
+         ws.sendJSON({action: "getDictionary", sid: '1231'});
       });
       it('should successfully get dictionary', function(done) {
-         onopen = function(e) {
-            ws.sendJSON({action: "getDictionary", sid: ssid});
-         }
-         onmessage = function(e) {
+         ws.onmessage = function(e) {
             var data = JSON.parse(e.data);
-            if (!data['tick']) {
+            if (data['action'] == "getDictionary") {
                expect(data).to.have.property('.', 'grass');
                expect(data).to.have.property('#', 'wall');
-               ws.close();
+               ws.onmessage = undefined;
                done();
             }
          }
-         ws = wsock(wsuri, null, onopen, null, onmessage);
+         ws.sendJSON({action: "getDictionary", sid: ssid});
       });
       it('should fail examine by badSid', function(done) {
-         onopen = function(e) {
-            ws.sendJSON({action: "examine", sid: 'fdsf'});
-         }
-         onmessage = function(e) {
+         ws.onmessage = function(e) {
             var data = JSON.parse(e.data);
-            if (!data['tick']) {
+            if (data['action'] == 'examine') {
                expect(data['result']).to.equal('badSid');
-               ws.close();
+               ws.onmessage = undefined;
                done();
             }
          }
-         ws = wsock(wsuri, null, onopen, null, onmessage);
+         ws.sendJSON({action: "examine", sid: 'fdsf'});
       });
       it('should fail examine by badId', function(done) {
-         onopen = function(e) {
-            ws.sendJSON({action: "examine", sid: ssid, id: 0});
-         }
-         onmessage = function(e) {
+         ws.onmessage = function(e) {
             var data = JSON.parse(e.data);
-            if (!data['tick']) {
+            if (data['action'] == 'examine') {
                expect(data['result']).to.equal('badId');
-               ws.close();
+               ws.onmessage = undefined;
                done();
             }
          }
-         ws = wsock(wsuri, null, onopen, null, onmessage);
+         ws.sendJSON({action: "examine", sid: ssid, id: 10000000});
       });
-      it('should successfully examine ', function(done) {
-         onopen = function(e) {
-            ws.sendJSON({action: "examine", sid: ssid, id: actor_id});
-         }
-         onmessage = function(e) {
+      it('should successfully make self examine', function(done) {
+         ws.onmessage = function(e) {
             var data = JSON.parse(e.data);
-            if (!data['tick']) {
+            if (data['action'] == 'examine') {
                expect(data['result']).to.equal('ok');
-               ws.close();
-               done();
-            }
-         }
-         ws = wsock(wsuri, null, onopen, null, onmessage);
-      });
-      it('should successfully examine and login not be empty', function(done) {
-         onopen = function(e) {
-            ws.sendJSON({action: "examine", sid: ssid, id: actor_id});
-         }
-         onmessage = function(e) {
-            var data = JSON.parse(e.data);
-            if (!data['tick']) {
-               expect(data['result']).to.equal('ok');
-               expect(data['login']).to.not.be.empty;
-               ws.close();
-               done();
-            }
-         }
-         ws = wsock(wsuri, null, onopen, null, onmessage);
-      });
-      it('should successfully examine and type must be player', function(done) {
-         onopen = function(e) {
-            ws.sendJSON({action: "examine", sid: ssid, id: actor_id});
-         }
-         onmessage = function(e) {
-            var data = JSON.parse(e.data);
-            if (!data['tick']) {
-               expect(data['result']).to.equal('ok');
+               expect(data['id']).to.equal(actor_id);
                expect(data['type']).to.equal('player');
-               ws.close();
-               done();
-            }
-         }
-         ws = wsock(wsuri, null, onopen, null, onmessage);
-      });
-      it('should successfully examine and coordinates must be positive', function(done) {
-         onopen = function(e) {
-            ws.sendJSON({action: "examine", sid: ssid, id: actor_id});
-         }
-         onmessage = function(e) {
-            var data = JSON.parse(e.data);
-            if (!data['tick']) {
-               expect(data['result']).to.equal('ok');
+               expect(data['login']).to.equal(login);
                expect(data['x']).to.be.at.least(0);
                expect(data['y']).to.be.at.least(0);
-               ws.close();
+               ws.onmessage = undefined;
                done();
             }
          }
-         ws = wsock(wsuri, null, onopen, null, onmessage);
+         ws.sendJSON({action: "examine", sid: ssid, id: actor_id});
       });
       it('should fail look by badSid', function(done) {
-         onopen = function(e) {
-            ws.sendJSON({action: "look", sid: 'fds'});
-         }
-         onmessage = function(e) {
+         ws.onmessage = function(e) {
             var data = JSON.parse(e.data);
-            if (!data['tick']) {
+            if (data['action'] == 'look') {
                expect(data['result']).to.equal('badSid');
-               ws.close();
+               ws.onmessage = undefined;
                done();
             }
          }
-         ws = wsock(wsuri, null, onopen, null, onmessage);
+         ws.sendJSON({action: "look", sid: 'fds'});
       });
       it('should successfully look and should contain positive player coordinates', function(done) {
-         onopen = function(e) {
-            ws.sendJSON({action: "look", sid: ssid});
-         }
-         onmessage = function(e) {
+         ws.onmessage = function(e) {
             var data = JSON.parse(e.data);
-            if (!data['tick']) {
+            if (data['action'] == 'look') {
                expect(data['x']).to.be.at.least(0);
                expect(data['y']).to.be.at.least(0);
-               ws.close();
+               ws.onmessage = undefined;
                done();
             }
          }
-         ws = wsock(wsuri, null, onopen, null, onmessage);
+         ws.sendJSON({action: "look", sid: ssid});
       });
       it('should successfully look and should contain map and actors keys', function(done) {
-         onopen = function(e) {
-            ws.sendJSON({action: "look", sid: ssid});
-         }
-         onmessage = function(e) {
+         ws.onmessage = function(e) {
             var data = JSON.parse(e.data);
-            if (!data['tick']) {
+            if (data['action'] == 'look') {
                expect(data).to.have.property('map');
                expect(data).to.have.property('actors')
-               ws.close();
+               ws.onmessage = undefined;
                done();
             }
          }
-         ws = wsock(wsuri, null, onopen, null, onmessage);
+         ws.sendJSON({action: "look", sid: ssid});
       });
    });
 
