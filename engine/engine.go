@@ -88,7 +88,11 @@ func (g *Game) CloseConnection(conn *connection) {
 }
 
 func (g *Game) CheckOutPlayersAction(conn *connection, json jsonType) {
-    action := json["action"].(string)
+    action, ok := json["action"].(string)
+    if !ok {
+        conn.send <- g.badAction("")
+        return
+    }
     switch action {
     case "getDictionary": conn.send <- g.getDictionaryAction()
     case "look": conn.send <- g.lookAction(json["sid"].(string))
@@ -96,7 +100,15 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json jsonType) {
     case "move": g.lastActions[json["sid"].(string)] = json
     case "startTesting" : conn.send <- g.startTesting()
     case "endTesting"   : conn.send <- g.endTesting()
+    default: conn.send <- g.badAction(action)
     }
+}
+
+func (g* Game) badAction(action string) jsonType {
+    res := make(jsonType)
+    res["action"] = action
+    res["result"] = "badAction"
+    return res
 }
 
 func (g *Game) startTesting() jsonType {
