@@ -94,7 +94,31 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json jsonType) {
     case "look": conn.send <- g.lookAction(json["sid"].(string))
     case "examine": conn.send <- g.examineAction(json)
     case "move": g.lastActions[json["sid"].(string)] = json
+    case "startTesting" : conn.send <- g.startTesting()
+    case "endTesting"   : conn.send <- g.endTesting()
     }
+}
+
+func (g *Game) startTesting() jsonType {
+    res := make(jsonType)
+    res["action"] = "startTesting"
+    res["result"] = "badAction"
+    if *consts.TEST && !consts.TEST_MODE {
+        res["result"] = "ok"
+        consts.TEST_MODE = true
+    }
+    return res
+}
+
+func (g *Game) endTesting() jsonType {
+    res := make(jsonType)
+    res["action"] = "endTesting"
+    res["result"] = "badAction"
+    if *consts.TEST && consts.TEST_MODE {
+        res["result"] = "ok"
+        consts.TEST_MODE = false
+    }
+    return res
 }
 
 func (g *Game) getDictionaryAction() jsonType {
