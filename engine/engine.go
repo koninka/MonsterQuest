@@ -163,6 +163,7 @@ func (g *Game) examineAction(json jsonType) jsonType {
         res["result"] = "badId"
     } else {
         center := obj.GetCenter()
+        res["result"] = "ok"
         res["type"] = obj.GetType()
         res["id"] = id
         res["x"] = center.X
