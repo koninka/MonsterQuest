@@ -8,12 +8,21 @@ requirejs.config({
 
 requirejs(['jquery', 'tester', 'auth', 'simple_walk'], function($, tester, auth, simple_walk) {
    $(function() {
-      $("#urlBtn").click(function() {
-         $('#mocha').empty();
+      var StartTesting = function(){
+        $('#mocha').empty();
          tester.setUrl($("#url").val());
-         simple_walk.updateData();
+
          auth.updateData();
-         mocha.run();
-      });
+         simple_walk.updateData();
+         
+         mocha.run(); 
+      }
+      $("#urlBtn").click(StartTesting);
+      $("#url").val('/json').keydown(function(e){
+         if(e.which == 13){
+            e.preventDefault();
+            StartTesting(); 
+         }
+      })
    });
 });
