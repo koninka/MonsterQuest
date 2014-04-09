@@ -6,15 +6,16 @@ requirejs.config({
    }
 });
 
-requirejs(['jquery', 'tester', 'auth', 'simple_walk'], function($, tester, auth, simple_walk) {
+requirejs(['jquery', 'tester', 'auth', 'simple_walk', 'test_mode'], function($, tester, auth, simple_walk, test_mode) {
    $(function() {
       var StartTesting = function(){
         $('#mocha').empty();
          tester.setUrl($("#url").val());
 
-         auth.updateData();
-         simple_walk.updateData();
-         
+         auth.Test();
+         simple_walk.Test();
+         test_mode.Test();
+
          mocha.run(); 
       }
       $("#urlBtn").click(StartTesting);
