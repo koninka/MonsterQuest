@@ -23,11 +23,16 @@ func (c *connection) readPump() {
         if err != nil {
             break
         }
-        if GetInstance().IsSIDValid(json["sid"].(string)) {
+        sid, present := json["sid"].(string);
+        
+        if present && GetInstance().IsSIDValid(sid) {
             GetInstance().CheckOutPlayersAction(c, json)
-        } else {
-            badSidResponse := map[string] string {"result" : "badSid", "action" : json["action"].(string)}
+        } else if action, present := json["action"]; present {
+            badSidResponse := map[string] string {"result" : "badSid", "action" : action.(string)}
             c.send <- badSidResponse
+        } else {
+            badActionResponse := map[string] string {"result" : "badAction", "action" : ""}
+            c.send <- badActionResponse
         }
     }
 }
