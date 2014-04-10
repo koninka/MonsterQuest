@@ -308,7 +308,7 @@ while ($i < count($content)) {
    }
 }
 
-$i = 0;
+$i = 1;
 echo "template names:\n";
 foreach ($templates as $key => $value) {
    echo "\t" . $i++ . " $key\n";
@@ -326,7 +326,7 @@ while ($i < count($content)) {
    }
 }
 
-$i = 0;
+$i = 1;
 echo "mob names:\n";
 foreach ($mobs as $key => $value) {
    echo "\t" . $i++ . " $key\n";
@@ -363,56 +363,8 @@ foreach ($mobs as $name => &$info) {
       implode('|', $info['S']),
       implode('|', $info['W'])
    );
-   // $st->execute([
-   //    $name,
-   //    implode('@', $blow_methods),
-   //    $info['C'],
-   //    $info['D'],
-   //    implode('|', $info['F']),
-   //    $info['G'],
-   //    implode('|', $info['I']),
-   //    implode('|', $info['S']),
-   //    implode('|', $info['W'])
-   // ]);
-   // foreach ($info as $key => $value) {
-      // if ($key == 'T' || $key == 'SF') continue;
-   //    if ($key == 'F' || $key == 'S' || $key == 'I' || $key == 'W') {
-   //       WriteLineToFile($f, "$key:" . implode('|', $value));
-   //    } else if ($key == 'B') {
-   //       foreach ($value as $desc) {
-   //          WriteLineToFile($f, "$key:" .implode('|', $desc));
-   //       }
-   //    } else {
-   //       WriteLineToFile($f, "$key:$value");
-   //    }
-   // }
-   // WriteLineToFile($f);
 }
 
 WriteLineToFile($f, implode(",\n", $lines) . ';');
 // print_r($mobs);
 // exit;
-
-
-
-
-   // public function Query($query, $params = Array())
-   // {
-   //    if (!$this->isConnected) return Array();
-   //   // echo "<br>";
-   //   // echo "<br>";
-   //   // echo $query;
-   //   // echo "<br>";
-   //   // print_r($params);
-   //   // echo "<br>";
-   //   // echo "<br>";
-   //   // echo "<br>";
-   //    $st = $this->link->prepare($query);
-   //    if (empty($st) || !$st->execute($params)) {
-   //       // echo "<br>";
-   //       // echo "EXCEPTION";
-   //       // echo "<br>";
-   //       throw new DBException(ERROR_QUERY);
-   //    }
-   //    return $st->fetchAll(PDO::FETCH_ASSOC);
-   // }
