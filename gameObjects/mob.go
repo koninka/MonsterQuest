@@ -51,6 +51,13 @@ func (m *Mob) GetType() string {
     return "mob"
 }
 
+func (m *Mob) GetInfo() map[string] interface{} {
+    return map[string] interface{} {
+        "name" : m.kind.name,
+        "description" : m.kind.description,
+    }
+}
+
 func (m *Mob) SetID(id int64) {
     m.id = id
 }

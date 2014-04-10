@@ -204,12 +204,9 @@ func (g *Game) examineAction(json jsonType) jsonType {
         res["id"] = id
         res["x"] = center.X
         res["y"] = center.Y
-        kind := obj.GetType()
-        if kind == "player" {
-            res["login"] = obj.(*gameObjects.Player).Login
-        } else if kind == "mob" {
-            res["name"] = obj.(gameObjects.Mober).GetName()
-            res["description"] = obj.(gameObjects.Mober).GetDescription()
+        info := obj.GetInfo()
+        for k, v := range info {
+            res[k] = v
         }
     }
     return res

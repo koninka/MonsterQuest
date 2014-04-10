@@ -23,6 +23,7 @@ type Activer interface {
     GetCollisionableSide(dir int) (geometry.Segment, geometry.Point)
     ForcePlace(point geometry.Point)
     GetType() string
+    GetInfo() map[string] interface{}
 }
 
 type ActiveObject struct {
@@ -70,6 +71,10 @@ func (obj *ActiveObject) ForcePlace(point geometry.Point) {
 
 func (obj *ActiveObject) GetType() string {
     return ""
+}
+
+func (obj *ActiveObject) GetInfo() map[string] interface{} {
+    return make(map[string] interface{})
 }
 
 func (obj *ActiveObject) GetCollisionableSide(dir int) (geometry.Segment, geometry.Point) {
