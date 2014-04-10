@@ -14,7 +14,7 @@ type mobList struct {
 
 func (ml *mobList) initializeMobTypes() {
 	db := connect.CreateConnect()
-	rows, _ := db.Query("SELECT * FROM mobs_types")
+	rows, _ := db.Query("SELECT id, name, description, flags FROM mobs_types")
 	for rows.Next() {
 		var id int64
 		var name, desc, flags string
