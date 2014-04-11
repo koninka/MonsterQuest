@@ -1,7 +1,11 @@
 package gameObjectsBehavior
 
 import (
+	"math"
+	"MonsterQuest/gameMap"
+	"MonsterQuest/geometry"
 	"MonsterQuest/gameObjectsBase"
+	"MonsterQuest/consts"
 )
 
 type Behavior struct {
@@ -9,10 +13,10 @@ type Behavior struct {
 }
 
 type MoveBehavior struct {
-	Do(obj Activer)
+	Behavior
 }
 
-func (m *MoveBehavior) checkCollisionWithWalls(obj gameObjects.Activer, dir int) (bool, geometry.Point) {
+func (m *MoveBehavior) checkCollisionWithWalls(obj gameObjectsBase.Activer, dir int) (bool, geometry.Point) {
     pos := obj.GetShiftedFrontSide(dir)
     if m.field.IsBlocked(int(pos.X), int(pos.Y)) {
         switch dir {
@@ -29,8 +33,8 @@ func (m *MoveBehavior) checkCollisionWithWalls(obj gameObjects.Activer, dir int)
     }
     eps := 2.0
     side, pos := obj.GetCollisionableSide(dir)
-    res1 := m.field.isBlocked(int(side.Point1.X), int(side.Point1.Y))
-    res2 := m.field.isBlocked(int(side.Point2.X), int(side.Point2.Y))
+    res1 := m.field.IsBlocked(int(side.Point1.X), int(side.Point1.Y))
+    res2 := m.field.IsBlocked(int(side.Point2.X), int(side.Point2.Y))
     var near float64
     if res1 || res2 {
         switch dir {
@@ -74,7 +78,7 @@ func (m *MoveBehavior) checkCollisionWithActorsInCell(col, row int, segment *geo
     return res
 }
 
-func (m *MoveBehavior) checkCollisionWithActors(obj gameObjects.Activer, dir int) (bool, geometry.Point) {
+func (m *MoveBehavior) checkCollisionWithActors(obj gameObjectsBase.Activer, dir int) (bool, geometry.Point) {
     segment, pos := obj.GetCollisionableSide(dir)
     col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
     col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
@@ -85,7 +89,7 @@ func (m *MoveBehavior) checkCollisionWithActors(obj gameObjects.Activer, dir int
     return res, pos
 }
 
-func (m *MoveBehavior) calcNewCenterForActor(obj gameObjects.Activer, dir int) (bool, geometry.Point) {
+func (m *MoveBehavior) calcNewCenterForActor(obj gameObjectsBase.Activer, dir int) (bool, geometry.Point) {
     collisionOccured := false
     noCollisionWithWall, res := m.checkCollisionWithWalls(obj, dir)
     if noCollisionWithWall {
@@ -100,14 +104,13 @@ func (m *MoveBehavior) calcNewCenterForActor(obj gameObjects.Activer, dir int) (
     return collisionOccured, res
 }
 
-func (m *MoveBehavior) Do(obj gameObjects.Activer) bool {
+func (m *MoveBehavior) Do(obj gameObjectsBase.Activer) {
     dir := obj.GetDir()
     if dir == -1 {
-        return false
+        return
     }
-    collisionOccured, newCenter := m.calcNewCenterForActor(obj, dir)
+    _, newCenter := m.calcNewCenterForActor(obj, dir)
     m.field.UnlinkActorFromCells(obj)
     obj.ForcePlace(newCenter)
     m.field.LinkActorToCells(obj)
-    return collisionOccured
 }
