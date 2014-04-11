@@ -1,4 +1,4 @@
-package gameObjects
+package gameObjectsBase
 
 import (
     "MonsterQuest/geometry"
@@ -15,6 +15,10 @@ func GetShiftByDirection(dir int) (mx int, my int) {
     return
 }
 
+type Flager interface {
+    Do(obj Activer)
+}
+
 type Activer interface {
     GetID() int64
     GetCenter() geometry.Point
@@ -24,15 +28,19 @@ type Activer interface {
     ForcePlace(point geometry.Point)
     GetType() string
     GetInfo() map[string] interface{}
+    GetDir() int
+    GetBehaviors() *[] Flager
 }
 
 type ActiveObject struct {
-    id int64
+    Id int64
+    Dir int
     Center geometry.Point
+    Behaviors []Flager
 }
 
 func (obj *ActiveObject) GetID() int64 {
-    return obj.id
+    return obj.Id
 }
 
 func (obj *ActiveObject) GetCenter() geometry.Point {
@@ -99,3 +107,10 @@ func (obj *ActiveObject) GetCollisionableSide(dir int) (geometry.Segment, geomet
     return geometry.Segment{p1, p2}, p3
 }
 
+func (obj *ActiveObject) GetDir() int {
+    return obj.Dir
+}
+
+func (obj *ActiveObject) GetBehaviors() *[]Flager {
+    return &obj.Behaviors
+}

@@ -1,12 +1,14 @@
 package gameObjects
 
-import "MonsterQuest/geometry"
-
+import (
+	"MonsterQuest/geometry"
+	"MonsterQuest/gameObjectsBase"
+)
 type Player struct {
     Login string
     SID string
     DBId int64
-    ActiveObject
+    gameObjectsBase.ActiveObject
 }
 
 func (p *Player) GetType() string {
@@ -18,5 +20,5 @@ func (p *Player) GetInfo() map[string] interface{} {
 }
 
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
-	return Player{login, sid, dbId, ActiveObject{id, geometry.Point{x, y}}}
+	return Player{login, sid, dbId, gameObjectsBase.ActiveObject{id, -1, geometry.Point{x, y}, make([]gameObjectsBase.Flager, 0, 1000)}}
 }

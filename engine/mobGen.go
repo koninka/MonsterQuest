@@ -21,7 +21,7 @@ func (gen *mobGenerator) run() {
 		var placeFound = false
 		for i := int(gen.area.LeftTop.Y); i <= int(gen.area.RightBottom.Y); i++ {
 			for j := int(gen.area.LeftTop.X); j <= int(gen.area.RightBottom.X); j++ {
-				if field.isFree(j, i) {
+				if field.IsFree(j, i) {
 					x = float64(j) + consts.OBJECT_HALF
 					y = float64(i) + consts.OBJECT_HALF
 					placeFound = true

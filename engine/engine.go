@@ -3,18 +3,18 @@ package engine
 import (
     "database/sql"
     "time"
-    "math"
     "MonsterQuest/connect"
     "MonsterQuest/consts"
+    "MonsterQuest/gameMap"
     "MonsterQuest/gameObjects"
-    "MonsterQuest/geometry"
+    "MonsterQuest/gameObjectsBase"
 )
 
 type jsonType map[string] interface{}
 
 type Game struct {
     websocketHub
-    field gameField
+    field gameMap.GameField
     players playerList
     mobs mobList
     lastActions map[string] jsonType
@@ -28,7 +28,7 @@ func GenerateId() int64 {
     return lastId
 }
 
-func getGameField() *gameField {
+func getGameField() *gameMap.GameField {
     return &GetInstance().field
 }
 
@@ -41,10 +41,7 @@ func GetInstance() *Game {
                 unregister:  make(chan *connection),
                 connections: make(map[*connection] bool),
             },
-            gameField{
-                field: make([]string, 1000),
-                actors: make([][]map[int64] gameObjects.Activer, 1000),
-            },
+            gameMap.NewGameField(),
 			playerList{
                 make(map[int64] *gameObjects.Player),
                 make(map[string] *gameObjects.Player),
@@ -57,14 +54,9 @@ func GetInstance() *Game {
             },
             make(map[string] jsonType),
         }
-        for i := range gameInstance.field.field {
-            gameInstance.field.actors[i] = make([]map[int64] gameObjects.Activer, 1000)
-            for j := range gameInstance.field.actors[i] {
-                gameInstance.field.actors[i][j] = make(map[int64] gameObjects.Activer)
-            }
-        }
+        gameInstance.field.LoadFromFile("map.txt")
         gameInstance.mobs.initializeMobTypes()
-        gameInstance.field.loadFromFile("map.txt", "areas.txt", &gameInstance.mobs)
+        gameInstance.mobs.initializeMobsGenerators("areas.txt")
         go gameInstance.mobs.run()
         go gameInstance.websocketHub.run()
         go gameInstance.players.save()
@@ -143,7 +135,7 @@ func (g *Game) setUpMap(json jsonType) jsonType {
             return loadingFailed()
         }
 
-        if !g.field.loadFromStrings(mapStrs) {
+        if !g.field.LoadFromStrings(mapStrs) {
             return loadingFailed()
         }
 
@@ -191,28 +183,6 @@ func (g *Game) getDictionaryAction() jsonType {
     return res
 }
 
-func (g *Game) linkActorToCells(obj gameObjects.Activer) {
-    r := obj.GetRectangle()
-    ltc, ltr := int(r.LeftTop.X), int(r.LeftTop.Y)
-    rbc, rbr := int(r.RightBottom.X), int(r.RightBottom.Y)
-    id := obj.GetID()
-    g.field.actors[ltr][ltc][id] = obj
-    g.field.actors[ltr][rbc][id] = obj
-    g.field.actors[rbr][rbc][id] = obj
-    g.field.actors[rbr][ltc][id] = obj
-}
-
-func (g *Game) unlinkActorFromCells(obj gameObjects.Activer) {
-    r := obj.GetRectangle()
-    ltc, ltr := int(r.LeftTop.X), int(r.LeftTop.Y)
-    rbc, rbr := int(r.RightBottom.X), int(r.RightBottom.Y)
-    id := obj.GetID()
-    delete(g.field.actors[ltr][ltc], id)
-    delete(g.field.actors[ltr][rbc], id)
-    delete(g.field.actors[rbr][rbc], id)
-    delete(g.field.actors[rbr][ltc], id)
-}
-
 func (g *Game) CreatePlayer(sid string) int64 {
     db := connect.CreateConnect()
     stmt, _ := db.Prepare(`
@@ -229,7 +199,7 @@ func (g *Game) CreatePlayer(sid string) int64 {
     return g.players.add(sid, login, x, y, GenerateId(), dbId).GetID()
 }
 
-func (g *Game) getObjectById(id int64) (gameObjects.Activer, bool) {
+func (g *Game) getObjectById(id int64) (gameObjectsBase.Activer, bool) {
     if g.players.players[id] != nil {
         return g.players.players[id], true
     } else if g.mobs.mobs[id] != nil {
@@ -293,11 +263,11 @@ func (g *Game) lookAction(sid string) jsonType {
             visibleSpace[i][j] = "#"
         }
     }
-    l, r, scol := g.getVisibleSpace(int(player.Center.X), g.field.width - 1)
-    t, b, srow := g.getVisibleSpace(int(player.Center.Y), g.field.height - 1)
+    l, r, scol := g.getVisibleSpace(int(player.Center.X), g.field.Width - 1)
+    t, b, srow := g.getVisibleSpace(int(player.Center.Y), g.field.Height - 1)
     for i := t; i < b; i++ {
         for j := l; j < r; j++ {
-            visibleSpace[i - t + srow][j - l + scol] = string(g.field.field[i][j])
+            visibleSpace[i - t + srow][j - l + scol] = string(g.field.Field[i][j])
         }
     }
     res["map"] = visibleSpace
@@ -305,7 +275,7 @@ func (g *Game) lookAction(sid string) jsonType {
     var addedActors = map[int64] bool {player.GetID() : true}
     for i := t; i < b; i++ {
         for j := l; j < r; j++ {
-            for id, obj := range g.field.actors[i][j] {
+            for id, obj := range g.field.Actors[i][j] {
                 if !addedActors[id] {
                     json := make(jsonType)
                     center := obj.GetCenter()
@@ -325,104 +295,6 @@ func (g *Game) lookAction(sid string) jsonType {
     return res
 }
 
-func (g *Game) checkCollisionWithWalls(obj gameObjects.Activer, dir int) (bool, geometry.Point) {
-    pos := obj.GetShiftedFrontSide(dir)
-    if g.field.isBlocked(int(pos.X), int(pos.Y)) {
-        switch dir {
-        case consts.NORTH_DIR: 
-            pos.Y = math.Ceil(pos.Y) + consts.OBJECT_HALF
-        case consts.SOUTH_DIR:
-            pos.Y = math.Floor(pos.Y) - consts.OBJECT_HALF
-        case consts.EAST_DIR:
-            pos.X = math.Floor(pos.X) - consts.OBJECT_HALF
-        case consts.WEST_DIR:
-            pos.X = math.Ceil(pos.X) + consts.OBJECT_HALF
-        }
-        return false, pos
-    }
-    eps := 2.0
-    side, pos := obj.GetCollisionableSide(dir)
-    res1 := g.field.isBlocked(int(side.Point1.X), int(side.Point1.Y))
-    res2 := g.field.isBlocked(int(side.Point2.X), int(side.Point2.Y))
-    var near float64
-    if res1 || res2 {
-        switch dir {
-        case consts.NORTH_DIR, consts.SOUTH_DIR:
-            if res1 {
-                near = math.Ceil(side.Point1.X) - side.Point1.X
-            } else {
-                near = math.Floor(side.Point1.X) - side.Point1.X
-            }
-            if math.Abs(near) < eps {
-                side.Point1.X = side.Point1.X + near
-                side.Point2.X = side.Point2.X + near
-            } else {
-                return false, obj.GetCenter()
-            }
-            pos.X = (side.Point1.X + side.Point2.X) / 2
-        case consts.EAST_DIR, consts.WEST_DIR:
-            if res1 {
-                near = math.Ceil(side.Point1.Y) - side.Point1.Y
-            } else {
-                near = math.Floor(side.Point1.Y) - side.Point1.Y
-            }
-            if math.Abs(near) < eps {
-                side.Point1.Y = side.Point1.Y + near
-                side.Point2.Y = side.Point2.Y + near
-            } else {
-                return false, obj.GetCenter()
-            }
-            pos.Y = (side.Point1.Y + side.Point2.Y) / 2
-        }
-    }
-    return true, pos 
-}
-
-func (g *Game) checkCollisionWithActorsInCell(col, row int, segment *geometry.Segment) bool {
-    res := false
-    for _, actor := range g.field.actors[row][col] {
-        r := actor.GetRectangle()
-        res = res || r.CrossedBySegment(segment)
-    }
-    return res
-}
-
-func (g *Game) checkCollisionWithActors(obj gameObjects.Activer, dir int) (bool, geometry.Point) {
-    segment, pos := obj.GetCollisionableSide(dir)
-    col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
-    col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
-    res := g.checkCollisionWithActorsInCell(col1, row1, &segment) || g.checkCollisionWithActorsInCell(col2, row2, &segment)
-    if res {
-        pos = obj.GetCenter()
-    }
-    return res, pos
-}
-
-func (g *Game) calcNewCenterForActor(obj gameObjects.Activer, dir int) (bool, geometry.Point) {
-    collisionOccured := false
-    noCollisionWithWall, res := g.checkCollisionWithWalls(obj, dir)
-    if noCollisionWithWall {
-        collisionWithActorOccured, alternativeRes := g.checkCollisionWithActors(obj, dir)
-        if collisionWithActorOccured {
-            res = alternativeRes
-            collisionOccured = true
-        }
-    } else {
-        collisionOccured = true
-    }
-    return collisionOccured, res
-}
-
-func (g *Game) moveActor(obj gameObjects.Activer, dir int) bool {
-    if dir == -1 {
-        return false
-    }
-    collisionOccured, newCenter := g.calcNewCenterForActor(obj, dir)
-    g.unlinkActorFromCells(obj)
-    obj.ForcePlace(newCenter)
-    g.linkActorToCells(obj)
-    return collisionOccured
-}
 
 func (g *Game) getIotaDir(dir string) int {
     var res int
@@ -436,7 +308,7 @@ func (g *Game) getIotaDir(dir string) int {
 }
 
 func (g *Game) updateWorld() {
-    for k, v := range g.lastActions {
+    /*for k, v := range g.lastActions {
         action := v["action"].(string)
         p := g.players.getPlayerBySession(k)
         if action == "move" {
@@ -450,7 +322,7 @@ func (g *Game) updateWorld() {
             go m.NotifyAboutCollision()
         }
         m.Do()
-    }
+    }*/
 }
 
 func (g *Game) IsSIDValid(sid string) bool {
@@ -461,7 +333,7 @@ func (g *Game) IsSIDValid(sid string) bool {
 }
 
 func (g *Game) LogoutPlayer(sid string) {
-    g.unlinkActorFromCells(g.players.getPlayerBySession(sid))
+    g.field.UnlinkActorFromCells(g.players.getPlayerBySession(sid))
     g.players.deletePlayerBySession(sid)
 }
 
