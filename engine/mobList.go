@@ -66,6 +66,6 @@ func (ml *mobList) run() {
 		id := GenerateId()
 		ml.mobs[id] = m
 		m.SetID(id)
-		GetInstance().field.LinkActorToCells(m)
+		getGameField().LinkActorToCells(m)
 	}
 }
