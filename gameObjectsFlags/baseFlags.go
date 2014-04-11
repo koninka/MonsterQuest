@@ -20,7 +20,7 @@ func (m *MoveFlag) checkCollisionWithWalls(obj gameObjectsBase.Activer, dir int)
     pos := obj.GetShiftedFrontSide(dir)
     if m.field.IsBlocked(int(pos.X), int(pos.Y)) {
         switch dir {
-        case consts.NORTH_DIR: 
+        case consts.NORTH_DIR:
             pos.Y = math.Ceil(pos.Y) + consts.OBJECT_HALF
         case consts.SOUTH_DIR:
             pos.Y = math.Floor(pos.Y) - consts.OBJECT_HALF
@@ -66,7 +66,7 @@ func (m *MoveFlag) checkCollisionWithWalls(obj gameObjectsBase.Activer, dir int)
             pos.Y = (side.Point1.Y + side.Point2.Y) / 2
         }
     }
-    return true, pos 
+    return true, pos
 }
 
 func (m *MoveFlag) checkCollisionWithActorsInCell(col, row int, segment *geometry.Segment) bool {
