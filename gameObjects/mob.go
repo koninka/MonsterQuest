@@ -3,7 +3,6 @@ package gameObjects
 import (
     "strings"
     "MonsterQuest/gameObjectsBase"
-    "MonsterQuest/geometry"
 )
 
 type Mober interface {
@@ -81,5 +80,7 @@ func (m *Mob) Init() {
 }
 
 func NewMob(kind *MobKind, x, y float64) Mober {
-    return &Mob{gameObjectsBase.ActiveObject{-1, -1, geometry.Point{x, y}, make([]gameObjectsBase.Flager, 0, 1000)}, kind}
+    m := Mob{gameObjectsBase.NewActiveObject(-1, x, y), kind}
+    m.Init()
+    return &m
 }
