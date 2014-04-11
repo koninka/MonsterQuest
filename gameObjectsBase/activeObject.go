@@ -15,6 +15,9 @@ func GetShiftByDirection(dir int) (mx int, my int) {
     return
 }
 
+
+/*=================INTERFACES======================*/
+
 type Flager interface {
     Do(obj Activer)
 }
@@ -40,6 +43,8 @@ type Activer interface {
     GetAttackRadius() int
     NotifyAboutCollision()
 }
+
+/*==========STRUCTS AND IMPLEMENTATION==============*/
 
 type ActiveObject struct {
     Id int64
