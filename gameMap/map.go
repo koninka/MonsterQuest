@@ -43,7 +43,7 @@ func (f *GameField) LoadFromStrings(strs []string) bool {
     if correct {
         copy(f.Field, strs)
         f.Width = len(f.Field[0])
-        f.Height = len(f.Field)
+        f.Height = len(strs)
     }
     return correct
 }
