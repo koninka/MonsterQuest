@@ -113,4 +113,5 @@ func (m *MoveBehavior) Do(obj gameObjectsBase.Activer) {
     m.field.UnlinkActorFromCells(obj)
     obj.ForcePlace(newCenter)
     m.field.LinkActorToCells(obj)
+    obj.SetDir(-1)
 }
