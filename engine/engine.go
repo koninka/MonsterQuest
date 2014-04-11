@@ -86,15 +86,20 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json jsonType) {
         return
     }
     switch action {
+    case "move": g.moveAction(json)
     case "getDictionary": conn.send <- g.getDictionaryAction()
     case "look": conn.send <- g.lookAction(json["sid"].(string))
     case "examine": conn.send <- g.examineAction(json)
-    case "move": g.lastActions[json["sid"].(string)] = json
     case "startTesting" : conn.send <- g.startTesting()
     case "endTesting"   : conn.send <- g.endTesting()
     case "setUpMap" : conn.send <- g.setUpMap(json)
     default: conn.send <- g.badAction(action)
     }
+}
+
+func (g *Game) moveAction(json jsonType) {
+    p := g.players.getPlayerBySession(json["sid"].(string))
+    p.SetDir(g.getIotaDir(json["direction"].(string)))
 }
 
 func (g *Game) inDictionary(k string) bool {
@@ -323,6 +328,7 @@ func (g *Game) updateWorld() {
         }
         m.Do()
     }*/
+
 }
 
 func (g *Game) IsSIDValid(sid string) bool {
