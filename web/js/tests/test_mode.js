@@ -141,7 +141,187 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
             ws.sendJSON({action: "endTesting", sid: data.ssid});
          })
 
+         it('should load map', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'endTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+            ws.sendJSON({action: 'setUpMap', map: [["#"], ["#"], ["#"]], sid: data.ssid});
+            ws.sendJSON({action: 'endTesting', sid: data.ssid});
+         });
+
+         it('should load map', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'endTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+            ws.sendJSON({action: 'setUpMap', map: [
+               ["#", "#", "#", "#"], 
+               ["#", ".", ".", "#"], 
+               ["#", ".", ".", "#"],
+               ["#", "#", "#", "#"]
+               ], sid: data.ssid});
+            ws.sendJSON({action: 'endTesting', sid: data.ssid});
+         });
         
+         it('should fail load map[null map]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('badMap');
+               } else if (response['action'] == 'endTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+            ws.sendJSON({action: 'setUpMap', sid: data.ssid});
+            ws.sendJSON({action: 'endTesting', sid: data.ssid});
+         });
+
+         it('should fail load map[empty map]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('badMap');
+               } else if (response['action'] == 'endTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+            ws.sendJSON({action: 'setUpMap', map: [], sid: data.ssid});
+            ws.sendJSON({action: 'endTesting', sid: data.ssid});
+         });
+
+         it('should fail load map[empty map]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('badMap');
+               } else if (response['action'] == 'endTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+            ws.sendJSON({action: 'setUpMap', map: [[], [], [], []], sid: data.ssid});
+            ws.sendJSON({action: 'endTesting', sid: data.ssid});
+         });
+
+         it('should fail load map[symbol out of dictionary]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('badMap');
+               } else if (response['action'] == 'endTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+            ws.sendJSON({action: 'setUpMap', map: [["#"], ["#"], ["A"]], sid: data.ssid});
+            ws.sendJSON({action: 'endTesting', sid: data.ssid});
+         });
+
+         it('should fail load map[unequal columns count in rows]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('badMap');
+               } else if (response['action'] == 'endTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+            ws.sendJSON({action: 'setUpMap', map: [["#", "#"], ["#"], ["#"]], sid: data.ssid});
+            ws.sendJSON({action: 'endTesting', sid: data.ssid});
+         });
+
+         it('should fail load map[unequal columns count in rows]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('badMap');
+               } else if (response['action'] == 'endTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+            ws.sendJSON({action: 'setUpMap', map: [["#", "#"], ["#", "#"], ["#", "#"], []], sid: data.ssid});
+            ws.sendJSON({action: 'endTesting', sid: data.ssid});
+         });
+
       }); 
    }
    

@@ -100,8 +100,57 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json jsonType) {
     case "move": g.lastActions[json["sid"].(string)] = json
     case "startTesting" : conn.send <- g.startTesting()
     case "endTesting"   : conn.send <- g.endTesting()
+    case "setUpMap" : conn.send <- g.setUpMap(json)
     default: conn.send <- g.badAction(action)
     }
+}
+
+func (g *Game) inDictionary(k string) bool {
+    return g.getDictionaryAction()[k] != nil
+}
+
+func (g *Game) setUpMap(json jsonType) jsonType {
+    res := make(jsonType)
+    res["action"] = "setUpMap"
+    res["result"] = "badAction"
+    loadingFailed := func () jsonType {
+        res["result"] = "badMap"
+        return res
+    }
+
+    if *consts.TEST && consts.TEST_MODE {
+        var mapStrs []string
+        data, ok := json["map"].([]interface{})
+        if ok {
+             for _, arr := range data {
+                var str string
+                chars, ok := arr.([]interface{})
+                if ok {
+                    for _, el := range chars {
+                        char, ok := el.(string)
+                        if ok && g.inDictionary(char) {
+                            str += char
+                        } else {
+                            return loadingFailed()
+                        }
+                    }
+                } else {
+                    return loadingFailed()
+                }
+                mapStrs = append(mapStrs, str)
+            }
+        } else {
+            return loadingFailed()
+        }
+
+        if !g.field.loadFromStrings(mapStrs) {
+            return loadingFailed()
+        }
+
+        res["result"] = "ok"
+    }
+
+    return res;
 }
 
 func (g* Game) badAction(action string) jsonType {
