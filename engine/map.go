@@ -2,6 +2,7 @@ package engine
 
 import (
     "bufio"
+    "io/ioutil"
     "os"
     "strings"
     "strconv"
@@ -33,26 +34,36 @@ func parseInt(s string) int64 {
     return res
 }
 
-func (f *gameField) loadFromFile(mapFile, areasFile string, ml *mobList) {
-    file, _ := os.Open(consts.PATH_TO_MAPS + mapFile)
-    defer file.Close()
-    reader := bufio.NewReader(file)
-    read := true
-    i := 0
-    for ; read ; {
-        line, _, err := reader.ReadLine()
-        f.field[i] = string(line)
-        read = err == nil
-        i++
-        if len(line) > 0 && f.width == 0 {
-            f.width = len(line)
+func (f *gameField) loadFromStrings(strs []string) bool {
+    var l int
+    equiv := false
+    notEmpty := len(strs) > 0
+    if notEmpty {
+        equiv = true
+        l = len(strs[0])
+        for _, str := range strs {
+            equiv = equiv && len(str) == l
         }
     }
-    f.height = i
+    correct := notEmpty && equiv && l > 0
+    if correct {
+        copy(f.field, strs)
+        f.width = len(f.field[0])
+        f.height = len(f.field)
+    }
+    return correct
+}
+
+func (f *gameField) loadFromFile(mapFile, areasFile string, ml *mobList) {
+    content, err := ioutil.ReadFile(consts.PATH_TO_MAPS + mapFile)
+    strs := strings.Split(string(content), "\n")
+    strs[len(strs) - 1] += "\n"
+    if err != nil || !f.loadFromStrings(strs) {
+        panic(fmt.Sprintf("Load map from file %s failed", mapFile))
+    }
     areas, _ := os.Open(consts.PATH_TO_MAPS + areasFile)
     defer areas.Close()
-    reader = bufio.NewReader(areas)
-    read = true
+    reader := bufio.NewReader(areas)
     for {
         bytes, _, err := reader.ReadLine()
         if err == nil {
