@@ -1,14 +1,14 @@
 package gameObjects
 
 import (
-	"MonsterQuest/geometry"
 	"MonsterQuest/gameObjectsBase"
+	"MonsterQuest/gameObjectsBehavior"
 )
 type Player struct {
+    gameObjectsBase.ActiveObject
     Login string
     SID string
     DBId int64
-    gameObjectsBase.ActiveObject
 }
 
 func (p *Player) GetType() string {
@@ -19,6 +19,12 @@ func (p *Player) GetInfo() map[string] interface{} {
 	return map[string] interface{} {"login" : p.Login}
 }
 
+func (p *Player) init() {
+	p.Behaviors = append(p.Behaviors, gameObjectsBehavior.GetBehavior("CAN_MOVE"))
+}
+
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
-	return Player{login, sid, dbId, gameObjectsBase.ActiveObject{id, -1, geometry.Point{x, y}, make([]gameObjectsBase.Flager, 0, 1000)}}
+	p := Player{gameObjectsBase.NewActiveObject(id, x, y), login, sid, dbId}
+	p.init()
+	return p
 }
