@@ -24,7 +24,7 @@ func main() {
     http.HandleFunc("/", makeHandler("main"))
     http.Handle("/game/", makeHandler("game"))
     http.HandleFunc("/json", auth.JsonHandler)
-    if(*consts.TEST) {
+    if *consts.TEST {
         http.HandleFunc("/tests/", makeHandler("tests"))
     }
     go engine.GameLoop()
