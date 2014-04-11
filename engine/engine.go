@@ -313,22 +313,12 @@ func (g *Game) getIotaDir(dir string) int {
 }
 
 func (g *Game) updateWorld() {
-    /*for k, v := range g.lastActions {
-        action := v["action"].(string)
-        p := g.players.getPlayerBySession(k)
-        if action == "move" {
-            g.moveActor(p, g.getIotaDir(v["direction"].(string)))
-        }
-        delete(g.lastActions, k)
+    for _, p := range g.players.players {
+        p.Do()
     }
     for _, m := range g.mobs.mobs {
-        dir := m.CurrDirection()
-        if g.moveActor(m, dir) {
-            go m.NotifyAboutCollision()
-        }
         m.Do()
-    }*/
-
+    }
 }
 
 func (g *Game) IsSIDValid(sid string) bool {
