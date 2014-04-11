@@ -3,6 +3,7 @@ package gameObjects
 import (
     "strings"
     "MonsterQuest/gameObjectsBase"
+    "MonsterQuest/gameObjectsBehavior"
 )
 
 type Mober interface {
