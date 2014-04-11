@@ -8,7 +8,6 @@ import (
 
 type Mober interface {
     gameObjectsBase.Activer
-    Do()
     NotifyAboutCollision()
     SetID(id int64)
     GetKind() *MobKind
@@ -40,8 +39,6 @@ type Mob struct {
 func (m *Mob) CurrDirection() int {
     return -1
 }
-
-func (m *Mob) Do() {}
 
 func (m *Mob) NotifyAboutCollision() {}
 
