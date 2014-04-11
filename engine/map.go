@@ -5,6 +5,7 @@ import (
     "os"
     "strings"
     "strconv"
+    "fmt"
     "MonsterQuest/consts"
     "MonsterQuest/gameObjects"
     "MonsterQuest/geometry"
@@ -19,7 +20,7 @@ type gameField struct {
 func parseFloat(s string) float64 {
     res, err := strconv.ParseFloat(s, 64)
     if err != nil {
-        return 0 // panic will be here
+        panic(fmt.Sprintf("Try parse \"%s\" in float", s))
     }
     return res
 }
@@ -27,7 +28,7 @@ func parseFloat(s string) float64 {
 func parseInt(s string) int64 {
     res, err := strconv.ParseInt(s, 10, 64)
     if err != nil {
-        return 0 // same situation as above
+        panic(fmt.Sprintf("Try parse \"%s\" in int64", s))
     }
     return res
 }
