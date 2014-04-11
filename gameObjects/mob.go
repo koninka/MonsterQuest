@@ -76,6 +76,13 @@ func (m *Mob) HasFlag(flag string) bool {
     return m.kind.flags[flag]
 }
 
+func (m *Mob) Init() {
+    //for flag, _ := range m.kind.flags {
+        //m.Behaviors = append(m.Behaviors, gameObjectsBehavior.GetBehavior(flag))
+    //}
+    m.Behaviors = append(m.Behaviors, gameObjectsBehavior.GetBehavior("CAN_MOVE"))
+}
+
 func NewMob(kind *MobKind, x, y float64) Mober {
     return &Mob{gameObjectsBase.ActiveObject{-1, -1, geometry.Point{x, y}, make([]gameObjectsBase.Flager, 0, 1000)}, kind}
 }

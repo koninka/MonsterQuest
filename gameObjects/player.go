@@ -19,12 +19,12 @@ func (p *Player) GetInfo() map[string] interface{} {
 	return map[string] interface{} {"login" : p.Login}
 }
 
-func (p *Player) init() {
+func (p *Player) Init() {
 	p.Behaviors = append(p.Behaviors, gameObjectsBehavior.GetBehavior("CAN_MOVE"))
 }
 
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
 	p := Player{gameObjectsBase.NewActiveObject(id, x, y), login, sid, dbId}
-	p.init()
+	p.Init()
 	return p
 }
