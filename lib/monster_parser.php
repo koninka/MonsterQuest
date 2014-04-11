@@ -75,8 +75,6 @@ $mon_flags = [
    'KILL_WALL',
    'TAKE_ITEM',
    'KILL_ITEM',
-   'TAKE_ITEM',
-   'KILL_ITEM',
    'ORC',
    'TROLL',
    'GIANT',
