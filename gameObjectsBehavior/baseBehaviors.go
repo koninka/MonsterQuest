@@ -115,3 +115,23 @@ func (m *MoveBehavior) Do(obj gameObjectsBase.Activer) {
     m.field.LinkActorToCells(obj)
     obj.SetDir(-1)
 }
+
+type BlowBehavior struct {
+    Behavior
+}
+
+func (b *BlowBehavior) Do(obj gameObjectsBase.Activer) {
+    target := obj.GetTarget()
+    if target != nil && geometry.Distance(obj.GetCenter(), target.GetCenter()) <= float64(obj.GetAttackRadius()) {
+        // attack target. may be, attack every tick is very "cool", so it's need to be discussed
+    }
+}
+
+type HateBehavior struct {
+    Behavior
+    hated string // might be anything else
+}
+
+func (h *HateBehavior) Do(obj gameObjectsBase.Activer) {
+    // find any hated actor on map and assign in to obj.Target
+}

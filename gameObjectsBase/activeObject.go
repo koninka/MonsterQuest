@@ -35,11 +35,15 @@ type Activer interface {
     Do()
     GetTarget() Activer
     GetRadiusVision() int
+    GetDealtDamage() int
+    GetHP() int
+    GetAttackRadius() int
 }
 
 type ActiveObject struct {
     Id int64
     Dir int
+    HP int
     Center geometry.Point
     Behaviors []Flager
     Target Activer
@@ -141,6 +145,18 @@ func (obj *ActiveObject) GetRadiusVision() int {
     return 0
 }
 
+func (obj *ActiveObject) GetDealtDamage() int {
+    return 0
+}
+
+func (obj *ActiveObject) GetHP() int {
+    return obj.HP
+}
+
+func (obj *ActiveObject) GetAttackRadius() int {
+    return 0
+}
+
 func NewActiveObject(id int64, x, y float64) ActiveObject {
-    return ActiveObject{id, -1, geometry.Point{x, y}, make([]Flager, 0, 1000), nil}
+    return ActiveObject{id, -1, 0, geometry.Point{x, y}, make([]Flager, 0, 1000), nil}
 }
