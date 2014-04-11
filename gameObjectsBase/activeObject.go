@@ -29,7 +29,10 @@ type Activer interface {
     GetType() string
     GetInfo() map[string] interface{}
     GetDir() int
+    SetDir(dir int)
     GetBehaviors() *[] Flager
+    Init()
+    Do()
 }
 
 type ActiveObject struct {
@@ -111,6 +114,22 @@ func (obj *ActiveObject) GetDir() int {
     return obj.Dir
 }
 
+func (obj *ActiveObject) SetDir(dir int) {
+    obj.Dir = dir
+}
+
 func (obj *ActiveObject) GetBehaviors() *[]Flager {
     return &obj.Behaviors
+}
+
+func (obj *ActiveObject) Init() {}
+
+func (obj *ActiveObject) Do() {
+    for _, f := range obj.Behaviors {
+        f.Do(obj)
+    }
+}
+
+func NewActiveObject(id int64, x, y float64) ActiveObject {
+    return ActiveObject{id, -1, geometry.Point{x, y}, make([]Flager, 0, 1000)}
 }
