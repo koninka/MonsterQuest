@@ -33,6 +33,8 @@ type Activer interface {
     GetBehaviors() *[] Flager
     Init()
     Do()
+    GetTarget() Activer
+    GetRadiusVision() int
 }
 
 type ActiveObject struct {
@@ -40,6 +42,7 @@ type ActiveObject struct {
     Dir int
     Center geometry.Point
     Behaviors []Flager
+    Target Activer
 }
 
 func (obj *ActiveObject) GetID() int64 {
@@ -130,6 +133,14 @@ func (obj *ActiveObject) Do() {
     }
 }
 
+func (obj *ActiveObject) GetTarget() Activer {
+    return obj.Target
+}
+
+func (obj *ActiveObject) GetRadiusVision() int {
+    return 0
+}
+
 func NewActiveObject(id int64, x, y float64) ActiveObject {
-    return ActiveObject{id, -1, geometry.Point{x, y}, make([]Flager, 0, 1000)}
+    return ActiveObject{id, -1, geometry.Point{x, y}, make([]Flager, 0, 1000), nil}
 }

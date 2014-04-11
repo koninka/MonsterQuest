@@ -1,5 +1,9 @@
 package geometry
 
+import (
+	"math"
+)
+
 type Point struct {
 	X, Y float64
 }
@@ -32,4 +36,8 @@ func (r *Rectangle) CrossedBySegment(s *Segment) bool {
 
 func MakeRectangle(lt, rb *Point) *Rectangle {
 	return &Rectangle{*lt, *rb}
+}
+
+func Distance(p1, p2 Point) float64 {
+	return math.Sqrt((p1.X - p2.X) * (p1.X - p2.X) + (p1.Y - p2.Y) * (p1.Y - p2.Y))
 }

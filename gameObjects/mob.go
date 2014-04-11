@@ -4,6 +4,7 @@ import (
     "strings"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/gameObjectsBehavior"
+    "MonsterQuest/geometry"
 )
 
 type Mober interface {
@@ -13,7 +14,6 @@ type Mober interface {
     GetKind() *MobKind
     GetName() string
     GetDescription() string
-    HasFlag(flag string) bool
 }
 
 type MobKind struct {
@@ -57,10 +57,6 @@ func (m *Mob) SetID(id int64) {
     m.Id = id
 }
 
-func (m *Mob) GetKind() *MobKind {
-    return m.kind
-}
-
 func (m *Mob) GetName() string {
     return m.kind.name
 }
@@ -69,8 +65,8 @@ func (m *Mob) GetDescription() string {
     return m.kind.description
 }
 
-func (m *Mob) HasFlag(flag string) bool {
-    return m.kind.flags[flag]
+func (m *Mob) GetKind() *MobKind {
+    return m.kind
 }
 
 func (m *Mob) Init() {
@@ -78,6 +74,22 @@ func (m *Mob) Init() {
         //m.Behaviors = append(m.Behaviors, gameObjectsBehavior.GetBehavior(flag))
     //}
     m.Behaviors = append(m.Behaviors, gameObjectsBehavior.GetBehavior("CAN_MOVE"))
+}
+
+func (m *Mob) think() {
+    if m.Target != nil {
+        center := m.Target.GetCenter()
+        if geometry.Distance(m.Center, center) > float64(m.GetRadiusVision()) {
+            // calc dx, dy and find direction
+            // save direction
+        }
+    
+    }
+}
+
+func (m *Mob) Do() {
+    m.think()
+    m.ActiveObject.Do()
 }
 
 func NewMob(kind *MobKind, x, y float64) Mober {
