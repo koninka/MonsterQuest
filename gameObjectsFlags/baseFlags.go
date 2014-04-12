@@ -109,10 +109,13 @@ func (m *MoveFlag) Do(obj gameObjectsBase.Activer) {
     if dir == -1 {
         return
     }
-    _, newCenter := m.calcNewCenterForActor(obj, dir)
+    collisionOccured, newCenter := m.calcNewCenterForActor(obj, dir)
     m.field.UnlinkActorFromCells(obj)
     obj.ForcePlace(newCenter)
     m.field.LinkActorToCells(obj)
+    if collisionOccured {
+        obj.NotifyAboutCollision()
+    }
 }
 
 type BlowFlag struct {

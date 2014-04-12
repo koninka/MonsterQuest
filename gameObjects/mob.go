@@ -11,7 +11,6 @@ import (
 
 type Mober interface {
     gameObjectsBase.Activer
-    NotifyAboutCollision()
     SetID(id int64)
     GetKind() *MobKind
     GetName() string
@@ -47,7 +46,9 @@ func (m *Mob) SetDir(dir int) {
     m.Dir = dir
 }
 
-func (m *Mob) NotifyAboutCollision() {}
+func (m *Mob) NotifyAboutCollision() {
+    m.chooseDir()
+}
 
 func (m *Mob) GetType() string {
     return "mob"

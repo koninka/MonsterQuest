@@ -38,6 +38,7 @@ type Activer interface {
     GetDealtDamage() int
     GetHP() int
     GetAttackRadius() int
+    NotifyAboutCollision()
 }
 
 type ActiveObject struct {
@@ -156,6 +157,8 @@ func (obj *ActiveObject) GetHP() int {
 func (obj *ActiveObject) GetAttackRadius() int {
     return 0
 }
+
+func (obj *ActiveObject) NotifyAboutCollision() {}
 
 func NewActiveObject(id int64, x, y float64) ActiveObject {
     return ActiveObject{id, -1, 0, geometry.Point{x, y}, make([]Flager, 0, 1000), nil}
