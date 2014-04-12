@@ -37,6 +37,7 @@ type Activer interface {
     Init()
     Do()
     GetTarget() Activer
+    SetTarget(new_target Activer)
     GetRadiusVision() int
     GetDealtDamage() int
     GetHP() int
@@ -145,6 +146,10 @@ func (obj *ActiveObject) Do() {
 
 func (obj *ActiveObject) GetTarget() Activer {
     return obj.Target
+}
+
+func (obj *ActiveObject) SetTarget(new_target Activer) {
+    obj.Target = new_target
 }
 
 func (obj *ActiveObject) GetRadiusVision() int {

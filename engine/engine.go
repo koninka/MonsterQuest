@@ -87,6 +87,7 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json jsonType) {
     }
     switch action {
     case "move": g.moveAction(json)
+    case "attack": g.attackAction(json)
     case "getDictionary": conn.send <- g.getDictionaryAction()
     case "look": conn.send <- g.lookAction(json["sid"].(string))
     case "examine": conn.send <- g.examineAction(json)
@@ -100,6 +101,12 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json jsonType) {
 func (g *Game) moveAction(json jsonType) {
     p := g.players.getPlayerBySession(json["sid"].(string))
     p.SetDir(g.getIotaDir(json["direction"].(string)))
+}
+
+func (g *Game) attackAction(json jsonType) {
+    if obj, isExist := g.getObjectById(int64(json["id"].(float64))); isExist {
+        g.players.getPlayerBySession(json["sid"].(string)).SetTarget(obj)
+    }
 }
 
 func (g *Game) inDictionary(k string) bool {
