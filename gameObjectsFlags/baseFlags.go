@@ -1,19 +1,19 @@
 package gameObjectsFlags
 
 import (
-	"math"
-	"MonsterQuest/gameMap"
-	"MonsterQuest/geometry"
-	"MonsterQuest/gameObjectsBase"
-	"MonsterQuest/consts"
+    "math"
+    "MonsterQuest/gameMap"
+    "MonsterQuest/geometry"
+    "MonsterQuest/gameObjectsBase"
+    "MonsterQuest/consts"
 )
 
 type Flag struct {
-	field *gameMap.GameField
+    field *gameMap.GameField
 }
 
 type MoveFlag struct {
-	Flag
+    Flag
 }
 
 func (m *MoveFlag) checkCollisionWithWalls(obj gameObjectsBase.Activer, dir int) (bool, geometry.Point) {
