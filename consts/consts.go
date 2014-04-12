@@ -21,6 +21,7 @@ const (
 	SOUTH_DIR
 	EAST_DIR
 	WEST_DIR
+	MOB_WALKING_CYCLE_DURATION = 20
 )
 
 var (
