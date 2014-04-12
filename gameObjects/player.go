@@ -2,7 +2,7 @@ package gameObjects
 
 import (
 	"MonsterQuest/gameObjectsBase"
-	"MonsterQuest/gameObjectsBehavior"
+	"MonsterQuest/gameObjectsFlags"
 )
 type Player struct {
     gameObjectsBase.ActiveObject
@@ -20,7 +20,7 @@ func (p *Player) GetInfo() map[string] interface{} {
 }
 
 func (p *Player) Init() {
-	p.Behaviors = append(p.Behaviors, gameObjectsBehavior.GetBehavior("CAN_MOVE"))
+	p.Behaviors = append(p.Behaviors, gameObjectsFlags.GetFlag("CAN_MOVE"))
 }
 
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {

@@ -9,7 +9,7 @@ import (
     "MonsterQuest/utils"
 	"MonsterQuest/consts"
 	"MonsterQuest/geometry"
-	"MonsterQuest/gameObjectsBehavior"
+	"MonsterQuest/gameObjectsFlags"
 )
 
 type mobList struct {
@@ -20,7 +20,7 @@ type mobList struct {
 }
 
 func (ml *mobList) initializeMobTypes() {
-	gameObjectsBehavior.InitBehaviors(getGameField())
+	gameObjectsFlags.InitFlags(getGameField())
 	db := connect.CreateConnect()
 	rows, _ := db.Query("SELECT id, name, description, flags FROM mobs_types")
 	for rows.Next() {

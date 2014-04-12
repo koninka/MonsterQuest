@@ -3,7 +3,7 @@ package gameObjects
 import (
     "strings"
     "MonsterQuest/gameObjectsBase"
-    "MonsterQuest/gameObjectsBehavior"
+    "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/geometry"
 )
 
@@ -73,7 +73,7 @@ func (m *Mob) Init() {
     //for flag, _ := range m.kind.flags {
         //m.Behaviors = append(m.Behaviors, gameObjectsBehavior.GetBehavior(flag))
     //}
-    m.Behaviors = append(m.Behaviors, gameObjectsBehavior.GetBehavior("CAN_MOVE"))
+    m.Behaviors = append(m.Behaviors, gameObjectsFlags.GetFlag("CAN_MOVE"))
 }
 
 func (m *Mob) think() {
