@@ -118,11 +118,11 @@ func (m *MoveFlag) Do(obj gameObjectsBase.Activer) {
     }
 }
 
-type BlowFlag struct {
+type AttackFlag struct {
     Flag
 }
 
-func (b *BlowFlag) Do(obj gameObjectsBase.Activer) {
+func (a *AttackFlag) Do(obj gameObjectsBase.Activer) {
     target := obj.GetTarget()
     if target != nil && geometry.Distance(obj.GetCenter(), target.GetCenter()) <= float64(obj.GetAttackRadius()) {
         // attack target. may be, attack every tick is very "cool", so it's need to be discussed
