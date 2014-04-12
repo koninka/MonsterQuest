@@ -23,6 +23,9 @@ func (p *Player) Init() {
 	p.Flags = append(p.Flags, gameObjectsFlags.GetFlag("CAN_MOVE"))
 }
 
+func (p *Player) Do() {
+	p.ActiveObject.Do()
+	p.Dir = -1
 }
 
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {

@@ -113,7 +113,6 @@ func (m *MoveFlag) Do(obj gameObjectsBase.Activer) {
     m.field.UnlinkActorFromCells(obj)
     obj.ForcePlace(newCenter)
     m.field.LinkActorToCells(obj)
-    obj.SetDir(-1)
 }
 
 type BlowFlag struct {
