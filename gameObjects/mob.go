@@ -73,7 +73,10 @@ func (m *Mob) Init() {
     //for flag, _ := range m.kind.flags {
         //m.Behaviors = append(m.Behaviors, gameObjectsBehavior.GetBehavior(flag))
     //}
-    m.Behaviors = append(m.Behaviors, gameObjectsFlags.GetFlag("CAN_MOVE"))
+    m.Flags = append(m.Flags, gameObjectsFlags.GetFlag("CAN_MOVE"))
+    m.chooseDir()
+}
+
 }
 
 func (m *Mob) think() {

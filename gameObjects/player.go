@@ -20,7 +20,9 @@ func (p *Player) GetInfo() map[string] interface{} {
 }
 
 func (p *Player) Init() {
-	p.Behaviors = append(p.Behaviors, gameObjectsFlags.GetFlag("CAN_MOVE"))
+	p.Flags = append(p.Flags, gameObjectsFlags.GetFlag("CAN_MOVE"))
+}
+
 }
 
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
