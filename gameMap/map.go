@@ -51,7 +51,6 @@ func (f *GameField) LoadFromStrings(strs []string) bool {
 func (f *GameField) LoadFromFile(mapFile string) {
     content, err := ioutil.ReadFile(consts.PATH_TO_MAPS + mapFile)
     strs := strings.Split(string(content), "\n")
-    strs[len(strs) - 1] += "\n"
     if err != nil || !f.LoadFromStrings(strs) {
         panic(fmt.Sprintf("Load map from file %s failed", mapFile))
     }
