@@ -80,10 +80,6 @@ func (m *Mob) GetKind() gameObjectsBase.Kinder {
 }
 
 func (m *Mob) Init() {
-    //for flag, _ := range m.kind.flags {
-        //m.Behaviors = append(m.Behaviors, gameObjectsBehavior.GetBehavior(flag))
-    //}
-    m.Flags = append(m.Flags, gameObjectsFlags.GetFlag("CAN_MOVE"))
     m.chooseDir()
 }
 
