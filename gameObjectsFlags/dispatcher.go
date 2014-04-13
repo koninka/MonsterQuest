@@ -8,11 +8,11 @@ import (
 
 var flags map[string] gameObjectsBase.Flager = make(map[string] gameObjectsBase.Flager)
 
-func InitFlags(field *gameMap.GameField) {
-	flags["CAN_MOVE"] = &MoveFlag{Flag{field}}
-	flags["CAN_BLOW"] = &AttackFlag{Flag{field}}
-	flags["HATE_TROLLS"] = &HateFlag{Flag{field}, consts.TROLL}
-	flags["HATE_ORCS"] = &HateFlag{Flag{field}, consts.ORC}
+func InitFlags(field *gameMap.GameField, msgsChan chan consts.JsonType) {
+	flags["CAN_MOVE"] = &MoveFlag{Flag{field, msgsChan}}
+	flags["CAN_BLOW"] = &AttackFlag{Flag{field, msgsChan}}
+	flags["HATE_TROLLS"] = &HateFlag{Flag{field, msgsChan}, consts.TROLL}
+	flags["HATE_ORCS"] = &HateFlag{Flag{field, msgsChan}, consts.ORC}
 }
 
 func GetFlag(name string) gameObjectsBase.Flager {

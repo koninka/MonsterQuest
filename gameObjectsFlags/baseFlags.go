@@ -10,6 +10,7 @@ import (
 
 type Flag struct {
     field *gameMap.GameField
+    MsgsChannel chan consts.JsonType
 }
 
 type MoveFlag struct {

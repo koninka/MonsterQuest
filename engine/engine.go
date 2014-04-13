@@ -16,6 +16,7 @@ type Game struct {
     players playerList
     mobs mobList
     lastActions map[string] consts.JsonType
+    msgsChannel chan consts.JsonType
 }
 
 var gameInstance *Game
@@ -47,15 +48,23 @@ func GetInstance() *Game {
                 make(map[int64] *gameObjects.MobKind),
             },
             make(map[string] consts.JsonType),
+            make(chan consts.JsonType),
         }
         gameInstance.field.LoadFromFile("map.txt")
         gameInstance.mobs.initializeMobTypes()
         gameInstance.mobs.initializeMobsGenerators("areas.txt")
+        go gameInstance.readInGameMsgs()
         go gameInstance.mobs.run()
         go gameInstance.websocketHub.run()
         go gameInstance.players.save()
     }
     return gameInstance
+}
+
+func (g *Game) readInGameMsgs() {
+    for {
+        msg := <-g.msgsChannel
+    }
 }
 
 func (g *Game) sendTick(tick int64) {
