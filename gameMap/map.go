@@ -6,6 +6,7 @@ import (
     "fmt"
     "MonsterQuest/consts"
     "MonsterQuest/gameObjectsBase"
+    "MonsterQuest/geometry"
 )
 
 type GameField struct {
