@@ -1,26 +1,26 @@
 package gameObjectsFlags
 
 import (
-	"math"
-	"MonsterQuest/gameMap"
-	"MonsterQuest/geometry"
-	"MonsterQuest/gameObjectsBase"
-	"MonsterQuest/consts"
+    "math"
+    "MonsterQuest/gameMap"
+    "MonsterQuest/geometry"
+    "MonsterQuest/gameObjectsBase"
+    "MonsterQuest/consts"
 )
 
 type Flag struct {
-	field *gameMap.GameField
+    field *gameMap.GameField
 }
 
 type MoveFlag struct {
-	Flag
+    Flag
 }
 
 func (m *MoveFlag) checkCollisionWithWalls(obj gameObjectsBase.Activer, dir int) (bool, geometry.Point) {
     pos := obj.GetShiftedFrontSide(dir)
     if m.field.IsBlocked(int(pos.X), int(pos.Y)) {
         switch dir {
-        case consts.NORTH_DIR: 
+        case consts.NORTH_DIR:
             pos.Y = math.Ceil(pos.Y) + consts.OBJECT_HALF
         case consts.SOUTH_DIR:
             pos.Y = math.Floor(pos.Y) - consts.OBJECT_HALF
@@ -66,7 +66,7 @@ func (m *MoveFlag) checkCollisionWithWalls(obj gameObjectsBase.Activer, dir int)
             pos.Y = (side.Point1.Y + side.Point2.Y) / 2
         }
     }
-    return true, pos 
+    return true, pos
 }
 
 func (m *MoveFlag) checkCollisionWithActorsInCell(col, row int, segment *geometry.Segment) bool {
@@ -118,11 +118,11 @@ func (m *MoveFlag) Do(obj gameObjectsBase.Activer) {
     }
 }
 
-type BlowFlag struct {
+type AttackFlag struct {
     Flag
 }
 
-func (b *BlowFlag) Do(obj gameObjectsBase.Activer) {
+func (a *AttackFlag) Do(obj gameObjectsBase.Activer) {
     target := obj.GetTarget()
     if target != nil && geometry.Distance(obj.GetCenter(), target.GetCenter()) <= float64(obj.GetAttackRadius()) {
         // attack target. may be, attack every tick is very "cool", so it's need to be discussed

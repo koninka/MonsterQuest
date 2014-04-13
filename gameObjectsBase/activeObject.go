@@ -15,6 +15,9 @@ func GetShiftByDirection(dir int) (mx int, my int) {
     return
 }
 
+
+/*=================INTERFACES======================*/
+
 type Flager interface {
     Do(obj Activer)
 }
@@ -49,6 +52,7 @@ type Activer interface {
     GetAttackRadius() int
     NotifyAboutCollision()
     GetKind() Kinder
+}
 
 type Kind struct {
     Race int
@@ -70,6 +74,8 @@ func (k *Kind) AddFlag(flag Flager) {
 func NewKind(race int) Kind {
     return Kind{race, make([]Flager, 0, 1000)}
 }
+
+/*==========STRUCTS AND IMPLEMENTATION==============*/
 
 type ActiveObject struct {
     Id int64

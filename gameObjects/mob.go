@@ -97,7 +97,7 @@ func (m *Mob) chooseDir() {
 func (m *Mob) think() {
     if m.Target != nil {
         center := m.Target.GetCenter()
-        if geometry.Distance(m.Center, center) > float64(m.GetRadiusVision()) {
+        if geometry.Distance(m.Center, center) < float64(m.GetRadiusVision()) {
             // calc dx, dy and find direction
             // save direction
         }
