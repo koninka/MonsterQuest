@@ -2,11 +2,11 @@ package gameObjects
 
 import (
     "strings"
-    "math/rand"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
+    "MonsterQuest/cube"
 )
 
 type MobKind struct {
@@ -84,12 +84,12 @@ func (m *Mob) Init() {
 }
 
 var directions = [4]int {consts.NORTH_DIR, consts.SOUTH_DIR, consts.WEST_DIR, consts.EAST_DIR}
-var gen *rand.Rand = rand.New(rand.NewSource(0))
 
 func (m *Mob) chooseDir() {
-    newDir := directions[gen.Int() % 4]
+    cube.Shake()
+    newDir := m.Dir
     for newDir == m.Dir {
-        newDir = directions[gen.Int() % 4]
+        newDir = directions[cube.Throw(4, 1) - 1]
     }
     m.Dir = newDir
 }
