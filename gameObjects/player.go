@@ -4,6 +4,30 @@ import (
 	"MonsterQuest/gameObjectsBase"
 	"MonsterQuest/gameObjectsFlags"
 )
+
+type playerKind struct {
+	gameObjectsBase.Kind
+}
+
+func (pk *playerKind) GetName() string {
+	return "player"
+}
+
+func (pk *playerKind) GetDescription() string {
+	return ""
+}
+
+var kind *playerKind
+
+func getPlayerKind() *playerKind {
+	if kind == nil {
+		kind = &playerKind{gameObjectsBase.NewKind(-1)}
+		kind.Flags = append(kind.Flags, gameObjectsFlags.GetFlag("CAN_MOVE"))
+		kind.Flags = append(kind.Flags, gameObjectsFlags.GetFlag("CAN_BLOW"))
+	}
+	return kind
+}
+
 type Player struct {
     gameObjectsBase.ActiveObject
     Login string
