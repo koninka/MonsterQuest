@@ -44,6 +44,7 @@ type Activer interface {
     SetDir(dir int)
     Init()
     Do()
+    Attack() consts.JsonType
     GetTarget() Activer
     SetTarget(target Activer)
     GetRadiusVision() int
@@ -176,6 +177,10 @@ func (obj *ActiveObject) Do() {
     for _, f := range *obj.GetKind().GetFlags() {
         f.Do(obj)
     }
+}
+
+func (obj *ActiveObject) Attack() consts.JsonType {
+    return nil
 }
 
 func (obj *ActiveObject) GetTarget() Activer {

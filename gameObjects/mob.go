@@ -2,11 +2,11 @@ package gameObjects
 
 import (
     "strings"
-    "math/rand"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
+    "MonsterQuest/dice"
 )
 
 type MobKind struct {
@@ -84,12 +84,12 @@ func (m *Mob) Init() {
 }
 
 var directions = [4]int {consts.NORTH_DIR, consts.SOUTH_DIR, consts.WEST_DIR, consts.EAST_DIR}
-var gen *rand.Rand = rand.New(rand.NewSource(0))
 
 func (m *Mob) chooseDir() {
-    newDir := directions[gen.Int() % 4]
+    dice.Shake()
+    newDir := m.Dir
     for newDir == m.Dir {
-        newDir = directions[gen.Int() % 4]
+        newDir = directions[dice.Throw(4, 1) - 1]
     }
     m.Dir = newDir
 }
@@ -101,7 +101,7 @@ func (m *Mob) think() {
             // calc dx, dy and find direction
             // save direction
         }
-    
+
     } else {
         m.walkingCycle++
         if m.walkingCycle == consts.MOB_WALKING_CYCLE_DURATION {
@@ -114,6 +114,10 @@ func (m *Mob) think() {
 func (m *Mob) Do() {
     m.think()
     m.ActiveObject.Do()
+}
+
+func (m *Mob) Attack() consts.JsonType {
+    return nil
 }
 
 func NewMob(kind *MobKind, x, y float64) Mob {

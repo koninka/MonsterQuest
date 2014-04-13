@@ -3,6 +3,7 @@ package gameObjects
 import (
 	"MonsterQuest/gameObjectsBase"
 	"MonsterQuest/gameObjectsFlags"
+	"MonsterQuest/consts"
 )
 
 type playerKind struct {
@@ -46,6 +47,10 @@ func (p *Player) GetInfo() map[string] interface{} {
 func (p *Player) Do() {
 	p.ActiveObject.Do()
 	p.Dir = -1
+}
+
+func (p *Player) Attack() consts.JsonType {
+	return nil
 }
 
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {

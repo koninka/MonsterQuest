@@ -62,9 +62,7 @@ func GetInstance() *Game {
 }
 
 func (g *Game) readInGameMsgs() {
-    for {
-        msg := <-g.msgsChannel
-    }
+
 }
 
 func (g *Game) sendTick(tick int64) {
