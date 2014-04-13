@@ -66,21 +66,13 @@ func (m *Mob) GetType() string {
 
 func (m *Mob) GetInfo() map[string] interface{} {
     return map[string] interface{} {
-        "name" : m.kind.name,
-        "description" : m.kind.description,
+        "name" : m.Kind.GetName(),
+        "description" : m.Kind.GetDescription(),
     }
 }
 
 func (m *Mob) SetID(id int64) {
     m.Id = id
-}
-
-func (m *Mob) GetName() string {
-    return m.kind.name
-}
-
-func (m *Mob) GetDescription() string {
-    return m.kind.description
 }
 
 func (m *Mob) GetKind() *MobKind {
