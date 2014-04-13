@@ -101,7 +101,7 @@ func (m *Mob) think() {
             // calc dx, dy and find direction
             // save direction
         }
-    
+
     } else {
         m.walkingCycle++
         if m.walkingCycle == consts.MOB_WALKING_CYCLE_DURATION {
@@ -114,6 +114,10 @@ func (m *Mob) think() {
 func (m *Mob) Do() {
     m.think()
     m.ActiveObject.Do()
+}
+
+func (m *Mob) Attack() {
+
 }
 
 func NewMob(kind *MobKind, x, y float64) Mob {

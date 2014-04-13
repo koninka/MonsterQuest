@@ -48,6 +48,10 @@ func (p *Player) Do() {
 	p.Dir = -1
 }
 
+func (p *Player) Attack() {
+
+}
+
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
 	return Player{gameObjectsBase.NewActiveObject(id, x, y, getPlayerKind()), login, sid, dbId}
 }

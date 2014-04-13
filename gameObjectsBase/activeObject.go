@@ -44,6 +44,7 @@ type Activer interface {
     SetDir(dir int)
     Init()
     Do()
+    Attack()
     GetTarget() Activer
     SetTarget(target Activer)
     GetRadiusVision() int
@@ -177,6 +178,8 @@ func (obj *ActiveObject) Do() {
         f.Do(obj)
     }
 }
+
+func (obj *ActiveObject) Attack() {}
 
 func (obj *ActiveObject) GetTarget() Activer {
     return obj.Target
