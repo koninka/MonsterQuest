@@ -4,6 +4,7 @@ import (
     "bufio"
     "os"
     "strings"
+    "MonsterQuest/gameBlows"
     "MonsterQuest/gameObjects"
     "MonsterQuest/connect"
     "MonsterQuest/utils"
@@ -20,15 +21,18 @@ type mobList struct {
 }
 
 func (ml *mobList) initializeMobTypes() {
+    gameBlows.InitBlowMethods();
 	gameObjectsFlags.InitFlags(&GetInstance().field, GetInstance().msgsChannel)
 	db := connect.CreateConnect()
-	rows, _ := db.Query("SELECT id, name, description, flags, race FROM mobs_types")
+	rows, _ := db.Query("SELECT id, name, description, blow_method, flags, race FROM mobs_types")
 	for rows.Next() {
-		var id int64
-		var race int
-		var name, desc, flags string
-		rows.Scan(&id, &name, &desc, &flags, &race)
-		ml.mobKinds[id] = gameObjects.CreateMobKind(id, race, name, desc, flags)
+		var (
+            id int64
+            race int
+            name, desc, flags, blowMethods string
+        )
+		rows.Scan(&id, &name, &desc, &blowMethods, &flags, &race)
+		ml.mobKinds[id] = gameObjects.CreateMobKind(id, race, name, desc, blowMethods, flags)
 	}
 }
 
