@@ -10,14 +10,12 @@ import (
     "MonsterQuest/gameObjectsBase"
 )
 
-type jsonType map[string] interface{}
-
 type Game struct {
     websocketHub
     field gameMap.GameField
     players playerList
     mobs mobList
-    lastActions map[string] jsonType
+    lastActions map[string] consts.JsonType
 }
 
 var gameInstance *Game
@@ -52,7 +50,7 @@ func GetInstance() *Game {
                 make(chan gameObjects.Mob),
                 make(map[int64] *gameObjects.MobKind),
             },
-            make(map[string] jsonType),
+            make(map[string] consts.JsonType),
         }
         gameInstance.field.LoadFromFile("map.txt")
         gameInstance.mobs.initializeMobTypes()
@@ -79,7 +77,7 @@ func (g *Game) CloseConnection(conn *connection) {
     g.unregister <- conn
 }
 
-func (g *Game) CheckOutPlayersAction(conn *connection, json jsonType) {
+func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     action, ok := json["action"].(string)
     if !ok {
         conn.send <- g.badAction("")
@@ -98,12 +96,12 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json jsonType) {
     }
 }
 
-func (g *Game) moveAction(json jsonType) {
+func (g *Game) moveAction(json consts.JsonType) {
     p := g.players.getPlayerBySession(json["sid"].(string))
     p.SetDir(g.getIotaDir(json["direction"].(string)))
 }
 
-func (g *Game) attackAction(json jsonType) {
+func (g *Game) attackAction(json consts.JsonType) {
     if obj, isExist := g.getObjectById(int64(json["id"].(float64))); isExist {
         g.players.getPlayerBySession(json["sid"].(string)).SetTarget(obj)
     }
@@ -113,11 +111,11 @@ func (g *Game) inDictionary(k string) bool {
     return g.getDictionaryAction()[k] != nil
 }
 
-func (g *Game) setUpMap(json jsonType) jsonType {
-    res := make(jsonType)
+func (g *Game) setUpMap(json consts.JsonType) consts.JsonType {
+    res := make(consts.JsonType)
     res["action"] = "setUpMap"
     res["result"] = "badAction"
-    loadingFailed := func () jsonType {
+    loadingFailed := func () consts.JsonType {
         res["result"] = "badMap"
         return res
     }
@@ -157,15 +155,15 @@ func (g *Game) setUpMap(json jsonType) jsonType {
     return res;
 }
 
-func (g* Game) badAction(action string) jsonType {
-    res := make(jsonType)
+func (g* Game) badAction(action string) consts.JsonType {
+    res := make(consts.JsonType)
     res["action"] = action
     res["result"] = "badAction"
     return res
 }
 
-func (g *Game) startTesting() jsonType {
-    res := make(jsonType)
+func (g *Game) startTesting() consts.JsonType {
+    res := make(consts.JsonType)
     res["action"] = "startTesting"
     res["result"] = "badAction"
     if *consts.TEST && !consts.TEST_MODE {
@@ -175,8 +173,8 @@ func (g *Game) startTesting() jsonType {
     return res
 }
 
-func (g *Game) endTesting() jsonType {
-    res := make(jsonType)
+func (g *Game) endTesting() consts.JsonType {
+    res := make(consts.JsonType)
     res["action"] = "endTesting"
     res["result"] = "badAction"
     if *consts.TEST && consts.TEST_MODE {
@@ -186,8 +184,8 @@ func (g *Game) endTesting() jsonType {
     return res
 }
 
-func (g *Game) getDictionaryAction() jsonType {
-    res := make(jsonType)
+func (g *Game) getDictionaryAction() consts.JsonType {
+    res := make(consts.JsonType)
     res["action"] = "getDictionary"
     res["result"] = "ok"
     res["."] = "grass"
@@ -221,8 +219,8 @@ func (g *Game) getObjectById(id int64) (gameObjectsBase.Activer, bool) {
     }
 }
 
-func (g *Game) examineAction(json jsonType) jsonType {
-    res := make(jsonType)
+func (g *Game) examineAction(json consts.JsonType) consts.JsonType {
+    res := make(consts.JsonType)
     id := int64(json["id"].(float64))
     res["action"] = "examine"
     obj, isExists := g.getObjectById(id)
@@ -243,8 +241,8 @@ func (g *Game) examineAction(json jsonType) jsonType {
     return res
 }
 
-func (g *Game) lookAction(sid string) jsonType {
-    res := make(jsonType)
+func (g *Game) lookAction(sid string) consts.JsonType {
+    res := make(consts.JsonType)
     res["action"] = "look"
     player := g.players.getPlayerBySession(sid)
     if player == nil {
@@ -276,13 +274,13 @@ func (g *Game) lookAction(sid string) jsonType {
         }
     }
     res["map"] = visibleSpace
-    visibleActors := make([]jsonType, 0, 1000)
+    visibleActors := make([]consts.JsonType, 0, 1000)
     var addedActors = map[int64] bool {player.GetID() : true}
     for i := t; i < b; i++ {
         for j := l; j < r; j++ {
             for id, obj := range g.field.Actors[i][j] {
                 if !addedActors[id] {
-                    json := make(jsonType)
+                    json := make(consts.JsonType)
                     center := obj.GetCenter()
                     json["id"] = id
                     json["x"] = center.X

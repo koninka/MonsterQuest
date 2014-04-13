@@ -6,6 +6,7 @@ import (
     "fmt"
 )
 
+type JsonType map[string] interface{}
 
 const (
     SERVER_PORT = ":8080"
