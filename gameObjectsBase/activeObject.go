@@ -39,7 +39,6 @@ type Activer interface {
     GetInfo() map[string] interface{}
     GetDir() int
     SetDir(dir int)
-    GetFlags() *[]Flager
     Init()
     Do()
     GetTarget() Activer
@@ -76,7 +75,6 @@ type ActiveObject struct {
     Dir int
     HP int
     Center geometry.Point
-    Flags []Flager
     Target Activer
     Kind Kinder
 }
@@ -162,13 +160,13 @@ func (obj *ActiveObject) SetDir(dir int) {
 }
 
 func (obj *ActiveObject) GetFlags() *[]Flager {
-    return &obj.Flags
+    return obj.GetKind().GetFlags()
 }
 
 func (obj *ActiveObject) Init() {}
 
 func (obj *ActiveObject) Do() {
-    for _, f := range obj.Flags {
+    for _, f := range *obj.GetKind().GetFlags() {
         f.Do(obj)
     }
 }
