@@ -23,6 +23,8 @@ const (
 	EAST_DIR
 	WEST_DIR
 	MOB_WALKING_CYCLE_DURATION = 20
+    BT_MELEE = iota
+    BT_RANGE
 )
 
 const (
