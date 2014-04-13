@@ -2,6 +2,7 @@ package gameObjects
 
 import (
     "strings"
+    "fmt"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/geometry"
@@ -24,9 +25,13 @@ func (mk *MobKind) GetDescription() string {
     return mk.description
 }
 
-func CreateMobKind(id int64, race int, name, description, flagsStr string) *MobKind {
+func CreateMobKind(id int64, race int, name, description, blowMethods, flagsStr string) *MobKind {
     added := make(map[string] bool)
     kind := MobKind{gameObjectsBase.NewKind(race), id, name, description}
+    for _, blowDesc := range strings.Split(blowMethods, "@") {
+        kind.GetBlowList().AddBlowDescription(blowDesc)
+    }
+    fmt.Println(kind.GetBlowList())
     for _, flagName := range strings.Split(flagsStr, "|") {
         flag := gameObjectsFlags.GetFlag(flagName)
         if flag != nil {
@@ -75,10 +80,6 @@ func (m *Mob) SetID(id int64) {
     m.Id = id
 }
 
-func (m *Mob) GetKind() gameObjectsBase.Kinder {
-    return m.Kind
-}
-
 func (m *Mob) Init() {
     m.chooseDir()
 }
@@ -117,7 +118,22 @@ func (m *Mob) Do() {
 }
 
 func (m *Mob) Attack() consts.JsonType {
-    return nil
+    var res consts.JsonType = nil
+    fmt.Println("attack")
+    t, bl := m.GetTarget(), m.GetBlowList()
+    if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d > 1.0 {
+        rbl := bl.GetReachesRangeBlows(d)
+        if rbl.Amount() > 0 {
+            res = t.GetHit(rbl.ChooseBlowMethod(consts.BT_RANGE))
+            // res = rbl.ChooseBlowMethod(consts.BT_RANGE).Blow()
+        } else {
+            //calc direction
+        }
+    } else {
+        res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE))
+        // res = bl.ChooseBlowMethod(consts.BT_MELEE).Blow()
+    }
+    return res
 }
 
 func NewMob(kind *MobKind, x, y float64) Mob {
