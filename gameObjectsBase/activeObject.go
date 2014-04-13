@@ -48,6 +48,26 @@ type Activer interface {
     GetHP() int
     GetAttackRadius() int
     NotifyAboutCollision()
+
+type Kind struct {
+    Race int
+    Flags []Flager
+}
+
+func (k *Kind) GetRace() int {
+    return k.Race
+}
+
+func (k *Kind) GetFlags() *[]Flager {
+    return &k.Flags
+}
+
+func (k *Kind) AddFlag(flag Flager) {
+    k.Flags = append(k.Flags, flag)
+}
+
+func NewKind(race int) Kind {
+    return Kind{race, make([]Flager, 0, 1000)}
 }
 
 type ActiveObject struct {
