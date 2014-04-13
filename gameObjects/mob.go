@@ -25,7 +25,7 @@ func (mk *MobKind) GetDescription() string {
 }
 
 func CreateMobKind(id int64, race int, name, description, flagsStr string) *MobKind {
-    var added map[string] bool
+    added := make(map[string] bool)
     kind := MobKind{gameObjectsBase.NewKind(race), id, name, description}
     for _, flagName := range strings.Split(flagsStr, "|") {
         flag := gameObjectsFlags.GetFlag(flagName)
