@@ -127,6 +127,12 @@ func (a *AttackFlag) Do(obj gameObjectsBase.Activer) {
     target := obj.GetTarget()
     if target != nil && geometry.Distance(obj.GetCenter(), target.GetCenter()) <= float64(obj.GetAttackRadius()) {
         // attack target. may be, attack every tick is very "cool", so it's need to be discussed
+
+        a.MsgsChannel <- map[string] interface{} {
+            "action"      : "attack",
+            "object"      : obj,
+            "affectedObj" : target,
+        }
     }
 }
 
