@@ -11,7 +11,7 @@ type mobGenerator struct {
 	kind *gameObjects.MobKind
 	area *geometry.Rectangle
 	respawnDuration time.Duration
-	pipeline chan gameObjects.Mober
+	pipeline chan gameObjects.Mob
 }
 
 func (gen *mobGenerator) run() {

@@ -13,9 +13,9 @@ import (
 )
 
 type mobList struct {
-	mobs map[int64] gameObjects.Mober
+	mobs map[int64] *gameObjects.Mob
 	mobGens []*mobGenerator
-	pipeline chan gameObjects.Mober
+	pipeline chan gameObjects.Mob
 	mobKinds map[int64] *gameObjects.MobKind
 }
 

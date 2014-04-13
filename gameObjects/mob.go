@@ -9,31 +9,42 @@ import (
     "MonsterQuest/consts"
 )
 
-type Mober interface {
-    gameObjectsBase.Activer
-    GetKind() *MobKind
-    GetName() string
-    GetDescription() string
-}
-
 type MobKind struct {
+    gameObjectsBase.Kind
     id int64
     name string
     description string
-    flags map[string] bool
 }
 
-func CreateMobKind(id int64, name, description, flagsStr string) *MobKind {
-    kind := MobKind{id, name, description, make(map[string] bool)}
-    for _, flag := range strings.Split(flagsStr, "|") {
-        kind.flags[flag] = true
+func (mk *MobKind) GetName() string {
+    return mk.name
+}
+
+func (mk *MobKind) GetDescription() string {
+    return mk.description
+}
+
+func CreateMobKind(id int64, race int, name, description, flagsStr string) *MobKind {
+    var added map[string] bool
+    kind := MobKind{gameObjectsBase.NewKind(race), id, name, description}
+    for _, flagName := range strings.Split(flagsStr, "|") {
+        flag := gameObjectsFlags.GetFlag(flagName)
+        if flag != nil {
+            added[flagName] = true
+            kind.Flags = append(kind.Flags, flag)
+        }
+    }
+    if !added["NEVER_MOVE"] {
+        kind.AddFlag(gameObjectsFlags.GetFlag("CAN_MOVE"))
+    }
+    if !added["NEVER_BLOW"] {
+        kind.AddFlag(gameObjectsFlags.GetFlag("CAN_BLOW"))
     }
     return &kind
 }
 
 type Mob struct {
     gameObjectsBase.ActiveObject
-    kind *MobKind
     walkingCycle int
 }
 

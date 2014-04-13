@@ -47,9 +47,9 @@ func GetInstance() *Game {
                 make(map[string] *gameObjects.Player),
             },
             mobList{
-                make(map[int64] gameObjects.Mober),
+                make(map[int64] *gameObjects.Mob),
                 make([] *mobGenerator, 0, 1000),
-                make(chan gameObjects.Mober),
+                make(chan gameObjects.Mob),
                 make(map[int64] *gameObjects.MobKind),
             },
             make(map[string] jsonType),
