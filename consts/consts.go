@@ -26,7 +26,8 @@ const (
 )
 
 const (
-	TROLL = iota
+	PLAYER = iota
+	TROLL
 	ORC
 )
 

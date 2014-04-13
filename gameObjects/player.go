@@ -22,7 +22,7 @@ var kind *playerKind
 
 func getPlayerKind() *playerKind {
 	if kind == nil {
-		kind = &playerKind{gameObjectsBase.NewKind(-1)}
+		kind = &playerKind{gameObjectsBase.NewKind(consts.PLAYER)}
 		kind.Flags = append(kind.Flags, gameObjectsFlags.GetFlag("CAN_MOVE"))
 		kind.Flags = append(kind.Flags, gameObjectsFlags.GetFlag("CAN_BLOW"))
 	}
