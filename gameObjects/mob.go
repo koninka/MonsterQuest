@@ -3,7 +3,7 @@ package gameObjects
 import (
     "strings"
     "fmt"
-    "MonsterQuest/gameBlows"
+    "MonsterQuest/gameFight/blowList"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/geometry"
@@ -16,7 +16,7 @@ type MobKind struct {
     id int64
     name string
     description string
-    blowList *gameBlows.BlowList
+    blowList *blowList.BlowList
 }
 
 func (mk *MobKind) GetName() string {
@@ -29,7 +29,7 @@ func (mk *MobKind) GetDescription() string {
 
 func CreateMobKind(id int64, race int, name, description, blowMethods, flagsStr string) *MobKind {
     added := make(map[string] bool)
-    kind := MobKind{gameObjectsBase.NewKind(race), id, name, description, gameBlows.NewBlowList()}
+    kind := MobKind{gameObjectsBase.NewKind(race), id, name, description, blowList.NewBlowList()}
     for _, blowDesc := range strings.Split(blowMethods, "@") {
         kind.blowList.AddBlowDescription(blowDesc)
     }

@@ -34,6 +34,7 @@ type Player struct {
     Login string
     SID string
     DBId int64
+    // weapon 
 }
 
 func (p *Player) GetType() string {
@@ -50,7 +51,7 @@ func (p *Player) Do() {
 }
 
 func (p *Player) Attack() consts.JsonType {
-    
+    return nil
 }
 
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
