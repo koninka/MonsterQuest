@@ -29,7 +29,6 @@ type Kinder interface {
     GetName() string
     GetDescription() string
     AddFlag(flag Flager)
-    GetBlowList() *gameBlows.BlowList
 }
 
 type Activer interface {
@@ -55,7 +54,6 @@ type Activer interface {
     GetAttackRadius() int
     NotifyAboutCollision()
     GetKind() Kinder
-    GetBlowList() *gameBlows.BlowList
     GetHit(bldesc *gameBlows.BlowDescription) consts.JsonType
 }
 
@@ -64,7 +62,6 @@ type Activer interface {
 type Kind struct {
     Race int
     Flags []Flager
-    blowList *gameBlows.BlowList
 }
 
 func (k *Kind) GetRace() int {
@@ -79,12 +76,8 @@ func (k *Kind) AddFlag(flag Flager) {
     k.Flags = append(k.Flags, flag)
 }
 
-func (k *Kind) GetBlowList() *gameBlows.BlowList {
-    return k.blowList
-}
-
 func NewKind(race int) Kind {
-    return Kind{race, make([]Flager, 0, 1000), gameBlows.NewBlowList()}
+    return Kind{race, make([]Flager, 0, 1000)}
 }
 
 type ActiveObject struct {
@@ -221,10 +214,6 @@ func (obj *ActiveObject) NotifyAboutCollision() {}
 
 func (obj *ActiveObject) GetKind() Kinder {
     return obj.Kind
-}
-
-func (obj *ActiveObject) GetBlowList() *gameBlows.BlowList {
-    return obj.Kind.GetBlowList()
 }
 
 func (obj *ActiveObject) GetHit(bldesc *gameBlows.BlowDescription) consts.JsonType {
