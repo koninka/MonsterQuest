@@ -22,12 +22,13 @@ type mobList struct {
 func (ml *mobList) initializeMobTypes() {
 	gameObjectsFlags.InitFlags(getGameField())
 	db := connect.CreateConnect()
-	rows, _ := db.Query("SELECT id, name, description, flags FROM mobs_types")
+	rows, _ := db.Query("SELECT id, name, description, flags, race FROM mobs_types")
 	for rows.Next() {
 		var id int64
+		var race int
 		var name, desc, flags string
-		rows.Scan(&id, &name, &desc, &flags)
-		ml.mobKinds[id] = gameObjects.CreateMobKind(id, name, desc, flags)
+		rows.Scan(&id, &name, &desc, &flags, &race)
+		ml.mobKinds[id] = gameObjects.CreateMobKind(id, race, name, desc, flags)
 	}
 }
 
