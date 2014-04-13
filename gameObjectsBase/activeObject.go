@@ -1,6 +1,7 @@
 package gameObjectsBase
 
 import (
+    "MonsterQuest/gameBlows"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
 )
@@ -28,6 +29,7 @@ type Kinder interface {
     GetName() string
     GetDescription() string
     AddFlag(flag Flager)
+    GetBlowList() *gameBlows.BlowList
 }
 
 type Activer interface {
@@ -53,6 +55,8 @@ type Activer interface {
     GetAttackRadius() int
     NotifyAboutCollision()
     GetKind() Kinder
+    GetBlowList() *gameBlows.BlowList
+    GetHit(bldesc *gameBlows.BlowDescription) consts.JsonType
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -60,6 +64,7 @@ type Activer interface {
 type Kind struct {
     Race int
     Flags []Flager
+    blowList *gameBlows.BlowList
 }
 
 func (k *Kind) GetRace() int {
@@ -74,8 +79,12 @@ func (k *Kind) AddFlag(flag Flager) {
     k.Flags = append(k.Flags, flag)
 }
 
+func (k *Kind) GetBlowList() *gameBlows.BlowList {
+    return k.blowList
+}
+
 func NewKind(race int) Kind {
-    return Kind{race, make([]Flager, 0, 1000)}
+    return Kind{race, make([]Flager, 0, 1000), gameBlows.NewBlowList()}
 }
 
 type ActiveObject struct {
@@ -216,6 +225,20 @@ func (obj *ActiveObject) NotifyAboutCollision() {}
 
 func (obj *ActiveObject) GetKind() Kinder {
     return obj.Kind
+}
+
+func (obj *ActiveObject) GetBlowList() *gameBlows.BlowList {
+    return obj.Kind.GetBlowList()
+}
+
+func (obj *ActiveObject) GetHit(bldesc *gameBlows.BlowDescription) consts.JsonType {
+    res := make(consts.JsonType)
+    res["action"] = "attack"
+    res["blowType"] = bldesc.GetBlowType()
+    res["dealtDamage"] = bldesc.DmgDesc.GetDamage()
+    obj.HP -= res["dealtDamage"].(int)
+    //use damage effect
+    return res
 }
 
 func NewActiveObject(id int64, x, y float64, kind Kinder) ActiveObject {
