@@ -138,6 +138,9 @@ type HateFlag struct {
 }
 
 func (h *HateFlag) Do(obj gameObjectsBase.Activer) {
+    if obj.GetTarget() == nil {
+        return
+    }
     center := obj.GetCenter()
     lt, rb := h.field.GetVisibleArea(center.X, center.Y, obj.GetRadiusVision())
     for i := int(lt.Y); i < int(rb.Y); i++ {
