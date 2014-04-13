@@ -24,6 +24,11 @@ const (
 	MOB_WALKING_CYCLE_DURATION = 20
 )
 
+const (
+	TROLL = iota
+	ORC
+)
+
 var (
     TEST = flag.Bool("test", false, "a bool")
     TEST_MODE = false
