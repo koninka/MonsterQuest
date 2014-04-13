@@ -67,8 +67,8 @@ func (ml *mobList) run() {
 	for {
 		m := <-ml.pipeline
 		id := GenerateId()
-		ml.mobs[id] = m
+		ml.mobs[id] = &m
 		m.SetID(id)
-		getGameField().LinkActorToCells(m)
+		getGameField().LinkActorToCells(&m)
 	}
 }
