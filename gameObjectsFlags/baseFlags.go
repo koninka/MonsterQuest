@@ -131,9 +131,20 @@ func (b *BlowFlag) Do(obj gameObjectsBase.Activer) {
 
 type HateFlag struct {
     Flag
-    hated string // might be anything else
+    hated int
 }
 
 func (h *HateFlag) Do(obj gameObjectsBase.Activer) {
-    // find any hated actor on map and assign in to obj.Target
+    center := obj.GetCenter()
+    lt, rb := h.field.GetVisibleArea(center.X, center.Y, obj.GetRadiusVision())
+    for i := int(lt.Y); i < int(rb.Y); i++ {
+        for j := int(lt.X); j < int(rb.X); j++ {
+            for _, m := range h.field.Actors[i][j] {
+                if m.GetKind().GetRace() == h.hated {
+                    obj.SetTarget(m)
+                    return
+                }
+            }
+        }
+    }
 }
