@@ -1,7 +1,7 @@
 package gameObjectsBase
 
 import (
-    "MonsterQuest/gameBlows"
+    "MonsterQuest/gameFight/blowList"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
 )
@@ -54,7 +54,7 @@ type Activer interface {
     GetAttackRadius() int
     NotifyAboutCollision()
     GetKind() Kinder
-    GetHit(bldesc *gameBlows.BlowDescription) consts.JsonType
+    GetHit(bldesc *blowList.BlowDescription) consts.JsonType
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -216,7 +216,7 @@ func (obj *ActiveObject) GetKind() Kinder {
     return obj.Kind
 }
 
-func (obj *ActiveObject) GetHit(bldesc *gameBlows.BlowDescription) consts.JsonType {
+func (obj *ActiveObject) GetHit(bldesc *blowList.BlowDescription) consts.JsonType {
     res := make(consts.JsonType)
     res["action"] = "attack"
     res["blowType"] = bldesc.GetBlowType()

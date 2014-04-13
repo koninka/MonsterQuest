@@ -1,6 +1,8 @@
 package gameObjects
 
 import (
+    wpns "MonsterQuest/gameStuff/weapons"
+    "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/consts"
@@ -34,6 +36,7 @@ type Player struct {
     Login string
     SID string
     DBId int64
+    weapon wpns.Weapon
 }
 
 func (p *Player) GetType() string {
@@ -50,9 +53,12 @@ func (p *Player) Do() {
 }
 
 func (p *Player) Attack() consts.JsonType {
-    
+    var res consts.JsonType = nil
+    // t, _ := p.GetTarget()
+    // res = t.GetHit(p.weapon)
+    return res
 }
 
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
-    return Player{gameObjectsBase.NewActiveObject(id, x, y, getPlayerKind()), login, sid, dbId}
+    return Player{gameObjectsBase.NewActiveObject(id, x, y, getPlayerKind()), login, sid, dbId, &wpns.FistWeap{wpns.BaseWeap{fightBase.NewBaseBlow(fightBase.BM_HIT, 0.8, "hit"), fightBase.CreateDmgDescription("4d3")}}}
 }

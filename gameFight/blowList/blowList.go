@@ -1,20 +1,16 @@
-package gameBlows
+package blowList
 
 import (
     "fmt"
     "strings"
-    "strconv"
     "MonsterQuest/dice"
+    "MonsterQuest/gameFight/blows"
+    "MonsterQuest/gameFight/fightBase"
 )
 
-type DmgDescription struct {
-    edge_amount   int
-    throws_amount int
-}
-
 type BlowDescription struct {
-    DmgDesc DmgDescription
-    method Blower
+    DmgDesc fightBase.DmgDescription
+    method fightBase.Blower
 }
 
 type BlowList struct {
@@ -22,21 +18,6 @@ type BlowList struct {
     blows []*BlowDescription
     meleeBlows []int
     rangeBlows []int
-}
-
-func createDmgDescription(damage string) DmgDescription {
-    if strings.Index(damage, "d") == -1 {
-        damage = "1d2" //must be default value for blow method
-    }
-    d := strings.Split(damage, "d")
-    edge_amount, _   := strconv.Atoi(d[0])
-    throws_amount, _ := strconv.Atoi(d[1])
-    return DmgDescription{edge_amount, throws_amount}
-}
-
-func (dd *DmgDescription) GetDamage() int {
-    dice.Shake()
-    return dice.Throw(dd.edge_amount, dd.throws_amount)
 }
 
 func (bld *BlowDescription) GetBlowType() string {
@@ -48,7 +29,7 @@ func NewBlowList() *BlowList {
 }
 
 func (bl *BlowList) addBlow(bdesc *BlowDescription) {
-    var isRange bool = bdesc.method.isRange()
+    var isRange bool = bdesc.method.IsRange()
     bl.blows = append(bl.blows, bdesc)
     bl.hasRangeBlows = bl.hasRangeBlows || isRange
     var b *[]int
@@ -82,7 +63,7 @@ func (bl *BlowList) AddBlowDescription(desc string) {
         blow_damage = bda[2]
     }
     fmt.Println(blow_name)
-    bl.addBlow(&BlowDescription{createDmgDescription(blow_damage), GetBlowMethod(blow_name)})
+    bl.addBlow(&BlowDescription{fightBase.CreateDmgDescription(blow_damage), blows.GetBlowMethod(blow_name)})
 }
 
 func (bl *BlowList) GetReachesRangeBlows(d float64) BlowList {
@@ -98,7 +79,7 @@ func (bl *BlowList) GetReachesRangeBlows(d float64) BlowList {
 func (bl *BlowList) ChooseBlowMethod(bt int) *BlowDescription {
     dice.Shake()
     blow := bl.blows[dice.Throw(len(bl.blows), 1) - 1]
-    for (bt == btMELEE && blow.method.isRange()) || (bt == btRANGE && !blow.method.isRange()) {
+    for (bt == fightBase.BT_MELEE && blow.method.IsRange()) || (bt == fightBase.BT_RANGE && !blow.method.IsRange()) {
         blow = bl.blows[dice.Throw(len(bl.blows), 1) - 1]
     }
     return blow
