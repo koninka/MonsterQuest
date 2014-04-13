@@ -26,10 +26,6 @@ func GenerateId() int64 {
     return lastId
 }
 
-func getGameField() *gameMap.GameField {
-    return &GetInstance().field
-}
-
 func GetInstance() *Game {
     if gameInstance == nil {
         gameInstance = &Game{

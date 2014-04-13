@@ -15,7 +15,7 @@ type mobGenerator struct {
 }
 
 func (gen *mobGenerator) run() {
-	field := getGameField()
+	field := &GetInstance().field
 	for {
 		var x, y float64
 		var placeFound = false

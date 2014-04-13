@@ -20,7 +20,7 @@ type mobList struct {
 }
 
 func (ml *mobList) initializeMobTypes() {
-	gameObjectsFlags.InitFlags(getGameField())
+	gameObjectsFlags.InitFlags(&GetInstance().field, GetInstance().actionsChannel)
 	db := connect.CreateConnect()
 	rows, _ := db.Query("SELECT id, name, description, flags, race FROM mobs_types")
 	for rows.Next() {
@@ -69,6 +69,6 @@ func (ml *mobList) run() {
 		id := GenerateId()
 		ml.mobs[id] = &m
 		m.SetID(id)
-		getGameField().LinkActorToCells(&m)
+		GetInstance().field.LinkActorToCells(&m)
 	}
 }
