@@ -236,23 +236,6 @@ func (g *Game) examineAction(json jsonType) jsonType {
     return res
 }
 
-func (g *Game) getVisibleSpace(coord, bound int) (v1 int, v2 int, shift int) {
-    shift = 0
-    r := consts.VISION_RADIUS + 1
-    if coord - r < 0 {
-        v1 = 0
-        shift = - (coord - r)
-    } else {
-        v1 = coord - r
-    }
-    if coord + r > bound {
-        v2 = bound
-    } else {
-        v2 = coord + r
-    }
-    return
-}
-
 func (g *Game) lookAction(sid string) jsonType {
     res := make(jsonType)
     res["action"] = "look"
@@ -268,8 +251,18 @@ func (g *Game) lookAction(sid string) jsonType {
             visibleSpace[i][j] = "#"
         }
     }
-    l, r, scol := g.getVisibleSpace(int(player.Center.X), g.field.Width - 1)
-    t, b, srow := g.getVisibleSpace(int(player.Center.Y), g.field.Height - 1)
+    px, py := int(player.Center.X), int(player.Center.Y)
+    var scol, srow int
+    r := player.GetRadiusVision() + 1
+    if px - r < 0 {
+        scol = r - px
+    }
+    if py - r < 0 {
+        srow = r - py
+    }
+    lt, rb := g.field.GetVisibleArea(player.Center.X, player.Center.Y, player.GetRadiusVision())
+    l, r := int(lt.X), int(rb.X)
+    t, b := int(lt.Y), int(rb.Y)
     for i := t; i < b; i++ {
         for j := l; j < r; j++ {
             visibleSpace[i - t + srow][j - l + scol] = string(g.field.Field[i][j])

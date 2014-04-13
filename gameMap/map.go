@@ -86,3 +86,24 @@ func (f *GameField) UnlinkActorFromCells(obj gameObjectsBase.Activer) {
     delete(f.Actors[rbr][rbc], id)
     delete(f.Actors[rbr][ltc], id)
 }
+
+func (f *GameField) getVisibleSpace(coord, radiusVision, bound int) (v1 int, v2 int) {
+    r := radiusVision + 1
+    if coord - r < 0 {
+        v1 = 0
+    } else {
+        v1 = coord - r
+    }
+    if coord + r > bound {
+        v2 = bound
+    } else {
+        v2 = coord + r
+    }
+    return
+}
+
+func (f *GameField) GetVisibleArea(x, y float64, radiusVision int) (geometry.Point, geometry.Point) {
+    l, r := f.getVisibleSpace(int(x), radiusVision, f.Width - 1)
+    t, b := f.getVisibleSpace(int(y), radiusVision, f.Height - 1)
+    return geometry.Point{float64(l), float64(t)}, geometry.Point{float64(r), float64(b)}
+}
