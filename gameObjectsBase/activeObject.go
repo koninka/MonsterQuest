@@ -45,7 +45,7 @@ type Activer interface {
     Init()
     Do()
     Attack() consts.JsonType
-    GetTarget() Activer
+    GetTarget() (Activer, bool)
     SetTarget(target Activer)
     GetRadiusVision() int
     GetDealtDamage() int
@@ -183,8 +183,12 @@ func (obj *ActiveObject) Attack() consts.JsonType {
     return nil
 }
 
-func (obj *ActiveObject) GetTarget() Activer {
-    return obj.Target
+func (obj *ActiveObject) GetTarget() (Activer, bool) {
+    if obj.Target != nil {
+        return obj.Target, true
+    } else {
+        return nil, false
+    }
 }
 
 func (obj *ActiveObject) SetTarget(target Activer) {

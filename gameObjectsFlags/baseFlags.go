@@ -138,7 +138,7 @@ type HateFlag struct {
 }
 
 func (h *HateFlag) Do(obj gameObjectsBase.Activer) {
-    if obj.GetTarget() == nil {
+    if _, exists := obj.GetTarget(); exists {
         return
     }
     center := obj.GetCenter()
