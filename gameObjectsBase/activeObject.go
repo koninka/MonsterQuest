@@ -29,6 +29,7 @@ type Kinder interface {
 
 type Activer interface {
     GetID() int64
+    SetID(id int64)
     GetCenter() geometry.Point
     GetRectangle() geometry.Rectangle
     GetShiftedFrontSide(dir int) geometry.Point
@@ -60,6 +61,10 @@ type ActiveObject struct {
 
 func (obj *ActiveObject) GetID() int64 {
     return obj.Id
+}
+
+func (obj *ActiveObject) SetID(id int64) {
+    obj.Id = id
 }
 
 func (obj *ActiveObject) GetCenter() geometry.Point {

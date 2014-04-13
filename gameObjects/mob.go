@@ -11,7 +11,6 @@ import (
 
 type Mober interface {
     gameObjectsBase.Activer
-    SetID(id int64)
     GetKind() *MobKind
     GetName() string
     GetDescription() string
