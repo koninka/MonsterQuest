@@ -30,6 +30,11 @@ func NewGameField() GameField {
 }
 
 func (f *GameField) LoadFromStrings(strs []string) bool {
+    for idx, str := range strs {
+       if rune(str[len(str) - 1]) == rune(13) {
+            strs[idx] = str[:len(str) - 1]
+       }
+    }
     var l int
     equiv := false
     notEmpty := len(strs) > 0
