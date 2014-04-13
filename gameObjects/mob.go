@@ -75,8 +75,8 @@ func (m *Mob) SetID(id int64) {
     m.Id = id
 }
 
-func (m *Mob) GetKind() *MobKind {
-    return m.kind
+func (m *Mob) GetKind() gameObjectsBase.Kinder {
+    return m.Kind
 }
 
 func (m *Mob) Init() {
