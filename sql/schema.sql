@@ -40,6 +40,7 @@ CREATE TABLE mobs_types (
    description TEXT,
    level_info  VARCHAR(15) NOT NULL,
    blow_method TEXT NOT NULL,
+   race        INT,
    UNIQUE(name)
 );
 

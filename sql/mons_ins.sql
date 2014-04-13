@@ -1,8 +1,8 @@
-INSERT INTO mobs_types(name, blow_method, color, description, flags, symbol, info, spells, level_info) VALUES
-	("Scrawny cat", "CLAW|HURT|1d1", "U", "A skinny little furball with sharp claws and a menacing look.", "RAND_25|ANIMAL", "f", "110|2|30|1|10", "", "0|3|0"),
-	("Scruffy little dog", "BITE|HURT|1d1", "U", "A thin flea-ridden mutt, growling as you get close.", "RAND_25|ANIMAL", "C", "110|2|20|1|5", "", "0|3|0"),
-	("Grey mold", "SPORE|HURT|1d4@SPORE|HURT|1d4", "s", "A small strange grey growth.", "NEVER_MOVE|IM_POIS|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP", "m", "110|2|2|1|0", "", "1|1|3"),
-	("Grey mushroom patch", "SPORE|CONFUSE|1d4", "s", "Yum!  It looks quite tasty.", "IM_POIS|NEVER_MOVE|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP", ",", "110|2|2|1|0", "", "1|1|1"),
+INSERT INTO mobs_types(name, blow_method, color, description, flags, symbol, info, spells, level_info, race) VALUES
+	("Scrawny cat", "CLAW|HURT|1d1", "U", "A skinny little furball with sharp claws and a menacing look.", "RAND_25|ANIMAL", "f", "110|2|30|1|10", "", "0|3|0", 0),
+	("Scruffy little dog", "BITE|HURT|1d1", "U", "A thin flea-ridden mutt, growling as you get close.", "RAND_25|ANIMAL", "C", "110|2|20|1|5", "", "0|3|0", 1),
+	("Grey mold", "SPORE|HURT|1d4@SPORE|HURT|1d4", "s", "A small strange grey growth.", "NEVER_MOVE|IM_POIS|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP", "m", "110|2|2|1|0", "", "1|1|3", 0),
+	("Grey mushroom patch", "SPORE|CONFUSE|1d4", "s", "Yum!  It looks quite tasty.", "IM_POIS|NEVER_MOVE|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP", ",", "110|2|2|1|0", "", "1|1|1", 1)/*,
 	("Giant yellow centipede", "BITE|HURT|1d3@STING|HURT|1d3", "y", "It is about four feet long and carnivorous.", "ANIMAL", "c", "110|7|8|14|30", "", "1|1|2"),
 	("Giant white centipede", "BITE|HURT|1d2@STING|HURT|1d2", "w", "It is about four feet long and carnivorous.", "RAND_50|ANIMAL", "c", "110|9|7|12|40", "", "1|1|2"),
 	("White icky thing", "TOUCH|HURT|1d2", "w", "It is a smallish, slimy, icky creature.", "RAND_25|RAND_50", "i", "110|6|12|8|10", "", "1|1|1"),
@@ -122,3 +122,4 @@ INSERT INTO mobs_types(name, blow_method, color, description, flags, symbol, inf
 	("Spirit troll", "HIT|HURT|3d6@HIT|HURT|3d6@HIT|HURT|3d6", "G", "A weird ghostly troll-like being from the ethereal plane.", "TROLL|REGENERATE|DROP_60|IM_ELEC|UNDEAD|EVIL|INVISIBLE|COLD_BLOOD|PASS_WALL|IM_COLD|IM_POIS|NO_CONF|NO_SLEEP|NO_STUN", "G", "110|880|20|108|5", "", "40|3|900"),
 	("Giant roc", "CRUSH|HURT|8d12@CRUSH|HURT|8d12@HIT|ELEC|12d12", "u", "and its screech echoes through the many winding dungeon corridors.", "IM_ELEC|ANIMAL", "B", "110|560|20|84|10", "", "40|3|1000"),
 	("Minotaur", "BUTT|HURT|4d6@BUTT|HURT|4d6@BUTT|HURT|2d6@BUTT|HURT|2d6", "s", "It is a cross between a human and a bull.", "EVIL", "H", "130|550|13|30|10", "", "40|2|2100");
+*/
