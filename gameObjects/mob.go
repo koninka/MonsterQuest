@@ -120,8 +120,8 @@ func (m *Mob) Do() {
     m.ActiveObject.Do()
 }
 
-func NewMob(kind *MobKind, x, y float64) Mober {
-    m := Mob{gameObjectsBase.NewActiveObject(-1, x, y), kind, 0}
-    m.Init()
-    return &m
+func NewMob(kind *MobKind, x, y float64) Mob {
+    m := Mob{gameObjectsBase.NewActiveObject(-1, x, y, kind), 0}
+    m.chooseDir()
+    return m
 }
