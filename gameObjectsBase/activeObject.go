@@ -181,7 +181,7 @@ func (obj *ActiveObject) SetTarget(target Activer) {
 }
 
 func (obj *ActiveObject) GetRadiusVision() int {
-    return 0
+    return consts.VISION_RADIUS
 }
 
 func (obj *ActiveObject) GetDealtDamage() int {
