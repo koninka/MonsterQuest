@@ -198,11 +198,11 @@ func (obj *ActiveObject) GetAttackRadius() int {
 
 func (obj *ActiveObject) NotifyAboutCollision() {}
 
-func NewActiveObject(id int64, x, y float64) ActiveObject {
-    return ActiveObject{id, -1, 0, geometry.Point{x, y}, make([]Flager, 0, 1000), nil}
 
 func (obj *ActiveObject) GetKind() Kinder {
     return obj.Kind
 }
 
+func NewActiveObject(id int64, x, y float64, kind Kinder) ActiveObject {
+    return ActiveObject{id, -1, 0, geometry.Point{x, y}, nil, kind}
 }
