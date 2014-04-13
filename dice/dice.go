@@ -1,4 +1,4 @@
-package cube
+package dice
 
 import (
     "math/rand"

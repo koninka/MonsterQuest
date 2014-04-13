@@ -6,7 +6,7 @@ import (
     "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
-    "MonsterQuest/cube"
+    "MonsterQuest/dice"
 )
 
 type MobKind struct {
@@ -86,10 +86,10 @@ func (m *Mob) Init() {
 var directions = [4]int {consts.NORTH_DIR, consts.SOUTH_DIR, consts.WEST_DIR, consts.EAST_DIR}
 
 func (m *Mob) chooseDir() {
-    cube.Shake()
+    dice.Shake()
     newDir := m.Dir
     for newDir == m.Dir {
-        newDir = directions[cube.Throw(4, 1) - 1]
+        newDir = directions[dice.Throw(4, 1) - 1]
     }
     m.Dir = newDir
 }
