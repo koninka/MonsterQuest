@@ -97,13 +97,11 @@ func (m *Mob) chooseDir() {
 
 func (m *Mob) think() {
     if m.Target != nil {
-        center := m.Target.GetCenter()
-        if geometry.Distance(m.Center, center) < float64(m.GetRadiusVision()) {
-            // calc dx, dy and find direction
-            // save direction
+        if geometry.Distance(m.Center, m.Target.GetCenter()) > float64(m.GetRadiusVision()) {
+            m.Target = nil
         }
-
     } else {
+        //try to find target
         m.walkingCycle++
         if m.walkingCycle == consts.MOB_WALKING_CYCLE_DURATION {
             m.walkingCycle = 0
