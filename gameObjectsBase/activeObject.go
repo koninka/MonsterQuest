@@ -48,6 +48,7 @@ type Activer interface {
     GetHP() int
     GetAttackRadius() int
     NotifyAboutCollision()
+    GetKind() Kinder
 
 type Kind struct {
     Race int
@@ -77,6 +78,7 @@ type ActiveObject struct {
     Center geometry.Point
     Flags []Flager
     Target Activer
+    Kind Kinder
 }
 
 func (obj *ActiveObject) GetID() int64 {
@@ -195,4 +197,9 @@ func (obj *ActiveObject) NotifyAboutCollision() {}
 
 func NewActiveObject(id int64, x, y float64) ActiveObject {
     return ActiveObject{id, -1, 0, geometry.Point{x, y}, make([]Flager, 0, 1000), nil}
+
+func (obj *ActiveObject) GetKind() Kinder {
+    return obj.Kind
+}
+
 }
