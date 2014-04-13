@@ -1,32 +1,32 @@
 package gameObjects
 
 import (
-	"MonsterQuest/gameObjectsBase"
-	"MonsterQuest/gameObjectsFlags"
-	"MonsterQuest/consts"
+    "MonsterQuest/gameObjectsBase"
+    "MonsterQuest/gameObjectsFlags"
+    "MonsterQuest/consts"
 )
 
 type playerKind struct {
-	gameObjectsBase.Kind
+    gameObjectsBase.Kind
 }
 
 func (pk *playerKind) GetName() string {
-	return "player"
+    return "player"
 }
 
 func (pk *playerKind) GetDescription() string {
-	return ""
+    return ""
 }
 
 var kind *playerKind
 
 func getPlayerKind() *playerKind {
-	if kind == nil {
-		kind = &playerKind{gameObjectsBase.NewKind(consts.PLAYER)}
-		kind.Flags = append(kind.Flags, gameObjectsFlags.GetFlag("CAN_MOVE"))
-		kind.Flags = append(kind.Flags, gameObjectsFlags.GetFlag("CAN_BLOW"))
-	}
-	return kind
+    if kind == nil {
+        kind = &playerKind{gameObjectsBase.NewKind(consts.PLAYER)}
+        kind.Flags = append(kind.Flags, gameObjectsFlags.GetFlag("CAN_MOVE"))
+        kind.Flags = append(kind.Flags, gameObjectsFlags.GetFlag("CAN_BLOW"))
+    }
+    return kind
 }
 
 type Player struct {
@@ -37,22 +37,22 @@ type Player struct {
 }
 
 func (p *Player) GetType() string {
-	return "player"
+    return "player"
 }
 
 func (p *Player) GetInfo() map[string] interface{} {
-	return map[string] interface{} {"login" : p.Login}
+    return map[string] interface{} {"login" : p.Login}
 }
 
 func (p *Player) Do() {
-	p.ActiveObject.Do()
-	p.Dir = -1
+    p.ActiveObject.Do()
+    p.Dir = -1
 }
 
 func (p *Player) Attack() consts.JsonType {
-	return nil
+    
 }
 
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
-	return Player{gameObjectsBase.NewActiveObject(id, x, y, getPlayerKind()), login, sid, dbId}
+    return Player{gameObjectsBase.NewActiveObject(id, x, y, getPlayerKind()), login, sid, dbId}
 }
