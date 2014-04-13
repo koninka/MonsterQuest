@@ -4,36 +4,37 @@ import (
     "bufio"
     "os"
     "strings"
-	"MonsterQuest/gameObjects"
-	"MonsterQuest/connect"
+    "MonsterQuest/gameObjects"
+    "MonsterQuest/connect"
     "MonsterQuest/utils"
-	"MonsterQuest/consts"
-	"MonsterQuest/geometry"
-	"MonsterQuest/gameObjectsFlags"
+    "MonsterQuest/consts"
+    "MonsterQuest/geometry"
+    "MonsterQuest/gameObjectsFlags"
 )
 
 type mobList struct {
-	mobs map[int64] *gameObjects.Mob
-	mobGens []*mobGenerator
-	pipeline chan gameObjects.Mob
-	mobKinds map[int64] *gameObjects.MobKind
+    mobs map[int64] *gameObjects.Mob
+    mobGens []*mobGenerator
+    pipeline chan gameObjects.Mob
+    mobKinds map[int64] *gameObjects.MobKind
 }
 
 func (ml *mobList) initializeMobTypes() {
-	gameObjectsFlags.InitFlags(getGameField())
-	db := connect.CreateConnect()
-	rows, _ := db.Query("SELECT id, name, description, flags, race FROM mobs_types")
-	for rows.Next() {
-		var id int64
-		var race int
-		var name, desc, flags string
-		rows.Scan(&id, &name, &desc, &flags, &race)
-		ml.mobKinds[id] = gameObjects.CreateMobKind(id, race, name, desc, flags)
-	}
+    gameObjectsFlags.InitFlags(getGameField())
+    db := connect.CreateConnect()
+    rows, _ := db.Query("SELECT id, name, description, flags, race FROM mobs_types")
+    for rows.Next() {
+        
+        var id int64
+        var race int
+        var name, desc, flags string
+        rows.Scan(&id, &name, &desc, &flags, &race)
+        ml.mobKinds[id] = gameObjects.CreateMobKind(id, race, name, desc, flags)
+    }
 }
 
 func (ml *mobList) initializeMobsGenerators(filename string) {
-	areas, _ := os.Open(consts.PATH_TO_MAPS + filename)
+    areas, _ := os.Open(consts.PATH_TO_MAPS + filename)
     defer areas.Close()
     reader := bufio.NewReader(areas)
     for {
@@ -53,22 +54,22 @@ func (ml *mobList) initializeMobsGenerators(filename string) {
 }
 
 func (ml *mobList) addGen(gen *mobGenerator) {
-	ml.mobGens = append(ml.mobGens, gen)
+    ml.mobGens = append(ml.mobGens, gen)
 }
 
 func (ml *mobList) runGens() {
-	for _, gen := range ml.mobGens {
-		go gen.run()
-	}
+    for _, gen := range ml.mobGens {
+        go gen.run()
+    }
 }
 
 func (ml *mobList) run() {
-	ml.runGens()
-	for {
-		m := <-ml.pipeline
-		id := GenerateId()
-		ml.mobs[id] = &m
-		m.SetID(id)
-		getGameField().LinkActorToCells(&m)
-	}
+    ml.runGens()
+    for {
+        m := <-ml.pipeline
+        id := GenerateId()
+        ml.mobs[id] = &m
+        m.SetID(id)
+        getGameField().LinkActorToCells(&m)
+    }
 }
