@@ -36,6 +36,6 @@ func (gen *mobGenerator) run() {
 	}
 }
 
-func NewMobGenerator(kind *gameObjects.MobKind, area *geometry.Rectangle, respawnDuration float64, pipeline chan gameObjects.Mober) *mobGenerator {
+func NewMobGenerator(kind *gameObjects.MobKind, area *geometry.Rectangle, respawnDuration float64, pipeline chan gameObjects.Mob) *mobGenerator {
 	return &mobGenerator{kind, area, time.Duration(respawnDuration) * time.Second, pipeline}
 }
