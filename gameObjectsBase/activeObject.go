@@ -19,6 +19,14 @@ type Flager interface {
     Do(obj Activer)
 }
 
+type Kinder interface {
+    GetRace() int
+    GetFlags() *[]Flager
+    GetName() string
+    GetDescription() string
+    AddFlag(flag Flager)
+}
+
 type Activer interface {
     GetID() int64
     GetCenter() geometry.Point
