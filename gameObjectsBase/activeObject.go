@@ -55,6 +55,8 @@ type Activer interface {
     GetKind() Kinder
 }
 
+/*==========STRUCTS AND IMPLEMENTATION==============*/
+
 type Kind struct {
     Race int
     Flags []Flager
@@ -75,8 +77,6 @@ func (k *Kind) AddFlag(flag Flager) {
 func NewKind(race int) Kind {
     return Kind{race, make([]Flager, 0, 1000)}
 }
-
-/*==========STRUCTS AND IMPLEMENTATION==============*/
 
 type ActiveObject struct {
     Id int64
