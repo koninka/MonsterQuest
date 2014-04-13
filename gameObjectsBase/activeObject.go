@@ -193,11 +193,7 @@ func (obj *ActiveObject) Attack() consts.JsonType {
 }
 
 func (obj *ActiveObject) GetTarget() (Activer, bool) {
-    if obj.Target != nil {
-        return obj.Target, true
-    } else {
-        return nil, false
-    }
+    return obj.Target, obj.Target != nil
 }
 
 func (obj *ActiveObject) SetTarget(target Activer) {

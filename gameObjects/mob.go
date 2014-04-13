@@ -120,7 +120,8 @@ func (m *Mob) Do() {
 func (m *Mob) Attack() consts.JsonType {
     var res consts.JsonType = nil
     fmt.Println("attack")
-    t, bl := m.GetTarget(), m.GetBlowList()
+    bl := m.GetBlowList()
+    t, _ := m.GetTarget()
     if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d > 1.0 {
         rbl := bl.GetReachesRangeBlows(d)
         if rbl.Amount() > 0 {

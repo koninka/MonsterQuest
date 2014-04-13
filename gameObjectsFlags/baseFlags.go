@@ -124,10 +124,9 @@ type AttackFlag struct {
 }
 
 func (a *AttackFlag) Do(obj gameObjectsBase.Activer) {
-    if t := obj.GetTarget(); t != nil {
+    if _, isExist := obj.GetTarget(); isExist {
         msg := obj.Attack()
         if msg != nil {
-            msg["action"] = "attack"
             msg["object"] = obj
             a.MsgsChannel <- msg
         }
