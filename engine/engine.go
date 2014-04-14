@@ -8,6 +8,7 @@ import (
     "MonsterQuest/gameMap"
     "MonsterQuest/gameObjects"
     "MonsterQuest/gameObjectsBase"
+    "fmt"
 )
 
 type Game struct {
@@ -62,7 +63,10 @@ func GetInstance() *Game {
 }
 
 func (g *Game) readInGameMsgs() {
-
+    for {
+        msg := <-g.msgsChannel
+        fmt.Println(msg)
+    }
 }
 
 func (g *Game) sendTick(tick int64) {
