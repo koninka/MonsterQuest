@@ -78,10 +78,6 @@ func (m *Mob) GetInfo() map[string] interface{} {
     }
 }
 
-func (m *Mob) SetID(id int64) {
-    m.Id = id
-}
-
 func (m *Mob) Init() {
     m.chooseDir()
 }
