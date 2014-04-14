@@ -40,7 +40,7 @@ type Player struct {
 }
 
 func (p *Player) GetType() string {
-    return "player"
+    return consts.PLAYER_TYPE
 }
 
 func (p *Player) GetInfo() map[string] interface{} {

@@ -9,6 +9,8 @@ import (
 type JsonType map[string] interface{}
 
 const (
+    MOB_TYPE = "mob"
+    PLAYER_TYPE = "player"
     SERVER_PORT = ":8080"
 	VELOCITY = 0.12
 	TICK_DURATION = 50 * time.Millisecond

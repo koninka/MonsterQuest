@@ -68,7 +68,7 @@ func (m *Mob) NotifyAboutCollision() {
 }
 
 func (m *Mob) GetType() string {
-    return "mob"
+    return consts.MOB_TYPE
 }
 
 func (m *Mob) GetInfo() map[string] interface{} {
