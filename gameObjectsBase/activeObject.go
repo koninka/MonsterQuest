@@ -1,6 +1,7 @@
 package gameObjectsBase
 
 import (
+    _ "fmt"
     "MonsterQuest/gameFight/blowList"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
@@ -28,7 +29,7 @@ type Kinder interface {
     GetFlags() *[]Flager
     GetName() string
     GetDescription() string
-    AddFlag(flag Flager)
+    AddFlag(Flager)
 }
 
 type Activer interface {
@@ -36,26 +37,26 @@ type Activer interface {
     SetID(id int64)
     GetCenter() geometry.Point
     GetRectangle() geometry.Rectangle
-    GetShiftedFrontSide(dir int) geometry.Point
-    GetCollisionableSide(dir int) (geometry.Segment, geometry.Point)
+    GetShiftedFrontSide(int) geometry.Point
+    GetCollisionableSide(int) (geometry.Segment, geometry.Point)
     ForcePlace(point geometry.Point)
     GetType() string
     GetInfo() map[string] interface{}
     GetDir() int
     SetDir(dir int)
     Init()
-    DoWithObj(object Activer)
+    DoWithObj(Activer)
     Do()
     Attack() consts.JsonType
     GetTarget() (Activer, bool)
-    SetTarget(target Activer)
+    SetTarget(Activer)
     GetRadiusVision() int
     GetDealtDamage() int
     GetHP() int
     GetAttackRadius() int
     NotifyAboutCollision()
     GetKind() Kinder
-    GetHit(bldesc *blowList.BlowDescription) consts.JsonType
+    GetHit(*blowList.BlowDescription, Activer) consts.JsonType
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -221,7 +222,7 @@ func (obj *ActiveObject) GetKind() Kinder {
     return obj.Kind
 }
 
-func (obj *ActiveObject) GetHit(bldesc *blowList.BlowDescription) consts.JsonType {
+func (obj *ActiveObject) GetHit(bldesc *blowList.BlowDescription, attacker Activer) consts.JsonType {
     res := make(consts.JsonType)
     res["action"] = "attack"
     res["blowType"] = bldesc.GetBlowType()
