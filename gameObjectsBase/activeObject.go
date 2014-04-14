@@ -176,7 +176,9 @@ func (obj *ActiveObject) GetFlags() *[]Flager {
 
 func (obj *ActiveObject) Init() {}
 
-func (obj *ActiveObject) Do() {}
+func (obj *ActiveObject) Do() {
+    obj.DoWithObj(obj)
+}
 
 func (obj *ActiveObject) DoWithObj(object Activer) {
     for _, f := range *obj.GetKind().GetFlags() {
