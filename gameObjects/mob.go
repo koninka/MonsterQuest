@@ -131,6 +131,24 @@ func (m *Mob) Attack() consts.JsonType {
     return res
 }
 
+func (m *Mob) GetHit(bldesc *blowList.BlowDescription, attacker gameObjectsBase.Activer) consts.JsonType {
+    res := m.ActiveObject.GetHit(bldesc, attacker)
+    if t, isExist := m.GetTarget(); isExist {
+        if t.GetType() != consts.PLAYER_TYPE {
+            if attacker.GetType() == consts.PLAYER_TYPE {
+                m.SetTarget(attacker)
+            } else {
+                dice.Shake()
+                ary := [2]gameObjectsBase.Activer{t, attacker}
+                m.SetTarget(ary[dice.Throw(2, 1) - 1])
+            }
+        }
+    } else {
+        m.SetTarget(attacker)
+    }
+    return res
+}
+
 func NewMob(kind *MobKind, x, y float64) Mob {
     m := Mob{gameObjectsBase.NewActiveObject(-1, x, y, kind), 0}
     m.chooseDir()
