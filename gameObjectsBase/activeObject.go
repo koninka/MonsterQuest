@@ -44,6 +44,7 @@ type Activer interface {
     GetDir() int
     SetDir(dir int)
     Init()
+    DoWithObj(object Activer)
     Do()
     Attack() consts.JsonType
     GetTarget() (Activer, bool)
@@ -175,9 +176,11 @@ func (obj *ActiveObject) GetFlags() *[]Flager {
 
 func (obj *ActiveObject) Init() {}
 
-func (obj *ActiveObject) Do() {
+func (obj *ActiveObject) Do() {}
+
+func (obj *ActiveObject) DoWithObj(object Activer) {
     for _, f := range *obj.GetKind().GetFlags() {
-        f.Do(obj)
+        f.Do(object)
     }
 }
 

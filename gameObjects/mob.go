@@ -110,7 +110,7 @@ func (m *Mob) think() {
 
 func (m *Mob) Do() {
     m.think()
-    m.ActiveObject.Do()
+    m.DoWithObj(m)
 }
 
 func (m *Mob) Attack() consts.JsonType {
