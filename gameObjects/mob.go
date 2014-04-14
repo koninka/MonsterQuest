@@ -99,7 +99,6 @@ func (m *Mob) think() {
             m.Target = nil
         }
     } else {
-        //try to find target
         m.walkingCycle++
         if m.walkingCycle == consts.MOB_WALKING_CYCLE_DURATION {
             m.walkingCycle = 0
