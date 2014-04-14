@@ -114,20 +114,19 @@ func (m *Mob) Do() {
 
 func (m *Mob) Attack() consts.JsonType {
     var res consts.JsonType = nil
-    fmt.Println("attack")
+    // fmt.Println("attack")
     bl := m.Kind.(*MobKind).blowList
     t, _ := m.GetTarget()
     if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d > 1.0 {
         rbl := bl.GetReachesRangeBlows(d)
         if rbl.Amount() > 0 {
-            res = t.GetHit(rbl.ChooseBlowMethod(consts.BT_RANGE))
-            // res = rbl.ChooseBlowMethod(consts.BT_RANGE).Blow()
+            res = t.GetHit(rbl.ChooseBlowMethod(consts.BT_RANGE), t)
         } else {
+            // fmt.Println("calc dir")
             //calc direction
         }
     } else {
-        res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE))
-        // res = bl.ChooseBlowMethod(consts.BT_MELEE).Blow()
+        res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE), t)
     }
     return res
 }
