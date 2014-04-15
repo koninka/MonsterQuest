@@ -29,8 +29,8 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
       this.sendViaWS({action: "move", direction: direct, tick: this.tick});
    }
 
-   Game.prototype.defineRadiusFromMap = function(){
-      this.view.defineRadiusFromMap();
+   Game.prototype.defineRadiusFromMap = function(map){
+      this.view.defineRadiusFromMap(map);
    }
 
    Game.prototype.dirDown = function(dir){
@@ -81,11 +81,11 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
       this.sock.onopen = function() {
         // console.log("connected to " + game.wsuri);
          th.firstLook = true;
-         th.sendViaWS({action: "examine", id: th.player.id});
+         th.initGraphic();
          th.sendViaWS({action: "getDictionary"});
          //th.sendViaWS({action: "getOptions"});
          th.sendViaWS({action: "look"});
-         th.initGraphic();
+         th.sendViaWS({action: "examine", id: th.player.id});
          
       };
 
@@ -110,11 +110,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
          } else {
             switch (data["action"]) {
                case "examine":
-                  if(!th.player.pt.x){
-                     th.player.examineSuccess(data);
-                  } else {
-                     th.setExamineData(data);
-                  }
+                  th.setExamineData(data);
                   break
                case "getOptions":
                   th.setOptions(data['options']);
@@ -122,13 +118,14 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
                   th.setDictionary(data);
                   break;
                case "look":
+                  if (th.firstLook) {
+                     th.defineRadiusFromMap(data['map']);
+                     th.firstLook = false;
+                     th.player.InitAnimation(true, th.player);
+                  }
                   th.setPlayerCoords(data.x, data.y);
                   th.setMap(data['map'], th.player.pt);
                   th.setActors(data['actors']);
-                  th.defineRadiusFromMap();
-                  if (th.firstLook) {
-                     th.firstLook = false;
-                  }
                   break;
             }
          }
