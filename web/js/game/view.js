@@ -1,8 +1,10 @@
-define(['options', 'actor', 'monster'], function(OPTIONS, Actor, Monster) {
+define(['options', 'actor', 'monster', 'global'], function(OPTIONS, Actor, Monster, GLOBAL) {
    var TILE_SIZE = 32;
+   var graphic = null;
 
    function Background(){
-      this.map = [
+      
+      this._data = [
          ['.', '.','.','.','.'],
          ['.', '.','.','.','.'],
          ['.', '.','.','.','.'],
@@ -11,8 +13,29 @@ define(['options', 'actor', 'monster'], function(OPTIONS, Actor, Monster) {
          ['.', '.','.','.','.']
       ]   // map from look
       this.dictionary = {'.':'grass', '#':'wall'};
+      this.map = []
    }
 
+   Background.prototype.SetMap = function(map, pt){
+      var TS = OPTIONS.TILE_SIZE;
+      var off_x = OPTIONS.screenColumnCount / 2;
+      var off_y = OPTIONS.screenRowCount    / 2;
+      var y = (-pt.y % 1 - off_y) * TS + TS / 2;
+      for(var i = 0; i < map.length; ++i){
+         var x = (-pt.x % 1 - off_x) * TS + TS / 2;
+         for(var j = 0; j < map[i].length; ++j){
+            if(this._data[i][j] != map[i][j]){
+               this.map[i][j].setTexture(graphic.Texture(this.dictionary[map[i][j]]));
+            }
+            this.map[i][j].position.x = x;
+            this.map[i][j].position.y = y;
+            graphic.Center(this.map[i][j]);
+            x += TS;
+         }
+         y += TS;
+      }
+      this._data = map;
+   }
 
    Background.prototype.Draw = function(graphic, pt){
       off_x = OPTIONS.screenColumnCount / 2;
