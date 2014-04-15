@@ -37,23 +37,18 @@ define(['options', 'actor', 'monster', 'global'], function(OPTIONS, Actor, Monst
       this._data = map;
    }
 
-   Background.prototype.Draw = function(graphic, pt){
-      off_x = OPTIONS.screenColumnCount / 2;
-      off_y = OPTIONS.screenRowCount    / 2;
-
-      if (pt == null) return "WTF";
-
-      y = (-pt.y % 1 - off_y) * TILE_SIZE + TILE_SIZE / 2;
-      for(var i = 0; i < this.map.length; ++i){
-         x = (-pt.x % 1 - off_x) * TILE_SIZE + TILE_SIZE / 2;
-         for(var j = 0; j < this.map[i].length; ++j){
-            var tile = graphic.Draw(this.dictionary[this.map[i][j]], x, y);
+   Background.prototype.DefineMap = function(map){
+      this.map = [];
+      for(var i = 0; i < map.length; ++i){
+         this.map.push([])
+         for(var j = 0; j < map[i].length; ++j){
+            var tile = graphic.Draw(this.dictionary[map[i][j]], 0, 0);
             tile.anchor.x = 0.5;
             tile.anchor.y = 0.5;
-            x += TILE_SIZE;
+            this.map[i].push(tile);
          }
-         y += OPTIONS.TILE_SIZE;
       }
+      this._data = map;
    }
 
    function View(player){
