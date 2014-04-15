@@ -56,6 +56,7 @@ define(['options', 'actor', 'monster', 'global'], function(OPTIONS, Actor, Monst
       this.actors = {};
       this.background = new Background();
       this._examine = null;
+      this.bounds = null;
       this.__defineSetter__("examine", function(e){
          if(this._examine)
             graphic.Remove(this._examine)
@@ -78,6 +79,7 @@ define(['options', 'actor', 'monster', 'global'], function(OPTIONS, Actor, Monst
 
    View.prototype.setActors = function(players){
       var actors_on_scene = [];
+      var last = null;
       for(var i = 0; i < players.length; ++i){
          var id = players[i].id;
          var x = players[i].x;
@@ -110,86 +112,44 @@ define(['options', 'actor', 'monster', 'global'], function(OPTIONS, Actor, Monst
                   this.actors[id].walk_anim = 0;
                this.actors[id].dir = -Math.PI / 2;
             }
+
             this.actors[id].pt.x = x;
             this.actors[id].pt.y = y;
+            this.actors[id].Move(this.player);
+            this.actors[id].Rotate();
          } else {
-            if(players[i].type == 'mob')
-               this.actors[id] = new Monster(id, x, y, 'zombie');
-            else
-               this.actors[id] = new Actor(id, x, y, players[i].type);
+            //if(players[i].type == 'mob')
+           //    this.actors[id] = new Monster(id, x, y, 'zombie');
+           // else
+            //   this.actors[id] = new Actor(id, x, y, players[i].type);
+            this.actors[id] = new Actor(id, x, y, 'player', true, this.player);
+            last = this.actors[id];
          }
          actors_on_scene[id] = true;
       }
       for(var i in this.actors)
-         if(!actors_on_scene[i])
+         if(!actors_on_scene[i]){
+            this.actors[i].Destroy();
             delete this.actors[i];
+         }
+      if(last){
+         if(this._examine){
+            graphic.stage.swapChildren(graphic.stage.children[graphic.stage.children.length-2], this.bounds);
+            graphic.stage.swapChildren(graphic.stage.children[graphic.stage.children.length-1], this._examine);
+         } else 
+            graphic.stage.swapChildren(this.bounds, last.container);
+      }
    }
 
    View.prototype.setMap = function(map, player_pos){
-      this.background.map = map;
-      //this.fixMap(player_pos);
-   }
-
-   View.prototype.fixMap = function(player_pos){
-      var map = this.background.map;
-      var worldbound;
-      if(map.length < OPTIONS.screenRowCount){
-         var push = player_pos.y < OPTIONS.screenRowCount ? "unshift" : "push";
-         while(map.length < OPTIONS.screenRowCount){
-            var row = []
-            while(row.length < OPTIONS.screenColumnCount)
-               row.push('space');
-            map[push](row);   
-         }
-      }
-      if(map[Math.floor(map.length / 2)].length < OPTIONS.screenColumnCount){
-         var push = player_pos.x < OPTIONS.screenColumnCount ? "unshift" : "push";
-         for(var i = 0; i < map.length; ++i)
-            while(map[i].length < OPTIONS.screenColumnCount)
-               map[i][push]('space');
-      }
+      this.background.SetMap(map, player_pos)
    }
 
    View.prototype.setDictionary = function(dict){
-      dict['space'] = 'space';
       this.background.dictionary = dict;
    }
 
-   View.prototype.DrawActors = function(graphic, game){
-      for (var i in this.actors) {
-         this.actors[i].Draw(graphic, game, this.player)
-      }   
-   }
-
-   View.prototype.DrawExamine = function(graphic){
-      if(this.examine){
-         var box = new PIXI.DisplayObjectContainer();
-         var txt = '';
-         delete this.examine.action;
-         for(var i in this.examine)
-            txt += i + ' : ' + this.examine[i] + "\n";
-         var text = graphic.Text( 
-            txt, 
-            {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'white'},
-            0, 
-            OPTIONS.TILE_SIZE + 7
-         )
-         text = graphic.DrawObj(text);
-         text.position.x = 20;
-         text.position.y = 20;
-      }
-   }
-
-   View.prototype.Draw = function(graphic, game){
-      graphic.Clear();
-      this.background.Draw(graphic, this.player.pt);
-      this.DrawActors(graphic, game);
-      this.player.Draw(graphic);
-      this.DrawImaginaryBounds(graphic);
-      this.DrawExamine(graphic);
-   }
-
-   View.prototype.DrawImaginaryBounds = function(graphic){
+   View.prototype.DefineImaginaryBounds = function(){
       var off_x = (OPTIONS.screenColumnCount) / 2 * OPTIONS.TILE_SIZE;
       var off_y = (OPTIONS.screenRowCount   ) / 2 * OPTIONS.TILE_SIZE;
       var c = { x: graphic.width / 2, y : graphic.height / 2 };
@@ -199,19 +159,22 @@ define(['options', 'actor', 'monster', 'global'], function(OPTIONS, Actor, Monst
       g.drawRect(0, 0, graphic.width,  c.y - off_y);
       g.drawRect(0, graphic.height - c.y + off_y - OPTIONS.TILE_SIZE, graphic.width, c.y - off_y);
       g.drawRect(graphic.width - c.x + off_x - OPTIONS.TILE_SIZE, 0, c.x - off_x, graphic.height);
-      graphic.stage.addChild(g);
+      this.bounds = g;
+      graphic.stage.addChild(this.bounds);
    }
 
    View.prototype.Clear = function(graphic){
       graphic.Clear();
    }
 
-   View.prototype.defineRadiusFromMap = function(){
-      var map = this.background.map;
+   View.prototype.defineRadiusFromMap = function(map){
       OPTIONS.screenRowCount = map.length;
       if(map[0] == undefined)
          alert("Смените сервак он харкается фигней")
       OPTIONS.screenColumnCount = map[0].length;
+      graphic = GLOBAL.graphic;
+      this.background.DefineMap(map);
+      this.DefineImaginaryBounds();
    }
 
    return View;
