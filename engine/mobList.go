@@ -1,6 +1,7 @@
 package engine
 
 import (
+    "fmt"
     "bufio"
     "os"
     "strings"
@@ -17,22 +18,24 @@ type mobList struct {
     mobs map[int64] *gameObjects.Mob
     mobGens []*mobGenerator
     pipeline chan gameObjects.Mob
-    mobKinds map[int64] *gameObjects.MobKind
+    mobsDepth map[int64] []*gameObjects.MobKind
 }
 
 func (ml *mobList) initializeMobTypes() {
     blows.InitBlowMethods();
 	gameObjectsFlags.InitFlags(&GetInstance().field, GetInstance().msgsChannel)
 	db := connect.CreateConnect()
-	rows, _ := db.Query("SELECT id, name, description, blow_method, flags, race FROM mobs_types")
+	rows, _ := db.Query("SELECT id, name, description, blow_method, flags, level_info, race FROM mobs_types")
 	for rows.Next() {
 		var (
             id int64
             race int
-            name, desc, flags, blowMethods string
+            name, desc, flags, blowMethods, level_info string
         )
-		rows.Scan(&id, &name, &desc, &blowMethods, &flags, &race)
-		ml.mobKinds[id] = gameObjects.CreateMobKind(id, race, name, desc, blowMethods, flags)
+		rows.Scan(&id, &name, &desc, &blowMethods, &flags, &level_info, &race)
+        depth := utils.ParseInt(strings.Split(level_info, "|")[0])
+        fmt.Printf("mob name = %s, mob depth = %d\n", name, depth)
+		ml.mobsDepth[depth] = append(ml.mobsDepth[depth], gameObjects.CreateMobKind(id, race, name, desc, blowMethods, flags))
 	}
 }
 
@@ -46,11 +49,12 @@ func (ml *mobList) initializeMobsGenerators(filename string) {
             data := strings.Split(string(bytes), ":")
             l, r := utils.ParseFloat(data[0]), utils.ParseFloat(data[1])
             t, b := utils.ParseFloat(data[2]), utils.ParseFloat(data[3])
-            mType := utils.ParseInt(data[4])
+            depth := utils.ParseInt(data[4])
             duration := utils.ParseFloat(data[5])
             area := geometry.MakeRectangle(geometry.MakePoint(l, t), geometry.MakePoint(r, b))
-            if kind, isExist := ml.mobKinds[mType]; isExist {
-                ml.addGen(NewMobGenerator(kind, area, duration, ml.pipeline))
+            fmt.Printf("gen depth = %d\n", depth)
+            if kinds, isExist := ml.mobsDepth[depth]; isExist {
+                ml.addGen(NewMobGenerator(&kinds, area, duration, ml.pipeline))
             }
         } else {
             break
