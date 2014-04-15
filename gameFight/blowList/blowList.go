@@ -14,7 +14,6 @@ type BlowDescription struct {
 }
 
 type BlowList struct {
-    hasRangeBlows bool
     blows []*BlowDescription
     meleeBlows []int
     rangeBlows []int
@@ -25,13 +24,12 @@ func (bld *BlowDescription) GetBlowType() string {
 }
 
 func NewBlowList() *BlowList {
-    return &BlowList{hasRangeBlows: false}
+    return &BlowList{}
 }
 
 func (bl *BlowList) addBlow(bdesc *BlowDescription) {
     var isRange bool = bdesc.method.IsRange()
     bl.blows = append(bl.blows, bdesc)
-    bl.hasRangeBlows = bl.hasRangeBlows || isRange
     var b *[]int
     if isRange {
         b = &(bl.meleeBlows)
@@ -46,7 +44,7 @@ func (bl *BlowList) Amount() int {
 }
 
 func (bl *BlowList) HasRangeBlows() bool {
-    return bl.hasRangeBlows
+    return len(bl.rangeBlows) > 0
 }
 
 func (bl *BlowList) AddBlowDescription(desc string) {
