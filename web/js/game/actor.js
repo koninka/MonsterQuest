@@ -54,7 +54,7 @@ define(['options', 'global'] ,function(OPTIONS, GLOBAL){
    }
 
    Actor.prototype.Rotate = function(){
-       this.container.body.rotation = this.dir;
+      this.container.body.rotation = this.dir;
    }
 
    Actor.prototype.Move = function(player){
