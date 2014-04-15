@@ -36,8 +36,8 @@ func CreateMobKind(id int64, race int, name, symbol, description, blowMethods, f
     fmt.Println(kind.blowList)
     for _, flagName := range strings.Split(flagsStr, "|") {
         flag := gameObjectsFlags.GetFlag(flagName)
+        added[flagName] = true
         if flag != nil {
-            added[flagName] = true
             kind.Flags = append(kind.Flags, flag)
         }
     }
