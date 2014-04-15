@@ -1,4 +1,5 @@
-define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options'], function(JQuery, utils, Player, View, Graphic, OPTIONS) {
+define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global'], 
+   function(JQuery, utils, Player, View, Graphic, OPTIONS, GLOBAL) {
 
    function Game(sid, wsuri) {
       this.sid      = sid;
@@ -8,6 +9,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options'], functi
       this.player   = new Player(parseInt(utils.getQueryVariable('id')));
       this.view    = new View(this.player);
       this.dirsDown  = [];
+      GLOBAL.game = this;
       //this.examine  = $('<div/>').draggable().hide();
    }
 
