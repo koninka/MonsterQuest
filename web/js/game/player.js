@@ -13,12 +13,7 @@ define(['actor'], function(Actor){
       alert(this.login);
    }
 
-   Player.prototype.Draw = function(graphic) {
-      var tile = graphic.Draw('player', 0, 0);
-      tile.anchor.x = 0.5;
-      tile.anchor.y = 0.5;
-      var angle = graphic.angleToPointer(this.pt);
-      tile.rotation = angle;
+
    }
 
    Player.prototype.examineSuccess = function(data) {
