@@ -27,9 +27,9 @@ func (mk *MobKind) GetDescription() string {
     return mk.description
 }
 
-func CreateMobKind(id int64, race int, name, description, blowMethods, flagsStr string) *MobKind {
+func CreateMobKind(id int64, race int, name, symbol, description, blowMethods, flagsStr string) *MobKind {
     added := make(map[string] bool)
-    kind := MobKind{gameObjectsBase.NewKind(race), id, name, description, blowList.NewBlowList()}
+    kind := MobKind{gameObjectsBase.NewKind(symbol, race), id, name, description, blowList.NewBlowList()}
     for _, blowDesc := range strings.Split(blowMethods, "@") {
         kind.blowList.AddBlowDescription(blowDesc)
     }

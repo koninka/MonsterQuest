@@ -46,7 +46,7 @@ func GetInstance() *Game {
                 make(map[int64] *gameObjects.Mob),
                 make([] *mobGenerator, 0, 1000),
                 make(chan gameObjects.Mob),
-                make(map[int64] *gameObjects.MobKind),
+                make(map[int64] []*gameObjects.MobKind),
             },
             make(map[string] consts.JsonType),
             make(chan consts.JsonType),
@@ -293,8 +293,9 @@ func (g *Game) lookAction(sid string) consts.JsonType {
                     json["x"] = center.X
                     json["y"] = center.Y
                     json["type"] = obj.GetType()
+                    json["symbol"] = obj.GetKind().GetSymbol()
                     visibleActors = append(visibleActors, json)
-                    addedActors[id] = true    
+                    addedActors[id] = true
                 }
             }
         }
