@@ -84,45 +84,35 @@ define(['options', 'actor', 'monster', 'global'], function(OPTIONS, Actor, Monst
          var id = players[i].id;
          var x = players[i].x;
          var y = players[i].y;
+         var moved = false
          if(this.actors[id]){
             var pt = this.actors[id].pt;
             if(pt.x < x){
-               if(this.actors[id].dir == 0)
-                  this.actors[id].walk_anim++;
-               else
-                  this.actors[id].walk_anim = 0;
                this.actors[id].dir = 0;
+               moved = true;
             } else if(pt.x > x){
-               if(this.actors[id].dir == Math.PI)
-                  this.actors[id].walk_anim++;
-               else
-                  this.actors[id].walk_anim = 0;
                this.actors[id].dir = Math.PI;
+               moved = true;
             }
             if(pt.y < y){
-               if(this.actors[id].dir == Math.PI / 2)
-                  this.actors[id].walk_anim++;
-               else
-                  this.actors[id].walk_anim = 0;
                this.actors[id].dir = Math.PI / 2;
+               moved = true;
             } else if(pt.y > y){
-               if(this.actors[id].dir == -Math.PI / 2)
-                  this.actors[id].walk_anim++;
-               else
-                  this.actors[id].walk_anim = 0;
                this.actors[id].dir = -Math.PI / 2;
+               moved = true;
             }
-
             this.actors[id].pt.x = x;
             this.actors[id].pt.y = y;
-            this.actors[id].Move(this.player);
+            //if(moved)
+               this.actors[id].Move(this.player);
+           // else
+            //   this.actors[id].StopWalkAnim();
             this.actors[id].Rotate();
          } else {
-            //if(players[i].type == 'mob')
-           //    this.actors[id] = new Monster(id, x, y, 'zombie');
-           // else
-            //   this.actors[id] = new Actor(id, x, y, players[i].type);
-            this.actors[id] = new Actor(id, x, y, 'player', true, this.player);
+            if(players[i].type == 'mob')
+               this.actors[id] = new Monster(id, x, y, 'zombie', this.player);
+            else
+               this.actors[id] = new Actor(id, x, y, players[i].type, true, this.player);
             last = this.actors[id];
          }
          actors_on_scene[id] = true;
