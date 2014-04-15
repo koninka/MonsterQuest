@@ -57,11 +57,9 @@ define(['jquery', 'options', 'global'], function(JQuery, OPTIONS, global) {
       var prevtick;
       var animate = function(){
          stats.begin();
-         if(game.tick != prevtick){  
-            prevtick = game.tick;
-            view.Draw(I, game);
-            I.renderer.render(I.stage);
-         }
+         if(view.player.container)
+         view.player.Rotate();
+         I.renderer.render(I.stage);
          requestAnimFrame( animate );
          stats.end();
       }
@@ -69,8 +67,17 @@ define(['jquery', 'options', 'global'], function(JQuery, OPTIONS, global) {
       requestAnimFrame( animate );
    }
 
+   Graphic.prototype.Texture = function(texture){
+      return this.textures[texture];
+   }
+
    Graphic.prototype.Sprite = function(texture){
       return new PIXI.Sprite(this.textures[texture]);
+   }
+
+   Graphic.prototype.Center = function(obj){
+      obj.position.x += this.width  / 2;
+      obj.position.y += this.height / 2;
    }
 
    Graphic.prototype.DrawObj = function(obj, x, y){
@@ -78,8 +85,7 @@ define(['jquery', 'options', 'global'], function(JQuery, OPTIONS, global) {
          obj.position.x = x;
       if(y != undefined)
          obj.position.y = y;
-      obj.position.x += this.width  / 2;
-      obj.position.y += this.height / 2;
+      this.Center(obj);
       this.stage.addChild(obj);
       return obj;
    }
@@ -90,12 +96,14 @@ define(['jquery', 'options', 'global'], function(JQuery, OPTIONS, global) {
    }
 
    Graphic.prototype.Clear = function(){
-
       for (var i = this.stage.children.length - 1; i >= 0; i--) {
          this.stage.removeChild(this.stage.children[i]);
       }
       this.stage.children = [];
+   }
 
+   Graphic.prototype.Remove = function(sprite){
+      this.stage.removeChild(sprite)
    }
 
    Graphic.prototype.drawGroup = function(group, x, y) {
@@ -123,10 +131,10 @@ define(['jquery', 'options', 'global'], function(JQuery, OPTIONS, global) {
        this.texture.destroy(destroyTexture);
    };
 
-   PIXI.DisplayObjectContainer.prototype.removeChild = function(child){
+   /*PIXI.DisplayObjectContainer.prototype.removeChild = function(child){
       if(this.stage)child.removeStageReference();
       child.parent = undefined;
-   };
+   };*/
 
    PIXI.DisplayObjectContainer.prototype.removeStageReference = function(){
       if (this.destroy)this.destroy(true);  //
