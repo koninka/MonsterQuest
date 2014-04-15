@@ -6,8 +6,8 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
       this.sock     = null;
       this.tick     = null;
       this.wsuri    = wsuri;
-      this.player   = new Player(parseInt(utils.getQueryVariable('id')));
-      this.view    = new View(this.player);
+      this.player   = new Player(parseInt(utils.getQueryVariable('id')))
+      this.view     = new View(this.player);
       this.dirsDown  = [];
       GLOBAL.game = this;
       //this.examine  = $('<div/>').draggable().hide();
