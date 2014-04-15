@@ -55,7 +55,25 @@ define(['options', 'actor', 'monster', 'global'], function(OPTIONS, Actor, Monst
       this.player = player;
       this.actors = {};
       this.background = new Background();
-      this.examine = null;
+      this._examine = null;
+      this.__defineSetter__("examine", function(e){
+         if(this._examine)
+            graphic.Remove(this._examine)
+         var txt = '';
+         delete e.action;
+         delete e.result;
+         for(var i in e)
+            txt += i + ' : ' + e[i] + "\n";
+         this._examine = graphic.Text( 
+            txt, 
+            {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'white'},
+            0, 
+            OPTIONS.TILE_SIZE + 7
+         )
+         this._examine = graphic.DrawObj(this._examine);
+         this._examine.position.x = 20;
+         this._examine.position.y = 20;
+      })
    }
 
    View.prototype.setActors = function(players){
