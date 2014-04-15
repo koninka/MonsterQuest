@@ -1,8 +1,7 @@
-define(['actor'], function(Actor){
+define(['actor', 'global'], function(Actor, GLOBAL){
 
    function Player(id) {
-      Actor.call(this, id);
-      this.type = 'player';
+      Actor.call(this, id, 0, 0, 'player', false, this);
       this.login = null;
    }
 
