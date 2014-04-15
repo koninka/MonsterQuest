@@ -1,4 +1,4 @@
-define(['jquery', 'options'], function(JQuery, OPTIONS) {
+define(['jquery', 'options', 'global'], function(JQuery, OPTIONS, global) {
    function getRandomInt (min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
    }
@@ -52,7 +52,7 @@ define(['jquery', 'options'], function(JQuery, OPTIONS) {
          I.pointer.x = event.clientX - $(this).offset().left - I.width  / 2;
          I.pointer.y = event.clientY - $(this).offset().top  - I.height / 2;
       })
-
+      global.graphic = this;
       PreloadResourses();
       var prevtick;
       var animate = function(){
