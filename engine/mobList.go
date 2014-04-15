@@ -25,17 +25,17 @@ func (ml *mobList) initializeMobTypes() {
     blows.InitBlowMethods();
 	gameObjectsFlags.InitFlags(&GetInstance().field, GetInstance().msgsChannel)
 	db := connect.CreateConnect()
-	rows, _ := db.Query("SELECT id, name, description, blow_method, flags, level_info, race FROM mobs_types")
+	rows, _ := db.Query("SELECT id, name, symbol, description, blow_method, flags, level_info, race FROM mobs_types")
 	for rows.Next() {
 		var (
             id int64
             race int
-            name, desc, flags, blowMethods, level_info string
+            name, symbol, desc, flags, blowMethods, level_info string
         )
-		rows.Scan(&id, &name, &desc, &blowMethods, &flags, &level_info, &race)
+		rows.Scan(&id, &name, &symbol, &desc, &blowMethods, &flags, &level_info, &race)
         depth := utils.ParseInt(strings.Split(level_info, "|")[0])
         fmt.Printf("mob name = %s, mob depth = %d\n", name, depth)
-		ml.mobsDepth[depth] = append(ml.mobsDepth[depth], gameObjects.CreateMobKind(id, race, name, desc, blowMethods, flags))
+		ml.mobsDepth[depth] = append(ml.mobsDepth[depth], gameObjects.CreateMobKind(id, race, name, symbol, desc, blowMethods, flags))
 	}
 }
 

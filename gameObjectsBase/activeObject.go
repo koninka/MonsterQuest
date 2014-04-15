@@ -30,6 +30,7 @@ type Kinder interface {
     GetName() string
     GetDescription() string
     AddFlag(Flager)
+    GetSymbol() string
 }
 
 type Activer interface {
@@ -62,8 +63,13 @@ type Activer interface {
 /*==========STRUCTS AND IMPLEMENTATION==============*/
 
 type Kind struct {
+    symbol string
     Race int
     Flags []Flager
+}
+
+func (k* Kind) GetSymbol() string {
+    return k.symbol
 }
 
 func (k *Kind) GetRace() int {
@@ -78,8 +84,8 @@ func (k *Kind) AddFlag(flag Flager) {
     k.Flags = append(k.Flags, flag)
 }
 
-func NewKind(race int) Kind {
-    return Kind{race, make([]Flager, 0, 1000)}
+func NewKind(symbol string, race int) Kind {
+    return Kind{symbol, race, make([]Flager, 0, 1000)}
 }
 
 type ActiveObject struct {
