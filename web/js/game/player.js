@@ -14,6 +14,9 @@ define(['actor'], function(Actor){
    }
 
 
+   Player.prototype.Rotate = function() {
+      var angle = GLOBAL.graphic.angleToPointer(this.pt);
+      this.container.body.rotation = angle;
    }
 
    Player.prototype.examineSuccess = function(data) {
