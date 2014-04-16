@@ -231,9 +231,14 @@ func (obj *ActiveObject) GetKind() Kinder {
 func (obj *ActiveObject) GetHit(bldesc *blowList.BlowDescription, attacker Activer) consts.JsonType {
     res := make(consts.JsonType)
     res["action"] = "attack"
-    res["blowType"] = bldesc.GetBlowType()
-    res["dealtDamage"] = bldesc.DmgDesc.GetDamage()
-    obj.HP -= res["dealtDamage"].(int)
+    res["description"] = consts.JsonType {
+        "blowType" : bldesc.GetBlowType(),
+        "dealtDamage" : bldesc.DmgDesc.GetDamage()
+    }
+    obj.HP -= res["description"]["dealtDamage"].(int)
+    if obj.HP <= 0 {
+        res["killed"] = true
+    }
     //use damage effect
     return res
 }
