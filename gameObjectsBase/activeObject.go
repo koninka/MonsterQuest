@@ -233,9 +233,9 @@ func (obj *ActiveObject) GetHit(bldesc *blowList.BlowDescription, attacker Activ
     res["action"] = "attack"
     res["description"] = consts.JsonType {
         "blowType" : bldesc.GetBlowType(),
-        "dealtDamage" : bldesc.DmgDesc.GetDamage()
+        "dealtDamage" : bldesc.DmgDesc.GetDamage(),
     }
-    obj.HP -= res["description"]["dealtDamage"].(int)
+    obj.HP -= bldesc.DmgDesc.GetDamage()
     if obj.HP <= 0 {
         res["killed"] = true
     }

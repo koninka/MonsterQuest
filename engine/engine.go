@@ -51,6 +51,7 @@ func GetInstance() *Game {
             },
             make(map[string] consts.JsonType),
             make(chan consts.JsonType),
+            make(map[int64] *connection),
         }
         gameInstance.field.LoadFromFile("map.txt")
         gameInstance.mobs.initializeMobTypes()
