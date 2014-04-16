@@ -63,10 +63,40 @@ func GetInstance() *Game {
     return gameInstance
 }
 
+func (g *Game) notifyAboutAttack(msg consts.JsonType) {
+    notifyMsg := make(consts.JsonType)
+    attacker := msg["attacker"].(gameObjectsBase.Activer)
+    target := msg["target"].(gameObjectsBase.Activer)
+    notifyMsg["attacker"] = attacker.GetID()
+    notifyMsg["target"] = target.GetID()
+    notifyMsg["description"] = msg["description"]
+    lt, rb := g.field.GetVisibleArea(attacker.GetCenter().X, attacker.GetCenter().Y, consts.VISION_RADIUS)
+    notified := make(map[int64] bool)
+    for i := int(lt.Y); i < int(rb.Y); i++ {
+        for j := int(lt.X); j < int(rb.X); j++ {
+            for _, actor := range g.field.Actors[i][j] {
+                id := actor.GetID()
+                if !notified[id] {
+                    notified[id] = true
+                    conn := g.id2conn[id]
+                    if conn != nil {
+                        conn.send <- notifyMsg
+                    }
+                }
+            }
+        }
+    }
+}
+
 func (g *Game) readInGameMsgs() {
     for {
         msg := <-g.msgsChannel
-        fmt.Println(msg)
+        if msg["action"].(string) == "attack" {
+            g.notifyAboutAttack(msg)
+            if msg["killed"] == true {
+                g.mobs.takeAwayMob(msg["target"].(*gameObjects.Mob))
+            }
+        }
     }
 }
 
