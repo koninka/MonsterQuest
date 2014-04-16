@@ -18,6 +18,7 @@ type Game struct {
     mobs mobList
     lastActions map[string] consts.JsonType
     msgsChannel chan consts.JsonType
+    id2conn map[int64] *connection
 }
 
 var gameInstance *Game
@@ -84,12 +85,20 @@ func (g *Game) CloseConnection(conn *connection) {
     g.unregister <- conn
 }
 
+func (g *Game) linkConnectionWithPlayer(sid string, conn *connection) {
+    id := g.players.getPlayerBySession(sid).GetID()
+    if g.id2conn[id] == nil {
+        g.id2conn[id] = conn
+    }
+}
+
 func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     action, ok := json["action"].(string)
     if !ok {
         conn.send <- g.badAction("")
         return
     }
+    g.linkConnectionWithPlayer(json["sid"].(string), conn)
     switch action {
     case "move": g.moveAction(json)
     case "attack": g.attackAction(json)
@@ -335,6 +344,7 @@ func (g *Game) IsSIDValid(sid string) bool {
 }
 
 func (g *Game) LogoutPlayer(sid string) {
+    delete(g.id2conn, g.players.getPlayerBySession(sid).GetID())
     g.field.UnlinkActorFromCells(g.players.getPlayerBySession(sid))
     g.players.deletePlayerBySession(sid)
 }
