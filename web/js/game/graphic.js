@@ -61,7 +61,7 @@ define(['jquery', 'options', 'global'], function(JQuery, OPTIONS, global) {
       var animate = function(){
          stats.begin();
          if(view.player.container)
-         view.player.Rotate();
+            view.player.Rotate();
          I.renderer.render(I.stage);
          requestAnimFrame( animate );
          stats.end();
