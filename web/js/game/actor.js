@@ -73,11 +73,29 @@ define(['options', 'global'] ,function(OPTIONS, GLOBAL){
       this.container.body.rotation = this.dir;
    }
 
-   Actor.prototype.Move = function(pos, player){
-      this.pt = pos;
+   Actor.prototype.MoveOnScreen = function(player){
       this.container.position.x = (this.pt.x - player.pt.x) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2;
       this.container.position.y = (this.pt.y - player.pt.y) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2;
       GLOBAL.graphic.Center(this.container);
+      this.Rotate();
+   }
+
+   Actor.prototype.Move = function(pos, player){
+      var pt = this.pt;
+      var x = pos.x;
+      var y = pos.y;
+      if(pt.x < x){
+         this.dir = 0;
+      } else if(pt.x > x){
+         this.dir = Math.PI;
+      }
+      if(pt.y < y){
+         this.dir = Math.PI / 2;
+      } else if(pt.y > y){
+         this.dir = -Math.PI / 2;
+      }
+      this.pt = pos;
+      this.MoveOnScreen(player)
    }
 
    Actor.prototype.Destroy = function(){

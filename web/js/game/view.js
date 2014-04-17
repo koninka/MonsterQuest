@@ -84,30 +84,8 @@ define(['options', 'actor', 'monster', 'global'], function(OPTIONS, Actor, Monst
          var id = players[i].id;
          var x = players[i].x;
          var y = players[i].y;
-         var moved = false
          if(this.actors[id]){
-            var pt = this.actors[id].pt;
-            if(pt.x < x){
-               this.actors[id].dir = 0;
-               moved = true;
-            } else if(pt.x > x){
-               this.actors[id].dir = Math.PI;
-               moved = true;
-            }
-            if(pt.y < y){
-               this.actors[id].dir = Math.PI / 2;
-               moved = true;
-            } else if(pt.y > y){
-               this.actors[id].dir = -Math.PI / 2;
-               moved = true;
-            }
-            this.actors[id].pt.x = x;
-            this.actors[id].pt.y = y;
-            //if(moved)
-               this.actors[id].Move(this.player);
-           // else
-            //   this.actors[id].StopWalkAnim();
-            this.actors[id].Rotate();
+            this.actors[id].Move({x: x, y: y}, this.player);
          } else {
             if(players[i].type == 'mob')
                this.actors[id] = new Monster(id, x, y, 'zombie', this.player);
