@@ -1,13 +1,15 @@
-define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options'], function(JQuery, utils, Player, View, Graphic, OPTIONS) {
+define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global'], 
+   function(JQuery, utils, Player, View, Graphic, OPTIONS, GLOBAL) {
 
    function Game(sid, wsuri) {
       this.sid      = sid;
       this.sock     = null;
       this.tick     = null;
       this.wsuri    = wsuri;
-      this.player   = new Player(parseInt(utils.getQueryVariable('id')));
-      this.view    = new View(this.player);
+      this.player   = new Player(parseInt(utils.getQueryVariable('id')))
+      this.view     = new View(this.player);
       this.dirsDown  = [];
+      GLOBAL.game = this;
       //this.examine  = $('<div/>').draggable().hide();
    }
 
@@ -27,8 +29,8 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options'], functi
       this.sendViaWS({action: "move", direction: direct, tick: this.tick});
    }
 
-   Game.prototype.defineRadiusFromMap = function(){
-      this.view.defineRadiusFromMap();
+   Game.prototype.defineRadiusFromMap = function(map){
+      this.view.defineRadiusFromMap(map);
    }
 
    Game.prototype.dirDown = function(dir){
@@ -79,11 +81,11 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options'], functi
       this.sock.onopen = function() {
         // console.log("connected to " + game.wsuri);
          th.firstLook = true;
-         th.sendViaWS({action: "examine", id: th.player.id});
+         th.initGraphic();
          th.sendViaWS({action: "getDictionary"});
          //th.sendViaWS({action: "getOptions"});
          th.sendViaWS({action: "look"});
-         th.initGraphic();
+         th.sendViaWS({action: "examine", id: th.player.id});
          
       };
 
@@ -108,11 +110,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options'], functi
          } else {
             switch (data["action"]) {
                case "examine":
-                  if(!th.player.pt.x){
-                     th.player.examineSuccess(data);
-                  } else {
-                     th.setExamineData(data);
-                  }
+                  th.setExamineData(data);
                   break
                case "getOptions":
                   th.setOptions(data['options']);
@@ -120,13 +118,14 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options'], functi
                   th.setDictionary(data);
                   break;
                case "look":
+                  if (th.firstLook) {
+                     th.defineRadiusFromMap(data['map']);
+                     th.firstLook = false;
+                     th.player.InitAnimation(true, th.player);
+                  }
                   th.setPlayerCoords(data.x, data.y);
                   th.setMap(data['map'], th.player.pt);
                   th.setActors(data['actors']);
-                  th.defineRadiusFromMap();
-                  if (th.firstLook) {
-                     th.firstLook = false;
-                  }
                   break;
             }
          }

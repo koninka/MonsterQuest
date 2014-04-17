@@ -1,8 +1,7 @@
-define(['actor'], function(Actor){
+define(['actor', 'global'], function(Actor, GLOBAL){
 
    function Player(id) {
-      Actor.call(this, id);
-      this.type = 'player';
+      Actor.call(this, id, 0, 0, 'player', false, this);
       this.login = null;
    }
 
@@ -13,12 +12,10 @@ define(['actor'], function(Actor){
       alert(this.login);
    }
 
-   Player.prototype.Draw = function(graphic) {
-      var tile = graphic.Draw('player', 0, 0);
-      tile.anchor.x = 0.5;
-      tile.anchor.y = 0.5;
-      var angle = graphic.angleToPointer(this.pt);
-      tile.rotation = angle;
+
+   Player.prototype.Rotate = function() {
+      var angle = GLOBAL.graphic.angleToPointer(this.pt);
+      this.container.body.rotation = angle;
    }
 
    Player.prototype.examineSuccess = function(data) {
