@@ -21,9 +21,25 @@ define(['options', 'global'] ,function(OPTIONS, GLOBAL){
       this.InitBody();
       this.container.interactive = true;
       var m = this;
-      this.container.mousedown = function(data){
-         GLOBAL.game.sendViaWS({action: "examine", id: m.id});
+      this.container.click = function(data){
+         var now = Date.now();
+         var lc = m.container.click.lastClick;
+         var diff = now - lc;
+         var event = data.originalEvent;
+         if(event.which == 3 || event.button == 2) {
+         //this was a right click;
+            GLOBAL.game.sendViaWS({action: "examine", id: m.id});
+         } else if(lc && (diff < 350)) {
+            m.container.click.lastClick = 0;
+         //this was a double click
+         } else {
+            m.container.click.lastClick = now;
+            GLOBAL.game.sendViaWS({action: "attack", id: m.id});
+         //this was a regular click
+         }
+            
       }
+      this.container.click.lastClick = 0;
       GLOBAL.graphic.DrawObj(
          this.container,
          this.container.position.x = (this.pt.x - player.pt.x) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2,
