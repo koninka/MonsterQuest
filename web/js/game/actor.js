@@ -4,8 +4,8 @@ define(['options', 'global'] ,function(OPTIONS, GLOBAL){
       this.id    = id;
       this.pt    = {x: x, y: y};
       this.type  = type;
-      this.angle = null;
-      this.dir = null;
+      this.angle = undefined;
+      this.dir = undefined;
       if(initAnimation === undefined) initAnimation = true;
       this.InitAnimation(initAnimation, player);
    }
@@ -64,14 +64,13 @@ define(['options', 'global'] ,function(OPTIONS, GLOBAL){
    }
 
    Actor.prototype.Destroy = function(){
-      this.id = null;
-      this.id = null;
-      this.pt = null;
-      this.type = null;
-      this.angle = null;
-      this.dir = null;
+      this.id = undefined;
+      this.pt = undefined;
+      this.type = undefined;
+      this.angle = undefined;
+      this.dir = undefined;
       GLOBAL.graphic.Remove(this.container);
-      this.container = null;
+      this.container = undefined;
    }
 
    return Actor;
