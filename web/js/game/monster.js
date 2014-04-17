@@ -19,6 +19,7 @@ define(['actor', 'game', 'options', 'global'], function(Actor, game, OPTIONS, GL
       legs.anchor.y = 0.5;
       legs.rotation = this.dir;
       legs.animationSpeed = 0.2;
+      legs.loop = false;
       this.container.addChild(legs);
 
       var corpse = new PIXI.Sprite(GLOBAL.graphic.textures[this.type].corpse)
@@ -43,16 +44,23 @@ define(['actor', 'game', 'options', 'global'], function(Actor, game, OPTIONS, GL
    }
 
    Monster.prototype.StartWalkAnim = function(){
-      this.container.body.legs.play();
+      if(!this.container.body.legs.playing)
+         this.container.body.legs.gotoAndPlay(0);
+   }
+
+   Monster.prototype.WalkAnim = function(pos){
+      if(this.pt.x != pos.x || this.pt.y != pos.y){
+         this.StartWalkAnim();
+      }
    }
 
    Monster.prototype.StopWalkAnim = function(){
       this.container.body.legs.stop();
    }
 
-   Monster.prototype.Move = function(player){
-      this.StartWalkAnim();
-      Actor.prototype.Move.call(this, player);
+   Monster.prototype.Move = function(pos, player){
+      this.WalkAnim(pos);
+      Actor.prototype.Move.call(this, pos, player);
    }
 
    Monster.prototype.Destroy = function(){
