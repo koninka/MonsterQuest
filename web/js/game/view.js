@@ -112,7 +112,7 @@ define(['options', 'actor', 'monster', 'global'], function(OPTIONS, Actor, Monst
             if(players[i].type == 'mob')
                this.actors[id] = new Monster(id, x, y, 'zombie', this.player);
             else
-               this.actors[id] = new Actor(id, x, y, players[i].type, true, this.player);
+               this.actors[id] = new Actor(id, x, y, 'player', true, this.player);
             last = this.actors[id];
          }
          actors_on_scene[id] = true;
