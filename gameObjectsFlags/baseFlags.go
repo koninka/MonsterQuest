@@ -119,11 +119,11 @@ func (m *MoveFlag) Do(obj gameObjectsBase.Activer) {
     }
 }
 
-type AttackFlag struct {
+type BlowFlag struct {
     Flag
 }
 
-func (a *AttackFlag) Do(obj gameObjectsBase.Activer) {
+func (a *BlowFlag) Do(obj gameObjectsBase.Activer) {
     if _, isExist := obj.GetTarget(); isExist {
         msg := obj.Attack()
         if msg != nil {

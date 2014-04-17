@@ -8,7 +8,6 @@ import (
     "MonsterQuest/gameMap"
     "MonsterQuest/gameObjects"
     "MonsterQuest/gameObjectsBase"
-    "fmt"
 )
 
 type Game struct {
@@ -18,6 +17,7 @@ type Game struct {
     mobs mobList
     lastActions map[string] consts.JsonType
     msgsChannel chan consts.JsonType
+    id2conn map[int64] *connection
 }
 
 var gameInstance *Game
@@ -50,6 +50,7 @@ func GetInstance() *Game {
             },
             make(map[string] consts.JsonType),
             make(chan consts.JsonType),
+            make(map[int64] *connection),
         }
         gameInstance.field.LoadFromFile("map.txt")
         gameInstance.mobs.initializeMobTypes()
@@ -62,10 +63,40 @@ func GetInstance() *Game {
     return gameInstance
 }
 
+func (g *Game) notifyAboutAttack(msg consts.JsonType) {
+    notifyMsg := make(consts.JsonType)
+    attacker := msg["attacker"].(gameObjectsBase.Activer)
+    target := msg["target"].(gameObjectsBase.Activer)
+    notifyMsg["attacker"] = attacker.GetID()
+    notifyMsg["target"] = target.GetID()
+    notifyMsg["description"] = msg["description"]
+    lt, rb := g.field.GetVisibleArea(attacker.GetCenter().X, attacker.GetCenter().Y, consts.VISION_RADIUS)
+    notified := make(map[int64] bool)
+    for i := int(lt.Y); i < int(rb.Y); i++ {
+        for j := int(lt.X); j < int(rb.X); j++ {
+            for _, actor := range g.field.Actors[i][j] {
+                id := actor.GetID()
+                if !notified[id] {
+                    notified[id] = true
+                    conn := g.id2conn[id]
+                    if conn != nil {
+                        conn.send <- notifyMsg
+                    }
+                }
+            }
+        }
+    }
+}
+
 func (g *Game) readInGameMsgs() {
     for {
         msg := <-g.msgsChannel
-        fmt.Println(msg)
+        if msg["action"].(string) == "attack" {
+            g.notifyAboutAttack(msg)
+            if msg["killed"] == true {
+                g.mobs.takeAwayMob(msg["target"].(*gameObjects.Mob))
+            }
+        }
     }
 }
 
@@ -84,12 +115,20 @@ func (g *Game) CloseConnection(conn *connection) {
     g.unregister <- conn
 }
 
+func (g *Game) linkConnectionWithPlayer(sid string, conn *connection) {
+    id := g.players.getPlayerBySession(sid).GetID()
+    if g.id2conn[id] == nil {
+        g.id2conn[id] = conn
+    }
+}
+
 func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     action, ok := json["action"].(string)
     if !ok {
         conn.send <- g.badAction("")
         return
     }
+    g.linkConnectionWithPlayer(json["sid"].(string), conn)
     switch action {
     case "move": g.moveAction(json)
     case "attack": g.attackAction(json)
@@ -335,6 +374,7 @@ func (g *Game) IsSIDValid(sid string) bool {
 }
 
 func (g *Game) LogoutPlayer(sid string) {
+    delete(g.id2conn, g.players.getPlayerBySession(sid).GetID())
     g.field.UnlinkActorFromCells(g.players.getPlayerBySession(sid))
     g.players.deletePlayerBySession(sid)
 }

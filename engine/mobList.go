@@ -5,6 +5,7 @@ import (
     "bufio"
     "os"
     "strings"
+    "time"
     "MonsterQuest/gameFight/blows"
     "MonsterQuest/gameObjects"
     "MonsterQuest/connect"
@@ -19,6 +20,12 @@ type mobList struct {
     mobGens []*mobGenerator
     pipeline chan gameObjects.Mob
     mobsDepth map[int64] []*gameObjects.MobKind
+}
+
+func (ml *mobList) takeAwayMob(m *gameObjects.Mob) {
+    delete(ml.mobs, m.GetID())
+    time.Sleep(consts.LIVING_AFTER_DEAD_DURATION)
+    GetInstance().field.UnlinkActorFromCells(m)
 }
 
 func (ml *mobList) initializeMobTypes() {

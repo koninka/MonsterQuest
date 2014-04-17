@@ -36,8 +36,8 @@ func CreateMobKind(id int64, race int, name, symbol, description, blowMethods, f
     fmt.Println(kind.blowList)
     for _, flagName := range strings.Split(flagsStr, "|") {
         flag := gameObjectsFlags.GetFlag(flagName)
+        added[flagName] = true
         if flag != nil {
-            added[flagName] = true
             kind.Flags = append(kind.Flags, flag)
         }
     }
@@ -112,9 +112,24 @@ func (m *Mob) Do() {
     m.DoWithObj(m)
 }
 
+func (m *Mob) chooseHorDir(dx float64) {
+    if dx > 0 {
+        m.Dir = consts.EAST_DIR
+    } else {
+        m.Dir = consts.WEST_DIR
+    }
+}
+
+func (m *Mob) chooseVerDir(dy float64) {
+    if dy > 0 {
+        m.Dir = consts.SOUTH_DIR
+    } else {
+        m.Dir = consts.NORTH_DIR
+    }
+}
+
 func (m *Mob) Attack() consts.JsonType {
     var res consts.JsonType = nil
-    // fmt.Println("attack")
     bl := m.Kind.(*MobKind).blowList
     t, _ := m.GetTarget()
     if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d > 1.0 {
@@ -122,11 +137,27 @@ func (m *Mob) Attack() consts.JsonType {
         if rbl.Amount() > 0 {
             res = t.GetHit(rbl.ChooseBlowMethod(consts.BT_RANGE), t)
         } else {
-            // fmt.Println("calc dir")
-            //calc direction
+            center := t.GetCenter()
+            dx := center.X - m.Center.X
+            dy := center.Y - m.Center.Y
+            if dx > 0.2 {
+                m.chooseVerDir(dy)
+            } else if dy > 0.2 {
+                m.chooseHorDir(dx)
+            } else {
+                if dice.Throw(6, 15) % 2 == 0 {
+                    m.chooseHorDir(dx)
+                } else {
+                    m.chooseVerDir(dy)
+                }
+            }
         }
     } else {
         res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE), t)
+    }
+    if res != nil {
+        res["attacker"] = m
+        res["target"] = t
     }
     return res
 }
