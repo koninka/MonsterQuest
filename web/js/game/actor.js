@@ -73,7 +73,8 @@ define(['options', 'global'] ,function(OPTIONS, GLOBAL){
       this.container.body.rotation = this.dir;
    }
 
-   Actor.prototype.Move = function(player){
+   Actor.prototype.Move = function(pos, player){
+      this.pt = pos;
       this.container.position.x = (this.pt.x - player.pt.x) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2;
       this.container.position.y = (this.pt.y - player.pt.y) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2;
       GLOBAL.graphic.Center(this.container);
