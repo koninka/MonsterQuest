@@ -18,6 +18,7 @@ type Game struct {
     lastActions map[string] consts.JsonType
     msgsChannel chan consts.JsonType
     id2conn map[int64] *connection
+    dictionary consts.JsonType
 }
 
 var gameInstance *Game
@@ -51,16 +52,24 @@ func GetInstance() *Game {
             make(map[string] consts.JsonType),
             make(chan consts.JsonType),
             make(map[int64] *connection),
+            //make(consts.JsonType),
+            nil,
         }
         gameInstance.field.LoadFromFile("map.txt")
-        gameInstance.mobs.initializeMobTypes()
+        gameInstance.dictionary = gameInstance.mobs.initializeMobTypes()
         gameInstance.mobs.initializeMobsGenerators("areas.txt")
+        gameInstance.initializeDictionary()
         go gameInstance.readInGameMsgs()
         go gameInstance.mobs.run()
         go gameInstance.websocketHub.run()
         go gameInstance.players.save()
     }
     return gameInstance
+}
+
+func (g *Game) initializeDictionary(){
+    g.dictionary["."] = "grass"
+    g.dictionary["#"] = "wall"
 }
 
 func (g *Game) notifyAboutAttack(msg consts.JsonType) {
@@ -154,7 +163,7 @@ func (g *Game) attackAction(json consts.JsonType) {
 }
 
 func (g *Game) inDictionary(k string) bool {
-    return g.getDictionaryAction()[k] != nil
+    return g.dictionary[k] != nil
 }
 
 func (g *Game) setUpMap(json consts.JsonType) consts.JsonType {
@@ -232,10 +241,11 @@ func (g *Game) endTesting() consts.JsonType {
 
 func (g *Game) getDictionaryAction() consts.JsonType {
     res := make(consts.JsonType)
+    for k, v := range g.dictionary {
+        res[k] = v
+    }
     res["action"] = "getDictionary"
     res["result"] = "ok"
-    res["."] = "grass"
-    res["#"] = "wall"
     return res
 }
 
