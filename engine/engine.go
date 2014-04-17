@@ -8,7 +8,6 @@ import (
     "MonsterQuest/gameMap"
     "MonsterQuest/gameObjects"
     "MonsterQuest/gameObjectsBase"
-    "fmt"
 )
 
 type Game struct {
