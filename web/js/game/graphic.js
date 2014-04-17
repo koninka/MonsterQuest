@@ -48,6 +48,9 @@ define(['jquery', 'options', 'global'], function(JQuery, OPTIONS, global) {
          }
       }
       $('#view').append(this.renderer.view);
+      $('#view').bind('contextmenu', function(){
+         return false;
+      });
       $(this.renderer.view).mousemove(function( event ) {
          I.pointer.x = event.clientX - $(this).offset().left - I.width  / 2;
          I.pointer.y = event.clientY - $(this).offset().top  - I.height / 2;
