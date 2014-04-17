@@ -10,21 +10,15 @@ define(['actor', 'game', 'options', 'global'], function(Actor, game, OPTIONS, GL
    Monster.prototype.InitAnimation = function(init, player){
       if(!init) return;
       this.InitSprite(player);
-      this.walk_anim = {}
-      this.walk_anim.counter = 0;
-      this.walk_anim.max = 8;
-      this.walk_anim.speed = 1;
-      this.walk_anim.start = true;
-      this.walk_anim.pos = this.pt;
-      this.walk_anim.tick = GLOBAL.game.tick;
    }
 
    Monster.prototype.InitBody = function(){
-      var legs = new PIXI.Sprite(GLOBAL.graphic.textures[this.type].legs[0]);
+      var legs = new PIXI.MovieClip(GLOBAL.graphic.textures[this.type].legs);
       legs.position.x = legs.position.y = OPTIONS.TILE_SIZE / 2;
       legs.anchor.x = 0.5;
       legs.anchor.y = 0.5;
       legs.rotation = this.dir;
+      legs.animationSpeed = 0.2;
       this.container.addChild(legs);
 
       var corpse = new PIXI.Sprite(GLOBAL.graphic.textures[this.type].corpse)
@@ -49,34 +43,11 @@ define(['actor', 'game', 'options', 'global'], function(Actor, game, OPTIONS, GL
    }
 
    Monster.prototype.StartWalkAnim = function(){
-      this.walk_anim.start = true;
-      this.walk_anim.pos = this.pt;
-      this.walk_anim.tick = GLOBAL.game.tick;
-      I = this;
-      //setTimeout(function () {
-
-         I.WalkAnim(I.walk_anim.speed);
-      //}, this.walk_anim.speed);
-   }
-
-   Monster.prototype.WalkAnim = function(speed){
-      I = this;
-      if(!this.walk_anim.start) return;
-      this.container.body.legs.setTexture(GLOBAL.graphic.Texture(this.type).legs[this.walk_anim.counter]);
-      this.walk_anim.counter++;
-      if(this.walk_anim.counter >= this.walk_anim.max)
-         this.walk_anim.counter = 0;
-      //if(this.walk_anim.pos.x == this.pt.x && this.walk_anim.pos.y == this.pt.y && GLOBAL.game.tick - this.walk_anim.tick > speed)
-      //   this.StopWalkAnim();
-      this.walk_anim.pos = this.pt;
-      this.walk_anim.tick = GLOBAL.game.tick;
-      //setTimeout(function(){
-      //   I.WalkAnim(speed);
-      //}, speed)
+      this.container.body.legs.play();
    }
 
    Monster.prototype.StopWalkAnim = function(){
-      this.walk_anim.start = false;
+      this.container.body.legs.stop();
    }
 
    Monster.prototype.Move = function(player){
@@ -86,7 +57,7 @@ define(['actor', 'game', 'options', 'global'], function(Actor, game, OPTIONS, GL
 
    Monster.prototype.Destroy = function(){
       Actor.prototype.Destroy.call(this);
-      this.walk_anim = null;
+      this.walk_anim = undefined;
    }
 
    return Monster;
