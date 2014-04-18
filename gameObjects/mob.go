@@ -132,7 +132,7 @@ func (m *Mob) Attack() consts.JsonType {
     var res consts.JsonType = nil
     bl := m.Kind.(*MobKind).blowList
     t, _ := m.GetTarget()
-    if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d > 1.0 {
+    if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d > 1.0 * 1.4 {
         rbl := bl.GetReachesRangeBlows(d)
         if rbl.Amount() > 0 {
             res = t.GetHit(rbl.ChooseBlowMethod(consts.BT_RANGE), t)
