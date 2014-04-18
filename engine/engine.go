@@ -101,9 +101,9 @@ func (g *Game) readInGameMsgs() {
     for {
         msg := <-g.msgsChannel
         if msg["action"].(string) == "attack" {
-            g.notifyAboutAttack(msg)
+            go g.notifyAboutAttack(msg)
             if msg["killed"] == true {
-                g.mobs.takeAwayMob(msg["target"].(*gameObjects.Mob))
+                go g.mobs.takeAwayMob(msg["target"].(*gameObjects.Mob))
             }
         }
     }
