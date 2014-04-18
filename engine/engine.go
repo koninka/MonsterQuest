@@ -76,9 +76,13 @@ func (g *Game) notifyAboutAttack(msg consts.JsonType) {
     notifyMsg := make(consts.JsonType)
     attacker := msg["attacker"].(gameObjectsBase.Activer)
     target := msg["target"].(gameObjectsBase.Activer)
+    notifyMsg["action"] = "attack"
     notifyMsg["attacker"] = attacker.GetID()
     notifyMsg["target"] = target.GetID()
     notifyMsg["description"] = msg["description"]
+    if msg["killed"] != nil {
+        notifyMsg["killed"] = true
+    }
     lt, rb := g.field.GetVisibleArea(attacker.GetCenter().X, attacker.GetCenter().Y, consts.VISION_RADIUS)
     notified := make(map[int64] bool)
     for i := int(lt.Y); i < int(rb.Y); i++ {
