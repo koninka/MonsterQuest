@@ -127,7 +127,6 @@ func (a *BlowFlag) Do(obj gameObjectsBase.Activer) {
     if _, isExist := obj.GetTarget(); isExist {
         msg := obj.Attack()
         if msg != nil {
-            msg["object"] = obj
             a.MsgsChannel <- msg
         }
     }
