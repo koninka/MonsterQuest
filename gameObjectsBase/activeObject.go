@@ -244,5 +244,5 @@ func (obj *ActiveObject) GetHit(bldesc *blowList.BlowDescription, attacker Activ
 }
 
 func NewActiveObject(id int64, x, y float64, kind Kinder) ActiveObject {
-    return ActiveObject{id, -1, 0, geometry.Point{x, y}, nil, kind}
+    return ActiveObject{id, -1, consts.DEFAULT_HP_COUNT, geometry.Point{x, y}, nil, kind}
 }
