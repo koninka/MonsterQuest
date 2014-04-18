@@ -64,7 +64,9 @@ func (m *Mob) SetDir(dir int) {
 }
 
 func (m *Mob) NotifyAboutCollision() {
-    m.chooseDir()
+    if m.Target == nil {
+        m.chooseDir()
+    }
 }
 
 func (m *Mob) GetType() string {
