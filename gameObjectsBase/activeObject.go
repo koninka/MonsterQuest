@@ -58,6 +58,7 @@ type Activer interface {
     NotifyAboutCollision()
     GetKind() Kinder
     GetHit(*blowList.BlowDescription, Activer) consts.JsonType
+    Killed() bool
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -241,6 +242,10 @@ func (obj *ActiveObject) GetHit(bldesc *blowList.BlowDescription, attacker Activ
     }
     //use damage effect
     return res
+}
+
+func (obj *ActiveObject) Killed() bool {
+    return obj.HP <= 0
 }
 
 func NewActiveObject(id int64, x, y float64, kind Kinder) ActiveObject {
