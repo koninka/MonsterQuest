@@ -22,6 +22,52 @@ define(['jquery', 'options', 'global'], function(JQuery, OPTIONS, global) {
                "/imgs/zombie/zombie_legs_7.png",
                "/imgs/zombie/zombie_legs_8.png"
             ]
+         },
+         "Scrawny cat" : {
+            walk : {
+               top : [
+                  "/imgs/cat/cat_walk_top_1.png",
+                  "/imgs/cat/cat_walk_top_2.png",
+                  "/imgs/cat/cat_walk_top_3.png",
+                  "/imgs/cat/cat_walk_top_2.png",
+                  "/imgs/cat/cat_walk_top_1.png"
+               ],
+               down : [
+                  "/imgs/cat/cat_walk_down_1.png",
+                  "/imgs/cat/cat_walk_down_2.png",
+                  "/imgs/cat/cat_walk_down_3.png",
+                  "/imgs/cat/cat_walk_down_2.png",
+                  "/imgs/cat/cat_walk_down_1.png"
+               ],
+               left : [
+                  "/imgs/cat/cat_walk_left_1.png",
+                  "/imgs/cat/cat_walk_left_2.png",
+                  "/imgs/cat/cat_walk_left_3.png",
+                  "/imgs/cat/cat_walk_left_2.png",
+                  "/imgs/cat/cat_walk_left_1.png"
+               ],
+               right : [
+                  "/imgs/cat/cat_walk_right_1.png",
+                  "/imgs/cat/cat_walk_right_2.png",
+                  "/imgs/cat/cat_walk_right_3.png",
+                  "/imgs/cat/cat_walk_right_2.png",
+                  "/imgs/cat/cat_walk_right_1.png"
+               ]
+            },
+            wait : {
+               top : [
+                  "/imgs/cat/cat_wait_top_1.png"
+               ],
+               down : [
+                  "/imgs/cat/cat_wait_down_1.png"
+               ],
+               left : [
+                  "/imgs/cat/cat_wait_left_1.png"
+               ],
+               right : [
+                  "/imgs/cat/cat_wait_right_1.png"
+               ]
+            }
          }
       }
       this.textures = {};
