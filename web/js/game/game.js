@@ -61,8 +61,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
    }
 
    Game.prototype.setPlayerCoords = function(x, y) {
-      this.player.pt.x = x;
-      this.player.pt.y = y;
+      this.player.Move({x: x, y: y}, this.player);
    }
 
    Game.prototype.setExamineData = function(data){
