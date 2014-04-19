@@ -6,10 +6,31 @@ define(['jquery', 'options', 'global', 'actors'], function(JQuery, OPTIONS, glob
    function Graphic(view, game) {
       this.width = 1000;
       this.height = 600;
-      this.actorTypes = {
-         player : Actors.ActorSTD,
-         zombie : Actors.ActorATD,
-         "Scrawny cat" : Actors.ActorRPG
+      this.actorInfo = {
+         player : {
+            class: Actors.ActorSTD,
+            opt : {
+               idle : false,
+            }
+         },
+         zombie : {
+            class : Actors.ActorATD,
+            opt : {
+               idle : false,
+            }
+         },
+         "Scrawny cat" : {
+            class: Actors.ActorRPG,
+            opt : {
+               idle : true,
+            }
+         },
+         "Scruffy little dog" : {
+            class: Actors.ActorRPG,
+            opt : {
+               idle : false
+            }
+         }
       }
       this.atlas = {
          player : "/imgs/character.png",
