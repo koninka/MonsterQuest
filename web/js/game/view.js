@@ -87,9 +87,9 @@ define(['options', 'global'], function(OPTIONS, GLOBAL) {
          if(this.actors[id]){
             this.actors[id].Move({x: x, y: y}, this.player);
          } else {
-            var t = this.actorType(players[i].symbol);
+            var t = this.actorInfo(players[i].symbol);
             var a = this.dictionary[players[i].symbol];
-            this.actors[id] = new t(id, x, y, a, true, this.player)
+            this.actors[id] = new t.class(id, x, y, a, true, this.player, t.opt)
             last = this.actors[id];
          }
          actors_on_scene[id] = true;
@@ -112,10 +112,10 @@ define(['options', 'global'], function(OPTIONS, GLOBAL) {
       this.background.SetMap(map, player_pos)
    }
 
-   View.prototype.actorType = function(symbol){
-      var t = GLOBAL.graphic.actorTypes[this.dictionary[symbol]];
+   View.prototype.actorInfo = function(symbol){
+      var t = GLOBAL.graphic.actorInfo[this.dictionary[symbol]];
       if (!t)
-         t = GLOBAL.graphic.actorTypes['player'];
+         t = GLOBAL.graphic.actorInfo['player'];
       return t;
    }
 
