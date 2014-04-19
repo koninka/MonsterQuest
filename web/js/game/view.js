@@ -1,4 +1,4 @@
-define(['options', 'actor', 'monster', 'global'], function(OPTIONS, Actor, Monster, GLOBAL) {
+define(['options', 'global'], function(OPTIONS, GLOBAL) {
    var TILE_SIZE = 32;
    var graphic = null;
 
@@ -87,10 +87,9 @@ define(['options', 'actor', 'monster', 'global'], function(OPTIONS, Actor, Monst
          if(this.actors[id]){
             this.actors[id].Move({x: x, y: y}, this.player);
          } else {
-            if(players[i].type == 'mob')
-               this.actors[id] = new Monster(id, x, y, 'zombie', this.player);
-            else
-               this.actors[id] = new Actor(id, x, y, 'player', true, this.player);
+            var t = this.actorType(players[i].symbol);
+            var a = this.dictionary[players[i].symbol];
+            this.actors[id] = new t(id, x, y, a, true, this.player)
             last = this.actors[id];
          }
          actors_on_scene[id] = true;
@@ -113,8 +112,16 @@ define(['options', 'actor', 'monster', 'global'], function(OPTIONS, Actor, Monst
       this.background.SetMap(map, player_pos)
    }
 
+   View.prototype.actorType = function(symbol){
+      var t = GLOBAL.graphic.actorTypes[this.dictionary[symbol]];
+      if (!t)
+         t = GLOBAL.graphic.actorTypes['player'];
+      return t;
+   }
+
    View.prototype.setDictionary = function(dict){
       this.background.dictionary = dict;
+      this.dictionary = dict;
    }
 
    View.prototype.DefineImaginaryBounds = function(){
