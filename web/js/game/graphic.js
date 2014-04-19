@@ -94,6 +94,38 @@ define(['jquery', 'options', 'global', 'actors'], function(JQuery, OPTIONS, glob
                   "/imgs/cat/cat_wait_right_1.png"
                ]
             }
+         },
+         "Scruffy little dog" : {
+            walk : {
+               top : [
+                  "/imgs/dog/dog_walk_top_1.png",
+                  "/imgs/dog/dog_walk_top_2.png",
+                  "/imgs/dog/dog_walk_top_3.png",
+                  "/imgs/dog/dog_walk_top_2.png",
+                  "/imgs/dog/dog_walk_top_1.png"
+               ],
+               down : [
+                  "/imgs/dog/dog_walk_down_1.png",
+                  "/imgs/dog/dog_walk_down_2.png",
+                  "/imgs/dog/dog_walk_down_3.png",
+                  "/imgs/dog/dog_walk_down_2.png",
+                  "/imgs/dog/dog_walk_down_1.png"
+               ],
+               left : [
+                  "/imgs/dog/dog_walk_left_1.png",
+                  "/imgs/dog/dog_walk_left_2.png",
+                  "/imgs/dog/dog_walk_left_3.png",
+                  "/imgs/dog/dog_walk_left_2.png",
+                  "/imgs/dog/dog_walk_left_1.png"
+               ],
+               right : [
+                  "/imgs/dog/dog_walk_right_1.png",
+                  "/imgs/dog/dog_walk_right_2.png",
+                  "/imgs/dog/dog_walk_right_3.png",
+                  "/imgs/dog/dog_walk_right_2.png",
+                  "/imgs/dog/dog_walk_right_1.png"
+               ]
+            }
          }
       }
       this.textures = {};
