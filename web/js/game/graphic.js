@@ -117,11 +117,11 @@ define(['jquery', 'options', 'global'], function(JQuery, OPTIONS, global) {
    }
 
    Graphic.prototype.Texture = function(texture){
-      return this.textures[texture];
+      return this.textures[texture] || this.textures['player'];
    }
 
    Graphic.prototype.Sprite = function(texture){
-      return new PIXI.Sprite(this.textures[texture]);
+      return new PIXI.Sprite(this.Texture(texture));
    }
 
    Graphic.prototype.Center = function(obj){
