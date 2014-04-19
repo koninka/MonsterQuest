@@ -30,22 +30,22 @@ define(['jquery', 'options', 'global'], function(JQuery, OPTIONS, global) {
       this.stage = new PIXI.Stage('0x000000', true);
       this.pointer = {};
       var I = this;
+      var loadA = function(t, a){
+         if(a instanceof Array){
+            t = [];
+            for (var i = 0; i < a.length; ++i)
+               t.push(loadA({}, a[i]))
+         } else if(a instanceof Object){
+            t = {}
+            for(var i in a){
+               t[i] = loadA({}, a[i]);
+            }
+         } else
+            t = PIXI.Texture.fromImage(a);
+         return t;
+      }
       var PreloadResourses = function () {
-         for(var name in I.atlas) {
-            if(I.atlas[name] instanceof Object){
-               I.textures[name] = {}
-               for(var part in I.atlas[name]){
-                  
-                  if(I.atlas[name][part] instanceof Array){
-                     I.textures[name][part] = [];
-                     for(var i = 0; i < I.atlas[name][part].length; ++i)
-                        I.textures[name][part].push(PIXI.Texture.fromImage(I.atlas[name][part][i]));  
-                  } else
-                     I.textures[name][part] = PIXI.Texture.fromImage(I.atlas[name][part]);
-               }
-            } else 
-               I.textures[name] = PIXI.Texture.fromImage(I.atlas[name]);
-         }
+         I.textures = loadA({}, I.atlas);
       }
       $('#view').append(this.renderer.view);
       $('#view').bind('contextmenu', function(){
