@@ -1,11 +1,11 @@
-define(['actor', 'global'], function(Actor, GLOBAL){
+define(['actor_rpg', 'global'], function(ActorRPG, GLOBAL){
 
    function Player(id) {
-      Actor.call(this, id, 0, 0, 'player', false, this);
+      ActorRPG.call(this, id, 0, 0, 'Scrawny cat', false, this);
       this.login = null;
    }
 
-   Player.prototype = Object.create(Actor.prototype);
+   Player.prototype = Object.create(ActorRPG.prototype);
    Player.prototype.constructor = Player;
 
    Player.prototype.echo = function() {
@@ -13,10 +13,10 @@ define(['actor', 'global'], function(Actor, GLOBAL){
    }
 
 
-   Player.prototype.Rotate = function() {
-      var angle = GLOBAL.graphic.angleToPointer(this.pt);
-      this.container.body.rotation = angle;
-   }
+   //Player.prototype.Rotate = function() {
+   //   var angle = GLOBAL.graphic.angleToPointer(this.pt);
+   //   this.container.body.rotation = angle;
+   //}
 
    Player.prototype.examineSuccess = function(data) {
       this.pt.x = data["x"];
