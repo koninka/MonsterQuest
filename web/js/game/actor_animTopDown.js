@@ -1,18 +1,13 @@
-define(['actor', 'game', 'options', 'global'], function(Actor, game, OPTIONS, GLOBAL){
+define(['actor_simpleTopDown', 'game', 'options', 'global'], function(ActorSTD, game, OPTIONS, GLOBAL){
 
-   function Monster(id, x, y, type, player){
-      Actor.call(this, id, x, y, type, true, player);
+   function ActorTopDownAnim(id, x, y, type, init, player){
+      ActorSTD.call(this, id, x, y, type, init, player);
    }
 
-   Monster.prototype = Object.create(Actor.prototype);
-   Monster.prototype.constructor = Monster;
+   ActorTopDownAnim.prototype = Object.create(ActorSTD.prototype);
+   ActorTopDownAnim.prototype.constructor = ActorTopDownAnim;
 
-   Monster.prototype.InitAnimation = function(init, player){
-      if(!init) return;
-      this.InitSprite(player);
-   }
-
-   Monster.prototype.InitBody = function(){
+   ActorTopDownAnim.prototype.InitBody = function(){
       var legs = new PIXI.MovieClip(GLOBAL.graphic.textures[this.type].legs);
       legs.position.x = legs.position.y = OPTIONS.TILE_SIZE / 2;
       legs.anchor.x = 0.5;
@@ -35,38 +30,33 @@ define(['actor', 'game', 'options', 'global'], function(Actor, game, OPTIONS, GL
       this.container.body = {legs: legs, corpse: corpse};
    }
 
-   Monster.prototype.Rotate = function(){
-      this.container.body.legs.rotation = this.dir;
-      var angle = this.dir;
+   ActorTopDownAnim.prototype.Rotate = function(){
+      var angle = this.DirToAngle(this.dir);
+      this.container.body.legs.rotation = angle;
       if(this.angle)
-         angle = this.angle;
+         angle = this.DirToAngle(this.angle);
       this.container.body.corpse.rotation = angle;
    }
 
-   Monster.prototype.StartWalkAnim = function(){
+   ActorTopDownAnim.prototype.StartWalkAnim = function(){
       if(!this.container.body.legs.playing)
          this.container.body.legs.gotoAndPlay(0);
    }
 
-   Monster.prototype.WalkAnim = function(pos){
+   ActorTopDownAnim.prototype.WalkAnim = function(pos){
       if(this.pt.x != pos.x || this.pt.y != pos.y){
          this.StartWalkAnim();
       }
    }
 
-   Monster.prototype.StopWalkAnim = function(){
+   ActorTopDownAnim.prototype.StopWalkAnim = function(){
       this.container.body.legs.stop();
    }
 
-   Monster.prototype.Move = function(pos, player){
+   ActorTopDownAnim.prototype.Move = function(pos, player){
       this.WalkAnim(pos);
-      Actor.prototype.Move.call(this, pos, player);
+      ActorSTD.prototype.Move.call(this, pos, player);
    }
 
-   Monster.prototype.Destroy = function(){
-      Actor.prototype.Destroy.call(this);
-      this.walk_anim = undefined;
-   }
-
-   return Monster;
+   return ActorTopDownAnim;
 })
