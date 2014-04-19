@@ -91,7 +91,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
       this.sock.onclose = function(e) {
          alert('Logout after 3 seconds');
          setTimeout(function () {
-            window.location.href = "/game/?sid=" + data['sid'];
+            window.location.href = "/";
          }, 3000);
          console.log("connection closed (" + e.code + ") reason("+ e.reason +")");
       };
