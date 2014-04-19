@@ -1,7 +1,7 @@
 define(['actor_rpg', 'global'], function(ActorRPG, GLOBAL){
 
    function Player(id) {
-      ActorRPG.call(this, id, 0, 0, 'Scrawny cat', false, this);
+      ActorRPG.call(this, id, 0, 0, 'Scrawny cat', false, this, {idle: true});
       this.login = null;
    }
 
