@@ -1,4 +1,4 @@
-define(['jquery', 'options', 'global'], function(JQuery, OPTIONS, global) {
+define(['jquery', 'options', 'global', 'actors'], function(JQuery, OPTIONS, global, Actors) {
    function getRandomInt (min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
    }
@@ -6,6 +6,11 @@ define(['jquery', 'options', 'global'], function(JQuery, OPTIONS, global) {
    function Graphic(view, game) {
       this.width = 1000;
       this.height = 600;
+      this.actorTypes = {
+         player : Actors.ActorSTD,
+         zombie : Actors.ActorATD,
+         "Scrawny cat" : Actors.ActorRPG
+      }
       this.atlas = {
          player : "/imgs/character.png",
          grass  : "/imgs/grass_1.png",
