@@ -1,7 +1,8 @@
 define(['actor_animTopDown', 'game', 'options', 'global'], function(ActorATD, game, OPTIONS, GLOBAL){
 
-   function ActorRPG(id, x, y, type, init, player){
+   function ActorRPG(id, x, y, type, init, player, opt){
       ActorATD.call(this, id, x, y, type, init, player);
+      this.idle = opt.idle || false;
    }
 
    ActorRPG.prototype = Object.create(ActorATD.prototype);
@@ -9,8 +10,8 @@ define(['actor_animTopDown', 'game', 'options', 'global'], function(ActorATD, ga
 
    ActorRPG.prototype.InitBody = function(){
       this.container.pics = GLOBAL.graphic.textures[this.type];
-      this.container.state = "wait";
-      var corpse = new PIXI.MovieClip(GLOBAL.graphic.textures[this.type].wait.right);
+      this.container.state = "walk";
+      var corpse = new PIXI.MovieClip(GLOBAL.graphic.textures[this.type].walk.right);
       corpse.position.x = corpse.position.y = OPTIONS.TILE_SIZE / 2;
       corpse.anchor.x = 0.5;
       corpse.anchor.y = 0.5;
@@ -18,18 +19,25 @@ define(['actor_animTopDown', 'game', 'options', 'global'], function(ActorATD, ga
       corpse.animationSpeed = 0.1;
       corpse.loop = false;
       var I = this;
-      I.dir = "right"
+      I.dir = "right";
       corpse.onComplete = function(){
-         I.container.state = "wait";
-         setTimeout(function(){
-            if(I.container && I.container.state == "wait"){
-              corpse.textures = I.container.pics.wait[I.dir];
-               corpse.gotoAndStop(0); 
-            }
-         }, 100)
+         I.Idle();
       }
       this.container.addChild(corpse);
       this.container.body = corpse;
+   }
+
+   ActorRPG.prototype.Idle = function(){
+      if(this.idle){
+         I = this;
+         I.container.state = "wait";
+         setTimeout(function(){
+            if(I.container && I.container.state == "wait"){
+               I.container.body.textures = I.container.pics.wait[I.dir];
+               I.container.body.gotoAndPlay(0); 
+            }
+         }, 100)
+      }
    }
 
    ActorRPG.prototype.Rotate = function(){
