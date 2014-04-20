@@ -17,6 +17,8 @@ type mobGenerator struct {
 
 func (gen *mobGenerator) run() {
     field := &GetInstance().field
+    d := dice.NewDice(len(*gen.kinds), 1)
+    amount := 0
     for {
         var x, y float64
         var placeFound = false
@@ -31,8 +33,12 @@ func (gen *mobGenerator) run() {
             }
         }
         if placeFound {
-            dice.Shake()
-            gen.pipeline <- gameObjects.NewMob((*gen.kinds)[dice.Throw(len(*gen.kinds), 1) - 1], x, y)
+            amount++
+            if amount % 10 == 0 {
+                amount = 0
+                d.Shake()
+            }
+            gen.pipeline <- gameObjects.NewMob((*gen.kinds)[d.Throw() - 1], x, y)
         }
         time.Sleep(gen.respawnDuration)
     }
