@@ -32,9 +32,17 @@ const (
 )
 
 const (
-	PLAYER = iota
-	TROLL
-	ORC
+    NO_RACE = iota
+    ORC_RACE
+    EVIL_RACE
+    TROLL_RACE
+    GIANT_RACE
+    DEMON_RACE
+    METAL_RACE
+    DRAGON_RACE
+    UNDEAD_RACE
+    ANIMAL_RACE
+    PLAYER_RACE
 )
 
 var (
