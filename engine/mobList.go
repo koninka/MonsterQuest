@@ -62,7 +62,6 @@ func (ml *mobList) initializeMobsGenerators(filename string) {
             depth := utils.ParseInt(data[4])
             duration := utils.ParseFloat(data[5])
             area := geometry.MakeRectangle(geometry.MakePoint(l, t), geometry.MakePoint(r, b))
-            fmt.Printf("gen depth = %d\n", depth)
             if kinds, isExist := ml.mobsDepth[depth]; isExist {
                 ml.addGen(NewMobGenerator(&kinds, area, duration, ml.pipeline))
             }
