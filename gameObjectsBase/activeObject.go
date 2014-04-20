@@ -77,6 +77,10 @@ func (k *Kind) GetRace() int {
     return k.Race
 }
 
+func (k* Kind) SetRace(race int) {
+    k.Race = race
+}
+
 func (k *Kind) GetFlags() *[]Flager {
     return &k.Flags
 }
@@ -85,8 +89,8 @@ func (k *Kind) AddFlag(flag Flager) {
     k.Flags = append(k.Flags, flag)
 }
 
-func NewKind(symbol string, race int) Kind {
-    return Kind{symbol, race, make([]Flager, 0, 1000)}
+func NewKind(symbol string) Kind {
+    return Kind{symbol, consts.NO_RACE, make([]Flager, 0, 1000)}
 }
 
 type ActiveObject struct {

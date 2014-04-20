@@ -32,18 +32,18 @@ func (ml *mobList) initializeMobTypes() consts.JsonType {
     blows.InitBlowMethods();
 	gameObjectsFlags.InitFlags(&GetInstance().field, GetInstance().msgsChannel)
 	db := connect.CreateConnect()
-	rows, _ := db.Query("SELECT id, name, base_hp, hp_inc, symbol, description, blow_method, flags, level_info, race FROM mobs_types")
+	rows, _ := db.Query("SELECT id, name, base_hp, hp_inc, symbol, description, blow_method, flags, level_info FROM mobs_types")
     mobDictionary := make(consts.JsonType)
 	for rows.Next() {
 		var (
             id int64
-            race, base_hp int
+            base_hp int
             name, hp_inc, symbol, desc, flags, blowMethods, level_info string
         )
-		rows.Scan(&id, &name, &base_hp, &hp_inc, &symbol, &desc, &blowMethods, &flags, &level_info, &race)
+		rows.Scan(&id, &name, &base_hp, &hp_inc, &symbol, &desc, &blowMethods, &flags, &level_info)
         depth := utils.ParseInt(strings.Split(level_info, "|")[0])
         fmt.Printf("mob name = %s, mob depth = %d\n", name, depth)
-		ml.mobsDepth[depth] = append(ml.mobsDepth[depth], gameObjects.CreateMobKind(id, race, name, base_hp, hp_inc, symbol, desc, blowMethods, flags))
+		ml.mobsDepth[depth] = append(ml.mobsDepth[depth], gameObjects.CreateMobKind(id, name, base_hp, hp_inc, symbol, desc, blowMethods, flags))
         mobDictionary[symbol] = name
 	}
     return mobDictionary

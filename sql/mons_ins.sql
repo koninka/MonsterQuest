@@ -1,6 +1,6 @@
 INSERT INTO mobs_types(name, base_hp, hp_inc, blow_method, color, description, flags, symbol, info, spells, level_info) VALUES
-	("Scrawny cat", "100", "25d2", "CLAW|HURT|1d1", "U", "A skinny little furball with sharp claws and a menacing look.", "RAND_25|ANIMAL|HATE_ORCS", "f", "110|2|30|1|10", "", "0|3|0"),
-	("Scruffy little dog", "100", "25d2", "BITE|HURT|1d1", "U", "A thin flea-ridden mutt, growling as you get close.", "RAND_25|ANIMAL|HATE_TROLLS", "C", "110|2|20|1|5", "", "0|3|0"),
+	("Scrawny cat", "100", "25d2", "CLAW|HURT|1d1", "U", "A skinny little furball with sharp claws and a menacing look.", "RAND_25|TROLL|HATE_ORCS", "f", "110|2|30|1|10", "", "0|3|0"),
+	("Scruffy little dog", "100", "25d2", "BITE|HURT|1d1", "U", "A thin flea-ridden mutt, growling as you get close.", "RAND_25|ORC|HATE_TROLLS", "C", "110|2|20|1|5", "", "0|3|0"),
 	("Grey mold", "200", "25d3", "SPORE|HURT|1d4@SPORE|HURT|1d4", "s", "A small strange grey growth.", "NEVER_MOVE|IM_POIS|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP|HATE_ORCS", "m", "110|2|2|1|0", "", "1|1|3"),
 	("Grey mushroom patch", "200", "25d3", "SPORE|CONFUSE|1d4", "s", "Yum!  It looks quite tasty.", "IM_POIS|NEVER_MOVE|HURT_FIRE|NO_FEAR|NO_CONF|NO_SLEEP|HATE_TROLLS", ",", "110|2|2|1|0", "", "1|1|1");/*,
 	("Giant yellow centipede", "200", "25d3", "BITE|HURT|1d3@STING|HURT|1d3", "y", "It is about four feet long and carnivorous.", "ANIMAL", "c", "110|7|8|14|30", "", "1|1|2"),

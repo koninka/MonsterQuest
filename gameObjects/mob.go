@@ -33,18 +33,22 @@ func (mk *MobKind) GenHP() int {
     return mk.base_hp + mk.hp_inc.Shake().Throw()
 }
 
-func CreateMobKind(id int64, race int, name string, base_hp int, hp_inc, symbol, description, blowMethods, flagsStr string) *MobKind {
+func CreateMobKind(id int64, name string, base_hp int, hp_inc, symbol, description, blowMethods, flagsStr string) *MobKind {
     added := make(map[string] bool)
-    kind := MobKind{gameObjectsBase.NewKind(symbol, race), id, name, base_hp, dice.CreateDice(hp_inc), description, blowList.NewBlowList()}
+    kind := MobKind{gameObjectsBase.NewKind(symbol), id, name, base_hp, dice.CreateDice(hp_inc), description, blowList.NewBlowList()}
     for _, blowDesc := range strings.Split(blowMethods, "@") {
         kind.blowList.AddBlowDescription(blowDesc)
     }
     fmt.Println(kind.blowList)
     for _, flagName := range strings.Split(flagsStr, "|") {
-        flag := gameObjectsFlags.GetFlag(flagName)
-        added[flagName] = true
-        if flag != nil {
-            kind.Flags = append(kind.Flags, flag)
+        if race, isExist := gameObjectsFlags.GetRaceFlag(flagName); isExist {
+            kind.SetRace(race)
+        } else {
+            flag := gameObjectsFlags.GetFlag(flagName)
+            added[flagName] = true
+            if flag != nil {
+                kind.Flags = append(kind.Flags, flag)
+            }
         }
     }
     if !added["NEVER_MOVE"] {

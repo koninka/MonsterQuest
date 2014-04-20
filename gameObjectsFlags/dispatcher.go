@@ -38,3 +38,8 @@ func InitFlags(field *gameMap.GameField, msgsChan chan consts.JsonType) {
 func GetFlag(name string) gameObjectsBase.Flager {
 	return flags[name]
 }
+
+func GetRaceFlag(name string) (int, bool) {
+    r, isExist := raceFlags[name]
+    return r, isExist
+}
