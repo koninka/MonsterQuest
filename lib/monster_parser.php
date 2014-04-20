@@ -330,6 +330,26 @@ while ($i < count($content)) {
    }
 }
 
+/*=========GEN HP AND HP INCREMENENTS SECTION=============*/
+define('FACTOR', 1 / 4);
+define('DURATION', 3);
+$start_dice = 1;
+$mob_hp = 0;
+$amount = $dur_amount = 0;
+foreach ($mobs as $depth => &$descs) {
+   $f = ($dur_amount++ % DURATION);
+   $mob_hp += 100 * ($f + ($f == 0));
+   foreach ($descs as &$desc) {
+      $amount++;
+      $d = ceil($depth / 2) + 1;
+      $desc['HP'] = $mob_hp;
+      $desc['HP_INC'] = sprintf("%dd%d", ceil(($mob_hp * FACTOR) / $d), $d + 1);
+   }
+   unset($desc);
+}
+
+/*=========PRINT MOBS SECTION=============*/
+unset($descs);
 $i = 1;
 echo "mob names:\n";
 foreach ($mobs as $descs) {
@@ -338,6 +358,7 @@ foreach ($mobs as $descs) {
    }
 }
 
+/*=========SAVE TO FILE SECTION=============*/
 function WriteLineToFile(&$f, $line = '')
 {
    fwrite($f, "$line\n");
@@ -347,8 +368,8 @@ printf("\nmonsters amount = %d\n===================================\n", $mobs_am
 
 $f = fopen('monsters_ins.txt', 'w');
 
-$ins = "\t" . '("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s")';
-WriteLineToFile($f, 'INSERT INTO mobs_types(name, blow_method, color, description, flags, symbol, info, spells, level_info) VALUES');
+$ins = "\t" . '("%s", "%d", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s")';
+WriteLineToFile($f, 'INSERT INTO mobs_types(name, base_hp, hp_inc, blow_method, color, description, flags, symbol, info, spells, level_info) VALUES');
 
 $lines = [];
 $i = 0;
@@ -361,6 +382,8 @@ foreach ($mobs as $depth => &$descriptions) {
       $lines[] = sprintf(
          $ins,
          $info['N'],
+         $info['HP'],
+         $info['HP_INC'],
          implode('@', $blow_methods),
          $info['C'],
          $info['D'],
