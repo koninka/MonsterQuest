@@ -35,6 +35,10 @@ func Throw(edge_amount, throws_amount int) int {
     return throw(gen, edge_amount, throws_amount)
 }
 
+func NewDice(edge, throws int) Dice {
+    return Dice{nil, edge, throws}
+}
+
 func CreateDice(sd string) Dice {
     if strings.Index(sd, "d") == -1 {
         sd = "1d2"
