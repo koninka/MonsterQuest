@@ -15,6 +15,8 @@ type MobKind struct {
     gameObjectsBase.Kind
     id int64
     name string
+    base_hp int
+    hp_inc dice.Dice
     description string
     blowList *blowList.BlowList
 }
@@ -27,9 +29,13 @@ func (mk *MobKind) GetDescription() string {
     return mk.description
 }
 
-func CreateMobKind(id int64, race int, name, symbol, description, blowMethods, flagsStr string) *MobKind {
+func (mk *MobKind) GenHP() int {
+    return mk.base_hp + mk.hp_inc.Shake().Throw()
+}
+
+func CreateMobKind(id int64, race int, name string, base_hp int, hp_inc, symbol, description, blowMethods, flagsStr string) *MobKind {
     added := make(map[string] bool)
-    kind := MobKind{gameObjectsBase.NewKind(symbol, race), id, name, description, blowList.NewBlowList()}
+    kind := MobKind{gameObjectsBase.NewKind(symbol, race), id, name, base_hp, dice.CreateDice(hp_inc), description, blowList.NewBlowList()}
     for _, blowDesc := range strings.Split(blowMethods, "@") {
         kind.blowList.AddBlowDescription(blowDesc)
     }
@@ -183,7 +189,9 @@ func (m *Mob) GetHit(bldesc *blowList.BlowDescription, attacker gameObjectsBase.
 }
 
 func NewMob(kind *MobKind, x, y float64) Mob {
-    m := Mob{gameObjectsBase.NewActiveObject(-1, x, y, kind), 0}
+    d := kind.GenHP()
+    fmt.Printf("NewMob: x = %f, y = %f, hp = %d\n", x, y, d)
+    m := Mob{gameObjectsBase.NewActiveObject(-1, d, x, y, kind), 0}
     m.chooseDir()
     return m
 }

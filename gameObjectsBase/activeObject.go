@@ -251,6 +251,6 @@ func (obj *ActiveObject) Killed() bool {
     return obj.HP <= 0
 }
 
-func NewActiveObject(id int64, x, y float64, kind Kinder) ActiveObject {
-    return ActiveObject{id, -1, consts.DEFAULT_HP_COUNT, geometry.Point{x, y}, nil, kind}
+func NewActiveObject(id int64, hp int, x, y float64, kind Kinder) ActiveObject {
+    return ActiveObject{id, -1, hp, geometry.Point{x, y}, nil, kind}
 }

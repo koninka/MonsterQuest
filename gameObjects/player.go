@@ -60,5 +60,5 @@ func (p *Player) Attack() consts.JsonType {
 }
 
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
-    return Player{gameObjectsBase.NewActiveObject(id, x, y, getPlayerKind()), login, sid, dbId, &wpns.FistWeap{wpns.BaseWeap{fightBase.NewBaseBlow(fightBase.BM_HIT, 0.8, "hit"), fightBase.CreateDmgDescription("4d3")}}}
+    return Player{gameObjectsBase.NewActiveObject(id, consts.INITIAL_PLAYER_HP, x, y, getPlayerKind()), login, sid, dbId, &wpns.FistWeap{wpns.BaseWeap{fightBase.NewBaseBlow(fightBase.BM_HIT, 0.8, "hit"), fightBase.CreateDmgDescription("4d3")}}}
 }
