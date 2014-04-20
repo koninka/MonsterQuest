@@ -33,6 +33,8 @@ CREATE TABLE mobs_types (
    id          INT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
    symbol      VARCHAR(2)  NOT NULL,
    name        VARCHAR(30) NOT NULL,
+   base_hp     INT         NOT NULL,
+   hp_inc      VARCHAR(4)  NOT NULL,
    flags       TEXT,
    info        VARCHAR(40) NOT NULL,
    color       VARCHAR(3)  NOT NULL,
