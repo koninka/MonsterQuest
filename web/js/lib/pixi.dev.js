@@ -3691,7 +3691,7 @@ PIXI.Stage.prototype.updateTransform = function()
 {
     this.worldAlpha = 1;
 
-    for(var i=0,j=this.children.length; i<j; i++)
+    for(var i=0; i<this.children.length; i++)
     {
         this.children[i].updateTransform();
     }
