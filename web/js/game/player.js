@@ -13,11 +13,6 @@ define(['actor_rpg', 'global'], function(ActorRPG, GLOBAL){
    }
 
 
-   //Player.prototype.Rotate = function() {
-   //   var angle = GLOBAL.graphic.angleToPointer(this.pt);
-   //   this.container.body.rotation = angle;
-   //}
-
    Player.prototype.examineSuccess = function(data) {
       this.pt.x = data["x"];
       this.pt.y = data["y"];
