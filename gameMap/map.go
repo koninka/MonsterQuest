@@ -11,13 +11,13 @@ import (
 
 type GameField struct {
     Width, Height int
-    Field []string
+    Field [][]byte
     Actors [][]map[int64] gameObjectsBase.Activer
 }
 
 func NewGameField() GameField {
     field := GameField{
-        Field: make([]string, 1000),
+        Field: make([][]byte, 1000),
         Actors: make([][]map[int64] gameObjectsBase.Activer, 1000),
     }
     for i := range field.Field {
@@ -34,6 +34,7 @@ func (f *GameField) LoadFromStrings(strs []string) bool {
        if rune(str[len(str) - 1]) == rune(13) {
             strs[idx] = str[:len(str) - 1]
        }
+       f.Field[idx] = []byte(strs[idx])
     }
     var l int
     equiv := false
@@ -47,7 +48,6 @@ func (f *GameField) LoadFromStrings(strs []string) bool {
     }
     correct := notEmpty && equiv && l > 0
     if correct {
-        copy(f.Field, strs)
         f.Width = len(f.Field[0])
         f.Height = len(strs)
     }
