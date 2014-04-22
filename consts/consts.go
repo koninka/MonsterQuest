@@ -16,9 +16,10 @@ const (
 	TICK_DURATION = 50 * time.Millisecond
 	DATABASE_TICK_DURATION = 1 * time.Second
 	LIVING_AFTER_DEAD_DURATION = 2 * time.Second
+	DEFAULT_ATTACK_COOLDOWN = 10
 	DEFAULT_PLAYER_POS_X = 5
 	DEFAULT_PLAYER_POS_Y = 5
-	DEFAULT_HP_COUNT = 10
+    INITIAL_PLAYER_HP = 100
 	VISION_RADIUS = 10
 	PATH_TO_MAPS = "resourses/maps/"
 	OBJECT_HALF = 0.5
@@ -32,9 +33,17 @@ const (
 )
 
 const (
-	PLAYER = iota
-	TROLL
-	ORC
+    NO_RACE = iota
+    ORC_RACE
+    EVIL_RACE
+    TROLL_RACE
+    GIANT_RACE
+    DEMON_RACE
+    METAL_RACE
+    DRAGON_RACE
+    UNDEAD_RACE
+    ANIMAL_RACE
+    PLAYER_RACE
 )
 
 var (

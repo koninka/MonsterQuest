@@ -210,13 +210,15 @@ class MonParser
       return $result;
    }
 
-   static public function ParseTemplate(&$content, &$i)
+   static public function ParseTemplate($name, &$content, &$i)
    {
       $r = [
-         'G' => null, 'M'  => null, 'F' => [],   'S'  => [],
-         'D' => null, 'C'  => null, 'I' => [], 'W'  => null,
-         'B' => null, 'SF' => null, 'T' => null, '-F' => []
+         'G' => null,  'M'  => null, 'F' => [],   'S'  => [],
+         'D' => null,  'C'  => null, 'I' => [],   'W'  => null,
+         'B' => null,  'SF' => null, 'T' => null, '-F' => [],
+         'N' => $name,
       ];
+      $depth_res = -1;
       while ($i < count($content) && !empty(trim($content[$i]))) {
          $line = $content[$i++];
          if (static::_ParseBaseTemplateFlag($line, $r)) continue;
@@ -232,6 +234,7 @@ class MonParser
 
             case 'W':
                $r['W'] = static::_ExplodeByColon(static::_GetPartAfterFirstColon($line));
+               $depth_res = $r['W'][0];
                if (isset($r['W'][2])) unset($r['W'][2]);
                break;
 
@@ -259,7 +262,7 @@ class MonParser
          $r['G'] = !empty($r['G']) ? $r['G'] : $t['G'];
          unset($r['-F']);
       }
-      return $r;
+      return [$depth_res, $r];
    }
 
    static public function CheckForPossibleFlags($flag_name, &$info)
@@ -314,53 +317,83 @@ foreach ($templates as $key => $value) {
 
 $content = file('a_monster.txt');
 
-$i = 0;
+$i = $mobs_amount = 0;
 while ($i < count($content)) {
    $line = $content[$i++];
    if ($line[0] == '#') continue;
    if ($line[0] == 'N') {
-      $mobs[$key = GetValueByKey($line, 2)] = MonParser::ParseTemplate($content, $i);
-      if (empty($mobs[$key])) unset($mobs[$key]);
+      list($depth, $desc) = MonParser::ParseTemplate(GetValueByKey($line, 2), $content, $i);
+      if (!empty($desc)) {
+         $mobs[$depth][] = $desc;
+         $mobs_amount++;
+      }
    }
 }
 
-$i = 1;
-echo "mob names:\n";
-foreach ($mobs as $key => $value) {
-   echo "\t" . $i++ . " $key\n";
+/*=========GEN HP AND HP INCREMENENTS SECTION=============*/
+define('FACTOR', 1 / 4);
+define('DURATION', 3);
+$start_dice = 1;
+$mob_hp = 0;
+$amount = $dur_amount = 0;
+foreach ($mobs as $depth => &$descs) {
+   $f = ($dur_amount++ % DURATION);
+   $mob_hp += 100 * ($f + ($f == 0));
+   foreach ($descs as &$desc) {
+      $amount++;
+      $d = ceil($depth / 2) + 1;
+      $desc['HP'] = $mob_hp;
+      $desc['HP_INC'] = sprintf("%dd%d", ceil(($mob_hp * FACTOR) / $d), $d + 1);
+   }
+   unset($desc);
 }
 
+/*=========PRINT MOBS SECTION=============*/
+unset($descs);
+$i = 1;
+echo "mob names:\n";
+foreach ($mobs as $descs) {
+   foreach ($descs as $desc) {
+      echo "\t" . $i++ . " ${desc['N']}\n";
+   }
+}
+
+/*=========SAVE TO FILE SECTION=============*/
 function WriteLineToFile(&$f, $line = '')
 {
    fwrite($f, "$line\n");
 }
 
-
-printf("\nmonsters amount = %d\n===================================\n", count($mobs));
+printf("\nmonsters amount = %d\n===================================\n", $mobs_amount);
 
 $f = fopen('monsters_ins.txt', 'w');
 
-$ins = "\t" . '("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s")';
-WriteLineToFile($f, 'INSERT INTO mobs_types(name, blow_method, color, description, flags, symbol, info, spells, level_info) VALUES');
+$ins = "\t" . '("%s", "%d", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s")';
+WriteLineToFile($f, 'INSERT INTO mobs_types(name, base_hp, hp_inc, blow_method, color, description, flags, symbol, info, spells, level_info) VALUES');
 
 $lines = [];
-foreach ($mobs as $name => &$info) {
-   $blow_methods = [];
-   foreach ($info['B'] as $desc) {
-      $blow_methods[] = implode('|', $desc);
+$i = 0;
+foreach ($mobs as $depth => &$descriptions) {
+   foreach ($descriptions as $info) {
+      $blow_methods = [];
+      foreach ($info['B'] as $desc) {
+         $blow_methods[] = implode('|', $desc);
+      }
+      $lines[] = sprintf(
+         $ins,
+         $info['N'],
+         $info['HP'],
+         $info['HP_INC'],
+         implode('@', $blow_methods),
+         $info['C'],
+         $info['D'],
+         implode('|', $info['F']),
+         $info['G'],
+         implode('|', $info['I']),
+         implode('|', $info['S']),
+         implode('|', $info['W'])
+      );
    }
-   $lines[] = sprintf(
-      $ins,
-      $name,
-      implode('@', $blow_methods),
-      $info['C'],
-      $info['D'],
-      implode('|', $info['F']),
-      $info['G'],
-      implode('|', $info['I']),
-      implode('|', $info['S']),
-      implode('|', $info['W'])
-   );
 }
 
 WriteLineToFile($f, implode(",\n", $lines) . ';');

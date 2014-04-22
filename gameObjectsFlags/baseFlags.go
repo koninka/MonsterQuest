@@ -124,11 +124,16 @@ type BlowFlag struct {
 }
 
 func (a *BlowFlag) Do(obj gameObjectsBase.Activer) {
-    if _, isExist := obj.GetTarget(); isExist {
-        msg := obj.Attack()
-        if msg != nil {
-            a.MsgsChannel <- msg
+    if obj.ReadyAttack() {
+        if _, isExist := obj.GetTarget(); isExist {
+            msg := obj.Attack()
+            obj.ZeroCooldown()
+            if msg != nil {
+                a.MsgsChannel <- msg
+            }
         }
+    } else {
+        obj.IncCooldownCounter()
     }
 }
 

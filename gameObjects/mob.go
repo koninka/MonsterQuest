@@ -15,6 +15,8 @@ type MobKind struct {
     gameObjectsBase.Kind
     id int64
     name string
+    base_hp int
+    hp_inc dice.Dice
     description string
     blowList *blowList.BlowList
 }
@@ -27,18 +29,26 @@ func (mk *MobKind) GetDescription() string {
     return mk.description
 }
 
-func CreateMobKind(id int64, race int, name, symbol, description, blowMethods, flagsStr string) *MobKind {
+func (mk *MobKind) GenHP() int {
+    return mk.base_hp + mk.hp_inc.Shake().Throw()
+}
+
+func CreateMobKind(id int64, name string, base_hp int, hp_inc, symbol, description, blowMethods, flagsStr string) *MobKind {
     added := make(map[string] bool)
-    kind := MobKind{gameObjectsBase.NewKind(symbol, race), id, name, description, blowList.NewBlowList()}
+    kind := MobKind{gameObjectsBase.NewKind(symbol), id, name, base_hp, dice.CreateDice(hp_inc), description, blowList.NewBlowList()}
     for _, blowDesc := range strings.Split(blowMethods, "@") {
         kind.blowList.AddBlowDescription(blowDesc)
     }
     fmt.Println(kind.blowList)
     for _, flagName := range strings.Split(flagsStr, "|") {
-        flag := gameObjectsFlags.GetFlag(flagName)
-        added[flagName] = true
-        if flag != nil {
-            kind.Flags = append(kind.Flags, flag)
+        if race, isExist := gameObjectsFlags.GetRaceFlag(flagName); isExist {
+            kind.SetRace(race)
+        } else {
+            flag := gameObjectsFlags.GetFlag(flagName)
+            added[flagName] = true
+            if flag != nil {
+                kind.Flags = append(kind.Flags, flag)
+            }
         }
     }
     if !added["NEVER_MOVE"] {
@@ -87,7 +97,6 @@ func (m *Mob) Init() {
 var directions = [4]int {consts.NORTH_DIR, consts.SOUTH_DIR, consts.WEST_DIR, consts.EAST_DIR}
 
 func (m *Mob) chooseDir() {
-    dice.Shake()
     newDir := m.Dir
     for newDir == m.Dir {
         newDir = directions[dice.Throw(4, 1) - 1]
@@ -103,6 +112,7 @@ func (m *Mob) think() {
     } else {
         m.walkingCycle++
         if m.walkingCycle == consts.MOB_WALKING_CYCLE_DURATION {
+            dice.Shake();
             m.walkingCycle = 0
             m.chooseDir()
         }
@@ -183,7 +193,9 @@ func (m *Mob) GetHit(bldesc *blowList.BlowDescription, attacker gameObjectsBase.
 }
 
 func NewMob(kind *MobKind, x, y float64) Mob {
-    m := Mob{gameObjectsBase.NewActiveObject(-1, x, y, kind), 0}
+    d := kind.GenHP()
+    fmt.Printf("NewMob: x = %f, y = %f, hp = %d\n", x, y, d)
+    m := Mob{gameObjectsBase.NewActiveObject(-1, d, x, y, kind), 0}
     m.chooseDir()
     return m
 }

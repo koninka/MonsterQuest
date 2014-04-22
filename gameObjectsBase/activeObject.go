@@ -59,6 +59,9 @@ type Activer interface {
     GetKind() Kinder
     GetHit(*blowList.BlowDescription, Activer) consts.JsonType
     Killed() bool
+    ReadyAttack() bool
+    IncCooldownCounter()
+    ZeroCooldown()
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -77,6 +80,10 @@ func (k *Kind) GetRace() int {
     return k.Race
 }
 
+func (k* Kind) SetRace(race int) {
+    k.Race = race
+}
+
 func (k *Kind) GetFlags() *[]Flager {
     return &k.Flags
 }
@@ -85,14 +92,15 @@ func (k *Kind) AddFlag(flag Flager) {
     k.Flags = append(k.Flags, flag)
 }
 
-func NewKind(symbol string, race int) Kind {
-    return Kind{symbol, race, make([]Flager, 0, 1000)}
+func NewKind(symbol string) Kind {
+    return Kind{symbol, consts.NO_RACE, make([]Flager, 0, 1000)}
 }
 
 type ActiveObject struct {
     Id int64
     Dir int
     HP int
+    AttackCooldownCounter int
     Center geometry.Point
     Target Activer
     Kind Kinder
@@ -251,6 +259,20 @@ func (obj *ActiveObject) Killed() bool {
     return obj.HP <= 0
 }
 
-func NewActiveObject(id int64, x, y float64, kind Kinder) ActiveObject {
-    return ActiveObject{id, -1, consts.DEFAULT_HP_COUNT, geometry.Point{x, y}, nil, kind}
+func (obj *ActiveObject) ReadyAttack() bool {
+    return obj.AttackCooldownCounter == consts.DEFAULT_ATTACK_COOLDOWN
+}
+
+func (obj *ActiveObject) IncCooldownCounter() {
+    if obj.AttackCooldownCounter < consts.DEFAULT_ATTACK_COOLDOWN {
+        obj.AttackCooldownCounter++
+    }
+}
+
+func (obj *ActiveObject) ZeroCooldown() {
+    obj.AttackCooldownCounter = 0
+}
+
+func NewActiveObject(id int64, hp int, x, y float64, kind Kinder) ActiveObject {
+    return ActiveObject{id, -1, hp, consts.DEFAULT_ATTACK_COOLDOWN, geometry.Point{x, y}, nil, kind}
 }
