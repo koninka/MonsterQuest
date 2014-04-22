@@ -62,8 +62,12 @@ func (f *GameField) LoadFromFile(mapFile string) {
     }
 }
 
+func (f *GameField) OutOfRange(col, row int) bool {
+    return col < 0 || col >= f.Width || row < 0 || row >= f.Height
+}
+
 func (f *GameField) IsBlocked(col, row int) bool {
-    return col < 0 || col >= f.Width || row < 0 || row >= f.Height || f.Field[row][col] == '#'
+    return f.OutOfRange(col, row) || f.Field[row][col] == '#'
 }
 
 func (f *GameField) IsFree(col, row int) bool {
