@@ -10,7 +10,6 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
       this.view     = new View(this.player);
       this.dirsDown  = [];
       GLOBAL.game = this;
-      //this.examine  = $('<div/>').draggable().hide();
    }
 
    Game.prototype.setDictionary = function(dict) {
