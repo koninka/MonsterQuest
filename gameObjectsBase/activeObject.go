@@ -207,7 +207,7 @@ func (obj *ActiveObject) Attack() consts.JsonType {
 }
 
 func (obj *ActiveObject) GetTarget() (Activer, bool) {
-    if obj.Target != nil && obj.Target.Killed() {
+    if obj.Target != nil && (obj.Target.Killed() || obj == obj.Target) {
         obj.Target = nil
     }
     return obj.Target, obj.Target != nil
