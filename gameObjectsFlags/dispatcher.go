@@ -14,6 +14,8 @@ func InitFlags(field *gameMap.GameField, msgsChan chan consts.JsonType) {
 	flags["CAN_BLOW"] = &BlowFlag{Flag{field, msgsChan}}
 	flags["PASS_WALL"] = &BaseMoveFlag{Flag{field, msgsChan}, &PassWallCollision{field}}
 
+	flags["KILL_WALL"] = &KillWallFlag{Flag{field, msgsChan}}
+
 	flags["HATE_ORCS"]    = &HateFlag{Flag{field, msgsChan}, consts.ORC_RACE}
 	flags["HATE_EVILS"]   = &HateFlag{Flag{field, msgsChan}, consts.EVIL_RACE}
 	flags["HATE_TROLLS"]  = &HateFlag{Flag{field, msgsChan}, consts.TROLL_RACE}
