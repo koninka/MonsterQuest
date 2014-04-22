@@ -17,7 +17,6 @@ func (h *websocketHub) run() {
 			h.connections[c] = true
 		case c := <-h.unregister:
 			delete(h.connections, c)
-			close(c.send)
 		case m := <-h.broadcast:
 			for c := range h.connections {
 				c.send <- m

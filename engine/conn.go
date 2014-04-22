@@ -47,6 +47,7 @@ func (c *connection) writePump() {
         select {
         case message := <-c.send:
             if err := c.ws.WriteJSON(message); err != nil {
+                GetInstance().CloseConnection(c)
                 return
             }
         }

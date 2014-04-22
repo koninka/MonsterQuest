@@ -18,6 +18,7 @@ type Game struct {
     lastActions map[string] consts.JsonType
     msgsChannel chan consts.JsonType
     id2conn map[int64] *connection
+    conn2id map[*connection] int64
     dictionary consts.JsonType
 }
 
@@ -52,6 +53,7 @@ func GetInstance() *Game {
             make(map[string] consts.JsonType),
             make(chan consts.JsonType),
             make(map[int64] *connection),
+            make(map[*connection] int64),
             //make(consts.JsonType),
             nil,
         }
@@ -126,12 +128,15 @@ func (g *Game) AddConnection(conn *connection) {
 
 func (g *Game) CloseConnection(conn *connection) {
     g.unregister <- conn
+    delete(g.id2conn, g.conn2id[conn])
+    delete(g.conn2id, conn)
 }
 
 func (g *Game) linkConnectionWithPlayer(sid string, conn *connection) {
     id := g.players.getPlayerBySession(sid).GetID()
     if g.id2conn[id] == nil {
         g.id2conn[id] = conn
+        g.conn2id[conn] = id
     }
 }
 
