@@ -99,7 +99,7 @@ var directions = [4]int {consts.NORTH_DIR, consts.SOUTH_DIR, consts.WEST_DIR, co
 func (m *Mob) chooseDir() {
     newDir := m.Dir
     for newDir == m.Dir {
-        newDir = directions[dice.Throw(2, 2) - 1]
+        newDir = directions[dice.Throw(4, 1) - 1]
     }
     m.Dir = newDir
 }
@@ -112,6 +112,7 @@ func (m *Mob) think() {
     } else {
         m.walkingCycle++
         if m.walkingCycle == consts.MOB_WALKING_CYCLE_DURATION {
+            dice.Shake();
             m.walkingCycle = 0
             m.chooseDir()
         }
