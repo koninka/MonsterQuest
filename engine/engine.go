@@ -349,6 +349,7 @@ func (g *Game) lookAction(sid string) consts.JsonType {
                     json["x"] = center.X
                     json["y"] = center.Y
                     json["hp"] = obj.GetHP()
+                    json["max_hp"] = obj.GetMaxHP()
                     json["type"] = obj.GetType()
                     json["symbol"] = obj.GetKind().GetSymbol()
                     visibleActors = append(visibleActors, json)

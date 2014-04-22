@@ -54,6 +54,7 @@ type Activer interface {
     GetRadiusVision() int
     GetDealtDamage() int
     GetHP() int
+    GetMaxHP() int
     GetAttackRadius() int
     NotifyAboutCollision()
     GetKind() Kinder
@@ -103,6 +104,7 @@ type ActiveObject struct {
     Id int64
     Dir int
     HP int
+    MaxHP int
     AttackCooldownCounter int
     Center geometry.Point
     Target Activer
@@ -233,6 +235,10 @@ func (obj *ActiveObject) GetHP() int {
     return obj.HP
 }
 
+func (obj *ActiveObject) GetMaxHP() int {
+    return obj.MaxHP
+}
+
 func (obj *ActiveObject) GetAttackRadius() int {
     return 0
 }
@@ -290,5 +296,5 @@ func (obj *ActiveObject) ClearAttackPoint() {
 }
 
 func NewActiveObject(id int64, hp int, x, y float64, kind Kinder) ActiveObject {
-    return ActiveObject{id, -1, hp, consts.DEFAULT_ATTACK_COOLDOWN, geometry.Point{x, y}, nil, kind, nil}
+    return ActiveObject{id, -1, hp, hp, consts.DEFAULT_ATTACK_COOLDOWN, geometry.Point{x, y}, nil, kind, nil}
 }
