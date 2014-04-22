@@ -6,32 +6,6 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
    function Graphic(view, game) {
       this.width = 1000;
       this.height = 600;
-      this.actorInfo = {
-         player : {
-            class: Actors.ActorSTD,
-            opt : {
-               idle : false,
-            }
-         },
-         zombie : {
-            class : Actors.ActorATD,
-            opt : {
-               idle : false,
-            }
-         },
-         "Scrawny cat" : {
-            class: Actors.ActorRPG,
-            opt : {
-               idle : true,
-            }
-         },
-         "Scruffy little dog" : {
-            class: Actors.ActorRPG,
-            opt : {
-               idle : false
-            }
-         }
-      }
       this.textures = {};
       this.renderer = PIXI.autoDetectRenderer(this.width, this.height);
       this.dict = null;
