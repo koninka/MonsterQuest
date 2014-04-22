@@ -29,6 +29,10 @@ func NewGameField() GameField {
     return field
 }
 
+func (f *GameField) SetCell(x, y int, c byte) {
+    f.Field[y][x] = c
+}
+
 func (f *GameField) LoadFromStrings(strs []string) bool {
     for idx, str := range strs {
        if rune(str[len(str) - 1]) == rune(13) {
