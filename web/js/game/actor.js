@@ -6,8 +6,8 @@ define(['options', 'global'] ,function(OPTIONS, GLOBAL){
       this.type  = type;
       this.angle = undefined;
       this.dir = undefined;
-      this.health = health || 100;
-      this.name = name || this.type;
+      this.health = health || {cur:75 , max:100};
+      this.name = name || this.type || "unknown";
    }
 
    Actor.prototype.PosToDir = function(pos){
@@ -31,6 +31,10 @@ define(['options', 'global'] ,function(OPTIONS, GLOBAL){
    Actor.prototype.Move = function(pos){
       this.dir = this.PosToDir(pos);
       this.pt = pos;
+   }
+
+   Actor.prototype.SetHP = function(hp){
+      this.health = hp;
    }
 
    Actor.prototype.Destroy = function(){
