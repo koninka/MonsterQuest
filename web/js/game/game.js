@@ -68,6 +68,10 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
       this.view.examine = data;
    }
 
+   Game.prototype.attack = function(data){
+      this.view.attack(data);
+   }
+
    Game.prototype.Start = function() {
       if (!this.sid) {
          utils.gameShutDown();
@@ -119,12 +123,16 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
                case "look":
                   if (th.firstLook) {
                      th.defineRadiusFromMap(data['map']);
-                     th.firstLook = false;
                      th.player.InitAnimation(true, th.player);
+                     th.firstLook = false;
                   }
                   th.setPlayerCoords(data.x, data.y);
                   th.setMap(data['map'], th.player.pt);
                   th.setActors(data['actors']);
+                  break;
+               case "attack":
+                  if(th.firstLook) return;
+                  th.attack(data);
                   break;
             }
          }

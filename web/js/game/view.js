@@ -124,6 +124,15 @@ define(['options', 'global'], function(OPTIONS, GLOBAL) {
       this.dictionary = dict;
    }
 
+   View.prototype.attack = function(data){
+      var t = data.target;
+      var a = data.attacker;
+      console.log(data);
+      attack(data.description, this.actors[t].pt);
+      //this.actors[a].Attack(data.description, this.actors[t].pt);
+      //this.actors[t].Hit();
+   }
+
    View.prototype.DefineImaginaryBounds = function(){
       var off_x = (OPTIONS.screenColumnCount) / 2 * OPTIONS.TILE_SIZE;
       var off_y = (OPTIONS.screenRowCount   ) / 2 * OPTIONS.TILE_SIZE;
