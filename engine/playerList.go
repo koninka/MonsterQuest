@@ -52,6 +52,11 @@ func (s *playerList) getPlayerById(id int64) *gameObjects.Player {
     return s.players[id]
 }
 
+func (s *playerList) deletePlayerById(id int64) {
+    delete(s.sessions, s.players[id].SID)
+    delete(s.players, id)
+}
+
 func (s *playerList) getPlayerBySession(sid string) *gameObjects.Player {
     return s.sessions[sid]
 }
