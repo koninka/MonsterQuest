@@ -36,6 +36,9 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
       $(this.renderer.view).mousemove(function( event ) {
          I.pointer.x = event.clientX - $(this).offset().left - I.width  / 2;
          I.pointer.y = event.clientY - $(this).offset().top  - I.height / 2;
+      }).click(function(event){
+         game.sendViaWS({action: "attack", point: I.pointer});
+         console.log({action: "attack", point: I.pointer});
       })
       global.graphic = this;
       PreloadResourses();
