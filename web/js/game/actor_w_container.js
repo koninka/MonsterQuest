@@ -54,6 +54,12 @@ define(['options', 'global', 'actor'] ,function(OPTIONS, GLOBAL, Actor){
          }
       }
       this.container.click.lastClick = 0;
+      this.container.mouseover = function(){
+         this.name.visible = true;
+      }
+      this.container.mouseout = function(){
+         this.name.visible = false;
+      }
       GLOBAL.graphic.DrawObj(
          this.container,
          this.container.position.x = (this.pt.x - player.pt.x) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2,
