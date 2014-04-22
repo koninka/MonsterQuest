@@ -1,7 +1,7 @@
 define(['options', 'global', 'actor_w_container'] ,function(OPTIONS, GLOBAL, ActorWC){
 
-   function ActorSimpleTopDown(id, x, y, type, initAnimation, player){
-      ActorWC.call(this, id, x, y, type, initAnimation, player);
+   function ActorSimpleTopDown(id, x, y, type, health, name, initAnimation, player){
+      ActorWC.call(this, id, x, y, type, health, name, initAnimation, player);
    }
 
    ActorSimpleTopDown.prototype = Object.create(ActorWC.prototype);

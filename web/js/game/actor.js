@@ -1,11 +1,13 @@
 define(['options', 'global'] ,function(OPTIONS, GLOBAL){
 
-   function Actor(id, x, y, type){
+   function Actor(id, x, y, type, health, name){
       this.id    = id;
       this.pt    = {x: x, y: y};
       this.type  = type;
       this.angle = undefined;
       this.dir = undefined;
+      this.health = health || 100;
+      this.name = name || this.type;
    }
 
    Actor.prototype.PosToDir = function(pos){

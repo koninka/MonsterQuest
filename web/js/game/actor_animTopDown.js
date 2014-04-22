@@ -1,7 +1,7 @@
 define(['actor_simpleTopDown', 'game', 'options', 'global'], function(ActorSTD, game, OPTIONS, GLOBAL){
 
-   function ActorTopDownAnim(id, x, y, type, init, player){
-      ActorSTD.call(this, id, x, y, type, init, player);
+   function ActorTopDownAnim(id, x, y, type, name, health, init, player){
+      ActorSTD.call(this, id, x, y, type, name, health, init, player);
    }
 
    ActorTopDownAnim.prototype = Object.create(ActorSTD.prototype);
