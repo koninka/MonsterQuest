@@ -8,11 +8,6 @@ define(['actor_rpg', 'global'], function(ActorRPG, GLOBAL){
    Player.prototype = Object.create(ActorRPG.prototype);
    Player.prototype.constructor = Player;
 
-   Player.prototype.echo = function() {
-      alert(this.login);
-   }
-
-
    Player.prototype.examineSuccess = function(data) {
       this.pt.x = data["x"];
       this.pt.y = data["y"];
