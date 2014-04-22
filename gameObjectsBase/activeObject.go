@@ -59,6 +59,9 @@ type Activer interface {
     GetKind() Kinder
     GetHit(*blowList.BlowDescription, Activer) consts.JsonType
     Killed() bool
+    ReadyAttack() bool
+    IncCooldownCounter()
+    ZeroCooldown()
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -97,6 +100,7 @@ type ActiveObject struct {
     Id int64
     Dir int
     HP int
+    AttackCooldownCounter int
     Center geometry.Point
     Target Activer
     Kind Kinder
@@ -255,6 +259,20 @@ func (obj *ActiveObject) Killed() bool {
     return obj.HP <= 0
 }
 
+func (obj *ActiveObject) ReadyAttack() bool {
+    return obj.AttackCooldownCounter == consts.DEFAULT_ATTACK_COOLDOWN
+}
+
+func (obj *ActiveObject) IncCooldownCounter() {
+    if obj.AttackCooldownCounter < consts.DEFAULT_ATTACK_COOLDOWN {
+        obj.AttackCooldownCounter++
+    }
+}
+
+func (obj *ActiveObject) ZeroCooldown() {
+    obj.AttackCooldownCounter = 0
+}
+
 func NewActiveObject(id int64, hp int, x, y float64, kind Kinder) ActiveObject {
-    return ActiveObject{id, -1, hp, geometry.Point{x, y}, nil, kind}
+    return ActiveObject{id, -1, hp, consts.DEFAULT_ATTACK_COOLDOWN, geometry.Point{x, y}, nil, kind}
 }
