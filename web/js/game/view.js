@@ -1,4 +1,4 @@
-define(['options', 'global'], function(OPTIONS, GLOBAL) {
+define(['options', 'global', 'actor_info', 'attack'], function(OPTIONS, GLOBAL, actorInfo, attack) {
    var TILE_SIZE = 32;
    var graphic = null;
 
@@ -89,7 +89,7 @@ define(['options', 'global'], function(OPTIONS, GLOBAL) {
          } else {
             var t = this.actorInfo(players[i].symbol);
             var a = this.dictionary[players[i].symbol];
-            this.actors[id] = new t.class(id, x, y, a, true, this.player, t.opt)
+            this.actors[id] = new t.class(id, x, y, a, null, players[i].login, true, this.player, t.opt)
             last = this.actors[id];
          }
          actors_on_scene[id] = true;
@@ -113,9 +113,9 @@ define(['options', 'global'], function(OPTIONS, GLOBAL) {
    }
 
    View.prototype.actorInfo = function(symbol){
-      var t = GLOBAL.graphic.actorInfo[this.dictionary[symbol]];
+      var t = actorInfo[this.dictionary[symbol]];
       if (!t)
-         t = GLOBAL.graphic.actorInfo['player'];
+         t = actorInfo['player'];
       return t;
    }
 
