@@ -1,4 +1,4 @@
-define(['jquery', 'options', 'global', 'actors'], function(JQuery, OPTIONS, global, Actors) {
+define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, global, atlas) {
    function getRandomInt (min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
    }
@@ -6,128 +6,6 @@ define(['jquery', 'options', 'global', 'actors'], function(JQuery, OPTIONS, glob
    function Graphic(view, game) {
       this.width = 1000;
       this.height = 600;
-      this.actorInfo = {
-         player : {
-            class: Actors.ActorSTD,
-            opt : {
-               idle : false,
-            }
-         },
-         zombie : {
-            class : Actors.ActorATD,
-            opt : {
-               idle : false,
-            }
-         },
-         "Scrawny cat" : {
-            class: Actors.ActorRPG,
-            opt : {
-               idle : true,
-            }
-         },
-         "Scruffy little dog" : {
-            class: Actors.ActorRPG,
-            opt : {
-               idle : false
-            }
-         }
-      }
-      this.atlas = {
-         player : "/imgs/character.png",
-         grass  : "/imgs/grass_1.png",
-         wall   : "/imgs/wall_1.png",
-         zombie : {
-            corpse: "/imgs/zombie/zombie_corpse_1.png",
-            legs  : [
-               "/imgs/zombie/zombie_legs_1.png",
-               "/imgs/zombie/zombie_legs_2.png",
-               "/imgs/zombie/zombie_legs_3.png",
-               "/imgs/zombie/zombie_legs_4.png",
-               "/imgs/zombie/zombie_legs_5.png",
-               "/imgs/zombie/zombie_legs_6.png",
-               "/imgs/zombie/zombie_legs_7.png",
-               "/imgs/zombie/zombie_legs_8.png"
-            ]
-         },
-         "Scrawny cat" : {
-            walk : {
-               top : [
-                  "/imgs/cat/cat_walk_top_1.png",
-                  "/imgs/cat/cat_walk_top_2.png",
-                  "/imgs/cat/cat_walk_top_3.png",
-                  "/imgs/cat/cat_walk_top_2.png",
-                  "/imgs/cat/cat_walk_top_1.png"
-               ],
-               down : [
-                  "/imgs/cat/cat_walk_down_1.png",
-                  "/imgs/cat/cat_walk_down_2.png",
-                  "/imgs/cat/cat_walk_down_3.png",
-                  "/imgs/cat/cat_walk_down_2.png",
-                  "/imgs/cat/cat_walk_down_1.png"
-               ],
-               left : [
-                  "/imgs/cat/cat_walk_left_1.png",
-                  "/imgs/cat/cat_walk_left_2.png",
-                  "/imgs/cat/cat_walk_left_3.png",
-                  "/imgs/cat/cat_walk_left_2.png",
-                  "/imgs/cat/cat_walk_left_1.png"
-               ],
-               right : [
-                  "/imgs/cat/cat_walk_right_1.png",
-                  "/imgs/cat/cat_walk_right_2.png",
-                  "/imgs/cat/cat_walk_right_3.png",
-                  "/imgs/cat/cat_walk_right_2.png",
-                  "/imgs/cat/cat_walk_right_1.png"
-               ]
-            },
-            wait : {
-               top : [
-                  "/imgs/cat/cat_wait_top_1.png"
-               ],
-               down : [
-                  "/imgs/cat/cat_wait_down_1.png"
-               ],
-               left : [
-                  "/imgs/cat/cat_wait_left_1.png"
-               ],
-               right : [
-                  "/imgs/cat/cat_wait_right_1.png"
-               ]
-            }
-         },
-         "Scruffy little dog" : {
-            walk : {
-               top : [
-                  "/imgs/dog/dog_walk_top_1.png",
-                  "/imgs/dog/dog_walk_top_2.png",
-                  "/imgs/dog/dog_walk_top_3.png",
-                  "/imgs/dog/dog_walk_top_2.png",
-                  "/imgs/dog/dog_walk_top_1.png"
-               ],
-               down : [
-                  "/imgs/dog/dog_walk_down_1.png",
-                  "/imgs/dog/dog_walk_down_2.png",
-                  "/imgs/dog/dog_walk_down_3.png",
-                  "/imgs/dog/dog_walk_down_2.png",
-                  "/imgs/dog/dog_walk_down_1.png"
-               ],
-               left : [
-                  "/imgs/dog/dog_walk_left_1.png",
-                  "/imgs/dog/dog_walk_left_2.png",
-                  "/imgs/dog/dog_walk_left_3.png",
-                  "/imgs/dog/dog_walk_left_2.png",
-                  "/imgs/dog/dog_walk_left_1.png"
-               ],
-               right : [
-                  "/imgs/dog/dog_walk_right_1.png",
-                  "/imgs/dog/dog_walk_right_2.png",
-                  "/imgs/dog/dog_walk_right_3.png",
-                  "/imgs/dog/dog_walk_right_2.png",
-                  "/imgs/dog/dog_walk_right_1.png"
-               ]
-            }
-         }
-      }
       this.textures = {};
       this.renderer = PIXI.autoDetectRenderer(this.width, this.height);
       this.dict = null;
@@ -149,7 +27,7 @@ define(['jquery', 'options', 'global', 'actors'], function(JQuery, OPTIONS, glob
          return t;
       }
       var PreloadResourses = function () {
-         I.textures = loadA({}, I.atlas);
+         I.textures = loadA({}, atlas);
       }
       $('#view').append(this.renderer.view);
       $('#view').bind('contextmenu', function(){
@@ -158,6 +36,9 @@ define(['jquery', 'options', 'global', 'actors'], function(JQuery, OPTIONS, glob
       $(this.renderer.view).mousemove(function( event ) {
          I.pointer.x = event.clientX - $(this).offset().left - I.width  / 2;
          I.pointer.y = event.clientY - $(this).offset().top  - I.height / 2;
+      }).click(function(event){
+         game.sendViaWS({action: "attack", point: I.pointer});
+         console.log({action: "attack", point: I.pointer});
       })
       global.graphic = this;
       PreloadResourses();

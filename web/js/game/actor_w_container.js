@@ -1,7 +1,7 @@
 define(['options', 'global', 'actor'] ,function(OPTIONS, GLOBAL, Actor){
 
-   function ActorWithContainer(id, x, y, type, initAnimation, player){
-      Actor.call(this, id, x, y, type);
+   function ActorWithContainer(id, x, y, type, health, name, initAnimation, player){
+      Actor.call(this, id, x, y, type, health, name);
       if(initAnimation === undefined) initAnimation = true;
       this.InitAnimation(initAnimation, player);
    }
@@ -17,6 +17,43 @@ define(['options', 'global', 'actor'] ,function(OPTIONS, GLOBAL, Actor){
 
    ActorWithContainer.prototype.Init = function(player){
       this.InitContainer(player);
+      this.InitName();
+   }
+
+   ActorWithContainer.prototype.Hit = function(){
+
+   }
+
+   ActorWithContainer.prototype.Attack = function(desc, pt){
+      var t = GLOBAL.graphic.textures[desc.blowType];
+      if(!t){
+         t = GLOBAL.graphic.textures['explosion'];
+      }
+      var m = new PIXI.MovieClip(t);
+      var p = GLOBAL.game.player;
+      m.loop = false;
+      m.onComplete = function(){
+         GLOBAL.graphic.Remove(m);
+      }
+      GLOBAL.graphic.DrawObj(
+         m,
+         m.position.x = (pt.x - p.pt.x) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2,
+         m.position.y = (pt.y - p.pt.y) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2
+      )
+      m.play();
+   }
+
+   ActorWithContainer.prototype.InitName = function(){
+      var n = GLOBAL.graphic.Text(
+         this.name,
+         {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'black'},
+         0, 
+         OPTIONS.TILE_SIZE + 7
+      )
+      n.position.x = (OPTIONS.TILE_SIZE - n.width) / 2 + 2;
+      n.visible = false;
+      this.container.addChild(n);
+      this.container.name = n;
    }
 
    ActorWithContainer.prototype.InitContainer = function(player){
@@ -41,6 +78,12 @@ define(['options', 'global', 'actor'] ,function(OPTIONS, GLOBAL, Actor){
          }
       }
       this.container.click.lastClick = 0;
+      this.container.mouseover = function(){
+         this.name.visible = true;
+      }
+      this.container.mouseout = function(){
+         this.name.visible = false;
+      }
       GLOBAL.graphic.DrawObj(
          this.container,
          this.container.position.x = (this.pt.x - player.pt.x) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2,

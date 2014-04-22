@@ -1,7 +1,7 @@
 define(['actor_animTopDown', 'game', 'options', 'global'], function(ActorATD, game, OPTIONS, GLOBAL){
 
-   function ActorRPG(id, x, y, type, init, player, opt){
-      ActorATD.call(this, id, x, y, type, init, player);
+   function ActorRPG(id, x, y, type, health, name, init, player, opt){
+      ActorATD.call(this, id, x, y, type, health, name, init, player);
       this.idle = opt.idle || false;
    }
 
@@ -36,7 +36,7 @@ define(['actor_animTopDown', 'game', 'options', 'global'], function(ActorATD, ga
                I.container.body.textures = I.container.pics.wait[I.dir];
                I.container.body.gotoAndPlay(0); 
             }
-         }, 100)
+         }, 300)
       }
    }
 
