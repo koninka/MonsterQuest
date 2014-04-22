@@ -39,6 +39,7 @@ define(['options', 'global', 'actor'] ,function(OPTIONS, GLOBAL, Actor){
 
    ActorWithContainer.prototype.Init = function(player){
       this.InitContainer(player);
+      this.InitHpBar();
       this.InitName();
    }
 
@@ -78,6 +79,24 @@ define(['options', 'global', 'actor'] ,function(OPTIONS, GLOBAL, Actor){
       this.container.name = n;
    }
 
+   ActorWithContainer.prototype.SetHp = function(hp){
+      Actor.SetHp.call(this, hp);
+      this.container.hpbar.SetHp(hp);
+   }
+
+   
+   ActorWithContainer.prototype.InitHpBar = function(){
+      if(this.health){
+         var bar = new HpBar(this.health.cur, this.health.max);
+         bar.visible = false;
+         bar.position.x = - (OPTIONS.TILE_SIZE) / 2;
+         bar.position.y = OPTIONS.TILE_SIZE + 7;
+         this.container.addChild(bar);
+         this.container.hpbar = bar;
+
+      }
+   }
+
    ActorWithContainer.prototype.InitContainer = function(player){
       this.container = new PIXI.DisplayObjectContainer(); 
       this.container.interactive = true;
@@ -102,9 +121,11 @@ define(['options', 'global', 'actor'] ,function(OPTIONS, GLOBAL, Actor){
       this.container.click.lastClick = 0;
       this.container.mouseover = function(){
          this.name.visible = true;
+         this.hpbar.visible = true;
       }
       this.container.mouseout = function(){
          this.name.visible = false;
+         this.hpbar.visible = false;
       }
       GLOBAL.graphic.DrawObj(
          this.container,
