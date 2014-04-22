@@ -125,7 +125,17 @@ type BlowFlag struct {
 
 func (a *BlowFlag) Do(obj gameObjectsBase.Activer) {
     if obj.ReadyAttack() {
-        if _, isExist := obj.GetTarget(); isExist {
+        if p := obj.GetAttackPoint(); p != nil {
+            for _, actor := range a.field.Actors[int(p.Y)][int(p.X)] {
+                r := actor.GetRectangle()
+                if r.In(p) {
+                    obj.SetTarget(actor)
+                    break
+                }
+            }
+            obj.ClearAttackPoint()
+        }
+        if _, exists := obj.GetTarget(); exists {
             msg := obj.Attack()
             obj.ZeroCooldown()
             if msg != nil {

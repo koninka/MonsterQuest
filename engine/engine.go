@@ -161,8 +161,10 @@ func (g *Game) moveAction(json consts.JsonType) {
 }
 
 func (g *Game) attackAction(json consts.JsonType) {
-    if obj, isExist := g.getObjectById(int64(json["id"].(float64))); isExist {
-        g.players.getPlayerBySession(json["sid"].(string)).SetTarget(obj)
+    x, ok1 := json["x"].(float64)
+    y, ok2 := json["y"].(float64)
+    if ok1 && ok2 {
+        g.players.getPlayerBySession(json["sid"].(string)).SetAttackPoint(x, y)
     }
 }
 

@@ -62,6 +62,9 @@ type Activer interface {
     ReadyAttack() bool
     IncCooldownCounter()
     ZeroCooldown()
+    SetAttackPoint(x, y float64)
+    GetAttackPoint() *geometry.Point
+    ClearAttackPoint()
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -104,6 +107,7 @@ type ActiveObject struct {
     Center geometry.Point
     Target Activer
     Kind Kinder
+    AttackPoint *geometry.Point
 }
 
 func (obj *ActiveObject) GetID() int64 {
@@ -273,6 +277,18 @@ func (obj *ActiveObject) ZeroCooldown() {
     obj.AttackCooldownCounter = 0
 }
 
+func (obj *ActiveObject) SetAttackPoint(x, y float64) {
+    obj.AttackPoint = geometry.MakePoint(x, y)
+}
+
+func (obj *ActiveObject) GetAttackPoint() *geometry.Point {
+    return obj.AttackPoint
+}
+
+func (obj *ActiveObject) ClearAttackPoint() {
+    obj.AttackPoint = nil
+}
+
 func NewActiveObject(id int64, hp int, x, y float64, kind Kinder) ActiveObject {
-    return ActiveObject{id, -1, hp, consts.DEFAULT_ATTACK_COOLDOWN, geometry.Point{x, y}, nil, kind}
+    return ActiveObject{id, -1, hp, consts.DEFAULT_ATTACK_COOLDOWN, geometry.Point{x, y}, nil, kind, nil}
 }
