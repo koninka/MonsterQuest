@@ -90,7 +90,7 @@ define(['options', 'global', 'actor_info', 'attack'], function(OPTIONS, GLOBAL, 
          } else {
             var t = this.actorInfo(players[i].symbol);
             var a = this.dictionary[players[i].symbol];
-            this.actors[id] = new t.class(id, x, y, a, players[i].hp, players[i].login, true, this.player, t.opt);
+            this.actors[id] = new t.class(id, x, y, a, {cur : players[i].hp, max : players[i].max_hp}, players[i].login, true, this.player, t.opt);
             last = this.actors[id];
          }
          actors_on_scene[id] = true;
