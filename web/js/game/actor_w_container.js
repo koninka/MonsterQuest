@@ -1,5 +1,7 @@
 define(['options', 'global', 'actor'] ,function(OPTIONS, GLOBAL, Actor){
 
+   var hpbar_width = 70;
+   var hpbar_height = 2;
    function HpBar(hp, max){
       PIXI.Graphics.call(this, 0, 0);
       this.max = max;
