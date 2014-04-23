@@ -7,6 +7,7 @@ import (
     "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/consts"
+    "MonsterQuest/geometry"
 )
 
 type playerKind struct {
@@ -56,14 +57,17 @@ func (p *Player) Do() {
 }
 
 func (p *Player) Attack() consts.JsonType {
+    fmt.Println("player Attack somebody")
     var res consts.JsonType = nil
     t, _ := p.GetTarget()
-    fmt.Println("player Attack somebody")
-    res = t.GetHit(p.weapon, p)
+    if d := geometry.Distance(p.GetCenter(), t.GetCenter()); d < 1.4 {
+        res = t.GetHit(p.weapon, p)
+    }
     if res != nil {
         res["attacker"] = p
         res["target"] = t
     }
+    p.Target = nil
     return res
 }
 
