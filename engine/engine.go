@@ -70,8 +70,8 @@ func GetInstance() *Game {
 }
 
 func (g *Game) initializeDictionary(){
-    g.dictionary["."] = consts.GRASS_SYMBOL
-    g.dictionary["#"] = consts.WALL_SYMBOL
+    g.dictionary[string(consts.GRASS_SYMBOL)] = "grass"
+    g.dictionary[string(consts.WALL_SYMBOL)] = "wall"
 }
 
 func (g *Game) notifyAboutAttack(msg consts.JsonType) {
