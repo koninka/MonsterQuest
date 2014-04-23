@@ -10,8 +10,11 @@ var raceFlags map[string] int = make(map[string] int)
 var flags map[string] gameObjectsBase.Flager = make(map[string] gameObjectsBase.Flager)
 
 func InitFlags(field *gameMap.GameField, msgsChan chan consts.JsonType) {
-	flags["CAN_MOVE"] = &MoveFlag{Flag{field, msgsChan}}
+	flags["CAN_MOVE"] = &BaseMoveFlag{Flag{field, msgsChan}, &MoveCollision{field}}
 	flags["CAN_BLOW"] = &BlowFlag{Flag{field, msgsChan}}
+	flags["PASS_WALL"] = &BaseMoveFlag{Flag{field, msgsChan}, &PassWallCollision{field}}
+
+	flags["KILL_WALL"] = &KillWallFlag{Flag{field, msgsChan}}
 
 	flags["HATE_ORCS"]    = &HateFlag{Flag{field, msgsChan}, consts.ORC_RACE}
 	flags["HATE_EVILS"]   = &HateFlag{Flag{field, msgsChan}, consts.EVIL_RACE}

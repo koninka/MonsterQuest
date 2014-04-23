@@ -70,8 +70,8 @@ func GetInstance() *Game {
 }
 
 func (g *Game) initializeDictionary(){
-    g.dictionary["."] = "grass"
-    g.dictionary["#"] = "wall"
+    g.dictionary["."] = consts.GRASS_SYMBOL
+    g.dictionary["#"] = consts.WALL_SYMBOL
 }
 
 func (g *Game) notifyAboutAttack(msg consts.JsonType) {
@@ -321,7 +321,7 @@ func (g *Game) lookAction(sid string) consts.JsonType {
     for i := 0; i < visibleSpaceSide; i++ {
         visibleSpace[i] = make([]string, visibleSpaceSide)
         for j := 0; j < visibleSpaceSide; j++ {
-            visibleSpace[i][j] = "#"
+            visibleSpace[i][j] = string(consts.WALL_SYMBOL)
         }
     }
     px, py := int(player.Center.X), int(player.Center.Y)

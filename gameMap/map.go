@@ -11,13 +11,13 @@ import (
 
 type GameField struct {
     Width, Height int
-    Field []string
+    Field [][]byte
     Actors [][]map[int64] gameObjectsBase.Activer
 }
 
 func NewGameField() GameField {
     field := GameField{
-        Field: make([]string, 1000),
+        Field: make([][]byte, 1000),
         Actors: make([][]map[int64] gameObjectsBase.Activer, 1000),
     }
     for i := range field.Field {
@@ -29,11 +29,16 @@ func NewGameField() GameField {
     return field
 }
 
+func (f *GameField) SetCell(x, y int, c byte) {
+    f.Field[y][x] = c
+}
+
 func (f *GameField) LoadFromStrings(strs []string) bool {
     for idx, str := range strs {
        if rune(str[len(str) - 1]) == rune(13) {
             strs[idx] = str[:len(str) - 1]
        }
+       f.Field[idx] = []byte(strs[idx])
     }
     var l int
     equiv := false
@@ -47,7 +52,6 @@ func (f *GameField) LoadFromStrings(strs []string) bool {
     }
     correct := notEmpty && equiv && l > 0
     if correct {
-        copy(f.Field, strs)
         f.Width = len(f.Field[0])
         f.Height = len(strs)
     }
@@ -62,8 +66,12 @@ func (f *GameField) LoadFromFile(mapFile string) {
     }
 }
 
+func (f *GameField) OutOfRange(col, row int) bool {
+    return col < 0 || col >= f.Width || row < 0 || row >= f.Height
+}
+
 func (f *GameField) IsBlocked(col, row int) bool {
-    return col < 0 || col >= f.Width || row < 0 || row >= f.Height || f.Field[row][col] == '#'
+    return f.OutOfRange(col, row) || f.Field[row][col] == '#'
 }
 
 func (f *GameField) IsFree(col, row int) bool {

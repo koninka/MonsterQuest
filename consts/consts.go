@@ -9,6 +9,8 @@ import (
 type JsonType map[string] interface{}
 
 const (
+    WALL_SYMBOL = '#'
+    GRASS_SYMBOL = '.'
     MOB_TYPE = "mob"
     PLAYER_TYPE = "player"
     SERVER_PORT = ":8080"
