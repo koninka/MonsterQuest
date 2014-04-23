@@ -45,6 +45,10 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
       }
    }
 
+   Game.prototype.setHP = function(hp){
+      this.player.setHP(hp);
+   }
+
    Game.prototype.checkKeys = function(){
       if(this.dirsDown[0]) this.movePlayer(this.dirsDown[0]);
    }
@@ -126,6 +130,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
                      th.firstLook = false;
                   }
                   th.setPlayerCoords(data.x, data.y);
+                  //th.setHp(data['hp']);
                   th.setMap(data['map'], th.player.pt);
                   th.setActors(data['actors']);
                   break;
