@@ -167,10 +167,12 @@ func (g *Game) moveAction(json consts.JsonType) {
 }
 
 func (g *Game) attackAction(json consts.JsonType) {
-    x, ok1 := json["x"].(float64)
-    y, ok2 := json["y"].(float64)
+    fmt.Println(json)
+    pt := json["point"].(map[string] interface{})
+    x, ok1 := pt["x"].(float64)
+    y, ok2 := pt["y"].(float64)
     if ok1 && ok2 {
-        g.players.getPlayerBySession(json["sid"].(string)).SetAttackPoint(x, y)
+        g.players.getPlayerBySession(json["sid"].(string)).SetAttackPoint(float64(x), float64(y))
     }
 }
 
