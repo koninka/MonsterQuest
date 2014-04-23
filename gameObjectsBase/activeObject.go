@@ -1,8 +1,8 @@
 package gameObjectsBase
 
 import (
-    _ "fmt"
-    "MonsterQuest/gameFight/blowList"
+    "fmt"
+    "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
 )
@@ -58,7 +58,7 @@ type Activer interface {
     GetAttackRadius() int
     NotifyAboutCollision()
     GetKind() Kinder
-    GetHit(*blowList.BlowDescription, Activer) consts.JsonType
+    GetHit(fightBase.Blower, Activer) consts.JsonType
     Killed() bool
     ReadyAttack() bool
     IncCooldownCounter()
@@ -209,6 +209,7 @@ func (obj *ActiveObject) DoWithObj(object Activer) {
 }
 
 func (obj *ActiveObject) Attack() consts.JsonType {
+    fmt.Println("ActiveObject attack")
     return nil
 }
 
@@ -250,18 +251,19 @@ func (obj *ActiveObject) GetKind() Kinder {
     return obj.Kind
 }
 
-func (obj *ActiveObject) GetHit(bldesc *blowList.BlowDescription, attacker Activer) consts.JsonType {
+func (obj *ActiveObject) GetHit(blow fightBase.Blower, attacker Activer) consts.JsonType {
     res := make(consts.JsonType)
     res["action"] = "attack"
     res["description"] = consts.JsonType {
-        "blowType" : bldesc.GetBlowType(),
-        "dealtDamage" : bldesc.DmgDesc.GetDamage(),
+        "blowType" : blow.GetType(),
+        "dealtDamage" : blow.GetDamage(),
     }
-    obj.HP -= bldesc.DmgDesc.GetDamage()
+    obj.HP -= blow.GetDamage()
     if obj.HP <= 0 {
         res["killed"] = true
     }
     //use damage effect
+    fmt.Println(res)
     return res
 }
 
