@@ -29,7 +29,7 @@ func (ml *mobList) takeAwayMob(m *gameObjects.Mob) {
 }
 
 func (ml *mobList) initializeMobTypes() consts.JsonType {
-    blows.InitBlowMethods();
+    blows.InitMobBlows();
 	gameObjectsFlags.InitFlags(&GetInstance().field, GetInstance().msgsChannel)
 	db := connect.CreateConnect()
 	rows, _ := db.Query("SELECT id, name, base_hp, hp_inc, symbol, description, blow_method, flags, level_info FROM mobs_types")

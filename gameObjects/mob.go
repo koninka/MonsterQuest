@@ -4,6 +4,7 @@ import (
     "strings"
     "fmt"
     "MonsterQuest/gameFight/blowList"
+    "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/geometry"
@@ -18,7 +19,7 @@ type MobKind struct {
     base_hp int
     hp_inc dice.Dice
     description string
-    blowList *blowList.BlowList
+    blowList blowList.BlowLister
 }
 
 func (mk *MobKind) GetName() string {
@@ -37,7 +38,7 @@ func CreateMobKind(id int64, name string, base_hp int, hp_inc, symbol, descripti
     added := make(map[string] bool)
     kind := MobKind{gameObjectsBase.NewKind(symbol), id, name, base_hp, dice.CreateDice(hp_inc), description, blowList.NewBlowList()}
     for _, blowDesc := range strings.Split(blowMethods, "@") {
-        kind.blowList.AddBlowDescription(blowDesc)
+        kind.blowList.AddMobBlowDesc(blowDesc)
     }
     fmt.Println(kind.blowList)
     for _, flagName := range strings.Split(flagsStr, "|") {
@@ -144,6 +145,8 @@ func (m *Mob) Attack() consts.JsonType {
     var res consts.JsonType = nil
     bl := m.Kind.(*MobKind).blowList
     t, _ := m.GetTarget()
+    //tmp, ok := t.(*Player)
+    //fffmt.Println(tmp, ok)
     if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d > 1.0 * 1.4 {
         rbl := bl.GetReachesRangeBlows(d)
         if rbl.Amount() > 0 {
@@ -174,8 +177,9 @@ func (m *Mob) Attack() consts.JsonType {
     return res
 }
 
-func (m *Mob) GetHit(bldesc *blowList.BlowDescription, attacker gameObjectsBase.Activer) consts.JsonType {
-    res := m.ActiveObject.GetHit(bldesc, attacker)
+func (m *Mob) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer) consts.JsonType {
+    res := m.ActiveObject.GetHit(blow, attacker)
+    fmt.Println("mob get hit")
     if t, isExist := m.GetTarget(); isExist {
         if t.GetType() != consts.PLAYER_TYPE {
             if attacker.GetType() == consts.PLAYER_TYPE {

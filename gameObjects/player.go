@@ -1,9 +1,10 @@
 package gameObjects
 
 import (
+    "fmt"
     wpns "MonsterQuest/gameStuff/weapons"
-    "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/gameObjectsBase"
+    "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/consts"
 )
@@ -37,7 +38,7 @@ type Player struct {
     Login string
     SID string
     DBId int64
-    weapon wpns.Weapon
+    weapon fightBase.Blower
 }
 
 func (p *Player) GetType() string {
@@ -49,17 +50,30 @@ func (p *Player) GetInfo() map[string] interface{} {
 }
 
 func (p *Player) Do() {
-    p.ActiveObject.Do()
+    //p.ActiveObject.Do()
+    p.DoWithObj(p)
     p.Dir = -1
 }
 
 func (p *Player) Attack() consts.JsonType {
     var res consts.JsonType = nil
-    // t, _ := p.GetTarget()
-    // res = t.GetHit(p.weapon)
+    t, _ := p.GetTarget()
+    fmt.Println("player Attack somebody")
+    res = t.GetHit(p.weapon, p)
+    if res != nil {
+        res["attacker"] = p
+        res["target"] = t
+    }
     return res
 }
 
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
-    return Player{gameObjectsBase.NewActiveObject(id, consts.INITIAL_PLAYER_HP, x, y, getPlayerKind()), login, sid, dbId, &wpns.FistWeap{wpns.BaseWeap{fightBase.NewBaseBlow(fightBase.BM_HIT, 0.8, "hit"), fightBase.CreateDmgDescription("4d3")}}}
+    return Player{gameObjectsBase.NewActiveObject(id, consts.INITIAL_PLAYER_HP, x, y, getPlayerKind()), login, sid, dbId, wpns.GetWeapon(consts.FIST_WEAP)}
+}
+
+func (p *Player) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer) consts.JsonType {
+    fmt.Println("player get hit")
+    res := p.ActiveObject.GetHit(blow, attacker)
+    fmt.Println(res)
+    return res
 }

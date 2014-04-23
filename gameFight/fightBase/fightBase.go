@@ -4,6 +4,7 @@ type Blower interface {
     IsRange() bool
     GetBlowRadius() float64
     GetType() string
+    GetDamage() int
 }
 
 type BaseBlow struct {
@@ -26,4 +27,8 @@ func (bb *BaseBlow) GetBlowRadius() float64 {
 
 func (bb *BaseBlow) GetType() string {
     return bb.typeName
+}
+
+func (bb *BaseBlow) GetDamage() int {
+    return 0
 }
