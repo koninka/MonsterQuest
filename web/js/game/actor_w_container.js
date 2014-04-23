@@ -110,7 +110,6 @@ define(['options', 'global', 'actor'] ,function(OPTIONS, GLOBAL, Actor){
          //this was a double click
          } else {
             m.container.click.lastClick = now;
-            GLOBAL.game.sendViaWS({action: "attack", id: m.id});
          //this was a regular click
          }
       }
