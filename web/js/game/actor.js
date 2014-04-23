@@ -6,7 +6,7 @@ define(['options', 'global'] ,function(OPTIONS, GLOBAL){
       this.type  = type;
       this.angle = undefined;
       this.dir = undefined;
-      this.health = health || {cur:75 , max:100};
+      this.health = health;
       this.name = name || this.type || "unknown";
    }
 
