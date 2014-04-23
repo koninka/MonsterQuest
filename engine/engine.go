@@ -108,7 +108,8 @@ func (g *Game) readInGameMsgs() {
         msg := <-g.msgsChannel
         if msg["action"].(string) == "attack" {
             go g.notifyAboutAttack(msg)
-            if msg["killed"] == true {
+            fmt.Println(msg["target"].(gameObjectsBase.Activer).GetHP())
+            if msg["killed"] == true && msg["target"].(*gameObjects.Mob) != nil {
                 go g.mobs.takeAwayMob(msg["target"].(*gameObjects.Mob))
             }
         }
