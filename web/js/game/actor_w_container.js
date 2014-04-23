@@ -79,8 +79,8 @@ define(['options', 'global', 'actor'] ,function(OPTIONS, GLOBAL, Actor){
       this.container.name = n;
    }
 
-   ActorWithContainer.prototype.SetHp = function(hp){
-      Actor.SetHp.call(this, hp);
+   ActorWithContainer.prototype.SetHP = function(hp){
+      Actor.prototype.SetHP.call(this, hp);
       this.container.hpbar.SetHp(hp);
    }
 
