@@ -129,7 +129,10 @@ define(['options', 'global', 'actor_info', 'attack'], function(OPTIONS, GLOBAL, 
       var t = data.target;
       var a = data.attacker;
       console.log(data);
-      attack(data.description, this.actors[t].pt);
+      if(t == player.id){
+         attack(data.description, this.player.pt);
+      }else
+         attack(data.description, this.actors[t].pt);
       //this.actors[a].Attack(data.description, this.actors[t].pt);
       //this.actors[t].Hit();
    }
