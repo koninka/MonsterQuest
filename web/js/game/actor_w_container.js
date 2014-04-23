@@ -83,7 +83,7 @@ define(['options', 'global', 'actor'] ,function(OPTIONS, GLOBAL, Actor){
       if(this.health){
          var bar = new HpBar(this.health.cur, this.health.max);
          bar.visible = false;
-         bar.position.x = - (OPTIONS.TILE_SIZE) / 2;
+         bar.position.x = (OPTIONS.TILE_SIZE - hpbar_width) / 2 + 2;
          bar.position.y = OPTIONS.TILE_SIZE + 7;
          this.container.addChild(bar);
          this.container.hpbar = bar;
