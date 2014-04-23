@@ -48,6 +48,10 @@ const (
     PLAYER_RACE
 )
 
+const (
+    FIST_WEAP = "FIST"
+)
+
 var (
     TEST = flag.Bool("test", false, "a bool")
     TEST_MODE = false
