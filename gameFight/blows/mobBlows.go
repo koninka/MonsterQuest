@@ -36,7 +36,7 @@ func InitMobBlows() {
     mobBlowsType["PUNCH"]  = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_PUNCH, 0.7, "punch")}
     mobBlowsType["CRAWL"]  = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_CRAWL, 0.7, "crawl")}
     mobBlowsType["DROOL"]  = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_DROOL, 0.7, "drool")}
-    mobBlowsType["SPORE"]  = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_SPORE, 0.7, "spore")}
+    mobBlowsType["SPORE"]  = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_SPORE, 1.0, "spore")}
     mobBlowsType["ENGULF"] = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_ENGULF, 0.5, "engulf")}
     mobBlowsType["INSULT"] = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_INSULT, 0.5, "insult")}
 }
