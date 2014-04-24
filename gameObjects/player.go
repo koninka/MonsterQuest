@@ -78,6 +78,5 @@ func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
 func (p *Player) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer) consts.JsonType {
     fmt.Println("player get hit")
     res := p.ActiveObject.GetHit(blow, attacker)
-    fmt.Println(res)
     return res
 }
