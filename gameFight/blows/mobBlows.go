@@ -19,11 +19,11 @@ type MobBlow struct {
 var mobBlowsType map[string] fightBase.Blower = make(map[string] fightBase.Blower)
 
 func InitMobBlows() {
-    mobBlowsType["HIT"]    = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_HIT, 0.8, "hit")}
+    mobBlowsType["HIT"]    = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_HIT, 1.0, "hit")}
     mobBlowsType["BEG"]    = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_BEG, 0.8, "beg")}
     mobBlowsType["KICK"]   = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_KICK, 0.8, "kick")}
     mobBlowsType["CLAW"]   = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_CLAW, 0.8, "claw")}
-    mobBlowsType["BITE"]   = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_BITE, 0.8, "bite")}
+    mobBlowsType["BITE"]   = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_BITE, 1.0, "bite")}
     mobBlowsType["BUTT"]   = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_BUTT, 0.8, "butt")}
     mobBlowsType["SPIT"]   = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_SPIT, 5.5, "spit")} //range, плевок
     mobBlowsType["GAZE"]   = &MobBlowType{fightBase.NewBaseBlow(fightBase.BM_GAZE, 0.8, "gaze")}
