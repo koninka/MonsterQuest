@@ -126,6 +126,7 @@ func (m *Mob) Do() {
 }
 
 func (m *Mob) chooseHorDir(dx float64) {
+    fmt.Println("choose h`or")
     if dx > 0 {
         m.Dir = consts.EAST_DIR
     } else {
@@ -134,6 +135,7 @@ func (m *Mob) chooseHorDir(dx float64) {
 }
 
 func (m *Mob) chooseVerDir(dy float64) {
+    fmt.Println("choose ver")
     if dy > 0 {
         m.Dir = consts.SOUTH_DIR
     } else {
@@ -152,6 +154,7 @@ func (m *Mob) Attack() consts.JsonType {
         if rbl.Amount() > 0 {
             res = t.GetHit(rbl.ChooseBlowMethod(consts.BT_RANGE), t)
         } else {
+            fmt.Println("going to target", m.Id, " ->  ", t.GetID())
             center := t.GetCenter()
             dx := center.X - m.Center.X
             dy := center.Y - m.Center.Y
