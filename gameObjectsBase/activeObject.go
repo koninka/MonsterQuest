@@ -34,15 +34,9 @@ type Kinder interface {
 }
 
 type Activer interface {
-    GetID() int64
-    SetID(id int64)
-    GetCenter() geometry.Point
-    GetRectangle() geometry.Rectangle
+    GameObjecter
     GetShiftedFrontSide(int) geometry.Point
     GetCollisionableSide(int) (geometry.Segment, geometry.Point)
-    ForcePlace(point geometry.Point)
-    GetType() string
-    GetInfo() map[string] interface{}
     GetDir() int
     SetDir(dir int)
     Init()
@@ -101,35 +95,14 @@ func NewKind(symbol string) Kind {
 }
 
 type ActiveObject struct {
-    Id int64
+    GameObject
     Dir int
     HP int
     MaxHP int
     AttackCooldownCounter int
-    Center geometry.Point
     Target Activer
     Kind Kinder
     AttackPoint *geometry.Point
-}
-
-func (obj *ActiveObject) GetID() int64 {
-    return obj.Id
-}
-
-func (obj *ActiveObject) SetID(id int64) {
-    obj.Id = id
-}
-
-func (obj *ActiveObject) GetCenter() geometry.Point {
-    return obj.Center
-}
-
-func (obj *ActiveObject) GetRectangle() geometry.Rectangle {
-    lt := obj.Center
-    rb := lt
-    lt.Move(-consts.OBJECT_HALF, -consts.OBJECT_HALF)
-    rb.Move(consts.OBJECT_HALF, consts.OBJECT_HALF)
-    return geometry.Rectangle{lt, rb}
 }
 
 func (obj *ActiveObject) GetShiftedCenter(dir int) geometry.Point {
@@ -148,18 +121,6 @@ func (obj *ActiveObject) GetShiftedFrontSide(dir int) geometry.Point{
 
 func (obj *ActiveObject) Move(dir int) {
     obj.Center = obj.GetShiftedCenter(dir)
-}
-
-func (obj *ActiveObject) ForcePlace(point geometry.Point) {
-    obj.Center = point
-}
-
-func (obj *ActiveObject) GetType() string {
-    return ""
-}
-
-func (obj *ActiveObject) GetInfo() map[string] interface{} {
-    return make(map[string] interface{})
 }
 
 func (obj *ActiveObject) GetCollisionableSide(dir int) (geometry.Segment, geometry.Point) {
