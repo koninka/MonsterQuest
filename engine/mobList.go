@@ -25,7 +25,7 @@ type mobList struct {
 func (ml *mobList) takeAwayMob(m *gameObjects.Mob) {
     delete(ml.mobs, m.GetID())
     time.Sleep(consts.LIVING_AFTER_DEAD_DURATION)
-    GetInstance().field.UnlinkActorFromCells(m)
+    GetInstance().field.UnlinkFromCells(m)
 }
 
 func (ml *mobList) initializeMobTypes() consts.JsonType {
@@ -88,6 +88,6 @@ func (ml *mobList) run() {
 		id := GenerateId()
 		ml.mobs[id] = &m
 		m.SetID(id)
-		GetInstance().field.LinkActorToCells(&m)
+		GetInstance().field.LinkToCells(&m)
 	}
 }

@@ -13,7 +13,7 @@ type KillWallFlag struct {
 func (k *KillWallFlag) Do(obj gameObjectsBase.Activer) {
     if pt := obj.GetAttackPoint(); pt != nil {
         x, y := int(math.Ceil(pt.X)), int(math.Ceil(pt.Y))
-        if  k.field.Field[y][x] == consts.WALL_SYMBOL {
+        if  !k.field.IsBlocked(x, y) {
             k.field.SetCell(x, y, consts.GRASS_SYMBOL)
         }
     }
