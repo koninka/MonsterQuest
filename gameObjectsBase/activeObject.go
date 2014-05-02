@@ -60,6 +60,7 @@ type Activer interface {
     SetAttackPoint(x, y float64)
     GetAttackPoint() *geometry.Point
     ClearAttackPoint()
+    GetItems() []*Item
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -103,6 +104,7 @@ type ActiveObject struct {
     Target Activer
     Kind Kinder
     AttackPoint *geometry.Point
+    Inventory *InventoryObj
 }
 
 func (obj *ActiveObject) GetShiftedCenter(dir int) geometry.Point {
@@ -258,6 +260,10 @@ func (obj *ActiveObject) ClearAttackPoint() {
     obj.AttackPoint = nil
 }
 
+func (obj *ActiveObject) GetItems() []*Item {
+    return obj.Inventory.Items
+}
+
 func NewActiveObject(id int64, hp int, x, y float64, kind Kinder) ActiveObject {
-    return ActiveObject{id, -1, hp, hp, consts.DEFAULT_ATTACK_COOLDOWN, geometry.Point{x, y}, nil, kind, nil}
+    return ActiveObject{NewGameObject(id, geometry.Point{x, y}), -1, hp, hp, consts.DEFAULT_ATTACK_COOLDOWN, nil, kind, nil, NewInventoryObj()}
 }
