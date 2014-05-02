@@ -46,7 +46,7 @@ func (p *Player) GetType() string {
     return consts.PLAYER_TYPE
 }
 
-func (p *Player) GetInfo() map[string] interface{} {
+func (p *Player) GetInfo() consts.JsonType {
     return map[string] interface{} {"login" : p.Login}
 }
 

@@ -84,7 +84,7 @@ func (m *Mob) GetType() string {
     return consts.MOB_TYPE
 }
 
-func (m *Mob) GetInfo() map[string] interface{} {
+func (m *Mob) GetInfo() consts.JsonType {
     return map[string] interface{} {
         "name" : m.Kind.GetName(),
         "description" : m.Kind.GetDescription(),
