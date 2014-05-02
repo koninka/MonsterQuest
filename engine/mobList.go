@@ -24,6 +24,9 @@ type mobList struct {
 
 func (ml *mobList) takeAwayMob(m *gameObjects.Mob) {
     delete(ml.mobs, m.GetID())
+    for _, item := range m.GetItems() {
+        GetInstance().field.LinkToCells(item)
+    }
     time.Sleep(consts.LIVING_AFTER_DEAD_DURATION)
     GetInstance().field.UnlinkFromCells(m)
 }
