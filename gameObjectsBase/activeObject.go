@@ -1,7 +1,6 @@
 package gameObjectsBase
 
 import (
-    "fmt"
     "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
@@ -34,15 +33,9 @@ type Kinder interface {
 }
 
 type Activer interface {
-    GetID() int64
-    SetID(id int64)
-    GetCenter() geometry.Point
-    GetRectangle() geometry.Rectangle
+    GameObjecter
     GetShiftedFrontSide(int) geometry.Point
     GetCollisionableSide(int) (geometry.Segment, geometry.Point)
-    ForcePlace(point geometry.Point)
-    GetType() string
-    GetInfo() map[string] interface{}
     GetDir() int
     SetDir(dir int)
     Init()
@@ -66,6 +59,7 @@ type Activer interface {
     SetAttackPoint(x, y float64)
     GetAttackPoint() *geometry.Point
     ClearAttackPoint()
+    GetItems() []*Item
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -101,35 +95,15 @@ func NewKind(symbol string) Kind {
 }
 
 type ActiveObject struct {
-    Id int64
+    GameObject
     Dir int
     HP int
     MaxHP int
     AttackCooldownCounter int
-    Center geometry.Point
     Target Activer
     Kind Kinder
     AttackPoint *geometry.Point
-}
-
-func (obj *ActiveObject) GetID() int64 {
-    return obj.Id
-}
-
-func (obj *ActiveObject) SetID(id int64) {
-    obj.Id = id
-}
-
-func (obj *ActiveObject) GetCenter() geometry.Point {
-    return obj.Center
-}
-
-func (obj *ActiveObject) GetRectangle() geometry.Rectangle {
-    lt := obj.Center
-    rb := lt
-    lt.Move(-consts.OBJECT_HALF, -consts.OBJECT_HALF)
-    rb.Move(consts.OBJECT_HALF, consts.OBJECT_HALF)
-    return geometry.Rectangle{lt, rb}
+    Inventory *InventoryObj
 }
 
 func (obj *ActiveObject) GetShiftedCenter(dir int) geometry.Point {
@@ -148,18 +122,6 @@ func (obj *ActiveObject) GetShiftedFrontSide(dir int) geometry.Point{
 
 func (obj *ActiveObject) Move(dir int) {
     obj.Center = obj.GetShiftedCenter(dir)
-}
-
-func (obj *ActiveObject) ForcePlace(point geometry.Point) {
-    obj.Center = point
-}
-
-func (obj *ActiveObject) GetType() string {
-    return ""
-}
-
-func (obj *ActiveObject) GetInfo() map[string] interface{} {
-    return make(map[string] interface{})
 }
 
 func (obj *ActiveObject) GetCollisionableSide(dir int) (geometry.Segment, geometry.Point) {
@@ -209,12 +171,11 @@ func (obj *ActiveObject) DoWithObj(object Activer) {
 }
 
 func (obj *ActiveObject) Attack() consts.JsonType {
-    fmt.Println("ActiveObject attack")
     return nil
 }
 
 func (obj *ActiveObject) GetTarget() (Activer, bool) {
-    if obj.Target != nil && (obj.Target.Killed() || obj == obj.Target) {
+    if obj.Target != nil && obj.Target.Killed() {
         obj.Target = nil
     }
     return obj.Target, obj.Target != nil
@@ -262,8 +223,6 @@ func (obj *ActiveObject) GetHit(blow fightBase.Blower, attacker Activer) consts.
     if obj.HP <= 0 {
         res["killed"] = true
     }
-    //use damage effect
-    fmt.Println(res)
     return res
 }
 
@@ -297,6 +256,10 @@ func (obj *ActiveObject) ClearAttackPoint() {
     obj.AttackPoint = nil
 }
 
+func (obj *ActiveObject) GetItems() []*Item {
+    return obj.Inventory.Items
+}
+
 func NewActiveObject(id int64, hp int, x, y float64, kind Kinder) ActiveObject {
-    return ActiveObject{id, -1, hp, hp, consts.DEFAULT_ATTACK_COOLDOWN, geometry.Point{x, y}, nil, kind, nil}
+    return ActiveObject{NewGameObject(id, geometry.Point{x, y}), -1, hp, hp, consts.DEFAULT_ATTACK_COOLDOWN, nil, kind, nil, NewInventoryObj()}
 }

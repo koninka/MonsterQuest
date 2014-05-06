@@ -1,7 +1,6 @@
 package engine
 
 import (
-    "fmt"
     "bufio"
     "os"
     "strings"
@@ -24,8 +23,11 @@ type mobList struct {
 
 func (ml *mobList) takeAwayMob(m *gameObjects.Mob) {
     delete(ml.mobs, m.GetID())
+    for _, item := range m.GetItems() {
+        GetInstance().field.LinkToCells(item)
+    }
     time.Sleep(consts.LIVING_AFTER_DEAD_DURATION)
-    GetInstance().field.UnlinkActorFromCells(m)
+    GetInstance().field.UnlinkFromCells(m)
 }
 
 func (ml *mobList) initializeMobTypes() consts.JsonType {
@@ -42,7 +44,6 @@ func (ml *mobList) initializeMobTypes() consts.JsonType {
         )
 		rows.Scan(&id, &name, &base_hp, &hp_inc, &symbol, &desc, &blowMethods, &flags, &level_info)
         depth := utils.ParseInt(strings.Split(level_info, "|")[0])
-        fmt.Printf("mob name = %s, mob depth = %d\n", name, depth)
 		ml.mobsDepth[depth] = append(ml.mobsDepth[depth], gameObjects.CreateMobKind(id, name, base_hp, hp_inc, symbol, desc, blowMethods, flags))
         mobDictionary[symbol] = name
 	}
@@ -88,6 +89,6 @@ func (ml *mobList) run() {
 		id := GenerateId()
 		ml.mobs[id] = &m
 		m.SetID(id)
-		GetInstance().field.LinkActorToCells(&m)
+		GetInstance().field.LinkToCells(&m)
 	}
 }

@@ -94,7 +94,7 @@ type BaseMoveFlag struct {
 
 func (m *BaseMoveFlag) checkCollisionWithActorsInCell(col, row int, segment *geometry.Segment) bool {
     res := false
-    for _, actor := range m.field.Actors[row][col] {
+    for _, actor := range m.field.GetActors(col, row) {
         r := actor.GetRectangle()
         res = res || r.CrossedBySegment(segment)
     }
@@ -133,9 +133,9 @@ func (m *BaseMoveFlag) Do(obj gameObjectsBase.Activer) {
         return
     }
     collisionOccured, newCenter := m.calcNewCenterForActor(obj, dir)
-    m.field.UnlinkActorFromCells(obj)
+    m.field.UnlinkFromCells(obj)
     obj.ForcePlace(newCenter)
-    m.field.LinkActorToCells(obj)
+    m.field.LinkToCells(obj)
     if collisionOccured {
         obj.NotifyAboutCollision()
     }
@@ -147,8 +147,8 @@ type BlowFlag struct {
 
 func (a *BlowFlag) Do(obj gameObjectsBase.Activer) {
     if obj.ReadyAttack() {
-        if p := obj.GetAttackPoint(); p != nil {
-            for _, actor := range a.field.Actors[int(p.Y)][int(p.X)] {
+        if p := obj.GetAttackPoint(); p != nil && !a.field.OutOfRange(int(p.X), int(p.Y)) {
+            for _, actor := range a.field.GetActors(int(p.X), int(p.Y)) {
                 r := actor.GetRectangle()
                 if r.In(p) {
                     obj.SetTarget(actor)
@@ -182,7 +182,7 @@ func (h *HateFlag) Do(obj gameObjectsBase.Activer) {
     lt, rb := h.field.GetVisibleArea(center.X, center.Y, obj.GetRadiusVision())
     for i := int(lt.Y); i < int(rb.Y); i++ {
         for j := int(lt.X); j < int(rb.X); j++ {
-            for _, m := range h.field.Actors[i][j] {
+            for _, m := range h.field.GetActors(j, i) {
                 if m.GetKind().GetRace() == h.hated {
                     obj.SetTarget(m)
                     return

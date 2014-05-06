@@ -40,7 +40,6 @@ func CreateMobKind(id int64, name string, base_hp int, hp_inc, symbol, descripti
     for _, blowDesc := range strings.Split(blowMethods, "@") {
         kind.blowList.AddMobBlowDesc(blowDesc)
     }
-    fmt.Println(kind.blowList)
     for _, flagName := range strings.Split(flagsStr, "|") {
         if race, isExist := gameObjectsFlags.GetRaceFlag(flagName); isExist {
             kind.SetRace(race)
@@ -84,7 +83,7 @@ func (m *Mob) GetType() string {
     return consts.MOB_TYPE
 }
 
-func (m *Mob) GetInfo() map[string] interface{} {
+func (m *Mob) GetInfo() consts.JsonType {
     return map[string] interface{} {
         "name" : m.Kind.GetName(),
         "description" : m.Kind.GetDescription(),
@@ -126,7 +125,6 @@ func (m *Mob) Do() {
 }
 
 func (m *Mob) chooseHorDir(dx float64) {
-    fmt.Println("choose h`or")
     if dx > 0 {
         m.Dir = consts.EAST_DIR
     } else {
@@ -135,7 +133,6 @@ func (m *Mob) chooseHorDir(dx float64) {
 }
 
 func (m *Mob) chooseVerDir(dy float64) {
-    fmt.Println("choose ver")
     if dy > 0 {
         m.Dir = consts.SOUTH_DIR
     } else {
@@ -147,14 +144,11 @@ func (m *Mob) Attack() consts.JsonType {
     var res consts.JsonType = nil
     bl := m.Kind.(*MobKind).blowList
     t, _ := m.GetTarget()
-    //tmp, ok := t.(*Player)
-    //fffmt.Println(tmp, ok)
     if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d > 1.0 * 1.4 {
         rbl := bl.GetReachesRangeBlows(d)
         if rbl.Amount() > 0 {
             res = t.GetHit(rbl.ChooseBlowMethod(consts.BT_RANGE), t)
         } else {
-            fmt.Println("going to target", m.Id, " ->  ", t.GetID())
             center := t.GetCenter()
             dx := center.X - m.Center.X
             dy := center.Y - m.Center.Y
@@ -171,7 +165,7 @@ func (m *Mob) Attack() consts.JsonType {
             }
         }
     } else {
-        res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE), t)
+        res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE), m)
     }
     if res != nil {
         res["attacker"] = m
@@ -182,7 +176,6 @@ func (m *Mob) Attack() consts.JsonType {
 
 func (m *Mob) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer) consts.JsonType {
     res := m.ActiveObject.GetHit(blow, attacker)
-    fmt.Println("mob get hit")
     if t, isExist := m.GetTarget(); isExist {
         if t.GetType() != consts.PLAYER_TYPE {
             if attacker.GetType() == consts.PLAYER_TYPE {
@@ -201,7 +194,6 @@ func (m *Mob) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer) co
 
 func NewMob(kind *MobKind, x, y float64) Mob {
     d := kind.GenHP()
-    fmt.Printf("NewMob: x = %f, y = %f, hp = %d\n", x, y, d)
     m := Mob{gameObjectsBase.NewActiveObject(-1, d, x, y, kind), 0}
     m.chooseDir()
     return m

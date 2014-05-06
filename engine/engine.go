@@ -89,7 +89,7 @@ func (g *Game) notifyAboutAttack(msg consts.JsonType) {
     notified := make(map[int64] bool)
     for i := int(lt.Y); i < int(rb.Y); i++ {
         for j := int(lt.X); j < int(rb.X); j++ {
-            for _, actor := range g.field.Actors[i][j] {
+            for _, actor := range g.field.GetActors(i, j) {
                 id := actor.GetID()
                 if !notified[id] {
                     notified[id] = true
@@ -342,7 +342,7 @@ func (g *Game) lookAction(sid string) consts.JsonType {
     t, b := int(lt.Y), int(rb.Y)
     for i := t; i < b; i++ {
         for j := l; j < r; j++ {
-            visibleSpace[i - t + srow][j - l + scol] = string(g.field.Field[i][j])
+            visibleSpace[i - t + srow][j - l + scol] = string(g.field.GetBackground(j, i))
         }
     }
     res["map"] = visibleSpace
@@ -350,7 +350,7 @@ func (g *Game) lookAction(sid string) consts.JsonType {
     var addedActors = map[int64] bool {player.GetID() : true}
     for i := t; i < b; i++ {
         for j := l; j < r; j++ {
-            for id, obj := range g.field.Actors[i][j] {
+            for id, obj := range g.field.GetActors(j, i) {
                 if !addedActors[id] {
                     json := make(consts.JsonType)
                     center := obj.GetCenter()
@@ -403,7 +403,7 @@ func (g *Game) IsSIDValid(sid string) bool {
 
 func (g *Game) LogoutPlayer(sid string) {
     delete(g.id2conn, g.players.getPlayerBySession(sid).GetID())
-    g.field.UnlinkActorFromCells(g.players.getPlayerBySession(sid))
+    g.field.UnlinkFromCells(g.players.getPlayerBySession(sid))
     g.players.deletePlayerBySession(sid)
 }
 

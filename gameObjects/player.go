@@ -1,7 +1,6 @@
 package gameObjects
 
 import (
-    "fmt"
     wpns "MonsterQuest/gameStuff/weapons"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/gameFight/fightBase"
@@ -46,7 +45,7 @@ func (p *Player) GetType() string {
     return consts.PLAYER_TYPE
 }
 
-func (p *Player) GetInfo() map[string] interface{} {
+func (p *Player) GetInfo() consts.JsonType {
     return map[string] interface{} {"login" : p.Login}
 }
 
@@ -57,7 +56,6 @@ func (p *Player) Do() {
 }
 
 func (p *Player) Attack() consts.JsonType {
-    fmt.Println("player Attack somebody")
     var res consts.JsonType = nil
     t, _ := p.GetTarget()
     if d := geometry.Distance(p.GetCenter(), t.GetCenter()); d < 1.4 {
@@ -76,7 +74,6 @@ func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
 }
 
 func (p *Player) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer) consts.JsonType {
-    fmt.Println("player get hit")
     res := p.ActiveObject.GetHit(blow, attacker)
     return res
 }
