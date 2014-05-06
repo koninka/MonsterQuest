@@ -1,25 +1,15 @@
-define(['options', 'global', 'actor_w_container'] ,function(OPTIONS, GLOBAL, ActorWC){
+define(['options', 'global', 'actor_angband'] ,function(OPTIONS, GLOBAL, ActorA){
 
    function ActorSimpleTopDown(id, x, y, type, health, name, initAnimation, player){
-      ActorWC.call(this, id, x, y, type, health, name, initAnimation, player);
+      ActorA.call(this, id, x, y, type, health, name, initAnimation, player);
    }
 
-   ActorSimpleTopDown.prototype = Object.create(ActorWC.prototype);
+   ActorSimpleTopDown.prototype = Object.create(ActorA.prototype);
    ActorSimpleTopDown.prototype.constructor = ActorSimpleTopDown;
 
-   ActorSimpleTopDown.prototype.Init = function(player){
-      ActorWC.prototype.Init.call(this, player);
-      this.InitBody();
-   }
-
    ActorSimpleTopDown.prototype.InitBody = function(){
-      var tile = GLOBAL.graphic.Sprite(this.type);
-      tile.position.x = tile.position.y = OPTIONS.TILE_SIZE / 2;
-      tile.anchor.x = 0.5;
-      tile.anchor.y = 0.5;
-      tile.rotation = this.dir;
-      this.container.addChild(tile);
-      this.container.body = tile;
+      ActorA.prototype.InitBody.call(this);
+      this.container.body.rotation = this.dir;
    }
 
    ActorSimpleTopDown.prototype.DirToAngle = function(dir){
@@ -36,7 +26,7 @@ define(['options', 'global', 'actor_w_container'] ,function(OPTIONS, GLOBAL, Act
    }
 
    ActorSimpleTopDown.prototype.Move = function(pos, player){
-      ActorWC.prototype.Move.call(this, pos, player);
+      ActorA.prototype.Move.call(this, pos, player);
       this.Rotate();
    }
 
