@@ -73,8 +73,8 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
             ws.onmessage = function(e) {
                var data = JSON.parse(e.data);
                if (data['action'] == "getDictionary") {
-                  expect(data).to.have.property('.', 'grass');
-                  expect(data).to.have.property('#', 'wall');
+                  expect(data.dictionary).to.have.property('.', 'grass');
+                  expect(data.dictionary).to.have.property('#', 'wall');
                   ws.onmessage = undefined;
                   done();
                }
