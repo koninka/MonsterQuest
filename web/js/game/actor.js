@@ -37,6 +37,10 @@ define(['options', 'global'] ,function(OPTIONS, GLOBAL){
       this.health = hp;
    }
 
+   Actor.prototype.Kill = function(){
+      this.SetHP(0);
+   }
+
    Actor.prototype.Destroy = function(){
       this.id = undefined;
       this.pt = undefined;
