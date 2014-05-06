@@ -126,13 +126,15 @@ define(['options', 'global', 'actor_info', 'attack'], function(OPTIONS, GLOBAL, 
    }
 
    View.prototype.attack = function(data){
-      var t = data.target;
+      var target_id = data.target;
       var a = data.attacker;
       console.log(data);
-      if(t == this.player.id){
-         attack(data.description, this.player.pt);
-      }else
-         attack(data.description, this.actors[t].pt);
+      var target = (target_id == this.player.id) ? this.player : this.actors[t];
+      attack(data.description, target.pt);
+      target.Hit();
+      if(data.killed)
+         target.Kill();
+         
       //this.actors[a].Attack(data.description, this.actors[t].pt);
       //this.actors[t].Hit();
    }
