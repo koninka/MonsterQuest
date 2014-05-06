@@ -165,7 +165,7 @@ func (m *Mob) Attack() consts.JsonType {
             }
         }
     } else {
-        res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE), t)
+        res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE), m)
     }
     if res != nil {
         res["attacker"] = m
