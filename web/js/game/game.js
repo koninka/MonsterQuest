@@ -121,7 +121,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
                case "getOptions":
                   th.setOptions(data['options']);
                case "getDictionary":
-                  th.setDictionary(data);
+                  th.setDictionary(data.dictionary);
                   break;
                case "look":
                   if (th.firstLook) {
