@@ -1,7 +1,6 @@
 package blowList
 
 import (
-    "fmt"
     "strings"
     "MonsterQuest/dice"
     "MonsterQuest/gameFight/blows"
@@ -79,7 +78,6 @@ func (bl *BlowList) AddMobBlowDesc(desc string) {
     if len(bda) == 3 {
         blow_damage = bda[2]
     }
-    fmt.Println(blow_name)
     // bl.addBlow(&BlowDescription{fightBase.CreateDmgDescription(blow_damage), blows.GetBlowMethod(blow_name)})
     bl.addBlow(blows.NewMobBlow(blow_damage, blow_name))
 }

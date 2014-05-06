@@ -1,7 +1,6 @@
 package engine
 
 import (
-    "fmt"
     "bufio"
     "os"
     "strings"
@@ -45,7 +44,6 @@ func (ml *mobList) initializeMobTypes() consts.JsonType {
         )
 		rows.Scan(&id, &name, &base_hp, &hp_inc, &symbol, &desc, &blowMethods, &flags, &level_info)
         depth := utils.ParseInt(strings.Split(level_info, "|")[0])
-        fmt.Printf("mob name = %s, mob depth = %d\n", name, depth)
 		ml.mobsDepth[depth] = append(ml.mobsDepth[depth], gameObjects.CreateMobKind(id, name, base_hp, hp_inc, symbol, desc, blowMethods, flags))
         mobDictionary[symbol] = name
 	}

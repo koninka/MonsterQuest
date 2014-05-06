@@ -1,7 +1,6 @@
 package gameObjectsBase
 
 import (
-    "fmt"
     "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
@@ -172,7 +171,6 @@ func (obj *ActiveObject) DoWithObj(object Activer) {
 }
 
 func (obj *ActiveObject) Attack() consts.JsonType {
-    fmt.Println("ActiveObject attack")
     return nil
 }
 
@@ -225,8 +223,6 @@ func (obj *ActiveObject) GetHit(blow fightBase.Blower, attacker Activer) consts.
     if obj.HP <= 0 {
         res["killed"] = true
     }
-    //use damage effect
-    fmt.Println(res)
     return res
 }
 
