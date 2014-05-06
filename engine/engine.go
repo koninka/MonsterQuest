@@ -253,11 +253,13 @@ func (g *Game) endTesting() consts.JsonType {
 }
 
 func (g *Game) getDictionaryAction() consts.JsonType {
+    dict := make(consts.JsonType) 
     res := make(consts.JsonType)
     for k, v := range g.dictionary {
-        res[k] = v
+        dict[k] = v
     }
     res["action"] = "getDictionary"
+    res["dictionary"] = dict
     res["result"] = "ok"
     return res
 }
