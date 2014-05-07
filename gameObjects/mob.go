@@ -168,8 +168,8 @@ func (m *Mob) Attack() consts.JsonType {
         res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE), m)
     }
     if res != nil {
-        res["attacker"] = m
-        res["target"] = t
+        res["attacker"] = m.GetID()
+        res["target"] = t.GetID()
     }
     return res
 }

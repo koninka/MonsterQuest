@@ -62,8 +62,8 @@ func (p *Player) Attack() consts.JsonType {
         res = t.GetHit(p.weapon, p)
     }
     if res != nil {
-        res["attacker"] = p
-        res["target"] = t
+        res["attacker"] = p.GetID()
+        res["target"] = t.GetID()
     }
     p.Target = nil
     return res
