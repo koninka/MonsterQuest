@@ -20,7 +20,16 @@ func (h *websocketHub) run() {
 		case m := <-h.broadcast:
 			for c := range h.connections {
 				c.send <- m
-			}
-		}
-	}
+        case t := <-h.ticks:
+            v := make(map[string]interface{})
+            v["tick"] = t
+
+            for c := range h.connections {
+                n := c.notifications
+                v["events"] = n
+                c.send <- v
+                c.ClearNotifications()
+            }
+        }
+    }
 }
