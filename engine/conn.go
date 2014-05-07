@@ -8,8 +8,17 @@ import (
 )
 
 type connection struct {
-    ws *websocket.Conn
-    send chan interface{}
+    ws            *websocket.Conn
+    send          chan interface{}
+    notifications []interface{}
+}
+
+func (c *connection) AddNotification(n interface{}) {
+    c.notifications = append(c.notifications, n)
+}
+
+func (c *connection) ClearNotifications() {
+    c.notifications = nil
 }
 
 func (c *connection) readPump() {
