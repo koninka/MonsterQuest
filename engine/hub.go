@@ -8,6 +8,7 @@ type websocketHub struct {
 	register chan *connection
 
 	unregister chan *connection
+    ticks      chan int64
 }
 
 func (h *websocketHub) run() {
