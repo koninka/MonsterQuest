@@ -38,6 +38,7 @@ func GetInstance() *Game {
                 register:    make(chan *connection),
                 unregister:  make(chan *connection),
                 connections: make(map[*connection] bool),
+                ticks:       make(chan int64),
             },
             gameMap.NewGameField(),
 			playerList{
@@ -61,10 +62,11 @@ func GetInstance() *Game {
         gameInstance.dictionary = gameInstance.mobs.initializeMobTypes()
         gameInstance.mobs.initializeMobsGenerators("areas.txt")
         gameInstance.initializeDictionary()
-        go gameInstance.readInGameMsgs()
+        //go gameInstance.readInGameMsgs()
         go gameInstance.mobs.run()
         go gameInstance.websocketHub.run()
         go gameInstance.players.save()
+        notifier.GameNotifier = gameInstance
     }
     return gameInstance
 }
@@ -74,19 +76,9 @@ func (g *Game) initializeDictionary(){
     g.dictionary[string(consts.WALL_SYMBOL)] = "wall"
 }
 
-func (g *Game) notifyAboutAttack(msg consts.JsonType) {
-    notifyMsg := make(consts.JsonType)
-    attacker := msg["attacker"].(gameObjectsBase.Activer)
-    target := msg["target"].(gameObjectsBase.Activer)
-    notifyMsg["action"] = "attack"
-    notifyMsg["attacker"] = attacker.GetID()
-    notifyMsg["target"] = target.GetID()
-    notifyMsg["description"] = msg["description"]
-    if msg["killed"] != nil {
-        notifyMsg["killed"] = true
-    }
+func (g *Game) NotifyAboutAttack(attacker, target gameObjectsBase.Activer, msg consts.JsonType) {
     lt, rb := g.field.GetVisibleArea(attacker.GetCenter().X, attacker.GetCenter().Y, consts.VISION_RADIUS)
-    notified := make(map[int64] bool)
+    notified := make(map[int64]bool)
     for i := int(lt.Y); i < int(rb.Y); i++ {
         for j := int(lt.X); j < int(rb.X); j++ {
             for _, actor := range g.field.GetActors(i, j) {
@@ -95,11 +87,15 @@ func (g *Game) notifyAboutAttack(msg consts.JsonType) {
                     notified[id] = true
                     conn := g.id2conn[id]
                     if conn != nil {
-                        conn.send <- notifyMsg
+                        conn.AddNotification(msg)
                     }
                 }
             }
         }
+    }
+    t, isMob := target.(*gameObjects.Mob)
+    if msg["killed"] == true && isMob {
+        go g.mobs.takeAwayMob(t)
     }
 }
 
@@ -107,7 +103,7 @@ func (g *Game) readInGameMsgs() {
     for {
         msg := <-g.msgsChannel
         if msg["action"].(string) == "attack" {
-            go g.notifyAboutAttack(msg)
+            //go g.NotifyAboutAttack(msg)
             _, isMob := msg["target"].(*gameObjects.Mob)
             if msg["killed"] == true && isMob {
                 go g.mobs.takeAwayMob(msg["target"].(*gameObjects.Mob))
@@ -117,8 +113,8 @@ func (g *Game) readInGameMsgs() {
 }
 
 func (g *Game) sendTick(tick int64) {
-    data := map[string] int64 {"tick" : tick}
-    g.broadcast <- data
+    //data := map[string]int64{"tick": tick}
+    g.ticks <- tick
 }
 
 func (g *Game) AddConnection(conn *connection) {
