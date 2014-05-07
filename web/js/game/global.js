@@ -1,3 +1,3 @@
 define({
-   graphic: null
+    graphic: null
 })
