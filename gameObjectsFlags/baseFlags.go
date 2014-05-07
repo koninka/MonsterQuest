@@ -6,6 +6,7 @@ import (
     "MonsterQuest/geometry"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/consts"
+    "MonsterQuest/notifier"
 )
 
 type Flag struct {
@@ -157,11 +158,11 @@ func (a *BlowFlag) Do(obj gameObjectsBase.Activer) {
             }
             obj.ClearAttackPoint()
         }
-        if _, exists := obj.GetTarget(); exists {
+        if target, exists := obj.GetTarget(); exists {
             msg := obj.Attack()
             obj.ZeroCooldown()
             if msg != nil {
-                a.MsgsChannel <- msg
+                notifier.GameNotifier.NotifyAboutAttack(obj, target, msg)
             }
         }
     } else {
