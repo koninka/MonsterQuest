@@ -8,6 +8,7 @@ import (
     "MonsterQuest/gameMap"
     "MonsterQuest/gameObjects"
     "MonsterQuest/gameObjectsBase"
+    "MonsterQuest/notifier"
 )
 
 type Game struct {
