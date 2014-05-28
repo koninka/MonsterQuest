@@ -117,6 +117,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
             switch (data["action"]) {
                case "examine":
                   th.setExamineData(data);
+                  console.log(JSON.stringify(data));
                   break
                case "getOptions":
                   th.setOptions(data['options']);

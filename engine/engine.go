@@ -303,6 +303,10 @@ func (g *Game) examineAction(json consts.JsonType) consts.JsonType {
         res["y"] = center.Y
         res["symbol"] = obj.GetKind().GetSymbol()
         info := obj.GetInfo()
+        t, e := obj.GetTarget()
+        if e {
+            res["target"] = t.GetID()
+        }
         for k, v := range info {
             res[k] = v
         }

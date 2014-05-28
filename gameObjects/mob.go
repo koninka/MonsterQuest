@@ -2,7 +2,6 @@ package gameObjects
 
 import (
     "strings"
-    "fmt"
     "MonsterQuest/gameFight/blowList"
     "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/gameObjectsBase"
@@ -90,10 +89,6 @@ func (m *Mob) GetInfo() consts.JsonType {
     }
 }
 
-func (m *Mob) Init() {
-    m.chooseDir()
-}
-
 var directions = [4]int {consts.NORTH_DIR, consts.SOUTH_DIR, consts.WEST_DIR, consts.EAST_DIR}
 
 func (m *Mob) chooseDir() {
@@ -109,10 +104,11 @@ func (m *Mob) think() {
         if geometry.Distance(m.Center, m.Target.GetCenter()) > float64(m.GetRadiusVision()) {
             m.Target = nil
         }
+        m.chooseDir()
     } else {
         m.walkingCycle++
         if m.walkingCycle == consts.MOB_WALKING_CYCLE_DURATION {
-            dice.Shake();
+            dice.Shake()
             m.walkingCycle = 0
             m.chooseDir()
         }
@@ -121,22 +117,8 @@ func (m *Mob) think() {
 
 func (m *Mob) Do() {
     m.think()
-    m.DoWithObj(m)
-}
-
-func (m *Mob) chooseHorDir(dx float64) {
-    if dx > 0 {
-        m.Dir = consts.EAST_DIR
-    } else {
-        m.Dir = consts.WEST_DIR
-    }
-}
-
-func (m *Mob) chooseVerDir(dy float64) {
-    if dy > 0 {
-        m.Dir = consts.SOUTH_DIR
-    } else {
-        m.Dir = consts.NORTH_DIR
+    if !m.Killed() {
+        m.DoWithObj(m)
     }
 }
 
@@ -144,32 +126,10 @@ func (m *Mob) Attack() consts.JsonType {
     var res consts.JsonType = nil
     bl := m.Kind.(*MobKind).blowList
     t, _ := m.GetTarget()
-    if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d > 1.0 * 1.4 {
-        rbl := bl.GetReachesRangeBlows(d)
-        if rbl.Amount() > 0 {
-            res = t.GetHit(rbl.ChooseBlowMethod(consts.BT_RANGE), t)
-        } else {
-            center := t.GetCenter()
-            dx := center.X - m.Center.X
-            dy := center.Y - m.Center.Y
-            if dx > 0.2 {
-                m.chooseVerDir(dy)
-            } else if dy > 0.2 {
-                m.chooseHorDir(dx)
-            } else {
-                if dice.Throw(6, 15) % 2 == 0 {
-                    m.chooseHorDir(dx)
-                } else {
-                    m.chooseVerDir(dy)
-                }
-            }
-        }
-    } else {
+    if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d <= 1.4 {
         res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE), m)
-    }
-    if res != nil {
-        res["attacker"] = m.GetID()
-        res["target"] = t.GetID()
+        res["attacker"] = m
+        res["target"] = t
     }
     return res
 }
