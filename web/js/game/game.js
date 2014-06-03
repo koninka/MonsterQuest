@@ -1,5 +1,5 @@
-define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global'], 
-    function(JQuery, utils, Player, View, Graphic, OPTIONS, GLOBAL) {
+define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'options', 'global'], 
+    function(JQuery, utils, Player, View, Graphic, Inventory, OPTIONS, GLOBAL) {
 
     function Game(sid, wsuri) {
         this.sid      = sid;
@@ -8,8 +8,11 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
         this.wsuri    = wsuri;
         this.player   = new Player(parseInt(utils.getQueryVariable('id')))
         this.view     = new View(this.player);
-        this.dirsDown  = [];
-        GLOBAL.game = this;
+        this.dirsDown = [];
+        this.graphic  = null;  //initGraphic
+        this.inventory = null; // initInventory
+        GLOBAL.game   = this;
+
     }
 
     Game.prototype.setDictionary = function(dict) {
@@ -68,7 +71,13 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
     }
 
     Game.prototype.setExamineData = function(data){
-        this.view.examine = data;
+        var txt = '';
+        delete data.action;
+        delete data.result;
+        for(var i in data)
+            txt += i + ' : ' + data[i] + "\n";
+        this.view.examine.SetText(txt);
+        this.view.examine.Show();
     }
 
     Game.prototype.attack = function(data){
@@ -90,74 +99,108 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
         }
     }
 
-    Game.prototype.Start = function() {
-        if (!this.sid) {
-            utils.gameShutDown();
-            return;
-        }
+    Game.prototype.initInventory = function(){
+        this.inventory = new Inventory();
+    }
 
-        this.sock = new WebSocket(this.wsuri);
+    Game.prototype.ShowInventory = function() {
+        this.inventory.Toggle();
+    };
 
-        var th = this
-        this.sock.onopen = function() {
-        // console.log("connected to " + game.wsuri);
-            th.firstLook = true;
-            th.initGraphic();
-            th.sendViaWS({action: "getDictionary"});
-            //th.sendViaWS({action: "getOptions"});
+    Game.prototype.SetInventory = function(inventory) {
+        this.inventory.SetItems(inventory);
+    };
+
+    function OnMessage(e){
+        var th = game;
+        var data = JSON.parse(e.data);
+        var result = data["result"];
+        if (data["tick"]) {
+            th.tick = data["tick"];
+            th.GetEvents(data["events"]);
             th.sendViaWS({action: "look"});
-            th.sendViaWS({action: "examine", id: th.player.id});
-
-        };
-
-        this.sock.onclose = function(e) {
-            alert('Logout after 3 seconds');
-            setTimeout(function () {
-                window.location.href = "/";
-            }, 3000);
-            console.log("connection closed (" + e.code + ") reason("+ e.reason +")");
-        };
-
-        this.sock.onmessage = function(e) {
-            var data = JSON.parse(e.data);
-            var result = data["result"];
-            if (data["tick"]) {
-                th.tick = data["tick"];
-                th.GetEvents(data["events"]);
-                th.sendViaWS({action: "look"});
-            } else if (result == "badSid") {
-                utils.gameShutDown("Bad user's security ID");
-            } else if (result == "badId") {
-                utils.gameShutDown("Bad ID");
-            } else {
-                switch (data["action"]) {
-                   case "examine":
-                      th.setExamineData(data);
-                      break
-                   case "getOptions":
-                      th.setOptions(data['options']);
-                   case "getDictionary":
-                      th.setDictionary(data.dictionary);
-                      break;
-                   case "look":
-                      if (th.firstLook) {
-                         th.defineRadiusFromMap(data['map']);
-                         th.player.InitAnimation(true, th.player);
-                         th.firstLook = false;
-                      }
-                      th.setPlayerCoords(data.x, data.y);
-                      //th.setHp(data['hp']);
-                      th.setMap(data['map'], th.player.pt);
-                      th.setActors(data['actors']);
-                      break;
-                   case "attack":
-                      if(th.firstLook) return;
-                      th.attack(data);
-                      break;
-                }
+        } else if (result == "badSid") {
+            utils.gameShutDown("Bad user's security ID");
+        } else if (result == "badId") {
+            utils.gameShutDown("Bad ID");
+        } else {
+            switch (data["action"]) {
+               case "examine":
+                  th.SetInventory(data.inventory);
+                  th.setExamineData(data);
+                  break
+               case "getOptions":
+                  th.setOptions(data['options']);
+               case "getDictionary":
+                  th.setDictionary(data.dictionary);
+                  break;
+               case "look":
+                  //if (th.firstLook) {
+                  //   th.defineRadiusFromMap(data['map']);
+                  //   th.player.InitAnimation(true, th.player);
+                  //   th.firstLook = false;
+                 // }
+                  th.setPlayerCoords(data.x, data.y);
+                  //th.setHp(data['hp']);
+                  th.setMap(data['map'], th.player.pt);
+                  th.setActors(data['actors']);
+                  break;
+               case "attack":
+                  //if(th.firstLook) return;
+                  th.attack(data);
+                  break;
             }
-        };
+        }
+    }
 
+    Game.prototype.InitChain = function(number){
+        if(number < this.init_chain.length)
+            this.init_chain[number](number);
+        else{
+            this.sock.onmessage = OnMessage;
+        }
+    }
+
+    Game.prototype.InitDictionary = function (chain_number){
+        var th = game;
+        th.sock.onmessage = function(e){
+            var data = JSON.parse(e.data);
+            if(data["action"] == "getDictionary"){
+                th.setDictionary(data.dictionary);
+                th.InitChain(chain_number + 1);
+            }
+        }
+        th.sendViaWS({action: "getDictionary"});
+    }
+
+    Game.prototype.InitLook = function (chain_number){
+        var th = game;
+        th.sock.onmessage = function(e){
+            var data = JSON.parse(e.data);
+            if(data["action"] == "look"){
+                th.defineRadiusFromMap(data['map']);
+                th.player.InitAnimation(true, th.player);
+                th.InitChain(chain_number + 1);
+            }
+        }
+        th.sendViaWS({action: "look"});
+    }
+
+    Game.prototype.InitPlayer = function (chain_number){
+        var th = game;
+        th.sock.onmessage = function(e){
+            var data = JSON.parse(e.data);
+            if(data["action"] == "examine"){
+                th.initInventory();
+                th.SetInventory(data.inventory);
+                th.setExamineData(data);
+                th.InitChain(chain_number + 1);
+            }
+        }
+        th.sendViaWS({action: "examine", id: th.player.id});
+    }
+
+    Game.prototype.InitKeyboard = function() {
         KeyboardJS.on('up, w', function() {
             game.dirDown('north');
         }, function(){
@@ -176,7 +219,6 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
             game.dirUp('south');
         })
 
-
         KeyboardJS.on('left, a', function() {
             game.dirDown('west');
         }, function(){
@@ -184,18 +226,51 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'options', 'global
         })
 
         KeyboardJS.on('ctrl > enter', function() {
-        var e = $('#view canvas').get(0);
-        if(e.webkitRequestFullscreen)//webkitRequestFullScreen есть разница
-            e.webkitRequestFullscreen();
-        else if(e.mozRequestFullScreen)
-            e.mozRequestFullScreen();
+            var e = $('#view canvas').get(0);
+            if(e.webkitRequestFullscreen)//webkitRequestFullScreen есть разница
+                e.webkitRequestFullscreen();
+            else if(e.mozRequestFullScreen)
+                e.mozRequestFullScreen();
         });
 
+        KeyboardJS.on('i', function(){
+            game.ShowInventory();
+        })
+
         setInterval(function(){
-            th.checkKeys()
+            game.checkKeys()
         }, 1)
+    };
 
+    Game.prototype.Init = function() {
+        this.firstLook = true;
+        this.initGraphic();
+        this.init_chain = [];
+        this.init_chain[0] = this.InitDictionary;
+        this.init_chain[1] = this.InitLook;
+        this.init_chain[2] = this.InitPlayer;
+        this.InitChain(0);
+        this.InitKeyboard()
+    };
 
+    Game.prototype.Start = function() {
+        if (!this.sid) {
+            utils.gameShutDown();
+            return;
+        }
+        this.sock = new WebSocket(this.wsuri);
+        this.sock.onopen = function(e) {
+            console.log("Connection open");
+            game.Init();
+        }
+        this.sock.onclose = function(e) {
+            alert('Logout after 3 seconds');
+            setTimeout(function () {
+                window.location.href = "/";
+            }, 1000);
+            console.log("connection closed (" + e.code + ") reason("+ e.reason +")");
+        };
+        
     }
 
     var game  = new Game(utils.getQueryVariable('sid'), utils.getQueryVariable('soсket'));
