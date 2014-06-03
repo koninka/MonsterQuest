@@ -3,6 +3,7 @@ package gameObjectsBase
 import (
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
+    "MonsterQuest/utils"
 )
 
 type GameObjecter interface {
@@ -49,7 +50,11 @@ func (obj *GameObject) GetType() string {
 }
 
 func (obj *GameObject) GetInfo() consts.JsonType {
-    return make(map[string] interface{})
+    info := make(consts.JsonType)
+    info["id"] = obj.Id
+    info["x"] = utils.Round(obj.Center.X)
+    info["y"] = utils.Round(obj.Center.Y)
+    return info
 }
 
 func NewGameObject(id int64, point geometry.Point) GameObject {

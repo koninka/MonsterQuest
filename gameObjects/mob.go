@@ -83,10 +83,11 @@ func (m *Mob) GetType() string {
 }
 
 func (m *Mob) GetInfo() consts.JsonType {
-    return map[string] interface{} {
-        "name" : m.Kind.GetName(),
-        "description" : m.Kind.GetDescription(),
-    }
+    info := m.ActiveObject.GetInfo()
+    info["name"] = m.Kind.GetName()
+    info["description"] = m.Kind.GetDescription()
+    info["type"] = consts.MOB_TYPE
+    return info
 }
 
 var directions = [4]int {consts.NORTH_DIR, consts.SOUTH_DIR, consts.WEST_DIR, consts.EAST_DIR}
