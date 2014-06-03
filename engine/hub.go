@@ -29,10 +29,8 @@ func (h *websocketHub) run() {
         case t := <-h.ticks:
             v := make(consts.JsonType)
             v["tick"] = t
-
             for c := range h.connections {
-                n := c.notifications
-                v["events"] = n
+                v["events"] = c.notifications
                 c.send <- v
                 c.ClearNotifications()
             }
