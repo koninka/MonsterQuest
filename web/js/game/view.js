@@ -50,13 +50,52 @@ define(['options', 'global', 'actor_info', 'attack'], function(OPTIONS, GLOBAL, 
         this._data = map;
     }
 
+    function Examine(){
+        PIXI.DisplayObjectContainer.call(this);
+        this.txt = '';
+        this.visible = false;
+        this._text = null;
+    }
+
+    Examine.prototype = Object.create( PIXI.DisplayObjectContainer.prototype );
+    Examine.prototype.constructor = Examine;
+
+    Examine.prototype.SetText = function(text){
+        this.txt = text;
+        if(this._text){
+            this.removeChild(this._text);
+        }
+        this._text = graphic.Text(
+            this.txt, 
+            {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'white'},
+            0, 
+            OPTIONS.TILE_SIZE + 7
+        );
+        this.addChild(this._text);
+        this._text.position.x = 20;
+        this._text.position.y = 20;
+    }
+
+    Examine.prototype.Close = function(){
+        this.visible = false;
+    }
+
+    Examine.prototype.Show = function(){
+        this.visible = true;
+    }
+
+    Examine.prototype.Toggle = function(){
+        this.visible = !(this.visible);
+    }
+
     function View(player){
         this.player = player;
         this.actors = {};
         this.background = new Background();
-        this._examine = null;
+        //this.examine_container = new PIXI.DisplayObjectContainer();
+        //graphic.stage.addChild(this.examine_container);
         this.bounds = null;
-        this.__defineSetter__("examine", function(e){
+        /*this.__defineSetter__("examine", function(e){
             if(this._examine)
                 graphic.Remove(this._examine)
             var txt = '';
@@ -73,7 +112,12 @@ define(['options', 'global', 'actor_info', 'attack'], function(OPTIONS, GLOBAL, 
             this._examine = graphic.DrawObj(this._examine);
             this._examine.position.x = 20;
             this._examine.position.y = 20;
-        })
+        })*/
+    }
+
+    View.prototype.initExamine = function(){
+        this.examine = new Examine();
+        graphic.stage.addChild(this.examine);
     }
 
     View.prototype.setActors = function(players){
@@ -99,13 +143,13 @@ define(['options', 'global', 'actor_info', 'attack'], function(OPTIONS, GLOBAL, 
                 this.actors[i].Destroy();
                 delete this.actors[i];
             }
-        if(last){
+        /*if(last){
             if(this._examine){
                 graphic.stage.swapChildren(graphic.stage.children[graphic.stage.children.length-2], this.bounds);
                 graphic.stage.swapChildren(graphic.stage.children[graphic.stage.children.length-1], this._examine);
             } else 
                 graphic.stage.swapChildren(this.bounds, last.container);
-        }
+        }*/
     }
 
     View.prototype.setMap = function(map, player_pos){
@@ -169,6 +213,7 @@ define(['options', 'global', 'actor_info', 'attack'], function(OPTIONS, GLOBAL, 
         graphic = GLOBAL.graphic;
         this.background.DefineMap(map);
         this.DefineImaginaryBounds();
+        this.initExamine();
     }
 
     return View;
