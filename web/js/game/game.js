@@ -93,7 +93,6 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
 
     Game.prototype.GetEvents = function(events){
         if (!events) return
-        console.log(events)
         for(var i = 0; i < events.length; ++i){
             this.StartEvent(events[i]);
         }
