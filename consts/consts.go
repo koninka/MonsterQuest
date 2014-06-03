@@ -33,6 +33,7 @@ const (
 	MOB_WALKING_CYCLE_DURATION = 20
     BT_MELEE = iota
     BT_RANGE
+    PICK_UP_RADIUS = 2
 )
 
 const (

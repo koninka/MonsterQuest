@@ -9,6 +9,7 @@ import (
     "MonsterQuest/gameObjects"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/notifier"
+    "MonsterQuest/geometry"
 )
 
 type Game struct {
@@ -142,8 +143,29 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     case "startTesting" : conn.send <- g.startTesting()
     case "endTesting"   : conn.send <- g.endTesting()
     case "setUpMap" : conn.send <- g.setUpMap(json)
+    case "pickUp" : conn.send <- g.pickUpItem(json)
     default: conn.send <- g.badAction(action)
     }
+}
+
+func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
+    res := make(consts.JsonType)
+    res["action"] = "pickUp"
+    idParam := json["id"]
+    if idParam == nil {
+        res["result"] = "badId"
+    } else {
+        id := idParam.(int64)
+        item := g.items.items[id]
+        p := g.players.getPlayerBySession(json["sid"].(string))
+        if item != nil && !item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) <= float64(consts.PICK_UP_RADIUS) {
+            p.AddItem(item)
+            item.SetOwner(p)
+            g.field.UnlinkFromCells(item)
+            res["result"] = "ok"
+        }
+    }
+    return res
 }
 
 func (g *Game) moveAction(json consts.JsonType) {
