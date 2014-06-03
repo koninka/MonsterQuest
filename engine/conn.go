@@ -8,6 +8,8 @@ import (
     "MonsterQuest/consts"
 )
 
+const MAX_MESSAGE_BAG_SIZE = 300
+
 type connection struct {
     ws            *websocket.Conn
     send          chan consts.JsonType
@@ -19,7 +21,7 @@ func (c *connection) AddNotification(n consts.JsonType) {
 }
 
 func (c *connection) ClearNotifications() {
-    c.notifications = make([]consts.JsonType, 300)
+    c.notifications = make([] consts.JsonType, 0, MAX_MESSAGE_BAG_SIZE)
 }
 
 func (c *connection) readPump() {
@@ -77,6 +79,7 @@ func ServeWs(w http.ResponseWriter, r *http.Request) {
         log.Println(err)
         return
     }
+    c := &connection{send: make(chan consts.JsonType), ws: ws, notifications: make([] consts.JsonType, 0, MAX_MESSAGE_BAG_SIZE)}
     c := &connection{send: make(chan interface{}), ws: ws, notifications: make([]consts.JsonType, 300)}
     GetInstance().AddConnection(c)
 }
