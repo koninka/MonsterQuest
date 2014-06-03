@@ -35,7 +35,7 @@ func GetInstance() *Game {
     if gameInstance == nil {
         gameInstance = &Game{
             websocketHub{
-                broadcast:   make(chan interface{}),
+                broadcast:   make(chan consts.JsonType),
                 register:    make(chan *connection),
                 unregister:  make(chan *connection),
                 connections: make(map[*connection] bool),
