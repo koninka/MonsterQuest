@@ -41,6 +41,7 @@ type Item struct {
     GameObject
     kind *ItemKind
     bonuses [] *Bonus
+    owner Activer
 }
 
 func (i *Item) AddBonus(b *Bonus) {
@@ -58,6 +59,18 @@ func (i *Item) GetInfo() consts.JsonType {
     msg["itemType"] = GetTypeByIota(i.kind.itemType)
     msg["type"] = consts.ITEM_TYPE
     return msg
+}
+
+func (i *Item) GetOwner() Activer {
+    return i.owner
+}
+
+func (i *Item) SetOwner(owner Activer) {
+    i.owner = owner
+}
+
+func (i *Item) HasOwner() bool {
+    return i.owner != nil
 }
 
 func NewItem(id int64, x, y float64, kind *ItemKind) *Item {
