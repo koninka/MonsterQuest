@@ -4,6 +4,10 @@ type Item struct {
     GameObject
     name string
     description string
+func (i *Item) GetType() string {
+	return consts.ITEM_TYPE
+}
+
 func (i *Item) GetInfo() consts.JsonType {
 	msg := make(consts.JsonType)
 	msg["name"] = i.name
