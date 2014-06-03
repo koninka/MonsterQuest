@@ -16,6 +16,7 @@ type Game struct {
     field gameMap.GameField
     players playerList
     mobs mobList
+    items itemList
     lastActions map[string] consts.JsonType
     msgsChannel chan consts.JsonType
     id2conn map[int64] *connection
@@ -51,6 +52,9 @@ func GetInstance() *Game {
                 make([] *mobGenerator, 0, 1000),
                 make(chan gameObjects.Mob),
                 make(map[int64] []*gameObjects.MobKind),
+            },
+            itemList{
+                make(map[int64] *gameObjectsBase.Item),
             },
             make(map[string] consts.JsonType),
             make(chan consts.JsonType),
@@ -261,11 +265,13 @@ func (g *Game) CreatePlayer(sid string) int64 {
     return g.players.add(sid, login, x, y, GenerateId(), dbId).GetID()
 }
 
-func (g *Game) getObjectById(id int64) (gameObjectsBase.Activer, bool) {
+func (g *Game) getObjectById(id int64) (gameObjectsBase.GameObjecter, bool) {
     if g.players.players[id] != nil {
         return g.players.players[id], true
     } else if g.mobs.mobs[id] != nil {
         return g.mobs.mobs[id], true
+    } else if g.items.items[id] != nil {
+        return g.items.items[id], true
     } else {
         return nil, false
     }
@@ -279,21 +285,10 @@ func (g *Game) examineAction(json consts.JsonType) consts.JsonType {
     if !isExists {
         res["result"] = "badId"
     } else {
-        center := obj.GetCenter()
-        res["result"] = "ok"
-        res["type"] = obj.GetType()
-        res["id"] = id
-        res["x"] = center.X
-        res["y"] = center.Y
-        res["symbol"] = obj.GetKind().GetSymbol()
-        info := obj.GetInfo()
-        t, e := obj.GetTarget()
-        if e {
-            res["target"] = t.GetID()
-        }
-        for k, v := range info {
+        for k, v := range obj.GetInfo() {
             res[k] = v
         }
+        res["result"] = "ok"
     }
     return res
 }
