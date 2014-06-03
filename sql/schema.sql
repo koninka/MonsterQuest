@@ -45,6 +45,13 @@ CREATE TABLE mobs_types (
    UNIQUE(name)
 );
 
+CREATE TABLE items_types (
+	id          INT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name        VARCHAR(20) NOT NULL,
+	description TEXT,
+	itemType    INT NOT NULL
+);
+
 DELIMITER //
 
 DROP PROCEDURE IF EXISTS `add_user_session` //
