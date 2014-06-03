@@ -35,7 +35,7 @@ func GetInstance() *Game {
     if gameInstance == nil {
         gameInstance = &Game{
             websocketHub{
-                broadcast:   make(chan interface{}),
+                broadcast:   make(chan consts.JsonType),
                 register:    make(chan *connection),
                 unregister:  make(chan *connection),
                 connections: make(map[*connection] bool),
@@ -56,14 +56,12 @@ func GetInstance() *Game {
             make(chan consts.JsonType),
             make(map[int64] *connection),
             make(map[*connection] int64),
-            //make(consts.JsonType),
             nil,
         }
         gameInstance.field.LoadFromFile("map.txt")
         gameInstance.dictionary = gameInstance.mobs.initializeMobTypes()
         gameInstance.mobs.initializeMobsGenerators("areas.txt")
         gameInstance.initializeDictionary()
-        //go gameInstance.readInGameMsgs()
         go gameInstance.mobs.run()
         go gameInstance.websocketHub.run()
         go gameInstance.players.save()
@@ -100,21 +98,7 @@ func (g *Game) NotifyAboutAttack(attacker, target gameObjectsBase.Activer, msg c
     }
 }
 
-func (g *Game) readInGameMsgs() {
-    for {
-        msg := <-g.msgsChannel
-        if msg["action"].(string) == "attack" {
-            //go g.NotifyAboutAttack(msg)
-            _, isMob := msg["target"].(*gameObjects.Mob)
-            if msg["killed"] == true && isMob {
-                go g.mobs.takeAwayMob(msg["target"].(*gameObjects.Mob))
-            }
-        }
-    }
-}
-
 func (g *Game) sendTick(tick int64) {
-    //data := map[string]int64{"tick": tick}
     g.ticks <- tick
 }
 
@@ -303,6 +287,10 @@ func (g *Game) examineAction(json consts.JsonType) consts.JsonType {
         res["y"] = center.Y
         res["symbol"] = obj.GetKind().GetSymbol()
         info := obj.GetInfo()
+        t, e := obj.GetTarget()
+        if e {
+            res["target"] = t.GetID()
+        }
         for k, v := range info {
             res[k] = v
         }

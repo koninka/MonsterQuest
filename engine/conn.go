@@ -5,20 +5,23 @@ import (
     "github.com/gorilla/websocket"
     "log"
     "net/http"
+    "MonsterQuest/consts"
 )
+
+const MAX_MESSAGE_BAG_SIZE = 300
 
 type connection struct {
     ws            *websocket.Conn
-    send          chan interface{}
-    notifications []interface{}
+    send          chan consts.JsonType
+    notifications [] consts.JsonType
 }
 
-func (c *connection) AddNotification(n interface{}) {
+func (c *connection) AddNotification(n consts.JsonType) {
     c.notifications = append(c.notifications, n)
 }
 
 func (c *connection) ClearNotifications() {
-    c.notifications = nil
+    c.notifications = make([] consts.JsonType, 0, MAX_MESSAGE_BAG_SIZE)
 }
 
 func (c *connection) readPump() {
@@ -27,20 +30,20 @@ func (c *connection) readPump() {
         c.ws.Close()
     }()
     for {
-        var json map[string] interface{}
+        var json consts.JsonType
         err := c.ws.ReadJSON(&json)
         if err != nil {
             break
         }
-        sid, present := json["sid"].(string);
+        sid, present := json["sid"].(string)
         
         if present && GetInstance().IsSIDValid(sid) {
             GetInstance().CheckOutPlayersAction(c, json)
         } else if action, present := json["action"]; present {
-            badSidResponse := map[string] string {"result" : "badSid", "action" : action.(string)}
+            badSidResponse := consts.JsonType {"result" : "badSid", "action" : action.(string)}
             c.send <- badSidResponse
         } else {
-            badActionResponse := map[string] string {"result" : "badAction", "action" : ""}
+            badActionResponse := consts.JsonType {"result" : "badAction", "action" : ""}
             c.send <- badActionResponse
         }
     }
@@ -76,6 +79,6 @@ func ServeWs(w http.ResponseWriter, r *http.Request) {
         log.Println(err)
         return
     }
-    c := &connection{send: make(chan interface{}), ws: ws}
+    c := &connection{send: make(chan consts.JsonType), ws: ws, notifications: make([] consts.JsonType, 0, MAX_MESSAGE_BAG_SIZE)}
     GetInstance().AddConnection(c)
 }

@@ -1,9 +1,13 @@
 package engine
 
+import (
+	"MonsterQuest/consts"
+)
+
 type websocketHub struct {
 	connections map[*connection] bool
 
-	broadcast chan interface{}
+	broadcast chan consts.JsonType
 
 	register chan *connection
 
@@ -21,13 +25,12 @@ func (h *websocketHub) run() {
 		case m := <-h.broadcast:
 			for c := range h.connections {
 				c.send <- m
+			}
         case t := <-h.ticks:
-            v := make(map[string]interface{})
+            v := make(consts.JsonType)
             v["tick"] = t
-
             for c := range h.connections {
-                n := c.notifications
-                v["events"] = n
+                v["events"] = c.notifications
                 c.send <- v
                 c.ClearNotifications()
             }

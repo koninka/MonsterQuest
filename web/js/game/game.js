@@ -128,6 +128,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
                case "examine":
                   th.SetInventory(data.inventory);
                   th.setExamineData(data);
+                  console.log(JSON.stringify(data));
                   break
                case "getOptions":
                   th.setOptions(data['options']);
