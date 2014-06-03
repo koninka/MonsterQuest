@@ -74,5 +74,5 @@ func (i *Item) HasOwner() bool {
 }
 
 func NewItem(id int64, x, y float64, kind *ItemKind) *Item {
-    return &Item{GameObject{id, geometry.Point{x, y}}, kind, make([] *Bonus, 0, 10)}
+    return &Item{GameObject{id, geometry.Point{x, y}}, kind, make([] *Bonus, 0, 10), nil}
 }
