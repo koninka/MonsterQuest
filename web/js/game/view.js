@@ -122,7 +122,7 @@ define(['options', 'global', 'actor_info', 'attack'], function(OPTIONS, GLOBAL, 
 
     View.prototype.setActors = function(players){
         var actors_on_scene = [];
-        var last = null;
+       // var last = null;
         for(var i = 0; i < players.length; ++i){
             var id = players[i].id;
             var x = players[i].x;
@@ -150,6 +150,28 @@ define(['options', 'global', 'actor_info', 'attack'], function(OPTIONS, GLOBAL, 
             } else 
                 graphic.stage.swapChildren(this.bounds, last.container);
         }*/
+    }
+
+    View.prototype.setItems = function(items){
+        if(!items) return;
+        var items_on_scene = {};
+        for(var i = 0; i < items.length; ++i){
+            var item = items[i];
+            var id = item.id;
+            if(this.items[id]){
+                this.items[id].x = item.x;
+                this.items[id].y = item.y;
+            } else {
+                this.items[id] = item;
+            }
+            founded_items[id] = true;
+        }
+        for(var i in this.items){
+            if(!founded_items[i]){
+                delete this.items[i];
+                //RemoveItem(this.items[i]);
+            }
+        }
     }
 
     View.prototype.setMap = function(map, player_pos){
