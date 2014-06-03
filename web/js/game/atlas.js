@@ -2,6 +2,7 @@ define({
 	player : "/imgs/character.png",
 	grass  : "/imgs/grass_1.png",
 	wall   : "/imgs/wall_1.png",
+    inventory_cell : "/imgs/inventory_cell.png",
 	zombie : {
 		corpse: "/imgs/zombie/zombie_corpse_1.png",
 		legs  : [
