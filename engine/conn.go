@@ -13,7 +13,7 @@ const MAX_MESSAGE_BAG_SIZE = 300
 type connection struct {
     ws            *websocket.Conn
     send          chan consts.JsonType
-    notifications []consts.JsonType
+    notifications [] consts.JsonType
 }
 
 func (c *connection) AddNotification(n consts.JsonType) {
@@ -80,6 +80,5 @@ func ServeWs(w http.ResponseWriter, r *http.Request) {
         return
     }
     c := &connection{send: make(chan consts.JsonType), ws: ws, notifications: make([] consts.JsonType, 0, MAX_MESSAGE_BAG_SIZE)}
-    c := &connection{send: make(chan interface{}), ws: ws, notifications: make([]consts.JsonType, 300)}
     GetInstance().AddConnection(c)
 }
