@@ -29,6 +29,8 @@ type Bonus struct {}
 
 type ItemKind struct {
     name string
+    weight int
+    message string
     description string
     itemType int
 }
