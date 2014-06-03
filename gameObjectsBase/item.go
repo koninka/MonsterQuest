@@ -4,6 +4,25 @@ import (
 	"MonsterQuest/consts"
 )
 
+func GetTypeByIota(itemType int) string {
+	switch (itemType) {
+		case consts.ITEM_GLOVES:
+			return "gloves"
+		case consts.ITEM_ARMOR:
+			return "armor"
+		case consts.ITEM_BOOTS:
+			return "boots"
+		case consts.ITEM_HELMET:
+			return "helmet"
+		case consts.ITEM_AMULET:
+			return "amulet"
+		case consts.ITEM_RING:
+			return "ring"
+		case consts.ITEM_WEAPON:
+			return "weapon"
+	}
+	return "somethingElse"
+}
 
 type Bonus struct {}
 
