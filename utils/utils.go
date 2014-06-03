@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"strconv"
+    "math"
 )
 
 func ParseFloat(s string) float64 {
@@ -19,4 +20,8 @@ func ParseInt(s string) int64 {
         panic(fmt.Sprintf("Try parse \"%s\" in int64", s))
     }
     return res
+}
+
+func Round(x float64) float64 {
+    return math.Ceil(x * 100) / 100
 }
