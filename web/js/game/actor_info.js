@@ -24,5 +24,11 @@ define(['actors'], function(Actors){
                 idle : false
             }
         }
+        item : {
+            class : Actors.item,
+            opt : {
+                idle : false
+            }
+        }
     }
 })

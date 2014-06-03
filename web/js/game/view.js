@@ -1,4 +1,4 @@
-define(['options', 'global', 'actor_info', 'attack'], function(OPTIONS, GLOBAL, actorInfo, attack) {
+define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, GLOBAL, actorInfo, attack,Item) {
     var TILE_SIZE = 32;
     var graphic = null;
 
@@ -133,7 +133,10 @@ define(['options', 'global', 'actor_info', 'attack'], function(OPTIONS, GLOBAL, 
             } else {
                 var t = this.actorInfo(players[i].symbol);
                 var a = this.dictionary[players[i].symbol];
-                this.actors[id] = new t.class(id, x, y, a, {cur : players[i].hp, max : players[i].max_hp}, players[i].login, true, this.player, t.opt);
+                if(players[i].type == 'item')
+                    this.actors[id] = new Item(players[i]);
+                else
+                    this.actors[id] = new t.class(id, x, y, a, {cur : players[i].hp, max : players[i].max_hp}, players[i].login, true, this.player, t.opt);
                 last = this.actors[id];
             }
             actors_on_scene[id] = true;
@@ -152,7 +155,7 @@ define(['options', 'global', 'actor_info', 'attack'], function(OPTIONS, GLOBAL, 
         }*/
     }
 
-    View.prototype.setItems = function(items){
+    /*View.prototype.setItems = function(items){
         if(!items) return;
         var items_on_scene = {};
         for(var i = 0; i < items.length; ++i){
@@ -172,16 +175,19 @@ define(['options', 'global', 'actor_info', 'attack'], function(OPTIONS, GLOBAL, 
                 //RemoveItem(this.items[i]);
             }
         }
-    }
+    }*/
 
     View.prototype.setMap = function(map, player_pos){
         this.background.SetMap(map, player_pos)
     }
 
     View.prototype.actorInfo = function(symbol){
+
         var t = actorInfo[this.dictionary[symbol]];
-        if (!t)
+        if (!t){
+
             t = actorInfo['player'];
+        }
         return t;
     }
 
