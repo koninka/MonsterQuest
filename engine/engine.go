@@ -144,6 +144,7 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     case "endTesting"   : conn.send <- g.endTesting()
     case "setUpMap" : conn.send <- g.setUpMap(json)
     case "pickUp" : conn.send <- g.pickUpItem(json)
+    case "drop" : conn.send <- g.dropItem(json)
     default: conn.send <- g.badAction(action)
     }
 }
@@ -162,6 +163,27 @@ func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
             p.AddItem(item)
             item.SetOwner(p)
             g.field.UnlinkFromCells(item)
+            res["result"] = "ok"
+        }
+    }
+    return res
+}
+
+func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
+    res := make(consts.JsonType)
+    res["action"] = "drop"
+    idParam := json["id"]
+    if idParam == nil {
+        res["result"] = "badId"
+    } else {
+        id := idParam.(int64)
+        item := g.items.items[id]
+        p := g.players.getPlayerBySession(json["sid"].(string))
+        if item != nil && item.GetOwner() == p {
+            p.DropItem(item)
+            item.SetOwner(nil)
+            item.ForcePlace(p.GetCenter())
+            g.field.LinkToCells(item)
             res["result"] = "ok"
         }
     }
