@@ -260,6 +260,14 @@ func (obj *ActiveObject) GetItems() []*Item {
     return obj.Inventory.Items
 }
 
+func (obj *ActiveObject) GetInfo() consts.JsonType {
+    info := obj.GameObject.GetInfo()
+    info["hp"] = obj.HP
+    info["max_hp"] = obj.MaxHP
+    info["symbol"] = obj.Kind.GetSymbol()
+    return info
+}
+
 func NewActiveObject(id int64, hp int, x, y float64, kind Kinder) ActiveObject {
     return ActiveObject{NewGameObject(id, geometry.Point{x, y}), -1, hp, hp, consts.DEFAULT_ATTACK_COOLDOWN, nil, kind, nil, NewInventoryObj()}
 }
