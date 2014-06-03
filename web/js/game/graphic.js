@@ -45,6 +45,12 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
             console.log({action: "attack", point: point});
         })
         global.graphic = this;
+
+        //InitField
+        this.field = new PIXI.DisplayObjectContainer();
+        this.stage.addChild(this.field);
+
+
         PreloadResourses();
         var prevtick;
         var animate = function(){
@@ -78,7 +84,7 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
         if(y != undefined)
             obj.position.y = y;
         this.Center(obj);
-        this.stage.addChild(obj);
+        this.field.addChild(obj);
         return obj;
     }
 
@@ -88,14 +94,14 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
     }
 
     Graphic.prototype.Clear = function(){
-        for (var i = this.stage.children.length - 1; i >= 0; i--) {
-            this.stage.removeChild(this.stage.children[i]);
+        for (var i = this.field.children.length - 1; i >= 0; i--) {
+            this.field.removeChild(this.field.children[i]);
         }
-        this.stage.children = [];
+        this.field.children = [];
     }
 
     Graphic.prototype.Remove = function(sprite){
-        this.stage.removeChild(sprite)
+        this.field.removeChild(sprite)
     }
 
     Graphic.prototype.drawGroup = function(group, x, y) {
