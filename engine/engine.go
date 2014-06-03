@@ -331,28 +331,20 @@ func (g *Game) lookAction(sid string) consts.JsonType {
         }
     }
     res["map"] = visibleSpace
-    visibleActors := make([]consts.JsonType, 0, 1000)
-    var addedActors = map[int64] bool {player.GetID() : true}
+    visibleObjects := make([]consts.JsonType, 0, 1000)
+    var addedObjects = map[int64] bool {player.GetID() : true}
     for i := t; i < b; i++ {
         for j := l; j < r; j++ {
-            for id, obj := range g.field.GetActors(j, i) {
-                if !addedActors[id] {
-                    json := make(consts.JsonType)
-                    center := obj.GetCenter()
-                    json["id"] = id
-                    json["x"] = center.X
-                    json["y"] = center.Y
-                    json["hp"] = obj.GetHP()
-                    json["max_hp"] = obj.GetMaxHP()
-                    json["type"] = obj.GetType()
-                    json["symbol"] = obj.GetKind().GetSymbol()
-                    visibleActors = append(visibleActors, json)
-                    addedActors[id] = true
+            for id, obj := range g.field.GetObjects(j, i) {
+                if !addedObjects[id] {
+                    json := obj.GetInfo()
+                    visibleObjects = append(visibleObjects, json)
+                    addedObjects[id] = true
                 }
             }
         }
     }
-    res["actors"] = visibleActors
+    res["actors"] = visibleObjects
 	res["x"] = player.Center.X
 	res["y"] = player.Center.Y
     return res
