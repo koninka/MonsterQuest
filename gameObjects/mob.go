@@ -104,7 +104,6 @@ func (m *Mob) think() {
         if geometry.Distance(m.Center, m.Target.GetCenter()) > float64(m.GetRadiusVision()) {
             m.Target = nil
         }
-        m.chooseDir()
     } else {
         m.walkingCycle++
         if m.walkingCycle == consts.MOB_WALKING_CYCLE_DURATION {
