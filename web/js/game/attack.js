@@ -8,7 +8,9 @@ define(['global', 'options'], function(GLOBAL, OPTIONS){
         var p = GLOBAL.game.player;
         m.loop = false;
         m.onComplete = function(){
-            GLOBAL.graphic.Remove(m);
+            setTimeout(function(){
+                GLOBAL.graphic.Remove(m);
+            }, 1)
         }
         GLOBAL.graphic.DrawObj(
             m,
