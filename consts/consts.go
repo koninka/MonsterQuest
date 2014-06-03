@@ -13,6 +13,7 @@ const (
     GRASS_SYMBOL = '.'
     MOB_TYPE = "mob"
     PLAYER_TYPE = "player"
+    ITEM_TYPE = "item"
     SERVER_PORT = ":8080"
 	VELOCITY = 0.12
 	TICK_DURATION = 50 * time.Millisecond
