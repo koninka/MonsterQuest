@@ -1,9 +1,24 @@
 package gameObjectsBase
 
+import (
+	"MonsterQuest/consts"
+)
+
+
+type Bonus struct {}
+
 type Item struct {
     GameObject
     name string
     description string
+    itemType int
+    bonuses [] *Bonus
+}
+
+func (i *Item) AddBonus(b *Bonus) {
+	i.bonuses = append(i.bonuses, b)
+}
+
 func (i *Item) GetType() string {
 	return consts.ITEM_TYPE
 }
