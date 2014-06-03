@@ -127,8 +127,8 @@ func (m *Mob) Attack() consts.JsonType {
     t, _ := m.GetTarget()
     if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d <= 1.4 {
         res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE), m)
-        res["attacker"] = m
-        res["target"] = t
+        res["attacker"] = m.GetID()
+        res["target"] = t.GetID()
     }
     return res
 }
