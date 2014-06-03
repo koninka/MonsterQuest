@@ -1,4 +1,4 @@
-define(['global', 'item', 'options'], function(GLOBAL, Items, OPTIONS){
+define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS){
     /* cells 20 * 10 */
     function Inventory(screen){
         this.items = [];
@@ -8,11 +8,12 @@ define(['global', 'item', 'options'], function(GLOBAL, Items, OPTIONS){
     Inventory.prototype.constructor = Inventory;
 
 
-
     Inventory.prototype.InitContainer = function() {
         this.drawable = new PIXI.DisplayObjectContainer();
         this.Hide();
         GLOBAL.graphic.stage.addChild(this.drawable);
+        this.drawable.position.x = 200;
+        this.drawable.position.y = 200;
 
         var container_size = {x : 20, y: 10};
         var TS = OPTIONS.TILE_SIZE;
@@ -31,7 +32,7 @@ define(['global', 'item', 'options'], function(GLOBAL, Items, OPTIONS){
     };
 
     Inventory.prototype.AddItem = function(item){
-        var i = this.items[item.id] = new Items.InventoryItem(item.id, item.type, item.pos);
+        var i = this.items[item.id] = new IItem(item.id, item.type, item.pos);
         this.drawable.addChild(i);
     }
 
