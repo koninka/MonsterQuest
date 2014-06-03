@@ -337,8 +337,7 @@ func (g *Game) lookAction(sid string) consts.JsonType {
         for j := l; j < r; j++ {
             for id, obj := range g.field.GetObjects(j, i) {
                 if !addedObjects[id] {
-                    json := obj.GetInfo()
-                    visibleObjects = append(visibleObjects, json)
+                    visibleObjects = append(visibleObjects,  obj.GetInfo())
                     addedObjects[id] = true
                 }
             }
