@@ -1,5 +1,6 @@
 define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS){
     /* cells 20 * 10 */
+    var inventory_size = {x: 20, y: 10};
     function Inventory(screen){
         this.items = [];
         this.InitContainer();
