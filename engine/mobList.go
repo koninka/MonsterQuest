@@ -7,7 +7,6 @@ import (
     "time"
     "MonsterQuest/gameFight/blows"
     "MonsterQuest/gameObjects"
-    "MonsterQuest/gameObjectsBase"
     "MonsterQuest/connect"
     "MonsterQuest/utils"
     "MonsterQuest/consts"
@@ -24,14 +23,12 @@ type mobList struct {
 
 func (ml *mobList) takeAwayMob(m *gameObjects.Mob) {
     for _, item := range m.GetItems() {
-        GetInstance().field.LinkToCells(item)
+        item.SetOwner(nil)
+        item.SetPosition(m.GetCenter())
+        instance := GetInstance()
+        instance.field.LinkToCells(item)
+        instance.items.addItem(item)
     }
-    // there is only in develop production
-    item := gameObjectsBase.NewItem(GenerateId(), m.GetCenter().X, m.GetCenter().Y,
-        gameObjectsBase.NewItemKind("test", "testItem", consts.ITEM_WEAPON))
-    GetInstance().items.addItem(item)
-    GetInstance().field.LinkToCells(item)
-    //  -----
     time.Sleep(consts.LIVING_AFTER_DEAD_DURATION)
     delete(ml.mobs, m.GetID())
     GetInstance().field.UnlinkFromCells(m)
