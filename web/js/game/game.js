@@ -125,7 +125,6 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         } else {
             switch (data["action"]) {
                case "examine":
-                  th.SetInventory(data.inventory);
                   th.setExamineData(data);
                   console.log(JSON.stringify(data));
                   break
@@ -144,6 +143,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
                   //th.setHp(data['hp']);
                   th.setMap(data['map'], th.player.pt);
                   th.setActors(data['actors']);
+                  th.SetInventory(data.inventory);
                   break;
                case "attack":
                   //if(th.firstLook) return;
