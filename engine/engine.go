@@ -144,8 +144,27 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     case "destroyItem" : conn.send <- g.destroyItem(json)
     case "equip" : conn.send <- g.equipItem(json)
     case "unequip" : conn.send <- g.unequipItem(json)
+    case "moveItem" : conn.send <- g.moveItem(json)
     default: conn.send <- g.badAction(action)
     }
+}
+
+func (g *Game) moveItem(json consts.JsonType) consts.JsonType{
+    res := make(consts.JsonType)
+    res["action"] = "moveItem"
+    id := int64(json["id"].(float64))
+    cell := int64(json["cell"].(float64))
+    item := g.items.items[id]
+    if item == nil {
+        res["result"] = "badId"
+    } else {
+        p := g.players.getPlayerBySession(json["sid"].(string))
+        if item != nil && item.GetOwner() == p {
+            p.MoveItem(item, cell)
+            res["result"] = "ok"
+        }
+    }
+    return res;
 }
 
 func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
