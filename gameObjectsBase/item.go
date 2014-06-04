@@ -127,7 +127,3 @@ func (i* Item) SetPosition(p geometry.Point) {
 func (i *Item) HasOwner() bool {
     return i.owner != nil
 }
-
-// func NewItem(id int64, x, y float64, kind *ItemKind, owner Activer) *Item {
-//     return &Item{GameObject{id, geometry.Point{x, y}}, kind, make([] *Bonus, 0, 10), owner}
-// }
