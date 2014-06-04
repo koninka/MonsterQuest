@@ -145,6 +145,9 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     case "setUpMap" : conn.send <- g.setUpMap(json)
     case "pickUp" : conn.send <- g.pickUpItem(json)
     case "drop" : conn.send <- g.dropItem(json)
+    case "destroyItem" : conn.send <- g.destroyItem(json)
+    case "equip" : conn.send <- g.equipItem(json)
+    case "unequip" : conn.send <- g.unequipItem(json)
     default: conn.send <- g.badAction(action)
     }
 }
@@ -183,6 +186,68 @@ func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
             item.ForcePlace(p.GetCenter())
             g.field.LinkToCells(item)
             res["result"] = "ok"
+        }
+    }
+    return res
+}
+
+func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
+    res := make(consts.JsonType)
+    res["action"] = "destroyItem"
+    idParam := json["id"]
+    if idParam == nil {
+        res["result"] = "badId"
+    } else {
+        item := g.items.items[idParam.(int64)]
+        p := g.players.getPlayerBySession(json["sid"].(string))
+        if item == nil || item.GetOwner() != p || geometry.Distance(p.GetCenter(), item.GetCenter()) > consts.PICK_UP_RADIUS {
+            res["result"] = "badId"
+        } else {
+            g.items.deleteItem(item)
+            if item.GetOwner() == p {
+                delete(p.GetItems(), idParam.(int64))
+            }
+            res["result"] = "ok"
+        }
+    }
+    return res
+}
+
+func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
+    res := make(consts.JsonType)
+    res["action"] = "equip"
+    idParam := json["id"]
+    if idParam == nil {
+        res["result"] = "badId"
+    } else {
+        item := g.items.items[idParam.(int64)]
+        p := g.players.getPlayerBySession(json["sid"].(string))
+        slotParam := json["slot"]
+        if item.GetOwner() != p {
+            res["result"] = "badId"
+        } else if slotParam == nil {
+            res["result"] = "badSlot"
+        } else if p.Equip(item, slotParam.(string)) {
+            res["result"] = "ok"
+        } else {
+            res["result"] = "badSlot"
+        }
+    }
+    return res
+}
+
+func (g *Game) unequipItem(json consts.JsonType) consts.JsonType {
+    res := make(consts.JsonType)
+    res["action"] = "unequip"
+    slotParam := json["slot"]
+    if slotParam == nil {
+        res["result"] = "badSlot"
+    } else {
+        p := g.players.getPlayerBySession(json["sid"].(string))
+        if p.Unequip(slotParam.(string)) {
+            res["result"] = "ok"
+        } else {
+            res["result"] = "badSlot"
         }
     }
     return res
