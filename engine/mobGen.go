@@ -11,6 +11,7 @@ import (
 type mobGenerator struct {
     kinds *[]*gameObjects.MobKind
     area *geometry.Rectangle
+    depth int64
     respawnDuration time.Duration
     pipeline chan gameObjects.Mob
 }
@@ -38,12 +39,12 @@ func (gen *mobGenerator) run() {
                 amount = 0
                 d.Shake()
             }
-            gen.pipeline <- gameObjects.NewMob((*gen.kinds)[d.Throw() - 1], x, y)
+            gen.pipeline <- gameObjects.NewMob((*gen.kinds)[d.Throw() - 1], x, y, gen.depth)
         }
         time.Sleep(gen.respawnDuration)
     }
 }
 
-func NewMobGenerator(kinds *[]*gameObjects.MobKind, area *geometry.Rectangle, respawnDuration float64, pipeline chan gameObjects.Mob) *mobGenerator {
-    return &mobGenerator{kinds, area, time.Duration(respawnDuration) * time.Second, pipeline}
+func NewMobGenerator(kinds *[]*gameObjects.MobKind, area *geometry.Rectangle, depth int64, respawnDuration float64, pipeline chan gameObjects.Mob) *mobGenerator {
+    return &mobGenerator{kinds, area, depth, time.Duration(respawnDuration) * time.Second, pipeline}
 }
