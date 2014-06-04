@@ -82,6 +82,24 @@ func (p *Player) Attack() consts.JsonType {
     return res
 }
 
+func (p *Player) Equip(item *gameObjectsBase.Item, slotName string) bool {
+    slot := p.slots[slotName]
+    if slot == nil || slot.itemType != item.GetItemType() {
+        return false
+    }
+    slot.item = item
+    return true
+}
+
+func (p *Player) Unequip(slotName string) bool {
+    slot := p.slots[slotName]
+    if slot == nil {
+        return false
+    }
+    slot.item = nil
+    return true
+}
+
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
     slots := make(map[string] *slot)
     slots["weapon"] = newSlot(consts.ITEM_WEAPON)
