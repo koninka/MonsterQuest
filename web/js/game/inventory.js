@@ -30,32 +30,40 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
     };
 
     Inventory.prototype.AddItem = function(item){
-        var i = this.items[item.id] = new IItem(item.id, item.type, item.pos);
-        this.drawable.addChild(i);
+        var i = this.items[item.id] = new IItem(item);
+        this.drawable.addChild(i.drawable);
     }
 
     Inventory.prototype.RemoveItem = function(item){
         var i = this.items[item.id];
-        this.drawable.removeChild(i);
+        this.drawable.removeChild(i.drawable);
         delete this.items[item.id];
     }
 
     Inventory.prototype.SetItems = function(items){
         if(!items) return;
         var founded_items = {};
+        var cell_x = 0;
+        var cell_y = -1;
         for(var i = 0; i < items.length; ++i){
+            if(i % inventory_size.x == 0){
+                cell_x = 0;
+                cell_y++;
+            } else {
+                cell_x++;
+            }
             var item = items[i];
             var id = item.id;
             if(this.items[id]){
-                this.items[id].SetCell(item.pos);
+                this.items[id].SetPosition({x: cell_x, y: cell_y});
             } else {
-                AddItem(item);
+                this.AddItem(item);
             }
             founded_items[id] = true;
         }
         for(var i in this.items){
             if(!founded_items[i]){
-                RemoveItem(this.items[i]);
+                this.RemoveItem(this.items[i].item);
             }
         }
     }
