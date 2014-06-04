@@ -16,10 +16,6 @@ define(['global', 'OPTIONS'], function(GLOBAL, OPTIONS){
 
     Item.prototype.InitSprite = function (){
         var tile = GLOBAL.graphic.Sprite(this.item.name);
-        tile.anchor.x = 0.5;
-        tile.anchor.y = 0.5;
-        //tile.rotation = this.dir;
-        //this.drawable.addChild(tile);
         this.drawable = tile;
         tile.interactive = true;
         var m = this;
