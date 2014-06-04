@@ -58,6 +58,7 @@ func GetInstance() *Game {
             make(map[*connection] int64),
             nil,
         }
+        gameObjectsBase.InitGameItems()
         gameInstance.field.LoadFromFile("map.txt")
         gameInstance.dictionary = gameInstance.mobs.initializeMobTypes()
         gameInstance.mobs.initializeMobsGenerators("areas.txt")

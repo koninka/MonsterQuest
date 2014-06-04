@@ -3,6 +3,9 @@ package gameObjectsBase
 import (
     "MonsterQuest/consts"
     "MonsterQuest/geometry"
+    "MonsterQuest/connect"
+    "MonsterQuest/utils"
+    "strings"
 )
 
 func GetTypeByIota(itemType int) string {
@@ -36,7 +39,53 @@ type ItemKind struct {
 }
 
 func NewItemKind(name, description string, itemType int) *ItemKind {
-    return &ItemKind{name, description, itemType}
+    return &ItemKind{}
+}
+
+type gameItemGen struct {
+    item_kind *ItemKind
+    probability int
+}
+
+func (gigi* gameItemGen) Probability() int {
+    return gigi.probability
+}
+
+func (gigi* gameItemGen) GenItem(owner Activer) *Item {
+    return &Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, gigi.item_kind, make([] *Bonus, 0, 10), owner}
+}
+
+type gameItemsList struct {
+    items map[int64] *ItemKind
+    items_depth_gen map[int64] []*gameItemGen
+}
+
+var gameItems *gameItemsList = &gameItemsList{make(map[int64] *ItemKind), make(map[int64] []*gameItemGen)}
+
+func ItemGens(depth int64) (*[]*gameItemGen, bool) {
+    gens, has_gen := gameItems.items_depth_gen[depth];
+    return &gens, has_gen
+}
+
+func InitGameItems() {
+    db := connect.CreateConnect()
+    rows, _ := db.Query("SELECT id, name, atype, weight, allocation_info, message, description FROM artifacts")
+    for rows.Next() {
+        var (
+            id int64
+            atype, weight int
+            name, alloc_info_str, msg, desc string
+        )
+        rows.Scan(&id, &name, &atype, &weight, &alloc_info_str, &msg, &desc)
+        gameItems.items[id] = &ItemKind{name, weight, msg, desc, atype}
+        alloc_info := strings.Split(alloc_info_str, ":");
+        prob := utils.ParseInt(alloc_info[0])
+        min_d := utils.ParseInt(alloc_info[1]) - 1
+        max_d := utils.ParseInt(alloc_info[2]) - 1
+        for i := min_d; i <= max_d; i++ {
+            gameItems.items_depth_gen[i] = append(gameItems.items_depth_gen[i], &gameItemGen{gameItems.items[id], int(prob)})
+        }
+    }
 }
 
 type Item struct {
@@ -71,10 +120,14 @@ func (i *Item) SetOwner(owner Activer) {
     i.owner = owner
 }
 
+func (i* Item) SetPosition(p geometry.Point) {
+    i.Center = p
+}
+
 func (i *Item) HasOwner() bool {
     return i.owner != nil
 }
 
-func NewItem(id int64, x, y float64, kind *ItemKind) *Item {
-    return &Item{GameObject{id, geometry.Point{x, y}}, kind, make([] *Bonus, 0, 10), nil}
-}
+// func NewItem(id int64, x, y float64, kind *ItemKind, owner Activer) *Item {
+//     return &Item{GameObject{id, geometry.Point{x, y}}, kind, make([] *Bonus, 0, 10), owner}
+// }
