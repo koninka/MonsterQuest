@@ -59,7 +59,7 @@ func (gigi* gameItemGen) Probability() int {
 }
 
 func (gigi* gameItemGen) GenItem(owner Activer) *Item {
-    return &Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, gigi.item_kind, make([] *Bonus, 0, 10), owner}
+    return &Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, gigi.item_kind, make([] *Bonus, 0, 10), owner, 0}
 }
 
 type gameItemsList struct {
@@ -101,6 +101,7 @@ type Item struct {
     kind *ItemKind
     bonuses [] *Bonus
     owner Activer
+    cell int64
 }
 
 func (i *Item) AddBonus(b *Bonus) {
@@ -117,7 +118,12 @@ func (i *Item) GetInfo() consts.JsonType {
     msg["description"] = i.kind.description
     msg["itemType"] = GetTypeByIota(i.kind.itemType)
     msg["type"] = consts.ITEM_TYPE
+    msg["cell"] = i.cell
     return msg
+}
+
+func (i *Item) SetCell(cell int64){
+    i.cell = cell
 }
 
 func (i *Item) GetOwner() Activer {
