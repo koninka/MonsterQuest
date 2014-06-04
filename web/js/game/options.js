@@ -5,4 +5,5 @@ define({
     ticksPerSecond: 60,
     screenRowCount: 7,
     screenColumnCount: 9,
+    inventory_size : {x : 20, y : 10},
 })
