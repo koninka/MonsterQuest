@@ -10,20 +10,26 @@ import (
 
 func GetTypeByIota(itemType int) string {
     switch (itemType) {
-        case consts.ITEM_GLOVES:
-            return "gloves"
-        case consts.ITEM_ARMOR:
-            return "armor"
-        case consts.ITEM_BOOTS:
-            return "boots"
-        case consts.ITEM_HELMET:
-            return "helmet"
-        case consts.ITEM_AMULET:
+        case consts.ITEM_T_AMULET:
             return "amulet"
-        case consts.ITEM_RING:
+        case consts.ITEM_T_RING:
             return "ring"
-        case consts.ITEM_WEAPON:
+        case consts.ITEM_T_ARMOR:
+            return "armor"
+        case consts.ITEM_T_SHIELD:
+            return "shield"
+        case consts.ITEM_T_HELMET:
+            return "helmet"
+        case consts.ITEM_T_GLOVES:
+            return "gloves"
+        case consts.ITEM_T_BOOTS:
+            return "boots"
+        case consts.ITEM_T_WEAPON:
             return "weapon"
+        case consts.ITEM_T_POTION:
+            return "potion"
+        case consts.ITEM_T_SCROLL:
+            return "scroll"
     }
     return "somethingElse"
 }
@@ -126,4 +132,8 @@ func (i* Item) SetPosition(p geometry.Point) {
 
 func (i *Item) HasOwner() bool {
     return i.owner != nil
+}
+
+func (i *Item) GetItemType() int {
+    return i.kind.itemType
 }

@@ -102,14 +102,14 @@ func (p *Player) Unequip(slotName string) bool {
 
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
     slots := make(map[string] *slot)
-    slots["weapon"] = newSlot(consts.ITEM_WEAPON)
-    slots["ring"] = newSlot(consts.ITEM_RING)
-    slots["amulet"] = newSlot(consts.ITEM_AMULET)
-    slots["armor"] = newSlot(consts.ITEM_ARMOR)
-    slots["shield"] = newSlot(consts.ITEM_SHIELD)
-    slots["helmet"] = newSlot(consts.ITEM_HELMET)
-    slots["boots"] = newSlot(consts.ITEM_BOOTS)
-    slots["gloves"] = newSlot(consts.ITEM_GLOVES)
+    slots["weapon"] = newSlot(consts.ITEM_T_WEAPON)
+    slots["ring"] = newSlot(consts.ITEM_T_RING)
+    slots["amulet"] = newSlot(consts.ITEM_T_AMULET)
+    slots["armor"] = newSlot(consts.ITEM_T_ARMOR)
+    slots["shield"] = newSlot(consts.ITEM_T_SHIELD)
+    slots["helmet"] = newSlot(consts.ITEM_T_HELMET)
+    slots["boots"] = newSlot(consts.ITEM_T_BOOTS)
+    slots["gloves"] = newSlot(consts.ITEM_T_GLOVES)
     return Player{gameObjectsBase.NewActiveObject(id, consts.INITIAL_PLAYER_HP, x, y, getPlayerKind()),
         login, sid, dbId, wpns.GetWeapon(consts.FIST_WEAP), slots}
 }
