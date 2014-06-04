@@ -55,7 +55,13 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             var item = items[i];
             var id = item.id;
             if(this.items[id]){
-                this.items[id].SetPosition({x: cell_x, y: cell_y});
+                var x = cell_x;
+                var y = cell_y;
+                if(item.cell !== null){
+                    y = Math.floor(item.cell / inventory_size.x);
+                    x = item.cell % inventory_size.x;
+                }
+                this.items[id].SetPosition({x: x, y: y});
             } else {
                 this.AddItem(item);
             }
