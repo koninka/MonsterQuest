@@ -123,21 +123,22 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
     View.prototype.setActors = function(players){
         var actors_on_scene = [];
        // var last = null;
+        players.push({id: 100500, type: "item", name: "ring", x: 10, y: 10});
         for(var i = 0; i < players.length; ++i){
             var id = players[i].id;
             var x = players[i].x;
             var y = players[i].y;
             if(this.actors[id]){
                 this.actors[id].Move({x: x, y: y}, this.player);
-                this.actors[id].SetHP(players[i].hp);
+                if(players[i].type != 'item')
+                    this.actors[id].SetHP(players[i].hp);
             } else {
                 var t = this.actorInfo(players[i].symbol);
                 var a = this.dictionary[players[i].symbol];
-                if(players[i].type == 'item')
+                if(players[i].type == 'item'){
                     this.actors[id] = new Item(players[i]);
-                else
+                } else
                     this.actors[id] = new t.class(id, x, y, a, {cur : players[i].hp, max : players[i].max_hp}, players[i].login, true, this.player, t.opt);
-                last = this.actors[id];
             }
             actors_on_scene[id] = true;
         }
