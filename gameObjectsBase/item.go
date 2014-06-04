@@ -42,6 +42,7 @@ type ItemKind struct {
     message string
     description string
     itemType int
+    subtype int
 }
 
 func NewItemKind(name, description string, itemType int) *ItemKind {
@@ -79,17 +80,18 @@ func InitGameItems() {
     for rows.Next() {
         var (
             id int64
-            atype, weight int
-            name, alloc_info_str, msg, desc string
+            weight int
+            atype_str, name, alloc_info_str, msg, desc string
         )
-        rows.Scan(&id, &name, &atype, &weight, &alloc_info_str, &msg, &desc)
-        gameItems.items[id] = &ItemKind{name, weight, msg, desc, atype}
+        rows.Scan(&id, &name, &atype_str, &weight, &alloc_info_str, &msg, &desc)
+        atype := strings.Split(atype_str, ":")
+        gameItems.items[id] = &ItemKind{name, weight, msg, desc, utils.ParseInt(atype[0]), utils.ParseInt(atype[1])}
         alloc_info := strings.Split(alloc_info_str, ":");
         prob := utils.ParseInt(alloc_info[0])
-        min_d := utils.ParseInt(alloc_info[1]) - 1
-        max_d := utils.ParseInt(alloc_info[2]) - 1
+        min_d := utils.ParseInt64(alloc_info[1]) - 1
+        max_d := utils.ParseInt64(alloc_info[2]) - 1
         for i := min_d; i <= max_d; i++ {
-            gameItems.items_depth_gen[i] = append(gameItems.items_depth_gen[i], &gameItemGen{gameItems.items[id], int(prob)})
+            gameItems.items_depth_gen[i] = append(gameItems.items_depth_gen[i], &gameItemGen{gameItems.items[id], prob})
         }
     }
 }

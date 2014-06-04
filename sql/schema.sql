@@ -55,7 +55,7 @@ CREATE TABLE items_types (
 CREATE TABLE artifacts (
    id              INT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
    name            VARCHAR(60) NOT NULL,
-   atype           INT         NOT NULL,
+   atype           VARCHAR(15) NOT NULL,
    weight          INT         NOT NULL,
    allocation_info VARCHAR(20) NOT NULL,
    power_info      VARCHAR(20),
