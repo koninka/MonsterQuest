@@ -15,3 +15,7 @@ func (il *itemList) addItem(i *gameObjectsBase.Item) {
 func (il *itemList) getItem(id int64) *gameObjectsBase.Item {
     return il.items[id]
 }
+
+func (il *itemList) deleteItem(i *gameObjectsBase.Item) {
+    delete(il.items, i.GetID())
+}
