@@ -5,7 +5,7 @@ define(['global', 'OPTIONS'], function(GLOBAL, OPTIONS){
         this.InitSprite();
         var m = this.item;
         this.onClick = function(){
-            GLOBAL.game.sendViaWS({action: "pickUp", id: mitem.id});
+            GLOBAL.game.sendViaWS({action: "pickUp", id: m.id});
         }
         this.onRightClick = function(){
             GLOBAL.game.sendViaWS({action: "examine", id: m.id});
