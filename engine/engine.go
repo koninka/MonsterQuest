@@ -5,10 +5,12 @@ import (
     "time"
     "MonsterQuest/connect"
     "MonsterQuest/consts"
+    "MonsterQuest/utils"
     "MonsterQuest/gameMap"
     "MonsterQuest/gameObjects"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/notifier"
+    "MonsterQuest/geometry"
 )
 
 type Game struct {
@@ -16,6 +18,7 @@ type Game struct {
     field gameMap.GameField
     players playerList
     mobs mobList
+    items itemList
     lastActions map[string] consts.JsonType
     msgsChannel chan consts.JsonType
     id2conn map[int64] *connection
@@ -24,12 +27,6 @@ type Game struct {
 }
 
 var gameInstance *Game
-var lastId int64 = -1
-
-func GenerateId() int64 {
-    lastId++
-    return lastId
-}
 
 func GetInstance() *Game {
     if gameInstance == nil {
@@ -52,12 +49,16 @@ func GetInstance() *Game {
                 make(chan gameObjects.Mob),
                 make(map[int64] []*gameObjects.MobKind),
             },
+            itemList{
+                make(map[int64] *gameObjectsBase.Item),
+            },
             make(map[string] consts.JsonType),
             make(chan consts.JsonType),
             make(map[int64] *connection),
             make(map[*connection] int64),
             nil,
         }
+        gameObjectsBase.InitGameItems()
         gameInstance.field.LoadFromFile("map.txt")
         gameInstance.dictionary = gameInstance.mobs.initializeMobTypes()
         gameInstance.mobs.initializeMobsGenerators("areas.txt")
@@ -138,8 +139,114 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     case "startTesting" : conn.send <- g.startTesting()
     case "endTesting"   : conn.send <- g.endTesting()
     case "setUpMap" : conn.send <- g.setUpMap(json)
+    case "pickUp" : conn.send <- g.pickUpItem(json)
+    case "drop" : conn.send <- g.dropItem(json)
+    case "destroyItem" : conn.send <- g.destroyItem(json)
+    case "equip" : conn.send <- g.equipItem(json)
+    case "unequip" : conn.send <- g.unequipItem(json)
     default: conn.send <- g.badAction(action)
     }
+}
+
+func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
+    res := make(consts.JsonType)
+    res["action"] = "pickUp"
+    idParam := json["id"]
+    if idParam == nil {
+        res["result"] = "badId"
+    } else {
+        item := g.items.items[idParam.(int64)]
+        p := g.players.getPlayerBySession(json["sid"].(string))
+        if item != nil && !item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) <= float64(consts.PICK_UP_RADIUS) {
+            p.AddItem(item)
+            item.SetOwner(p)
+            g.field.UnlinkFromCells(item)
+            res["result"] = "ok"
+        }
+    }
+    return res
+}
+
+func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
+    res := make(consts.JsonType)
+    res["action"] = "drop"
+    idParam := json["id"]
+    if idParam == nil {
+        res["result"] = "badId"
+    } else {
+        item := g.items.items[idParam.(int64)]
+        p := g.players.getPlayerBySession(json["sid"].(string))
+        if item != nil && item.GetOwner() == p {
+            p.DropItem(item)
+            item.SetOwner(nil)
+            item.ForcePlace(p.GetCenter())
+            g.field.LinkToCells(item)
+            res["result"] = "ok"
+        }
+    }
+    return res
+}
+
+func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
+    res := make(consts.JsonType)
+    res["action"] = "destroyItem"
+    idParam := json["id"]
+    if idParam == nil {
+        res["result"] = "badId"
+    } else {
+        item := g.items.items[idParam.(int64)]
+        p := g.players.getPlayerBySession(json["sid"].(string))
+        if item == nil || item.GetOwner() != p || geometry.Distance(p.GetCenter(), item.GetCenter()) > consts.PICK_UP_RADIUS {
+            res["result"] = "badId"
+        } else {
+            g.items.deleteItem(item)
+            if item.GetOwner() == p {
+                delete(p.GetItems(), idParam.(int64))
+            }
+            res["result"] = "ok"
+        }
+    }
+    return res
+}
+
+func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
+    res := make(consts.JsonType)
+    res["action"] = "equip"
+    idParam := json["id"]
+    if idParam == nil {
+        res["result"] = "badId"
+    } else {
+        item := g.items.items[idParam.(int64)]
+        p := g.players.getPlayerBySession(json["sid"].(string))
+        slotParam := json["slot"]
+        if item.GetOwner() != p {
+            res["result"] = "badId"
+        } else if slotParam == nil {
+            res["result"] = "badSlot"
+        } else if p.Equip(item, slotParam.(string)) {
+            res["result"] = "ok"
+        } else {
+            res["result"] = "badSlot"
+        }
+    }
+    return res
+}
+
+func (g *Game) unequipItem(json consts.JsonType) consts.JsonType {
+    res := make(consts.JsonType)
+    res["action"] = "unequip"
+    slotParam := json["slot"]
+    if slotParam == nil {
+        res["result"] = "badSlot"
+    } else {
+        p := g.players.getPlayerBySession(json["sid"].(string))
+        if p.Unequip(slotParam.(string)) {
+            res["result"] = "ok"
+        } else {
+            res["result"] = "badSlot"
+        }
+    }
+    return res
 }
 
 func (g *Game) moveAction(json consts.JsonType) {
@@ -258,14 +365,16 @@ func (g *Game) CreatePlayer(sid string) int64 {
     var login string
     var x, y float64
     stmt.QueryRow(sid).Scan(&dbId, &login, &x, &y)
-    return g.players.add(sid, login, x, y, GenerateId(), dbId).GetID()
+    return g.players.add(sid, login, x, y, utils.GenerateId(), dbId).GetID()
 }
 
-func (g *Game) getObjectById(id int64) (gameObjectsBase.Activer, bool) {
+func (g *Game) getObjectById(id int64) (gameObjectsBase.GameObjecter, bool) {
     if g.players.players[id] != nil {
         return g.players.players[id], true
     } else if g.mobs.mobs[id] != nil {
         return g.mobs.mobs[id], true
+    } else if g.items.items[id] != nil {
+        return g.items.items[id], true
     } else {
         return nil, false
     }
@@ -279,21 +388,10 @@ func (g *Game) examineAction(json consts.JsonType) consts.JsonType {
     if !isExists {
         res["result"] = "badId"
     } else {
-        center := obj.GetCenter()
-        res["result"] = "ok"
-        res["type"] = obj.GetType()
-        res["id"] = id
-        res["x"] = center.X
-        res["y"] = center.Y
-        res["symbol"] = obj.GetKind().GetSymbol()
-        info := obj.GetInfo()
-        t, e := obj.GetTarget()
-        if e {
-            res["target"] = t.GetID()
-        }
-        for k, v := range info {
+        for k, v := range obj.GetInfo() {
             res[k] = v
         }
+        res["result"] = "ok"
     }
     return res
 }

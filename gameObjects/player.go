@@ -33,12 +33,22 @@ func getPlayerKind() *playerKind {
     return kind
 }
 
+type slot struct {
+    itemType int
+    item *gameObjectsBase.Item
+}
+
+func newSlot(itemType int) *slot {
+    return &slot{itemType, nil}
+}
+
 type Player struct {
     gameObjectsBase.ActiveObject
     Login string
     SID string
     DBId int64
     weapon fightBase.Blower
+    slots map[string] *slot
 }
 
 func (p *Player) GetType() string {
@@ -72,8 +82,36 @@ func (p *Player) Attack() consts.JsonType {
     return res
 }
 
+func (p *Player) Equip(item *gameObjectsBase.Item, slotName string) bool {
+    slot := p.slots[slotName]
+    if slot == nil || slot.itemType != item.GetItemType() {
+        return false
+    }
+    slot.item = item
+    return true
+}
+
+func (p *Player) Unequip(slotName string) bool {
+    slot := p.slots[slotName]
+    if slot == nil {
+        return false
+    }
+    slot.item = nil
+    return true
+}
+
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
-    return Player{gameObjectsBase.NewActiveObject(id, consts.INITIAL_PLAYER_HP, x, y, getPlayerKind()), login, sid, dbId, wpns.GetWeapon(consts.FIST_WEAP)}
+    slots := make(map[string] *slot)
+    slots["weapon"] = newSlot(consts.ITEM_T_WEAPON)
+    slots["ring"] = newSlot(consts.ITEM_T_RING)
+    slots["amulet"] = newSlot(consts.ITEM_T_AMULET)
+    slots["armor"] = newSlot(consts.ITEM_T_ARMOR)
+    slots["shield"] = newSlot(consts.ITEM_T_SHIELD)
+    slots["helmet"] = newSlot(consts.ITEM_T_HELMET)
+    slots["boots"] = newSlot(consts.ITEM_T_BOOTS)
+    slots["gloves"] = newSlot(consts.ITEM_T_GLOVES)
+    return Player{gameObjectsBase.NewActiveObject(id, consts.INITIAL_PLAYER_HP, x, y, getPlayerKind()),
+        login, sid, dbId, wpns.GetWeapon(consts.FIST_WEAP), slots}
 }
 
 func (p *Player) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer) consts.JsonType {
