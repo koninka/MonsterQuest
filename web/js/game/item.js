@@ -4,10 +4,12 @@ define(['global', 'OPTIONS'], function(GLOBAL, OPTIONS){
         this.item = item;
         this.InitSprite();
         var m = this.item;
-        this.onClick = function(){
+        this.onClick = function(data){
+            data.originalEvent.preventDefault();
             GLOBAL.game.sendViaWS({action: "pickUp", id: m.id});
         }
-        this.onRightClick = function(){
+        this.onRightClick = function(data){
+            data.originalEvent.preventDefault();
             GLOBAL.game.sendViaWS({action: "examine", id: m.id});
         }
     }
@@ -26,15 +28,15 @@ define(['global', 'OPTIONS'], function(GLOBAL, OPTIONS){
             var event = data.originalEvent;
             if(event.which == 3 || event.button == 2) {
                 if(m.onRightClick)
-                    m.onRightClick();
+                    m.onRightClick(data);
             } else if(lc && (diff < 350)) {
                 tile.click.lastClick = 0;
                 if(m.onDoubleClick)
-                    m.onDoubleClick();
+                    m.onDoubleClick(data);
             } else {
                 tile.click.lastClick = now;
                 if(m.onClick)
-                    m.onClick();
+                    m.onClick(data);
             }
         }
         tile.click.lastClick = 0;
