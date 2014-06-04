@@ -4,7 +4,12 @@ import (
     "fmt"
     "strconv"
     "math"
+    "math/rand"
 )
+
+func Randint0(max int) int {
+    return rand.Intn(max)
+}
 
 func ParseFloat(s string) float64 {
     res, err := strconv.ParseFloat(s, 64)
@@ -24,4 +29,11 @@ func ParseInt(s string) int64 {
 
 func Round(x float64) float64 {
     return math.Ceil(x * 100) / 100
+}
+
+var lastId int64 = -1
+
+func GenerateId() int64 {
+    lastId++
+    return lastId
 }

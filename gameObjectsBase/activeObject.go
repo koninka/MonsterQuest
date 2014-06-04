@@ -30,6 +30,7 @@ type Kinder interface {
     GetDescription() string
     AddFlag(Flager)
     GetSymbol() string
+    CreateDropCount() int
 }
 
 type Activer interface {
@@ -89,6 +90,10 @@ func (k *Kind) GetFlags() *[]Flager {
 
 func (k *Kind) AddFlag(flag Flager) {
     k.Flags = append(k.Flags, flag)
+}
+
+func (k *Kind) CreateDropCount() int {
+    return 0
 }
 
 func NewKind(symbol string) Kind {

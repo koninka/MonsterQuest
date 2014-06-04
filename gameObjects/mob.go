@@ -8,6 +8,7 @@ import (
     "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
+    "MonsterQuest/utils"
     "MonsterQuest/dice"
 )
 
@@ -31,6 +32,10 @@ func (mk *MobKind) GetDescription() string {
 
 func (mk *MobKind) GenHP() int {
     return mk.base_hp + mk.hp_inc.Shake().Throw()
+}
+
+func (mk *MobKind) CreateDropCount() int {
+    return 1
 }
 
 func CreateMobKind(id int64, name string, base_hp int, hp_inc, symbol, description, blowMethods, flagsStr string) *MobKind {
@@ -152,9 +157,31 @@ func (m *Mob) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer) co
     return res
 }
 
-func NewMob(kind *MobKind, x, y float64) Mob {
+func (m *Mob) createDrop(depth int64) {
+    var (
+        created_d = 0
+        number int = m.Kind.CreateDropCount()
+    )
+    number = 4;
+    if gens, has_gens := gameObjectsBase.ItemGens(depth); has_gens {
+        for _, gen := range *gens {
+            r := utils.Randint0(100)
+            if r >= gen.Probability() {
+                continue;
+            }
+            created_d++
+            m.AddItem(gen.GenItem(m))
+            if created_d == number {
+                break;
+            }
+        }
+    }
+}
+
+func NewMob(kind *MobKind, x, y float64, depth int64) Mob {
     d := kind.GenHP()
     m := Mob{gameObjectsBase.NewActiveObject(-1, d, x, y, kind), 0}
     m.chooseDir()
+    m.createDrop(int64(depth))
     return m
 }
