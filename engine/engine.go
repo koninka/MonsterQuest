@@ -201,7 +201,7 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
         } else {
             g.items.deleteItem(item)
             if item.GetOwner() == p {
-                delete(p.GetItems(), idParam.(int64))
+                delete(p.GetItems(), id)
             }
             res["result"] = "ok"
         }
