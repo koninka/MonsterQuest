@@ -4,18 +4,21 @@ type InventoryObj struct {
 	Items map[int64] *Item
 }
 
+func (inv *InventoryObj) CellIsEmpty(cell int64) bool {
+    empty := true
+    for _, i  := range inv.Items {
+        if cell == i.cell{
+            empty = false
+            break
+        }
+    }
+    return empty
+}
+
 func (inv *InventoryObj) FindEmptyCell() (cell int64) {
     cell = 0
-    empty := false
-    for !empty {
-        empty = true
-        for _, i  := range inv.Items {
-            if cell == i.cell{
-                empty = false
-                cell = cell + 1
-                break
-            }
-        }
+    for !inv.CellIsEmpty(cell) {
+        cell = cell + 1
     }
     return cell
 }
