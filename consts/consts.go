@@ -65,6 +65,7 @@ const (
     ITEM_T_WEAPON
     ITEM_T_POTION
     ITEM_T_SCROLL
+    ITEM_ST_DEFAULT = -1
     ITEM_ST_SWORD = iota
     ITEM_ST_POLEARM
     ITEM_ST_BOW
