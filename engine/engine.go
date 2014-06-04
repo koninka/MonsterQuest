@@ -151,13 +151,13 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
 func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
     res := make(consts.JsonType)
     res["action"] = "pickUp"
-    idParam := json["id"]
-    if idParam == nil {
+    id := int64(json["id"].(float64))
+    item := g.items.items[id]
+    if item == nil {
         res["result"] = "badId"
     } else {
-        item := g.items.items[idParam.(int64)]
         p := g.players.getPlayerBySession(json["sid"].(string))
-        if item != nil && !item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) <= float64(consts.PICK_UP_RADIUS) {
+        if !item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) <= float64(consts.PICK_UP_RADIUS) {
             p.AddItem(item)
             item.SetOwner(p)
             g.field.UnlinkFromCells(item)
@@ -170,11 +170,11 @@ func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
 func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
     res := make(consts.JsonType)
     res["action"] = "drop"
-    idParam := json["id"]
-    if idParam == nil {
+    id := int64(json["id"].(float64))
+    item := g.items.items[id]
+    if item == nil {
         res["result"] = "badId"
     } else {
-        item := g.items.items[idParam.(int64)]
         p := g.players.getPlayerBySession(json["sid"].(string))
         if item != nil && item.GetOwner() == p {
             p.DropItem(item)
@@ -190,11 +190,11 @@ func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
 func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
     res := make(consts.JsonType)
     res["action"] = "destroyItem"
-    idParam := json["id"]
-    if idParam == nil {
+    id := int64(json["id"].(float64))
+    item := g.items.items[id]
+    if item == nil {
         res["result"] = "badId"
     } else {
-        item := g.items.items[idParam.(int64)]
         p := g.players.getPlayerBySession(json["sid"].(string))
         if item == nil || item.GetOwner() != p || geometry.Distance(p.GetCenter(), item.GetCenter()) > consts.PICK_UP_RADIUS {
             res["result"] = "badId"
@@ -212,11 +212,11 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
 func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
     res := make(consts.JsonType)
     res["action"] = "equip"
-    idParam := json["id"]
-    if idParam == nil {
+    id := int64(json["id"].(float64))
+    item := g.items.items[id]
+    if item == nil {
         res["result"] = "badId"
     } else {
-        item := g.items.items[idParam.(int64)]
         p := g.players.getPlayerBySession(json["sid"].(string))
         slotParam := json["slot"]
         if item.GetOwner() != p {
