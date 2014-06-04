@@ -13,6 +13,9 @@ define(['global', 'OPTIONS', 'item'], function(GLOBAL, OPTIONS, Item){
                 GLOBAL.game.sendViaWS({action: "equip", id: m.id, slot: fund_slot(m)});
             }
         }
+        this.onClick = function(){
+            GLOBAL.game.sendViaWS({action: "examine", id: m.id});
+        }
         this.onRightClick = function(){
             GLOBAL.game.sendViaWS({action: "drop", id: m.id});
         }
@@ -22,7 +25,8 @@ define(['global', 'OPTIONS', 'item'], function(GLOBAL, OPTIONS, Item){
     InventoryItem.prototype.constructor = InventoryItem;
 
     InventoryItem.prototype.SetPosition = function (cell){
-        this.item.position = cell;
+        this.item.x = cell.x;
+        this.item.y = cell.y;
         this.drawable.position = {x: cell.x * OPTIONS.TILE_SIZE, y: cell.y * OPTIONS.TILE_SIZE};
     }
 
