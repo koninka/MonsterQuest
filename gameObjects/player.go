@@ -102,7 +102,7 @@ func (p *Player) Unequip(slotName string) bool {
 
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
     slots := make(map[string] *slot)
-    slots["weapon"] = newSlot(consts.ITEM_WEAPON)
+    slots["weapon"] = newSlot(consts.ITEM_SWORD)
     slots["ring"] = newSlot(consts.ITEM_RING)
     slots["amulet"] = newSlot(consts.ITEM_AMULET)
     slots["armor"] = newSlot(consts.ITEM_ARMOR)
