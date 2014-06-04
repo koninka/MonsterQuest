@@ -442,6 +442,11 @@ func (g *Game) lookAction(sid string) consts.JsonType {
         }
     }
     res["actors"] = visibleObjects
+    inventory := make([]consts.JsonType, 0, 1000)
+    for _, item := range player.GetItems(){
+        inventory = append(inventory, item.GetInfo())
+    }
+    res["inventory"] = inventory
 	res["x"] = player.Center.X
 	res["y"] = player.Center.Y
     return res
