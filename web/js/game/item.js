@@ -57,5 +57,11 @@ define(['global', 'OPTIONS'], function(GLOBAL, OPTIONS){
         GLOBAL.graphic.Center(this.drawable);
     }
 
+    Item.prototype.Destroy = function(){
+        //Item.prototype.Destroy.call(this);
+        GLOBAL.graphic.Remove(this.drawable);
+        this.drawable = undefined;
+    }
+
     return Item;
 })
