@@ -263,7 +263,9 @@ func (obj *ActiveObject) ClearAttackPoint() {
 }
 
 func (obj *ActiveObject) MoveItem(item *Item, cell int64){
-    item.SetCell(cell);
+    if obj.Inventory.CellIsEmpty(cell){
+        item.SetCell(cell)
+    }
 }
 
 func (obj *ActiveObject) AddItem(item *Item) {
