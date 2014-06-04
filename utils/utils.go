@@ -19,7 +19,11 @@ func ParseFloat(s string) float64 {
     return res
 }
 
-func ParseInt(s string) int64 {
+func ParseInt(s string) int {
+    return int(ParseInt64(s))
+}
+
+func ParseInt64(s string) int64 {
     res, err := strconv.ParseInt(s, 10, 64)
     if err != nil {
         panic(fmt.Sprintf("Try parse \"%s\" in int64", s))

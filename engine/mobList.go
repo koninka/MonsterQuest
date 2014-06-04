@@ -47,7 +47,7 @@ func (ml *mobList) initializeMobTypes() consts.JsonType {
             name, hp_inc, symbol, desc, flags, blowMethods, level_info string
         )
 		rows.Scan(&id, &name, &base_hp, &hp_inc, &symbol, &desc, &blowMethods, &flags, &level_info)
-        depth := utils.ParseInt(strings.Split(level_info, "|")[0])
+        depth := utils.ParseInt64(strings.Split(level_info, "|")[0])
 		ml.mobsDepth[depth] = append(ml.mobsDepth[depth], gameObjects.CreateMobKind(id, name, base_hp, hp_inc, symbol, desc, blowMethods, flags))
         mobDictionary[symbol] = name
 	}
@@ -64,7 +64,7 @@ func (ml *mobList) initializeMobsGenerators(filename string) {
             data := strings.Split(string(bytes), ":")
             l, r := utils.ParseFloat(data[0]), utils.ParseFloat(data[1])
             t, b := utils.ParseFloat(data[2]), utils.ParseFloat(data[3])
-            depth := utils.ParseInt(data[4])
+            depth := utils.ParseInt64(data[4])
             duration := utils.ParseFloat(data[5])
             area := geometry.MakeRectangle(geometry.MakePoint(l, t), geometry.MakePoint(r, b))
             if kinds, isExist := ml.mobsDepth[depth]; isExist {
