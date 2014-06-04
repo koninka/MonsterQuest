@@ -16,17 +16,14 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         this.drawable.position.x = 200;
         this.drawable.position.y = 200;
 
-        var container_size = {x : 20, y: 10};
         var TS = OPTIONS.TILE_SIZE;
-        for(var i = 0; i < container_size.x; ++i){
+        for(var i = 0; i < inventory_size.x; ++i){
             var x = TS * i;
-            for(var j = 0; j < container_size.y; ++j){
+            for(var j = 0; j < inventory_size.y; ++j){
                 var y = TS * j;
                 var cell = GLOBAL.graphic.Sprite('inventory_cell');
                 cell.position.x = x;
                 cell.position.y = y;
-                cell.anchor.x = 0.5;
-                cell.anchor.y = 0.5;
                 this.drawable.addChild(cell);
             }
         }
