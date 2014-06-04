@@ -93,7 +93,7 @@ func (ml *mobList) run() {
 	ml.runGens()
 	for {
 		m := <-ml.pipeline
-		id := GenerateId()
+		id := utils.GenerateId()
 		ml.mobs[id] = &m
 		m.SetID(id)
 		GetInstance().field.LinkToCells(&m)

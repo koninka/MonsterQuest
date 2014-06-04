@@ -5,6 +5,7 @@ import (
     "time"
     "MonsterQuest/connect"
     "MonsterQuest/consts"
+    "MonsterQuest/utils"
     "MonsterQuest/gameMap"
     "MonsterQuest/gameObjects"
     "MonsterQuest/gameObjectsBase"
@@ -26,12 +27,6 @@ type Game struct {
 }
 
 var gameInstance *Game
-var lastId int64 = -1
-
-func GenerateId() int64 {
-    lastId++
-    return lastId
-}
 
 func GetInstance() *Game {
     if gameInstance == nil {
@@ -306,7 +301,7 @@ func (g *Game) CreatePlayer(sid string) int64 {
     var login string
     var x, y float64
     stmt.QueryRow(sid).Scan(&dbId, &login, &x, &y)
-    return g.players.add(sid, login, x, y, GenerateId(), dbId).GetID()
+    return g.players.add(sid, login, x, y, utils.GenerateId(), dbId).GetID()
 }
 
 func (g *Game) getObjectById(id int64) (gameObjectsBase.GameObjecter, bool) {
