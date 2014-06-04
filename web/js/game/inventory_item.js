@@ -1,13 +1,16 @@
 define(['global', 'OPTIONS', 'item'], function(GLOBAL, OPTIONS, Item){
+    function find_slot(item){
+        return undefined;
+    }
 
     function InventoryItem(item){
         Item.call(this, item);
-        var m = this;
+        var m = this.item;
         this.onDoubleClick = function(){
             if(m.equiped){
                 GLOBAL.game.sendViaWS({action: "unequip", id: m.id});
             }else{
-                GLOBAL.game.sendViaWS({action: "equip", id: m.id, slot: m.slot});
+                GLOBAL.game.sendViaWS({action: "equip", id: m.id, slot: fund_slot(m)});
             }
         }
         this.onRightClick = function(){
