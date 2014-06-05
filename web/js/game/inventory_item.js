@@ -30,6 +30,8 @@ define(['global', 'OPTIONS', 'item'], function(GLOBAL, OPTIONS, Item){
             var keys = KeyboardJS.activeKeys();
             if(keys[0] == 'shift')
                 GLOBAL.game.sendViaWS({action: "drop", id: m.id});
+            else if(keys[0] == 'ctrl')
+                GLOBAL.game.sendViaWS({action: "destroyItem", id: m.id});
             else
                 GLOBAL.game.sendViaWS({action: "examine", id: m.id});
         }
