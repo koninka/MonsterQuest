@@ -133,8 +133,9 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
                 if(players[i].type != 'item')
                     this.actors[id].SetHP(players[i].hp);
             } else {
-                var t = this.actorInfo(players[i].symbol);
-                var a = this.dictionary[players[i].symbol];
+                var name = players[i].name || players[i].type;
+                var t = actorInfo[name];
+                var a = name;
                 if(players[i].type == 'item'){
                     this.actors[id] = new Item(players[i]);
                 } else
