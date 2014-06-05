@@ -34,6 +34,9 @@ define(['global', 'OPTIONS', 'item'], function(GLOBAL, OPTIONS, Item){
                 GLOBAL.game.sendViaWS({action: "examine", id: m.id});
         }
         this.drawable.mousedown = function(data){
+            var event = data.originalEvent;
+            if(event.which == 3 || event.button == 2)
+                return;
             data.originalEvent.preventDefault();
             this.data = data;
             this.alpha = 0.9;
