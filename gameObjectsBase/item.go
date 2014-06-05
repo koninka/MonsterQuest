@@ -115,10 +115,15 @@ func (i *Item) GetType() string {
 func (i *Item) GetInfo() consts.JsonType {
     msg := i.GameObject.GetInfo()
     msg["name"] = i.kind.name
-    msg["description"] = i.kind.description
     msg["itemType"] = GetTypeByIota(i.kind.itemType)
     msg["type"] = consts.ITEM_TYPE
     msg["cell"] = i.cell
+    return msg
+}
+
+func (i *Item) GetFullInfo() consts.JsonType {
+    msg := i.GetInfo()
+    msg["description"] = i.kind.description
     return msg
 }
 

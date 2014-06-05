@@ -90,8 +90,13 @@ func (m *Mob) GetType() string {
 func (m *Mob) GetInfo() consts.JsonType {
     info := m.ActiveObject.GetInfo()
     info["name"] = m.Kind.GetName()
-    info["description"] = m.Kind.GetDescription()
     info["type"] = consts.MOB_TYPE
+    return info
+}
+
+func (m *Mob) GetFullInfo() consts.JsonType {
+    info := m.GetInfo()
+    info["description"] = m.Kind.GetDescription()
     return info
 }
 

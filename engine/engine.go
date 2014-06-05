@@ -423,7 +423,7 @@ func (g *Game) examineAction(json consts.JsonType) consts.JsonType {
         if !isExists {
             res["result"] = "badId"
         } else {
-            for k, v := range obj.GetInfo() {
+            for k, v := range obj.GetFullInfo() {
                 res[k] = v
             }
             res["result"] = "ok"

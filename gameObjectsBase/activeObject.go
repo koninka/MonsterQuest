@@ -283,6 +283,10 @@ func (obj *ActiveObject) GetInfo() consts.JsonType {
     return info
 }
 
+func (obj *ActiveObject) GetFullInfo() consts.JsonType {
+    return obj.GetInfo()
+}
+
 func NewActiveObject(id int64, hp int, x, y float64, kind Kinder) ActiveObject {
     return ActiveObject{NewGameObject(id, geometry.Point{x, y}), -1, hp, hp, consts.DEFAULT_ATTACK_COOLDOWN, nil, kind, nil, NewInventoryObj()}
 }

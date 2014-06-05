@@ -14,6 +14,7 @@ type GameObjecter interface {
     ForcePlace(point geometry.Point)
     GetType() string
     GetInfo() consts.JsonType
+    GetFullInfo() consts.JsonType
 }
 
 type GameObject struct {
@@ -55,6 +56,10 @@ func (obj *GameObject) GetInfo() consts.JsonType {
     info["x"] = utils.Round(obj.Center.X)
     info["y"] = utils.Round(obj.Center.Y)
     return info
+}
+
+func (obj *GameObject) GetFullInfo() consts.JsonType {
+    return obj.GetInfo()
 }
 
 func NewGameObject(id int64, point geometry.Point) GameObject {
