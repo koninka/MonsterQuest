@@ -38,9 +38,9 @@ func (mk *MobKind) CreateDropCount() int {
     return 1
 }
 
-func CreateMobKind(id int64, name string, base_hp int, hp_inc, symbol, description, blowMethods, flagsStr string) *MobKind {
+func CreateMobKind(id int64, name string, base_hp int, hp_inc, description, blowMethods, flagsStr string) *MobKind {
     added := make(map[string] bool)
-    kind := MobKind{gameObjectsBase.NewKind(symbol), id, name, base_hp, dice.CreateDice(hp_inc), description, blowList.NewBlowList()}
+    kind := MobKind{gameObjectsBase.NewKind(), id, name, base_hp, dice.CreateDice(hp_inc), description, blowList.NewBlowList()}
     for _, blowDesc := range strings.Split(blowMethods, "@") {
         kind.blowList.AddMobBlowDesc(blowDesc)
     }
@@ -90,8 +90,13 @@ func (m *Mob) GetType() string {
 func (m *Mob) GetInfo() consts.JsonType {
     info := m.ActiveObject.GetInfo()
     info["name"] = m.Kind.GetName()
-    info["description"] = m.Kind.GetDescription()
     info["type"] = consts.MOB_TYPE
+    return info
+}
+
+func (m *Mob) GetFullInfo() consts.JsonType {
+    info := m.GetInfo()
+    info["description"] = m.Kind.GetDescription()
     return info
 }
 
@@ -106,17 +111,11 @@ func (m *Mob) chooseDir() {
 }
 
 func (m *Mob) think() {
-    if m.Target != nil {
-        if geometry.Distance(m.Center, m.Target.GetCenter()) > float64(m.GetRadiusVision()) {
-            m.Target = nil
-        }
-    } else {
-        m.walkingCycle++
-        if m.walkingCycle == consts.MOB_WALKING_CYCLE_DURATION {
-            dice.Shake()
-            m.walkingCycle = 0
-            m.chooseDir()
-        }
+    m.walkingCycle++
+    if m.walkingCycle == consts.MOB_WALKING_CYCLE_DURATION {
+        dice.Shake()
+        m.walkingCycle = 0
+        m.chooseDir()
     }
 }
 

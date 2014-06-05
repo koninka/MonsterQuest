@@ -139,6 +139,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
                   //   th.player.InitAnimation(true, th.player);
                   //   th.firstLook = false;
                  // }
+                  console.log(JSON.stringify(data['actors']))
                   th.setPlayerCoords(data.x, data.y);
                   //th.setHp(data['hp']);
                   th.setMap(data['map'], th.player.pt);

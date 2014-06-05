@@ -25,7 +25,7 @@ var kind *playerKind
 
 func getPlayerKind() *playerKind {
     if kind == nil {
-        kind = &playerKind{gameObjectsBase.NewKind("p")}
+        kind = &playerKind{gameObjectsBase.NewKind()}
         kind.SetRace(consts.PLAYER_RACE)
         kind.Flags = append(kind.Flags, gameObjectsFlags.GetFlag("CAN_MOVE"))
         kind.Flags = append(kind.Flags, gameObjectsFlags.GetFlag("CAN_BLOW"))
@@ -63,7 +63,6 @@ func (p *Player) GetInfo() consts.JsonType {
 }
 
 func (p *Player) Do() {
-    //p.ActiveObject.Do()
     p.DoWithObj(p)
     p.Dir = -1
 }
@@ -100,6 +99,30 @@ func (p *Player) Unequip(slotName string) bool {
     return true
 }
 
+func (p *Player) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer) consts.JsonType {
+    res := p.ActiveObject.GetHit(blow, attacker)
+    return res
+}
+
+func (p *Player) Equipped(item *gameObjectsBase.Item) bool {
+    for _, slot := range p.slots {
+        if slot.item == item {
+            return true
+        }
+    }
+    return false
+}
+
+func (p *Player) MoveItem(item *gameObjectsBase.Item, cell int64) bool {
+    if item.GetOwner() != p || p.Equipped(item) {
+        return false
+    }
+    if p.Inventory.CellIsEmpty(cell) {
+        item.SetCell(cell)
+    }
+    return true
+}
+
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
     slots := make(map[string] *slot)
     slots["weapon"] = newSlot(consts.ITEM_T_WEAPON)
@@ -112,9 +135,4 @@ func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
     slots["gloves"] = newSlot(consts.ITEM_T_GLOVES)
     return Player{gameObjectsBase.NewActiveObject(id, consts.INITIAL_PLAYER_HP, x, y, getPlayerKind()),
         login, sid, dbId, wpns.GetWeapon(consts.FIST_WEAP), slots}
-}
-
-func (p *Player) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer) consts.JsonType {
-    res := p.ActiveObject.GetHit(blow, attacker)
-    return res
 }
