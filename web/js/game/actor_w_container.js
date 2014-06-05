@@ -13,9 +13,13 @@ define(['options', 'global', 'actor'] ,function(OPTIONS, GLOBAL, Actor){
 
     HpBar.prototype.SetHp = function(hp){
         this.hp = hp;
+        var hp_to_draw = hp;
+        if(hp_to_draw < 0){
+            hp_to_draw = 0;
+        }
         this.clear();
         this.beginFill(0xFF0000);
-        this.drawRect(0, 0, this.hp / this.max * hpbar_width, hpbar_height);
+        this.drawRect(0, 0, hp_to_draw / this.max * hpbar_width, hpbar_height);
     }
 
     function ActorWithContainer(id, x, y, type, health, name, initAnimation, player){
