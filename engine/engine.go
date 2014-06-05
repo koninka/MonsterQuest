@@ -156,15 +156,19 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
 func (g *Game) moveItem(json consts.JsonType) consts.JsonType{
     res := make(consts.JsonType)
     res["action"] = "moveItem"
-    id := int64(json["id"].(float64))
-    cell := int64(json["cell"].(float64))
-    item := g.items.items[id]
-    if item == nil {
+    idParam := json["id"]
+    cellParam := json["cell"]
+    if idParam == nil {
         res["result"] = "badId"
+    } else if cellParam == nil {
+        res["result"] = "badCell"
     } else {
+        item := g.items.items[int64(idParam.(float64))]
+        cell := int64(cellParam.(float64))
         p := g.players.getPlayerBySession(json["sid"].(string))
-        if item != nil && item.GetOwner() == p {
-            p.MoveItem(item, cell)
+        if item == nil || !p.MoveItem(item, cell) {
+            res["result"] = "badId"
+        } else {
             res["result"] = "ok"
         }
     }
