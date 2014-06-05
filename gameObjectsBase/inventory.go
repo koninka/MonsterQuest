@@ -5,20 +5,18 @@ type InventoryObj struct {
 }
 
 func (inv *InventoryObj) CellIsEmpty(cell int64) bool {
-    empty := true
     for _, i  := range inv.Items {
-        if cell == i.cell{
-            empty = false
-            break
+        if cell == i.cell {
+            return false
         }
     }
-    return empty
+    return true
 }
 
 func (inv *InventoryObj) FindEmptyCell() (cell int64) {
     cell = 0
     for !inv.CellIsEmpty(cell) {
-        cell = cell + 1
+        cell++
     }
     return cell
 }
