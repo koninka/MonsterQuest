@@ -127,7 +127,11 @@ func (i *Item) GetFullInfo() consts.JsonType {
     return msg
 }
 
-func (i *Item) SetCell(cell int64){
+func (i *Item) GetCell() int64 {
+    return i.cell
+}
+
+func (i *Item) SetCell(cell int64) {
     i.cell = cell
 }
 

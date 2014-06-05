@@ -256,12 +256,6 @@ func (obj *ActiveObject) ClearAttackPoint() {
     obj.AttackPoint = nil
 }
 
-func (obj *ActiveObject) MoveItem(item *Item, cell int64){
-    if obj.Inventory.CellIsEmpty(cell){
-        item.SetCell(cell)
-    }
-}
-
 func (obj *ActiveObject) AddItem(item *Item) {
     obj.Inventory.Items[item.GetID()] = item
     cell := obj.Inventory.FindEmptyCell()

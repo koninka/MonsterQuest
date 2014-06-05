@@ -100,6 +100,25 @@ func (p *Player) Unequip(slotName string) bool {
     return true
 }
 
+func (p *Player) Equipped(item *gameObjectsBase.Item) bool {
+    for _, slot := range p.slots {
+        if slot.item == item {
+            return true
+        }
+    }
+    return false
+}
+
+func (p *Player) MoveItem(item *gameObjectsBase.Item, cell int64) bool {
+    if item.GetOwner() != p || p.Equipped(item) {
+        return false
+    }
+    if p.Inventory.CellIsEmpty(cell) {
+        item.SetCell(cell)
+    }
+    return true
+}
+
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
     slots := make(map[string] *slot)
     slots["weapon"] = newSlot(consts.ITEM_T_WEAPON)
