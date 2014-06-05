@@ -3,6 +3,7 @@ define({
 	grass  : "/imgs/grass_1.png",
 	wall   : "/imgs/wall_1.png",
     inventory_cell : "/imgs/inventory_cell.png",
+    item : "/imgs/angband/Ring of Tulkas.png",
 	zombie : {
 		corpse: "/imgs/zombie/zombie_corpse_1.png",
 		legs  : [
