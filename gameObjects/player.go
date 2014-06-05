@@ -25,7 +25,7 @@ var kind *playerKind
 
 func getPlayerKind() *playerKind {
     if kind == nil {
-        kind = &playerKind{gameObjectsBase.NewKind("p")}
+        kind = &playerKind{gameObjectsBase.NewKind()}
         kind.SetRace(consts.PLAYER_RACE)
         kind.Flags = append(kind.Flags, gameObjectsFlags.GetFlag("CAN_MOVE"))
         kind.Flags = append(kind.Flags, gameObjectsFlags.GetFlag("CAN_BLOW"))

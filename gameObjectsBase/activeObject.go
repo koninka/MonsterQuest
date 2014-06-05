@@ -29,7 +29,6 @@ type Kinder interface {
     GetName() string
     GetDescription() string
     AddFlag(Flager)
-    GetSymbol() string
     CreateDropCount() int
 }
 
@@ -67,13 +66,8 @@ type Activer interface {
 /*==========STRUCTS AND IMPLEMENTATION==============*/
 
 type Kind struct {
-    symbol string
     Race int
     Flags []Flager
-}
-
-func (k* Kind) GetSymbol() string {
-    return k.symbol
 }
 
 func (k *Kind) GetRace() int {
@@ -96,8 +90,8 @@ func (k *Kind) CreateDropCount() int {
     return 0
 }
 
-func NewKind(symbol string) Kind {
-    return Kind{symbol, consts.NO_RACE, make([]Flager, 0, 1000)}
+func NewKind() Kind {
+    return Kind{consts.NO_RACE, make([]Flager, 0, 1000)}
 }
 
 type ActiveObject struct {
@@ -286,7 +280,6 @@ func (obj *ActiveObject) GetInfo() consts.JsonType {
     info := obj.GameObject.GetInfo()
     info["hp"] = obj.HP
     info["max_hp"] = obj.MaxHP
-    info["symbol"] = obj.Kind.GetSymbol()
     return info
 }
 
