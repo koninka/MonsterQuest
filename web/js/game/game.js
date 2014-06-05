@@ -134,12 +134,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
                   th.setDictionary(data.dictionary);
                   break;
                case "look":
-                  //if (th.firstLook) {
-                  //   th.defineRadiusFromMap(data['map']);
-                  //   th.player.InitAnimation(true, th.player);
-                  //   th.firstLook = false;
-                 // }
-                  console.log(JSON.stringify(data['actors']))
+                  
                   th.setPlayerCoords(data.x, data.y);
                   //th.setHp(data['hp']);
                   th.setMap(data['map'], th.player.pt);
@@ -147,7 +142,6 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
                   th.SetInventory(data.inventory);
                   break;
                case "attack":
-                  //if(th.firstLook) return;
                   th.attack(data);
                   break;
             }
