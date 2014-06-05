@@ -63,7 +63,6 @@ func (p *Player) GetInfo() consts.JsonType {
 }
 
 func (p *Player) Do() {
-    //p.ActiveObject.Do()
     p.DoWithObj(p)
     p.Dir = -1
 }
