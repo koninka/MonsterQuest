@@ -24,6 +24,7 @@ define(['global', 'OPTIONS', 'item'], function(GLOBAL, OPTIONS, Item){
                 GLOBAL.game.sendViaWS({action: "equip", id: m.id, slot: fund_slot(m)});
             }
         }
+        this.onClick = function(data){}
         this.onRightClick = function(data){
             data.originalEvent.preventDefault();
             var keys = KeyboardJS.activeKeys();
