@@ -21,6 +21,10 @@ func (inv *InventoryObj) FindEmptyCell() (cell int64) {
     return cell
 }
 
+func (inv *InventoryObj) GetItem(id int64) *Item {
+	return inv.Items[id]
+}
+
 func NewInventoryObj() *InventoryObj {
 	return &InventoryObj{make(map[int64]*Item)}
 }
