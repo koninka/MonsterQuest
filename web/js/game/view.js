@@ -148,49 +148,10 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
                 this.actors[i].Destroy();
                 delete this.actors[i];
             }
-        /*if(last){
-            if(this._examine){
-                graphic.stage.swapChildren(graphic.stage.children[graphic.stage.children.length-2], this.bounds);
-                graphic.stage.swapChildren(graphic.stage.children[graphic.stage.children.length-1], this._examine);
-            } else 
-                graphic.stage.swapChildren(this.bounds, last.container);
-        }*/
     }
-
-    /*View.prototype.setItems = function(items){
-        if(!items) return;
-        var items_on_scene = {};
-        for(var i = 0; i < items.length; ++i){
-            var item = items[i];
-            var id = item.id;
-            if(this.items[id]){
-                this.items[id].x = item.x;
-                this.items[id].y = item.y;
-            } else {
-                this.items[id] = item;
-            }
-            founded_items[id] = true;
-        }
-        for(var i in this.items){
-            if(!founded_items[i]){
-                delete this.items[i];
-                //RemoveItem(this.items[i]);
-            }
-        }
-    }*/
 
     View.prototype.setMap = function(map, player_pos){
         this.background.SetMap(map, player_pos)
-    }
-
-    View.prototype.actorInfo = function(symbol){
-
-        var t = actorInfo[this.dictionary[symbol]];
-        if (!t){
-
-            t = actorInfo['player'];
-        }
-        return t;
     }
 
     View.prototype.setDictionary = function(dict){
