@@ -45,6 +45,7 @@ define(['global', 'OPTIONS', 'item'], function(GLOBAL, OPTIONS, Item){
             this.dragging = true;
         }
         this.drawable.mouseup = this.drawable.mouseupoutside = function(data){
+            if(!this.dragging) return;
             this.alpha = 1;
             this.dragging = false;
             //var newPosition = this.data.getLocalPosition(this.parent);
