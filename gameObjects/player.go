@@ -86,6 +86,7 @@ func (p *Player) Equip(item *gameObjectsBase.Item, slotName string) bool {
     if slot == nil || slot.itemType != item.GetItemType() {
         return false
     }
+    item.SetCell(-1)
     slot.item = item
     return true
 }
@@ -95,6 +96,8 @@ func (p *Player) Unequip(slotName string) bool {
     if slot == nil {
         return false
     }
+    cell := p.Inventory.FindEmptyCell()
+    slot.item.SetCell(cell)
     slot.item = nil
     return true
 }
