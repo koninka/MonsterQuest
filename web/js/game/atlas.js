@@ -171,7 +171,7 @@ define({
     "Thalkettoth" : "/imgs/angband/Thalkettoth.png",
     "Shield of Gil-galad" : "/imgs/angband/Shield of Gil-galad.png",
     "Shield of Thorin" : "/imgs/angband/Shield of Thorin.png",
-    "Shield of AnГЎrion" : "/imgs/angband/Shield of AnГЎrion.png",
+    "Shield of Anárion" : "/imgs/angband/Shield of Anárion.png",
     "Helm of Celebrimbor" : "/imgs/angband/Helm of Celebrimbor.png",
     "Helm of Thranduil" : "/imgs/angband/Helm of Thranduil.png",
     "Crown of Gondor" : "/imgs/angband/Crown of Gondor.png",
