@@ -184,7 +184,6 @@ func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
             p.AddItem(item)
             item.SetOwner(p)
             g.field.UnlinkFromCells(item)
-            fmt.Println("unlink", item)
             res["result"] = "ok"
         } else {
             res["result"] = "badId"
@@ -398,7 +397,6 @@ func (g *Game) CreatePlayer(sid string) int64 {
 }
 
 func (g *Game) getObjectById(id int64) (gameObjectsBase.GameObjecter, bool) {
-    fmt.Println(g.items.items[id])
     if g.players.players[id] != nil {
         return g.players.players[id], true
     } else if g.mobs.mobs[id] != nil {
@@ -412,7 +410,6 @@ func (g *Game) getObjectById(id int64) (gameObjectsBase.GameObjecter, bool) {
 
 func (g *Game) examineAction(json consts.JsonType) consts.JsonType {
     res := make(consts.JsonType)
-    fmt.Println(fmt.Sprintf("id = %s", json["id"]))
     idParam := json["id"]
     if idParam == nil {
         res["result"] = "badId"
