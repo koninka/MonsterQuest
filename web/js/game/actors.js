@@ -1,5 +1,5 @@
-define(['actor', 'actor_animTopDown', 'actor_rpg', 'actor_simpleTopDown', 'actor_w_container', 'item'], function(
-    Actor, ActorATD, ActorRPG, ActorSTD, ActorWC, Item
+define(['actor', 'actor_animTopDown', 'actor_rpg', 'actor_simpleTopDown', 'actor_w_container', 'item', 'actor_angband'], function(
+    Actor, ActorATD, ActorRPG, ActorSTD, ActorWC, Item, ActorAngband
 ){
     return {
             Actor : Actor,
@@ -7,6 +7,7 @@ define(['actor', 'actor_animTopDown', 'actor_rpg', 'actor_simpleTopDown', 'actor
         ActorRPG : ActorRPG,
         ActorSTD : ActorSTD,
         ActorWC  : ActorWC,
-        Item : Item
+        Item : Item,
+        ActorAngband : ActorAngband
     }
 })
