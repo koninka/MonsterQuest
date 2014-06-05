@@ -262,6 +262,10 @@ func (obj *ActiveObject) AddItem(item *Item) {
     item.SetCell(cell)
 }
 
+func (obj *ActiveObject) DeleteItem(item *Item) {
+    delete(obj.Inventory.Items, item.GetID())
+}
+
 func (obj *ActiveObject) DropItem(item *Item) {
     delete(obj.Inventory.Items, item.GetID())
 }

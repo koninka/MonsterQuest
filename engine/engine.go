@@ -228,12 +228,12 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
         id := int64(idParam.(float64))
         item := g.items.items[id]
         p := g.players.getPlayerBySession(json["sid"].(string))
-        if item == nil || item.GetOwner() != p || geometry.Distance(p.GetCenter(), item.GetCenter()) > consts.PICK_UP_RADIUS {
+        if item == nil || (item.HasOwner() && item.GetOwner() != p) || geometry.Distance(p.GetCenter(), item.GetCenter()) > consts.PICK_UP_RADIUS {
             res["result"] = "badId"
         } else {
             g.items.deleteItem(item)
-            if item.GetOwner() == p {
-                delete(p.GetItems(), id)
+            if item.HasOwner() {
+                p.DeleteItem(item)
             }
             res["result"] = "ok"
         }
