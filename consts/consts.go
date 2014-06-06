@@ -161,6 +161,10 @@ var CharacteristicDefaultValueMapping = map[int] float64 {
     CHARACTERISTIC_DEFENSE           : DEFAULT_DEFENSE,
     CHARACTERISTIC_MAGICK_RESISTANCE : DEFAULT_MAGICK_RESISTANCE,
 }
+
+const (
+    BONUS_PERCENT = iota
+    BONUS_CONSTANT
 )
 
 var (
