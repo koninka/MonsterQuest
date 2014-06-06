@@ -1,29 +1,110 @@
 package gameObjectsBase
 
+import (
+    "MonsterQuest/consts"
+)
+
 type InventoryObj struct {
 	Items map[int64] *Item
+    kinds map[int64] int64 //kind_id to item_id on map
+    cells map[int] int64
 }
 
-func (inv* InventoryObj) AddItem(i* Item, owner Activer) {
-    inv.Items[i.GetID()] = i
-    i.SetOwner(owner)
+func (inv* InventoryObj) GetInfo() []consts.JsonType {
+    inventory := make([] consts.JsonType, 0)
+    for cell, item_id := range inv.cells {
+        inventory = append(inventory, inv.Items[item_id].GetInfo())
+        inventory[len(inventory) - 1]["cell"] = cell
+    }
+    return inventory
 }
 
-func (inv *InventoryObj) CellIsEmpty(cell int64) bool {
-    for _, i  := range inv.Items {
-        if cell == i.cell {
-            return false
+func (inv* InventoryObj) DropItem(i* Item) int {
+    delete(inv.Items, i.GetID())
+    i.SetOwner(nil)
+    var needDeleteKind bool = true
+    for kind_id, item_id := range inv.kinds {
+        if kind_id == i.GetKindId() && item_id != i.GetID() {
+            needDeleteKind = false
+            break
         }
     }
-    return true
+    if needDeleteKind {
+        delete(inv.kinds, i.GetKindId())
+    }
+    place := inv.getPlaceById(i.GetID())
+    return place
 }
 
-func (inv *InventoryObj) FindEmptyCell() (cell int64) {
-    cell = 0
-    for !inv.CellIsEmpty(cell) {
-        cell++
+func (inv* InventoryObj) AddItem(i* Item, owner Activer) int {
+    var place int = -1
+    if item_id, isExist := inv.kinds[i.GetKindId()]; isExist {
+        if inv.Items[item_id].IsHeapItem() {
+            i = nil
+            place = inv.getPlaceById(item_id)
+            // inv.Items[item_id]
+            // item.IncAmount
+        }
+    } else {
+        inv.kinds[i.GetKindId()] = i.GetID()
     }
-    return cell
+    if place == -1 {
+        inv.Items[i.GetID()] = i
+        i.SetOwner(owner)
+        place = inv.placeItem(i.GetID())
+    }
+    return place
+}
+
+func (inv* InventoryObj) RestoreItem(i* Item, place int) {
+    var id int64 = i.GetID()
+    inv.cells[place] = id
+    inv.kinds[i.GetKindId()] = id
+    inv.Items[i.GetID()] = i
+}
+
+func (inv* InventoryObj) getPlaceById(id int64) int {
+    for cell, item_id := range inv.cells {
+        if item_id == id {
+            return cell
+        }
+    }
+    return -1
+}
+
+func (inv *InventoryObj) EquipItem(i* Item) {
+    for cell, item_id := range inv.cells {
+        if item_id == i.GetID() {
+            delete(inv.cells, cell)
+            break
+        }
+    }
+}
+
+func (inv *InventoryObj) UnequipItem(i* Item) {
+    inv.placeItem(i.GetID())
+}
+
+func (inv* InventoryObj) MoveItem(i* Item, cell int) {
+    if iid, isExist := inv.cells[cell]; isExist {
+        if i.GetID() == iid {
+            return
+        }
+        inv.cells[inv.getPlaceById(i.GetID())] = inv.cells[cell]
+    }
+    inv.cells[cell] = i.GetID()
+}
+
+func (inv *InventoryObj) placeItem(id int64) int {
+    var idx int = 0
+    for true {
+        if _, isExist := inv.cells[idx]; !isExist {
+            inv.cells[idx] = id
+            break
+        }
+        idx++
+    }
+    return idx
 }
 
 func (inv *InventoryObj) GetItem(id int64) *Item {
@@ -31,5 +112,5 @@ func (inv *InventoryObj) GetItem(id int64) *Item {
 }
 
 func NewInventoryObj() *InventoryObj {
-	return &InventoryObj{make(map[int64]*Item)}
+	return &InventoryObj{make(map[int64]*Item), make(map[int64] int64), make(map[int]int64)}
 }

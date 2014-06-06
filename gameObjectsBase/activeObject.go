@@ -60,7 +60,8 @@ type Activer interface {
     GetAttackPoint() *geometry.Point
     ClearAttackPoint()
     GetItems() map[int64] *Item
-    AddItem(item *Item)
+    AddItem(item *Item) int
+    DropItem(item *Item) int
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -256,19 +257,16 @@ func (obj *ActiveObject) ClearAttackPoint() {
     obj.AttackPoint = nil
 }
 
-func (obj *ActiveObject) AddItem(item *Item) {
-    obj.Inventory.AddItem(item, obj)
-    cell := obj.Inventory.FindEmptyCell()
-    item.SetCell(cell)
+func (obj *ActiveObject) AddItem(item *Item) int {
+    return obj.Inventory.AddItem(item, obj)
 }
 
 func (obj *ActiveObject) DeleteItem(item *Item) {
     delete(obj.Inventory.Items, item.GetID())
 }
 
-func (obj *ActiveObject) DropItem(item *Item) {
-    delete(obj.Inventory.Items, item.GetID())
-    item.SetOwner(nil)
+func (obj *ActiveObject) DropItem(item *Item) int {
+    return obj.Inventory.DropItem(item)
 }
 
 func (obj *ActiveObject) GetItems() map[int64] *Item {

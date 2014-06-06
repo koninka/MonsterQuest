@@ -392,11 +392,14 @@ func (g *Game) CreatePlayer(sid string) int64 {
     stmt.QueryRow(sid).Scan(&dbId, &login, &x, &y)
     p := gameObjects.NewPlayer(utils.GenerateId(), dbId, login, sid, x, y)
     g.players.add(p)
-    rows, _ := db.Query("SELECT item_id FROM users_inventory WHERE user_id = ?", dbId)
+    rows, _ := db.Query("SELECT item_id, amount, place FROM users_inventory WHERE user_id = ?", dbId)
     for rows.Next() {
-        var iid int64
-        rows.Scan(&iid)
-        p.AddItem(gameObjectsBase.NewItem(iid, p))
+        var (
+            iid int64
+            amount, place int
+        )
+        rows.Scan(&iid, &amount, &place)
+        p.RestoreItem(gameObjectsBase.NewItem(iid, p), place)
     }
     return p.GetID()
 }
@@ -430,11 +433,7 @@ func (g *Game) examineAction(json consts.JsonType) consts.JsonType {
             }
             p := g.players.getPlayerBySession(json["sid"].(string))
             if p.GetID() == id {
-                inventory := make([] consts.JsonType, 0, 1000)
-                for _, item := range p.GetItems() {
-                    inventory = append(inventory, item.GetInfo())
-                }
-                res["inventory"] = inventory
+                res["inventory"] = p.GetInventoryInfo()
             }
             res["result"] = "ok"
         }

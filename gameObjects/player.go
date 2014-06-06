@@ -56,6 +56,10 @@ func (p *Player) GetType() string {
     return consts.PLAYER_TYPE
 }
 
+func (p* Player) GetInventoryInfo() []consts.JsonType {
+    return p.Inventory.GetInfo()
+}
+
 func (p *Player) GetInfo() consts.JsonType {
     info := p.ActiveObject.GetInfo()
     info["login"] = p.Login
@@ -65,13 +69,13 @@ func (p *Player) GetInfo() consts.JsonType {
 
 func (p *Player) GetFullInfo() consts.JsonType {
     info := p.GetInfo()
-    slots := make(map[string] consts.JsonType)
-    for slot, slotName := range consts.SlotNameMapping {
-        if p.slots[slot].item != nil {
-            slots[slotName] = p.slots[slot].item.GetFullInfo()
-        }
-    }
-    info["slots"] = slots
+    // slots := make(map[string] consts.JsonType)
+    // for slot, slotName := range consts.SlotNameMapping {
+    //     if p.slots[slot].item != nil {
+    //         slots[slotName] = p.slots[slot].item.GetFullInfo()
+    //     }
+    // }
+    // info["slots"] = slots
     return info
 }
 
@@ -94,11 +98,26 @@ func (p *Player) Attack() consts.JsonType {
     return res
 }
 
+func (p* Player) RestoreItem(item *gameObjectsBase.Item, place int) {
+    p.Inventory.RestoreItem(item, place)
+}
+
+func (p* Player) DropItem(item *gameObjectsBase.Item) int {
+    db := connect.CreateConnect()
+    place := p.ActiveObject.DropItem(item)
+    _, err := db.Exec("CALL drop_user_item(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, 1);
+    if err != nil {
+        //-
+    }
+    return place
+    // return err == nil
+}
+
 func (p* Player) PickUpItem(item *gameObjectsBase.Item) bool {
     db := connect.CreateConnect()
-    _, err := db.Exec("CALL add_user_item(?, ?)", p.DBId, item.GetKindId());
-    if err == nil {
-        p.AddItem(item)
+    _, err := db.Exec("CALL add_user_item(?, ?, ?, ?)", p.DBId, item.GetKindId(), p.AddItem(item), 1);
+    if err != nil {
+        //
     }
     return err == nil
 }
@@ -108,7 +127,7 @@ func (p *Player) Equip(item *gameObjectsBase.Item, slotName string) bool {
     if slot == nil || slot.itemType != item.GetItemType() {
         return false
     }
-    item.SetCell(-1)
+    p.Inventory.EquipItem(slot.item)
     slot.item = item
     return true
 }
@@ -118,8 +137,7 @@ func (p *Player) Unequip(slotName string) bool {
     if slot == nil {
         return false
     }
-    cell := p.Inventory.FindEmptyCell()
-    slot.item.SetCell(cell)
+    p.Inventory.UnequipItem(slot.item)
     slot.item = nil
     return true
 }
