@@ -172,11 +172,11 @@ func (p *Player) CanPickUp(item *gameObjectsBase.Item) bool {
     return p.Inventory.GetWeight() + item.GetWeight() <= p.GetCapacity()
 }
 
-func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
+func NewPlayer(id, dbId int64, login, sid string, x, y float64) *Player {
     slots := make(map[int] *slot)
     for slotType, itemType := range consts.SlotItemMapping {
         slots[slotType] = newSlot(itemType)
     }
-    return Player{gameObjectsBase.NewActiveObject(id, consts.INITIAL_PLAYER_HP, x, y, getPlayerKind()),
+    return &Player{gameObjectsBase.NewActiveObject(id, consts.INITIAL_PLAYER_HP, x, y, getPlayerKind()),
         login, sid, dbId, wpns.GetWeapon(consts.FIST_WEAP), slots}
 }
