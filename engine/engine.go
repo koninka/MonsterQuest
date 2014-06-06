@@ -164,7 +164,7 @@ func (g *Game) moveItem(json consts.JsonType) consts.JsonType{
         res["result"] = "badCell"
     } else {
         item := g.items.items[int64(idParam.(float64))]
-        cell := int64(cellParam.(float64))
+        cell := int(cellParam.(float64))
         p := g.players.getPlayerBySession(json["sid"].(string))
         if item == nil || !p.MoveItem(item, cell) {
             res["result"] = "badId"

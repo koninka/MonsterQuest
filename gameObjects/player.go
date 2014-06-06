@@ -138,13 +138,11 @@ func (p *Player) Equipped(item *gameObjectsBase.Item) bool {
     return false
 }
 
-func (p *Player) MoveItem(item *gameObjectsBase.Item, cell int64) bool {
+func (p *Player) MoveItem(item *gameObjectsBase.Item, cell int) bool {
     if item.GetOwner() != p || p.Equipped(item) {
         return false
     }
-    if p.Inventory.CellIsEmpty(cell) {
-        item.SetCell(cell)
-    }
+    p.Inventory.MoveItem(item, cell)
     return true
 }
 
