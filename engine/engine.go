@@ -427,6 +427,14 @@ func (g *Game) examineAction(json consts.JsonType) consts.JsonType {
             for k, v := range obj.GetFullInfo() {
                 res[k] = v
             }
+            p := g.players.getPlayerBySession(json["sid"].(string))
+            if p.GetID() == id {
+                inventory := make([] consts.JsonType, 0, 1000)
+                for _, item := range p.GetItems() {
+                    inventory = append(inventory, item.GetInfo())
+                }
+                res["inventory"] = inventory
+            }
             res["result"] = "ok"
         }
     }    
@@ -479,11 +487,6 @@ func (g *Game) lookAction(sid string) consts.JsonType {
         }
     }
     res["actors"] = visibleObjects
-    inventory := make([]consts.JsonType, 0, 1000)
-    for _, item := range player.GetItems(){
-        inventory = append(inventory, item.GetInfo())
-    }
-    res["inventory"] = inventory
 	res["x"] = player.Center.X
 	res["y"] = player.Center.Y
     return res
