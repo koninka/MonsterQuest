@@ -111,7 +111,7 @@ func InitGameItems() {
         )
         rows.Scan(&id, &name, &atype_str, &weight, &alloc_info_str, &msg, &desc, &bonusStr)
         atype := strings.Split(atype_str, ":")
-        gameItems.items[id] = &ItemKind{id, name, weight, msg, desc, utils.ParseInt(atype[0]), utils.ParseInt(atype[1])}
+        gameItems.items[id] = &ItemKind{id, name, weight, msg, desc, utils.ParseInt(atype[0]), utils.ParseInt(atype[1]), make([] *Bonus, 0, 30)}
         alloc_info := strings.Split(alloc_info_str, ":");
         prob := utils.ParseInt(alloc_info[0])
         min_d := utils.ParseInt64(alloc_info[1]) - 1
@@ -206,5 +206,5 @@ func NewItem(iid int64, owner Activer) *Item {
 }
 
 func newItem(ik *ItemKind, owner Activer) *Item {
-    return &Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, ik, make([] *Bonus, 0, 10), owner}
+    return &Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, ik, owner}
 }
