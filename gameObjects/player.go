@@ -7,6 +7,7 @@ import (
     "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/consts"
     "MonsterQuest/geometry"
+    "MonsterQuest/connect"
 )
 
 type playerKind struct {
@@ -79,6 +80,15 @@ func (p *Player) Attack() consts.JsonType {
     }
     p.Target = nil
     return res
+}
+
+func (p* Player) PickUpItem(item *gameObjectsBase.Item) bool {
+    db := connect.CreateConnect()
+    _, err := db.Exec("CALL add_user_item(?, ?)", p.DBId, item.GetKindId());
+    if err == nil {
+        p.AddItem(item)
+    }
+    return err == nil
 }
 
 func (p *Player) Equip(item *gameObjectsBase.Item, slotName string) bool {

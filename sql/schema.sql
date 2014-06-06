@@ -60,6 +60,14 @@ CREATE TABLE artifacts (
    UNIQUE(name)
 );
 
+CREATE TABLE users_inventory (
+   id      INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   user_id INT NOT NULL REFERENCES users(id)     ON DELETE CASCADE,
+   item_id INT NOT NULL REFERENCES artifacts(id) ON DELETE CASCADE,
+   amount  INT NOT NULL DEFAULT 1,
+   UNIQUE(user_id, item_id)
+);
+
 DELIMITER //
 
 DROP PROCEDURE IF EXISTS `add_user_session` //
@@ -70,6 +78,16 @@ BEGIN
    DELETE FROM `sessions` WHERE `user_id` = uuser_id;
    IF uuser_id is NOT NULL THEN
       INSERT INTO `sessions`(`user_id`, `sid`) VALUES(uuser_id, uuid);
+   END IF;
+END//
+
+DROP PROCEDURE IF EXISTS `add_user_item` //
+CREATE PROCEDURE `add_user_item`(IN `uid` INT, IN `iid` INT)
+BEGIN
+   IF (SELECT EXISTS (SELECT 1 FROM `users_inventory` WHERE `user_id` = uid AND `item_id` = iid)) THEN
+      UPDATE `users_inventory` SET `amount` = `amount` + 1 WHERE `user_id` = uid  AND `item_id` = iid;
+   ELSE
+      INSERT INTO `users_inventory`(`user_id`, `item_id`) VALUES(uid, iid);
    END IF;
 END//
 
