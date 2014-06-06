@@ -7,6 +7,7 @@ import (
     "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/consts"
     "MonsterQuest/geometry"
+    "MonsterQuest/connect"
 )
 
 type playerKind struct {
@@ -93,11 +94,21 @@ func (p *Player) Attack() consts.JsonType {
     return res
 }
 
+func (p* Player) PickUpItem(item *gameObjectsBase.Item) bool {
+    db := connect.CreateConnect()
+    _, err := db.Exec("CALL add_user_item(?, ?)", p.DBId, item.GetKindId());
+    if err == nil {
+        p.AddItem(item)
+    }
+    return err == nil
+}
+
 func (p *Player) Equip(item *gameObjectsBase.Item, slotName string) bool {
     slot := p.slots[slotName]
     if slot == nil || slot.itemType != item.GetItemType() {
         return false
     }
+    item.SetCell(-1)
     slot.item = item
     return true
 }
@@ -107,6 +118,8 @@ func (p *Player) Unequip(slotName string) bool {
     if slot == nil {
         return false
     }
+    cell := p.Inventory.FindEmptyCell()
+    slot.item.SetCell(cell)
     slot.item = nil
     return true
 }
@@ -135,7 +148,7 @@ func (p *Player) MoveItem(item *gameObjectsBase.Item, cell int64) bool {
     return true
 }
 
-func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
+func NewPlayer(id, dbId int64, login, sid string, x, y float64) *Player {
     slots := make(map[string] *slot)
     slots["weapon"] = newSlot(consts.ITEM_T_WEAPON)
     slots["ring"] = newSlot(consts.ITEM_T_RING)
@@ -145,6 +158,6 @@ func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
     slots["helmet"] = newSlot(consts.ITEM_T_HELMET)
     slots["boots"] = newSlot(consts.ITEM_T_BOOTS)
     slots["gloves"] = newSlot(consts.ITEM_T_GLOVES)
-    return Player{gameObjectsBase.NewActiveObject(id, consts.INITIAL_PLAYER_HP, x, y, getPlayerKind()),
+    return &Player{gameObjectsBase.NewActiveObject(id, consts.INITIAL_PLAYER_HP, x, y, getPlayerKind()),
         login, sid, dbId, wpns.GetWeapon(consts.FIST_WEAP), slots}
 }

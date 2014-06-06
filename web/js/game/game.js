@@ -121,7 +121,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         } else if (result == "badSid") {
             utils.gameShutDown("Bad user's security ID");
         } else if (result == "badId") {
-            utils.gameShutDown("Bad ID");
+            //utils.gameShutDown("Bad ID");
         } else {
             switch (data["action"]) {
                case "examine":

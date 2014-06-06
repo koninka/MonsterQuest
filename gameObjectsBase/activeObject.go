@@ -257,7 +257,7 @@ func (obj *ActiveObject) ClearAttackPoint() {
 }
 
 func (obj *ActiveObject) AddItem(item *Item) {
-    obj.Inventory.Items[item.GetID()] = item
+    obj.Inventory.AddItem(item, obj)
     cell := obj.Inventory.FindEmptyCell()
     item.SetCell(cell)
 }
@@ -268,6 +268,7 @@ func (obj *ActiveObject) DeleteItem(item *Item) {
 
 func (obj *ActiveObject) DropItem(item *Item) {
     delete(obj.Inventory.Items, item.GetID())
+    item.SetOwner(nil)
 }
 
 func (obj *ActiveObject) GetItems() map[int64] *Item {

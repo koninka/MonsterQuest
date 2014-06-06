@@ -1,4 +1,4 @@
-define(['global', 'OPTIONS'], function(GLOBAL, OPTIONS){
+define(['global', 'options'], function(GLOBAL, OPTIONS){
 
     function Item(item){
         this.item = item;

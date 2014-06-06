@@ -1,6 +1,7 @@
 define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS){
     /* cells 20 * 10 */
-    var inventory_size = {x: 20, y: 10};
+    var inventory_size = OPTIONS.inventory_size;
+    var TS = OPTIONS.TILE_SIZE;
     function Inventory(screen){
         this.items = [];
         this.InitContainer();
@@ -8,6 +9,33 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
 
     Inventory.prototype.constructor = Inventory;
 
+    Inventory.prototype.InitCells = function(){
+        for(var i = 0; i < inventory_size.x; ++i){
+            var x = TS * i;
+            for(var j = 0; j < inventory_size.y; ++j){
+                var y = TS * j;
+                this.AddCell('inventory_cell', x, y);
+            }
+        }
+    }
+
+    Inventory.prototype.AddCell = function(img, x, y){
+        var cell = GLOBAL.graphic.Sprite(img);
+        cell.position.x = x;
+        cell.position.y = y;
+        this.drawable.addChild(cell);
+        return cell;
+    }
+
+    Inventory.prototype.InitSlots = function(){
+        var x = -TS;
+        var y = 0;
+        
+        for(var j = 0; j < OPTIONS.slots.length; ++j){
+            var y = TS * j;
+            this.AddCell(OPTIONS.slots[j], x, y);
+        }
+    }
 
     Inventory.prototype.InitContainer = function() {
         this.drawable = new PIXI.DisplayObjectContainer();
@@ -15,18 +43,9 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         GLOBAL.graphic.stage.addChild(this.drawable);
         this.drawable.position.x = 200;
         this.drawable.position.y = 200;
+        this.InitCells();
+        this.InitSlots();
 
-        var TS = OPTIONS.TILE_SIZE;
-        for(var i = 0; i < inventory_size.x; ++i){
-            var x = TS * i;
-            for(var j = 0; j < inventory_size.y; ++j){
-                var y = TS * j;
-                var cell = GLOBAL.graphic.Sprite('inventory_cell');
-                cell.position.x = x;
-                cell.position.y = y;
-                this.drawable.addChild(cell);
-            }
-        }
     };
 
     Inventory.prototype.AddItem = function(item){
@@ -39,6 +58,39 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         this.drawable.removeChild(i.drawable);
         delete this.items[item.id];
     }
+/*case consts.ITEM_T_AMULET:
+            return "amulet"
+        case consts.ITEM_T_RING:
+            return "ring"
+        case consts.ITEM_T_ARMOR:
+            return "armor"
+        case consts.ITEM_T_SHIELD:
+            return "shield"
+        case consts.ITEM_T_HELMET:
+            return "helmet"
+        case consts.ITEM_T_GLOVES:
+            return "gloves"
+        case consts.ITEM_T_BOOTS:
+            return "boots"
+        case consts.ITEM_T_WEAPON:
+            return "weapon"
+        case consts.ITEM_T_POTION:
+            return "potion"
+        case consts.ITEM_T_S*/
+   // function ItemToSlot(item){
+    //    var n = 0;
+        var itemType = {
+            "helmet" : 0,
+            "amulet" : 1,
+            "armor" : 2,
+            "gloves" : 3,
+            "ring" : 4, //5
+            "weapon" : 6,
+            "shield" : 7,
+            "boots" : 8,
+
+        }
+   // }
 
     Inventory.prototype.SetItems = function(items){
         if(!items) return;
@@ -58,8 +110,13 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
                 var x = cell_x;
                 var y = cell_y;
                 if(item.cell !== null){
-                    y = Math.floor(item.cell / inventory_size.x);
-                    x = item.cell % inventory_size.x;
+                    if(item.cell == -1){
+                        x = -1;
+                        y = itemType[item.itemType];
+                    } else {
+                        y = Math.floor(item.cell / inventory_size.x);
+                        x = item.cell % inventory_size.x;
+                    }
                 }
                 this.items[id].SetPosition({x: x, y: y});
             } else {

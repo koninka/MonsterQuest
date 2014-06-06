@@ -37,6 +37,7 @@ func GetTypeByIota(itemType int) string {
 type Bonus struct {}
 
 type ItemKind struct {
+    dbId int64
     name string
     weight int
     message string
@@ -85,7 +86,7 @@ func InitGameItems() {
         )
         rows.Scan(&id, &name, &atype_str, &weight, &alloc_info_str, &msg, &desc)
         atype := strings.Split(atype_str, ":")
-        gameItems.items[id] = &ItemKind{name, weight, msg, desc, utils.ParseInt(atype[0]), utils.ParseInt(atype[1])}
+        gameItems.items[id] = &ItemKind{id, name, weight, msg, desc, utils.ParseInt(atype[0]), utils.ParseInt(atype[1])}
         alloc_info := strings.Split(alloc_info_str, ":");
         prob := utils.ParseInt(alloc_info[0])
         min_d := utils.ParseInt64(alloc_info[1]) - 1
@@ -147,10 +148,22 @@ func (i* Item) SetPosition(p geometry.Point) {
     i.Center = p
 }
 
+func (i* Item) GetKindId() int64 {
+    return i.kind.dbId
+}
+
 func (i *Item) HasOwner() bool {
     return i.owner != nil
 }
 
 func (i *Item) GetItemType() int {
     return i.kind.itemType
+}
+
+func NewItem(iid int64, owner Activer) *Item {
+    return newItem(gameItems.items[iid], owner)
+}
+
+func newItem(ik *ItemKind, owner Activer) *Item {
+    return &Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, ik, make([] *Bonus, 0, 10), owner, 0}
 }

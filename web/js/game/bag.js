@@ -1,4 +1,4 @@
-define(['global', 'OPTIONS', 'item'], function(GLOBAL, OPTIONS, Item){
+define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
 
     function BagItem(item, number){
         this.item = item;
