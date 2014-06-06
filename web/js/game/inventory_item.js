@@ -1,4 +1,7 @@
-define(['global', 'OPTIONS', 'item'], function(GLOBAL, OPTIONS, Item){
+define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
+    function find_slot(item){
+        return undefined;
+    }
 
     var TS = OPTIONS.TILE_SIZE;
     function CoordsToCell(coords){
