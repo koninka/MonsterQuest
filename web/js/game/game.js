@@ -124,26 +124,29 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
             //utils.gameShutDown("Bad ID");
         } else {
             switch (data["action"]) {
-               case "examine":
-                  th.setExamineData(data);
-                  console.log(JSON.stringify(data));
-                  break
-               case "getOptions":
-                  th.setOptions(data['options']);
-               case "getDictionary":
-                  th.setDictionary(data.dictionary);
-                  break;
-               case "look":
+                case "examine":
+                    if(data.id != th.player.id)
+                        th.setExamineData(data);
+                    else
+                        th.SetInventory(data.inventory);
+                    console.log(JSON.stringify(data));
+                    break
+                case "getOptions":
+                    th.setOptions(data['options']);
+                case "getDictionary":
+                    th.setDictionary(data.dictionary);
+                    break;
+                case "look":
                   
-                  th.setPlayerCoords(data.x, data.y);
-                  //th.setHp(data['hp']);
-                  th.setMap(data['map'], th.player.pt);
-                  th.setActors(data['actors']);
-                  th.SetInventory(data.inventory);
-                  break;
-               case "attack":
-                  th.attack(data);
-                  break;
+                    th.setPlayerCoords(data.x, data.y);
+                    //th.setHp(data['hp']);
+                    th.setMap(data['map'], th.player.pt);
+                    th.setActors(data['actors']);
+                  
+                    break;
+                case "attack":
+                    th.attack(data);
+                    break;
             }
         }
     }
