@@ -111,6 +111,14 @@ func (inv *InventoryObj) GetItem(id int64) *Item {
 	return inv.Items[id]
 }
 
+func (inv *InventoryObj) GetWeight() int {
+    weight := 0
+    for _, item := range inv.Items {
+        weight += item.GetWeight()
+    }
+    return weight
+}
+
 func NewInventoryObj() *InventoryObj {
 	return &InventoryObj{make(map[int64]*Item), make(map[int64] int64), make(map[int]int64)}
 }
