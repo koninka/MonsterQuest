@@ -70,6 +70,67 @@ const (
     ITEM_ST_POLEARM
     ITEM_ST_BOW
 )
+
+const (
+    SLOT_WEAPON = iota
+    SLOT_LEFT
+    SLOT_RIGHT
+    SLOT_NECK
+    SLOT_BODY
+    SLOT_ARM
+    SLOT_HEAD
+    SLOT_HANDS
+    SLOT_FEET
+)
+
+var SlotItemMapping = map[int] int {
+    SLOT_WEAPON : ITEM_T_WEAPON,
+    SLOT_LEFT   : ITEM_T_RING,
+    SLOT_RIGHT  : ITEM_T_RING,
+    SLOT_NECK   : ITEM_T_AMULET,
+    SLOT_BODY   : ITEM_T_ARMOR,
+    SLOT_ARM    : ITEM_T_SHIELD,
+    SLOT_HEAD   : ITEM_T_HELMET,
+    SLOT_HANDS  : ITEM_T_GLOVES,
+    SLOT_FEET   : ITEM_T_BOOTS,
+}
+
+const (
+    SLOT_NAME_WEAPON = "WEAPON"
+    SLOT_NAME_LEFT   = "LEFT"
+    SLOT_NAME_RIGHT  = "RIGHT"
+    SLOT_NAME_NECK   = "NECK"
+    SLOT_NAME_BODY   = "BODY"
+    SLOT_NAME_ARM    = "ARM"
+    SLOT_NAME_HEAD   = "HEAD"
+    SLOT_NAME_HANDS  = "HANDS"
+    SLOT_NAME_FEET   = "FEET"
+)
+
+var NameSlotMapping = map[string] int {
+    SLOT_NAME_WEAPON : SLOT_WEAPON,
+    SLOT_NAME_LEFT   : SLOT_LEFT,
+    SLOT_NAME_RIGHT  : SLOT_RIGHT,
+    SLOT_NAME_NECK   : SLOT_NECK,
+    SLOT_NAME_BODY   : SLOT_BODY,
+    SLOT_NAME_ARM    : SLOT_ARM,
+    SLOT_NAME_HEAD   : SLOT_HEAD,
+    SLOT_NAME_HANDS  : SLOT_HANDS,
+    SLOT_NAME_FEET   : SLOT_FEET,
+}
+
+var SlotNameMapping = map[int] string {
+    SLOT_WEAPON : SLOT_NAME_WEAPON,
+    SLOT_LEFT   : SLOT_NAME_LEFT,
+    SLOT_RIGHT  : SLOT_NAME_RIGHT,
+    SLOT_NECK   : SLOT_NAME_NECK,
+    SLOT_BODY   : SLOT_NAME_BODY,
+    SLOT_ARM    : SLOT_NAME_ARM,
+    SLOT_HEAD   : SLOT_NAME_HEAD,
+    SLOT_HANDS  : SLOT_NAME_HANDS,
+    SLOT_FEET   : SLOT_NAME_FEET,
+}
+
 )
 
 var (
