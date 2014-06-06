@@ -65,7 +65,8 @@ CREATE TABLE users_inventory (
    user_id INT NOT NULL REFERENCES users(id)     ON DELETE CASCADE,
    item_id INT NOT NULL REFERENCES artifacts(id) ON DELETE CASCADE,
    amount  INT NOT NULL DEFAULT 1,
-   UNIQUE(user_id, item_id)
+   place   INT NOT NULL,
+   UNIQUE(user_id, item_id, place)
 );
 
 DELIMITER //
@@ -82,12 +83,27 @@ BEGIN
 END//
 
 DROP PROCEDURE IF EXISTS `add_user_item` //
-CREATE PROCEDURE `add_user_item`(IN `uid` INT, IN `iid` INT)
+CREATE PROCEDURE `add_user_item`(IN `uid` INT, IN `iid` INT, IN `place_num` INT, IN `amnt` INT)
 BEGIN
-   IF (SELECT EXISTS (SELECT 1 FROM `users_inventory` WHERE `user_id` = uid AND `item_id` = iid)) THEN
-      UPDATE `users_inventory` SET `amount` = `amount` + 1 WHERE `user_id` = uid  AND `item_id` = iid;
+   SET amnt = 1;
+   IF (SELECT EXISTS (SELECT 1 FROM `users_inventory` WHERE `user_id` = uid AND `item_id` = iid AND `place` = place_num)) THEN
+      UPDATE `users_inventory` SET `amount` = `amount` + amnt WHERE `user_id` = uid  AND `item_id` = iid AND `place` = place_num;
    ELSE
-      INSERT INTO `users_inventory`(`user_id`, `item_id`) VALUES(uid, iid);
+      INSERT INTO `users_inventory`(`user_id`, `item_id`, `place`, `amount`) VALUES(uid, iid, place_num, amnt);
+   END IF;
+END//
+
+DROP PROCEDURE IF EXISTS `drop_user_item` //
+CREATE PROCEDURE `drop_user_item`(IN `uid` INT, IN `iid` INT, IN `place_num` INT, IN `amnt` INT)
+BEGIN
+   DECLARE tbl_amnt INT;
+   SET amnt = 1;
+   UPDATE `users_inventory` SET `amount` = `amount` - amnt WHERE `user_id` = uid  AND `item_id` = iid AND `place` = place_num;
+   IF (SELECT EXISTS (SELECT 1 FROM `users_inventory` WHERE `user_id` = uid AND `item_id` = iid AND `place` = place_num)) THEN
+      SELECT `amount` INTO tbl_amnt FROM `users_inventory` WHERE `user_id` = uid AND `item_id` = iid AND `place` = place_num;
+      IF tbl_amnt <= 0 THEN
+         DELETE FROM `users_inventory` WHERE `user_id` = uid  AND `item_id` = iid AND `place` = place_num;
+      END IF;
    END IF;
 END//
 

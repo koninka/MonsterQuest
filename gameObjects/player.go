@@ -49,11 +49,15 @@ type Player struct {
     SID string
     DBId int64
     weapon fightBase.Blower
-    slots map[string] *slot
+    slots map[int] *slot
 }
 
 func (p *Player) GetType() string {
     return consts.PLAYER_TYPE
+}
+
+func (p* Player) GetInventoryInfo() []consts.JsonType {
+    return p.Inventory.GetInfo()
 }
 
 func (p *Player) GetInfo() consts.JsonType {
@@ -94,32 +98,46 @@ func (p *Player) Attack() consts.JsonType {
     return res
 }
 
+func (p* Player) RestoreItem(item *gameObjectsBase.Item, place int) {
+    p.Inventory.RestoreItem(item, place)
+}
+
+func (p* Player) DropItem(item *gameObjectsBase.Item) int {
+    db := connect.CreateConnect()
+    place := p.ActiveObject.DropItem(item)
+    _, err := db.Exec("CALL drop_user_item(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, 1);
+    if err != nil {
+        //-
+    }
+    return place
+    // return err == nil
+}
+
 func (p* Player) PickUpItem(item *gameObjectsBase.Item) bool {
     db := connect.CreateConnect()
-    _, err := db.Exec("CALL add_user_item(?, ?)", p.DBId, item.GetKindId());
-    if err == nil {
-        p.AddItem(item)
+    _, err := db.Exec("CALL add_user_item(?, ?, ?, ?)", p.DBId, item.GetKindId(), p.AddItem(item), 1);
+    if err != nil {
+        //
     }
     return err == nil
 }
 
-func (p *Player) Equip(item *gameObjectsBase.Item, slotName string) bool {
-    slot := p.slots[slotName]
+func (p *Player) Equip(item *gameObjectsBase.Item, slotIota int) bool {
+    slot := p.slots[slotIota]
     if slot == nil || slot.itemType != item.GetItemType() {
         return false
     }
-    item.SetCell(-1)
+    p.Inventory.EquipItem(slot.item)
     slot.item = item
     return true
 }
 
-func (p *Player) Unequip(slotName string) bool {
-    slot := p.slots[slotName]
+func (p *Player) Unequip(slotIota int) bool {
+    slot := p.slots[slotIota]
     if slot == nil {
         return false
     }
-    cell := p.Inventory.FindEmptyCell()
-    slot.item.SetCell(cell)
+    p.Inventory.UnequipItem(slot.item)
     slot.item = nil
     return true
 }
@@ -138,26 +156,27 @@ func (p *Player) Equipped(item *gameObjectsBase.Item) bool {
     return false
 }
 
-func (p *Player) MoveItem(item *gameObjectsBase.Item, cell int64) bool {
+func (p *Player) MoveItem(item *gameObjectsBase.Item, cell int) bool {
     if item.GetOwner() != p || p.Equipped(item) {
         return false
     }
-    if p.Inventory.CellIsEmpty(cell) {
-        item.SetCell(cell)
-    }
+    p.Inventory.MoveItem(item, cell)
     return true
 }
 
+func (p *Player) GetCapacity() int {
+    return 100
+}
+
+func (p *Player) CanPickUp(item *gameObjectsBase.Item) bool {
+    return p.Inventory.GetWeight() + item.GetWeight() <= p.GetCapacity()
+}
+
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) *Player {
-    slots := make(map[string] *slot)
-    slots["weapon"] = newSlot(consts.ITEM_T_WEAPON)
-    slots["ring"] = newSlot(consts.ITEM_T_RING)
-    slots["amulet"] = newSlot(consts.ITEM_T_AMULET)
-    slots["armor"] = newSlot(consts.ITEM_T_ARMOR)
-    slots["shield"] = newSlot(consts.ITEM_T_SHIELD)
-    slots["helmet"] = newSlot(consts.ITEM_T_HELMET)
-    slots["boots"] = newSlot(consts.ITEM_T_BOOTS)
-    slots["gloves"] = newSlot(consts.ITEM_T_GLOVES)
+    slots := make(map[int] *slot)
+    for slotType, itemType := range consts.SlotItemMapping {
+        slots[slotType] = newSlot(itemType)
+    }
     return &Player{gameObjectsBase.NewActiveObject(id, consts.INITIAL_PLAYER_HP, x, y, getPlayerKind()),
         login, sid, dbId, wpns.GetWeapon(consts.FIST_WEAP), slots}
 }

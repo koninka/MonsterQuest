@@ -8,7 +8,7 @@ import (
     "strings"
 )
 
-func GetTypeByIota(itemType int) string {
+func GetItemTypeByIota(itemType int) string {
     switch (itemType) {
         case consts.ITEM_T_AMULET:
             return "amulet"
@@ -34,7 +34,15 @@ func GetTypeByIota(itemType int) string {
     return "somethingElse"
 }
 
-type Bonus struct {}
+type Bonus struct {
+    characteristic int
+    effectCalculation int
+    val int
+}
+
+func NewBonus(characteristic, effectCalculation, val int) *Bonus {
+    return &Bonus{characteristic, effectCalculation, val}
+}
 
 type ItemKind struct {
     dbId int64
@@ -44,10 +52,7 @@ type ItemKind struct {
     description string
     itemType int
     subtype int
-}
-
-func NewItemKind(name, description string, itemType int) *ItemKind {
-    return &ItemKind{}
+    bonuses [] *Bonus
 }
 
 type gameItemGen struct {
@@ -60,7 +65,7 @@ func (gigi* gameItemGen) Probability() int {
 }
 
 func (gigi* gameItemGen) GenItem(owner Activer) *Item {
-    return &Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, gigi.item_kind, make([] *Bonus, 0, 10), owner, 0}
+    return &Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, gigi.item_kind, owner}
 }
 
 type gameItemsList struct {
@@ -75,18 +80,38 @@ func ItemGens(depth int64) (*[]*gameItemGen, bool) {
     return &gens, has_gen
 }
 
+var BDString2IotaCharacteristic = map[string] int {
+    "STR"   : consts.CHARACTERISTIC_STRENGTH,
+    "INT"   : consts.CHARACTERISTIC_INTELLEGENCE,
+    "DEX"   : consts.CHARACTERISTIC_DEXTERITY,
+    "WIS"   : consts.CHARACTERISTIC_WISDOM,
+    "CON"   : consts.CHARACTERISTIC_DEFENSE,
+    "SPEED" : consts.CHARACTERISTIC_SPEED,
+    "RES"   : consts.CHARACTERISTIC_MAGICK_RESISTANCE,
+}
+
+var IotaCharacteristic2String = map[int] string {
+    consts.CHARACTERISTIC_STRENGTH          : "strength",
+    consts.CHARACTERISTIC_INTELLEGENCE      : "intellegence",
+    consts.CHARACTERISTIC_DEXTERITY         : "dexterity",
+    consts.CHARACTERISTIC_SPEED             : "speed",
+    consts.CHARACTERISTIC_WISDOM            : "wisdom",
+    consts.CHARACTERISTIC_DEFENSE           : "defense",
+    consts.CHARACTERISTIC_MAGICK_RESISTANCE : "resistance",
+}
+
 func InitGameItems() {
     db := connect.CreateConnect()
-    rows, _ := db.Query("SELECT id, name, atype, weight, allocation_info, message, description FROM artifacts")
+    rows, _ := db.Query("SELECT id, name, atype, weight, allocation_info, message, description, bonus FROM artifacts")
     for rows.Next() {
         var (
             id int64
             weight int
-            atype_str, name, alloc_info_str, msg, desc string
+            atype_str, name, alloc_info_str, msg, desc, bonusStr string
         )
-        rows.Scan(&id, &name, &atype_str, &weight, &alloc_info_str, &msg, &desc)
+        rows.Scan(&id, &name, &atype_str, &weight, &alloc_info_str, &msg, &desc, &bonusStr)
         atype := strings.Split(atype_str, ":")
-        gameItems.items[id] = &ItemKind{id, name, weight, msg, desc, utils.ParseInt(atype[0]), utils.ParseInt(atype[1])}
+        gameItems.items[id] = &ItemKind{id, name, weight, msg, desc, utils.ParseInt(atype[0]), utils.ParseInt(atype[1]), make([] *Bonus, 0, 30)}
         alloc_info := strings.Split(alloc_info_str, ":");
         prob := utils.ParseInt(alloc_info[0])
         min_d := utils.ParseInt64(alloc_info[1]) - 1
@@ -94,19 +119,23 @@ func InitGameItems() {
         for i := min_d; i <= max_d; i++ {
             gameItems.items_depth_gen[i] = append(gameItems.items_depth_gen[i], &gameItemGen{gameItems.items[id], prob})
         }
+        for _, bonus := range strings.Split(bonusStr, "@") {
+            if len(bonus) == 0 {
+                continue
+            }
+            parts := strings.Split(bonus, ":")
+            val := utils.ParseInt(parts[0])
+            for _, c := range strings.Split(parts[1], "|") {
+                gameItems.items[id].bonuses = append(gameItems.items[id].bonuses, NewBonus(BDString2IotaCharacteristic[c], 0, val))
+            }
+        } 
     }
 }
 
 type Item struct {
     GameObject
     kind *ItemKind
-    bonuses [] *Bonus
     owner Activer
-    cell int64
-}
-
-func (i *Item) AddBonus(b *Bonus) {
-    i.bonuses = append(i.bonuses, b)
 }
 
 func (i *Item) GetType() string {
@@ -116,24 +145,28 @@ func (i *Item) GetType() string {
 func (i *Item) GetInfo() consts.JsonType {
     msg := i.GameObject.GetInfo()
     msg["name"] = i.kind.name
-    msg["itemType"] = GetTypeByIota(i.kind.itemType)
+    msg["itemType"] = GetItemTypeByIota(i.kind.itemType)
     msg["type"] = consts.ITEM_TYPE
-    msg["cell"] = i.cell
     return msg
 }
 
 func (i *Item) GetFullInfo() consts.JsonType {
     msg := i.GetInfo()
     msg["description"] = i.kind.description
+    if len(i.kind.bonuses) > 0 {
+        msg["bonuses"] = make([] consts.JsonType, 0, 30)
+        for _, bonus := range i.kind.bonuses {
+            bonusInfo := make(consts.JsonType)
+            bonusInfo["characteristic"] = IotaCharacteristic2String[bonus.characteristic]
+            effect := string(bonus.val)
+            if bonus.effectCalculation == consts.BONUS_PERCENT {
+                effect += "%"
+            }
+            bonusInfo["effect"] = effect
+            msg["bonuses"] = append(msg["bonuses"].([] consts.JsonType), bonusInfo)
+        }
+    }
     return msg
-}
-
-func (i *Item) GetCell() int64 {
-    return i.cell
-}
-
-func (i *Item) SetCell(cell int64) {
-    i.cell = cell
 }
 
 func (i *Item) GetOwner() Activer {
@@ -148,12 +181,20 @@ func (i* Item) SetPosition(p geometry.Point) {
     i.Center = p
 }
 
+func (i* Item) IsHeapItem() bool {
+    return false
+}
+
 func (i* Item) GetKindId() int64 {
     return i.kind.dbId
 }
 
 func (i *Item) HasOwner() bool {
     return i.owner != nil
+}
+
+func (i *Item) GetWeight() int {
+    return i.kind.weight
 }
 
 func (i *Item) GetItemType() int {
@@ -165,5 +206,5 @@ func NewItem(iid int64, owner Activer) *Item {
 }
 
 func newItem(ik *ItemKind, owner Activer) *Item {
-    return &Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, ik, make([] *Bonus, 0, 10), owner, 0}
+    return &Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, ik, owner}
 }
