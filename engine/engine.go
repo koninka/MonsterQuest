@@ -184,9 +184,13 @@ func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
         item := g.items.items[int64(idParam.(float64))]
         p := g.players.getPlayerBySession(json["sid"].(string))
         if item != nil && !item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) <= float64(consts.PICK_UP_RADIUS) {
-            if p.PickUpItem(item) {
-                g.field.UnlinkFromCells(item)
-                res["result"] = "ok"
+            if p.CanPickUp(item) {
+                if p.PickUpItem(item) {
+                    g.field.UnlinkFromCells(item)
+                    res["result"] = "ok"    
+                }
+            } else {
+                res["result"] = "tooHeavy"
             }
         }
     }
@@ -238,17 +242,17 @@ func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
     res := make(consts.JsonType)
     res["action"] = "equip"
     idParam := json["id"]
+    slotParam := json["slot"]
     if idParam == nil {
         res["result"] = "badId"
+    } else if slotParam == nil {
+        res["result"] = "badSlot"
     } else {
         item := g.items.items[int64(idParam.(float64))]
         p := g.players.getPlayerBySession(json["sid"].(string))
-        slotParam := json["slot"]
         if item.GetOwner() != p {
             res["result"] = "badId"
-        } else if slotParam == nil {
-            res["result"] = "badSlot"
-        } else if p.Equip(item, slotParam.(string)) {
+        } else if p.Equip(item, consts.NameSlotMapping[slotParam.(string)]) {
             res["result"] = "ok"
         } else {
             res["result"] = "badSlot"
@@ -265,7 +269,7 @@ func (g *Game) unequipItem(json consts.JsonType) consts.JsonType {
         res["result"] = "badSlot"
     } else {
         p := g.players.getPlayerBySession(json["sid"].(string))
-        if p.Unequip(slotParam.(string)) {
+        if p.Unequip(consts.NameSlotMapping[slotParam.(string)]) {
             res["result"] = "ok"
         } else {
             res["result"] = "badSlot"

@@ -62,6 +62,8 @@ type Activer interface {
     GetItems() map[int64] *Item
     AddItem(item *Item) int
     DropItem(item *Item) int
+    GetCharacteristic(charIota int) float64
+    SetCharacteristic(charIota int, newVal float64)
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -105,6 +107,7 @@ type ActiveObject struct {
     Kind Kinder
     AttackPoint *geometry.Point
     Inventory *InventoryObj
+    Characteristics map[int] float64
 }
 
 func (obj *ActiveObject) GetShiftedCenter(dir int) geometry.Point {
@@ -284,6 +287,22 @@ func (obj *ActiveObject) GetFullInfo() consts.JsonType {
     return obj.GetInfo()
 }
 
+func (obj *ActiveObject) GetCharacteristic(charIota int) float64 {
+    return obj.Characteristics[charIota]
+}
+
+func (obj *ActiveObject) SetCharacteristic(charIota int, newVal float64) {
+    obj.Characteristics[charIota] = newVal
+}
+
+func newCharacteristicsMap() map[int] float64 {
+    characteristics := make(map[int] float64)
+    for i := 0; i < consts.CHARACTERISTICS_COUNT; i++ {
+        characteristics[i] = consts.CharacteristicDefaultValueMapping[i]
+    }
+    return characteristics
+}
+
 func NewActiveObject(id int64, hp int, x, y float64, kind Kinder) ActiveObject {
-    return ActiveObject{NewGameObject(id, geometry.Point{x, y}), -1, hp, hp, consts.DEFAULT_ATTACK_COOLDOWN, nil, kind, nil, NewInventoryObj()}
+    return ActiveObject{NewGameObject(id, geometry.Point{x, y}), -1, hp, hp, consts.DEFAULT_ATTACK_COOLDOWN, nil, kind, nil, NewInventoryObj(), newCharacteristicsMap()}
 }
