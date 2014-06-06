@@ -62,6 +62,18 @@ func (p *Player) GetInfo() consts.JsonType {
     return info
 }
 
+func (p *Player) GetFullInfo() consts.JsonType {
+    info := p.GetInfo()
+    slots := make(map[string] consts.JsonType)
+    for slot, slotName := range consts.SlotNameMapping {
+        if p.slots[slot].item != nil {
+            slots[slotName] = p.slots[slot].item.GetFullInfo()
+        }
+    }
+    info["slots"] = slots
+    return info
+}
+
 func (p *Player) Do() {
     p.DoWithObj(p)
     p.Dir = -1
