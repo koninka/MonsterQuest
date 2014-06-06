@@ -4,6 +4,11 @@ type InventoryObj struct {
 	Items map[int64] *Item
 }
 
+func (inv* InventoryObj) AddItem(i* Item, owner Activer) {
+    inv.Items[i.GetID()] = i
+    i.SetOwner(owner)
+}
+
 func (inv *InventoryObj) CellIsEmpty(cell int64) bool {
     for _, i  := range inv.Items {
         if cell == i.cell {
