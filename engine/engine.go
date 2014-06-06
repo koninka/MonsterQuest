@@ -390,7 +390,15 @@ func (g *Game) CreatePlayer(sid string) int64 {
     var login string
     var x, y float64
     stmt.QueryRow(sid).Scan(&dbId, &login, &x, &y)
-    return g.players.add(sid, login, x, y, utils.GenerateId(), dbId).GetID()
+    p := gameObjects.NewPlayer(utils.GenerateId(), dbId, login, sid, x, y)
+    g.players.add(p)
+    rows, _ := db.Query("SELECT item_id FROM users_inventory WHERE user_id = ?", dbId)
+    for rows.Next() {
+        var iid int64
+        rows.Scan(&iid)
+        p.AddItem(gameObjectsBase.NewItem(iid, p))
+    }
+    return p.GetID()
 }
 
 func (g *Game) getObjectById(id int64) (gameObjectsBase.GameObjecter, bool) {

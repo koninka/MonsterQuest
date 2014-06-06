@@ -25,11 +25,9 @@ func (s *playerList) save() {
     }
 }
 
-func (s *playerList) add(sid, login string, x, y float64, id, dbId int64) *gameObjects.Player {
-	p := gameObjects.NewPlayer(id, dbId, login, sid, x, y)
-	s.players[id] = &p
-	s.sessions[sid] = &p
-    return &p
+func (s *playerList) add(p *gameObjects.Player) {
+	s.players[p.GetID()] = p
+	s.sessions[p.SID] = p
 }
 
 func (s *playerList) isExists(id int64) bool {

@@ -136,7 +136,7 @@ func (p *Player) MoveItem(item *gameObjectsBase.Item, cell int64) bool {
     return true
 }
 
-func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
+func NewPlayer(id, dbId int64, login, sid string, x, y float64) *Player {
     slots := make(map[string] *slot)
     slots["weapon"] = newSlot(consts.ITEM_T_WEAPON)
     slots["ring"] = newSlot(consts.ITEM_T_RING)
@@ -146,6 +146,6 @@ func NewPlayer(id, dbId int64, login, sid string, x, y float64) Player {
     slots["helmet"] = newSlot(consts.ITEM_T_HELMET)
     slots["boots"] = newSlot(consts.ITEM_T_BOOTS)
     slots["gloves"] = newSlot(consts.ITEM_T_GLOVES)
-    return Player{gameObjectsBase.NewActiveObject(id, consts.INITIAL_PLAYER_HP, x, y, getPlayerKind()),
+    return &Player{gameObjectsBase.NewActiveObject(id, consts.INITIAL_PLAYER_HP, x, y, getPlayerKind()),
         login, sid, dbId, wpns.GetWeapon(consts.FIST_WEAP), slots}
 }
