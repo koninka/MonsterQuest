@@ -69,10 +69,7 @@ const (
     ITEM_ST_SWORD = iota
     ITEM_ST_POLEARM
     ITEM_ST_BOW
-    PATH_SEGMENT_DURATION_IN_TICKS = 20
-    ACCEPTABLE_DISTANCE_DELTA = 0.2
-    AXIS_X = iota
-    AXIS_Y
+)
 )
 
 var (
