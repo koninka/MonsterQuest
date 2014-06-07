@@ -275,7 +275,7 @@ func (i *Item) CancelBonuses() {
 
 func (i *Item) ApplyEffects() {
     for _, effect := range i.kind.effects {
-        effect.apply(i.owner)
+        go effect.apply(i.owner)
     }
 }
 
