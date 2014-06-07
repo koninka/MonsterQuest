@@ -50,6 +50,32 @@ func NewBonus(characteristic, effectCalculation, val int) *Bonus {
     return &Bonus{characteristic, effectCalculation, val}
 }
 
+type Effecter interface {
+    apply(activator Activer)
+    GetFullInfo() consts.JsonType
+}
+
+type Effect struct {
+    duration time.Duration
+}
+
+type ModifyingEffect struct {
+    Effect
+    characteristic int
+    val int
+}
+type BonusEffect struct {
+    Effect
+    Bonus
+}
+func newModifyingEffect(duration time.Duration, characteristic, val int) *ModifyingEffect {
+    return &ModifyingEffect{Effect{duration}, characteristic, val}
+}
+
+func newBonusEffect(duration time.Duration, bonus *Bonus) *BonusEffect {
+    return &BonusEffect{Effect{duration}, *bonus}
+}
+
 type ItemKind struct {
     dbId int64
     name string
