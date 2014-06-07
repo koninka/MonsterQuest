@@ -32,6 +32,20 @@ func (b *Bonus) cancel(owner Activer) {
     owner.ModifyBonus(b.characteristic, - b.calcActualValue(owner))
 }
 
+func (b *Bonus) GetFullInfo() consts.JsonType {
+    bonusInfo := make(consts.JsonType)
+    bonusInfo["characteristic"] = consts.CharacteristicNameMapping[b.characteristic]
+    effect := string(b.val)
+    if b.val > 0 {
+        effect = "+" + effect
+    }
+    if b.effectCalculation == consts.BONUS_PERCENT {
+        effect += "%"
+    }
+    bonusInfo["effect"] = effect
+    return bonusInfo
+}
+
 func NewBonus(characteristic, effectCalculation, val int) *Bonus {
     return &Bonus{characteristic, effectCalculation, val}
 }
@@ -151,14 +165,9 @@ func (i *Item) GetFullInfo() consts.JsonType {
     if len(i.kind.bonuses) > 0 {
         msg["bonuses"] = make([] consts.JsonType, 0, 30)
         for _, bonus := range i.kind.bonuses {
-            bonusInfo := make(consts.JsonType)
-            bonusInfo["characteristic"] = IotaCharacteristic2String[bonus.characteristic]
-            effect := string(fmt.Sprintf("%02f", bonus.val))
-            if bonus.effectCalculation == consts.BONUS_PERCENT {
-                effect += "%"
-            }
-            bonusInfo["effect"] = effect
-            msg["bonuses"] = append(msg["bonuses"].([] consts.JsonType), bonusInfo)
+            msg["bonuses"] = append(msg["bonuses"].([] consts.JsonType), bonus.GetFullInfo())
+        }
+    }
         }
     }
     return msg
