@@ -104,7 +104,6 @@ type ActiveObject struct {
     Dir int
     HP int
     MP int
-    MaxHP int
     AttackCooldownCounter int
     Target Activer
     Kind Kinder
@@ -206,7 +205,8 @@ func (obj *ActiveObject) GetHP() int {
 }
 
 func (obj *ActiveObject) GetMaxHP() int {
-    return obj.MaxHP
+    return obj.Characteristics[consts.CHARACTERISTIC_HP]
+}
 
 func (obj *ActiveObject) GetMP() int {
     return obj.MP
@@ -287,7 +287,7 @@ func (obj *ActiveObject) GetItems() map[int64] *Item {
 func (obj *ActiveObject) GetInfo() consts.JsonType {
     info := obj.GameObject.GetInfo()
     info["hp"] = obj.HP
-    info["max_hp"] = obj.MaxHP
+    info["max_hp"] = obj.Characteristics[consts.CHARACTERISTIC_HP]
     return info
 }
 
