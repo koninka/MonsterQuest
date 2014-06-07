@@ -62,9 +62,10 @@ type Activer interface {
     GetItems() map[int64] *Item
     AddItem(item *Item) int
     DropItem(item *Item) int
-    GetCharacteristic(charIota int) float64
-    SetCharacteristic(charIota int, newVal float64)
-    ModifyBonus(charIota int, val float64)
+    GetCharacteristic(charIota int) int
+    SetCharacteristic(charIota, newVal int)
+    ModifyCharacteristic(charIota, val int)
+    ModifyBonus(charIota, val int)
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -313,7 +314,26 @@ func (obj *ActiveObject) SetCharacteristic(charIota int, newVal int) {
     obj.Characteristics[charIota] = newVal
 }
 
-func (obj *ActiveObject) ModifyBonus(charIota int, val float64) {
+func (obj *ActiveObject) modifyInRange(charIota int, val, maxVal int) {
+    cVal := obj.GetCharacteristic(charIota)
+    if cVal + val >= maxVal {
+        obj.SetCharacteristic(charIota, maxVal)
+    } else {
+        obj.SetCharacteristic(charIota, cVal + val)
+    }
+}
+
+func (obj *ActiveObject) ModifyCharacteristic(charIota int, val int) {
+    if charIota == consts.CHARACTERISTIC_HP {
+        obj.modifyInRange(charIota, val, obj.GetMaxHP())
+    } else if charIota == consts.CHARACTERISTIC_MP {
+        obj.modifyInRange(charIota, val, obj.GetMaxMP())
+    } else {
+        obj.Characteristics[charIota] += val
+    }
+}
+
+func (obj *ActiveObject) ModifyBonus(charIota, val int) {
     obj.Bonuses[charIota] += val
 }
 
