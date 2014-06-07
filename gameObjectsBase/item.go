@@ -82,16 +82,6 @@ var BDString2IotaCharacteristic = map[string] int {
     "RES"   : consts.CHARACTERISTIC_MAGICK_RESISTANCE,
 }
 
-var IotaCharacteristic2String = map[int] string {
-    consts.CHARACTERISTIC_STRENGTH          : "strength",
-    consts.CHARACTERISTIC_INTELLEGENCE      : "intellegence",
-    consts.CHARACTERISTIC_DEXTERITY         : "dexterity",
-    consts.CHARACTERISTIC_SPEED             : "speed",
-    consts.CHARACTERISTIC_WISDOM            : "wisdom",
-    consts.CHARACTERISTIC_DEFENSE           : "defense",
-    consts.CHARACTERISTIC_MAGICK_RESISTANCE : "resistance",
-}
-
 func InitGameItems() {
     db := connect.CreateConnect()
     rows, _ := db.Query("SELECT id, name, atype, weight, allocation_info, message, description, bonus FROM artifacts")
