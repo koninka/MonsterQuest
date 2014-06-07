@@ -66,7 +66,7 @@ CREATE TABLE users_inventory (
    item_id INT NOT NULL REFERENCES artifacts(id) ON DELETE CASCADE,
    amount  INT NOT NULL DEFAULT 1,
    place   INT NOT NULL,
-   UNIQUE(user_id, item_id, place)
+   UNIQUE(user_id, place)
 );
 
 DELIMITER //
@@ -105,6 +105,14 @@ BEGIN
          DELETE FROM `users_inventory` WHERE `user_id` = uid  AND `item_id` = iid AND `place` = place_num;
       END IF;
    END IF;
+END//
+
+DROP PROCEDURE IF EXISTS `move_item` //
+CREATE PROCEDURE `move_item`(IN `uid` INT, IN `from_place` INT,  IN `to_place` INT)
+BEGIN
+   UPDATE `users_inventory` SET `place` = -1 WHERE `user_id` = uid AND `place` = from_place;
+   UPDATE `users_inventory` SET `place` = from_place WHERE `user_id` = uid AND `place` = to_place;
+   UPDATE `users_inventory` SET `place` = to_place WHERE `user_id` = uid AND `place` = -1;
 END//
 
 DELIMITER ;

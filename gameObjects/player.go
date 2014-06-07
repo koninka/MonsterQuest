@@ -156,12 +156,21 @@ func (p *Player) Equipped(item *gameObjectsBase.Item) bool {
     return false
 }
 
-func (p *Player) MoveItem(item *gameObjectsBase.Item, cell int) bool {
+func (p *Player) MoveItem(item *gameObjectsBase.Item, to_cell int) bool {
     if item.GetOwner() != p || p.Equipped(item) {
         return false
     }
-    p.Inventory.MoveItem(item, cell)
-    return true
+    from_cell := p.Inventory.GetPlace(item.GetID())
+    if from_cell == to_cell {
+        return true
+    } else {
+        db := connect.CreateConnect()
+        _, err := db.Exec("CALL move_item(?, ?, ?)", p.DBId, from_cell, to_cell);
+        if err == nil {
+            p.Inventory.MoveItem(item, from_cell, to_cell)
+        }
+        return err == nil
+    }
 }
 
 func (p *Player) GetCapacity() int {

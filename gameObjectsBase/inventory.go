@@ -63,6 +63,10 @@ func (inv* InventoryObj) RestoreItem(i* Item, place int) {
     inv.Items[i.GetID()] = i
 }
 
+func (inv* InventoryObj) GetPlace(id int64) int {
+    return inv.getPlaceById(id)
+}
+
 func (inv* InventoryObj) getPlaceById(id int64) int {
     for cell, item_id := range inv.cells {
         if item_id == id {
@@ -85,14 +89,16 @@ func (inv *InventoryObj) UnequipItem(i* Item) {
     inv.placeItem(i.GetID())
 }
 
-func (inv* InventoryObj) MoveItem(i* Item, cell int) {
-    if iid, isExist := inv.cells[cell]; isExist {
+func (inv* InventoryObj) MoveItem(i* Item, from_cell, to_cell int) {
+    if iid, isExist := inv.cells[to_cell]; isExist {
         if i.GetID() == iid {
             return
         }
-        inv.cells[inv.getPlaceById(i.GetID())] = inv.cells[cell]
+        inv.cells[from_cell] = inv.cells[to_cell]
+    } else {
+        delete(inv.cells, from_cell)
     }
-    inv.cells[cell] = i.GetID()
+    inv.cells[to_cell] = i.GetID()
 }
 
 func (inv *InventoryObj) placeItem(id int64) int {
