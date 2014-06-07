@@ -4,6 +4,7 @@ import (
     "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
+    "MonsterQuest/utils"
 )
 
 func GetShiftByDirection(dir int) (mx int, my int) {
@@ -64,6 +65,7 @@ type Activer interface {
     DropItem(item *Item) int
     GetCharacteristic(charIota int) float64
     SetCharacteristic(charIota int, newVal float64)
+    ModifyBonus(charIota int, val float64)
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -108,6 +110,7 @@ type ActiveObject struct {
     AttackPoint *geometry.Point
     Inventory *InventoryObj
     Characteristics map[int] float64
+    Bonuses map[int] float64
 }
 
 func (obj *ActiveObject) GetShiftedCenter(dir int) geometry.Point {
@@ -295,6 +298,10 @@ func (obj *ActiveObject) SetCharacteristic(charIota int, newVal float64) {
     obj.Characteristics[charIota] = newVal
 }
 
+func (obj *ActiveObject) ModifyBonus(charIota int, val float64) {
+    obj.Bonuses[charIota] += val
+}
+
 func newCharacteristicsMap() map[int] float64 {
     characteristics := make(map[int] float64)
     for i := 0; i < consts.CHARACTERISTICS_COUNT; i++ {
@@ -303,6 +310,15 @@ func newCharacteristicsMap() map[int] float64 {
     return characteristics
 }
 
+func newBonusMap() map[int] float64 {
+    characteristics := make(map[int] float64)
+    for i := 0; i < consts.CHARACTERISTICS_COUNT; i++ {
+        characteristics[i] = 0.0
+    }
+    return characteristics
+}
+
 func NewActiveObject(id int64, hp int, x, y float64, kind Kinder) ActiveObject {
-    return ActiveObject{NewGameObject(id, geometry.Point{x, y}), -1, hp, hp, consts.DEFAULT_ATTACK_COOLDOWN, nil, kind, nil, NewInventoryObj(), newCharacteristicsMap()}
+    return ActiveObject{NewGameObject(id, geometry.Point{x, y}), -1, hp, hp, consts.DEFAULT_ATTACK_COOLDOWN, nil, kind, nil,
+        NewInventoryObj(), newCharacteristicsMap(), newBonusMap()}
 }

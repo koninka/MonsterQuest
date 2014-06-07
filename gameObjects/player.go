@@ -129,6 +129,7 @@ func (p *Player) Equip(item *gameObjectsBase.Item, slotIota int) bool {
     }
     p.Inventory.EquipItem(slot.item)
     slot.item = item
+    item.ApplyBonuses()
     return true
 }
 
@@ -138,6 +139,7 @@ func (p *Player) Unequip(slotIota int) bool {
         return false
     }
     p.Inventory.UnequipItem(slot.item)
+    slot.item.CancelBonuses()
     slot.item = nil
     return true
 }

@@ -38,6 +38,22 @@ type Bonus struct {
     characteristic int
     effectCalculation int
     val int
+
+func (b *Bonus) calcActualValue(owner Activer) float64 {
+    bonusVal := b.val
+    baseVal := owner.GetCharacteristic(b.characteristic)
+    if b.effectCalculation == consts.BONUS_PERCENT {
+        bonusVal = baseVal * b.val / 100.0
+    }
+    return bonusVal
+}
+
+func (b *Bonus) apply(owner Activer) {
+    owner.ModifyBonus(b.characteristic, b.calcActualValue(owner))
+}
+
+func (b *Bonus) cancel(owner Activer) {
+    owner.ModifyBonus(b.characteristic, - b.calcActualValue(owner))
 }
 
 func NewBonus(characteristic, effectCalculation, val int) *Bonus {
@@ -199,6 +215,18 @@ func (i *Item) GetWeight() int {
 
 func (i *Item) GetItemType() int {
     return i.kind.itemType
+}
+
+func (i *Item) ApplyBonuses() {
+    for _, bonus := range i.kind.bonuses {
+        bonus.apply(i.owner)
+    }
+}
+
+func (i *Item) CancelBonuses() {
+    for _, bonus := range i.kind.bonuses {
+        bonus.cancel(i.owner)
+    }
 }
 
 func NewItem(iid int64, owner Activer) *Item {
