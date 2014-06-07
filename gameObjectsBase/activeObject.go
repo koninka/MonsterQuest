@@ -103,6 +103,7 @@ type ActiveObject struct {
     GameObject
     Dir int
     HP int
+    MP int
     MaxHP int
     AttackCooldownCounter int
     Target Activer
@@ -206,6 +207,10 @@ func (obj *ActiveObject) GetHP() int {
 
 func (obj *ActiveObject) GetMaxHP() int {
     return obj.MaxHP
+
+func (obj *ActiveObject) GetMP() int {
+    return obj.MP
+}
 }
 
 func (obj *ActiveObject) GetAttackRadius() int {
@@ -324,7 +329,7 @@ func newBonusMap() map[int] float64 {
     return characteristics
 }
 
-func NewActiveObject(id int64, hp int, x, y float64, kind Kinder) ActiveObject {
-    return ActiveObject{NewGameObject(id, geometry.Point{x, y}), -1, hp, hp, consts.DEFAULT_ATTACK_COOLDOWN, nil, kind, nil,
+func NewActiveObject(id int64, hp, mp int, x, y float64, kind Kinder) ActiveObject {
+    return ActiveObject{NewGameObject(id, geometry.Point{x, y}), -1, hp, mp, consts.DEFAULT_ATTACK_COOLDOWN, nil, kind, nil,
         NewInventoryObj(), newCharacteristicsMap(), newBonusMap()}
 }
