@@ -220,6 +220,10 @@ func (i *Item) GetFullInfo() consts.JsonType {
             msg["bonuses"] = append(msg["bonuses"].([] consts.JsonType), bonus.GetFullInfo())
         }
     }
+    if len(i.kind.effects) > 0 {
+        msg["effects"] = make([] consts.JsonType, 0, 30)
+        for _, effect := range i.kind.effects {
+             msg["effects"] = append(msg["effects"].([] consts.JsonType), effect.GetFullInfo())
         }
     }
     return msg
