@@ -12,14 +12,14 @@ import (
 type Bonus struct {
     characteristic int
     effectCalculation int
-    val float64
+    val int
 }
 
-func (b *Bonus) calcActualValue(owner Activer) float64 {
+func (b *Bonus) calcActualValue(owner Activer) int {
     bonusVal := b.val
     baseVal := owner.GetCharacteristic(b.characteristic)
     if b.effectCalculation == consts.BONUS_PERCENT {
-        bonusVal = baseVal * b.val / 100.0
+        bonusVal = int(baseVal * b.val / 100.0)
     }
     return bonusVal
 }
@@ -32,7 +32,7 @@ func (b *Bonus) cancel(owner Activer) {
     owner.ModifyBonus(b.characteristic, - b.calcActualValue(owner))
 }
 
-func NewBonus(characteristic, effectCalculation int, val float64) *Bonus {
+func NewBonus(characteristic, effectCalculation, val int) *Bonus {
     return &Bonus{characteristic, effectCalculation, val}
 }
 
