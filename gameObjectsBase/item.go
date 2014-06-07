@@ -85,6 +85,7 @@ type ItemKind struct {
     itemType int
     subtype int
     bonuses [] *Bonus
+    effects [] Effecter
 }
 
 type gameItemGen struct {
@@ -133,7 +134,7 @@ func InitGameItems() {
         )
         rows.Scan(&id, &name, &atype_str, &weight, &alloc_info_str, &msg, &desc, &bonusStr)
         atype := strings.Split(atype_str, ":")
-        gameItems.items[id] = &ItemKind{id, name, weight, msg, desc, utils.ParseInt(atype[0]), utils.ParseInt(atype[1]), make([] *Bonus, 0, 30)}
+        gameItems.items[id] = &ItemKind{id, name, weight, msg, desc, utils.ParseInt(atype[0]), utils.ParseInt(atype[1]), make([] *Bonus, 0, 30), make([] Effecter, 0, 30)}
         alloc_info := strings.Split(alloc_info_str, ":");
         prob := utils.ParseInt(alloc_info[0])
         min_d := utils.ParseInt64(alloc_info[1]) - 1
