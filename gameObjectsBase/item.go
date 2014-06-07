@@ -9,32 +9,6 @@ import (
     "fmt"
 )
 
-func GetItemTypeByIota(itemType int) string {
-    switch (itemType) {
-        case consts.ITEM_T_AMULET:
-            return "amulet"
-        case consts.ITEM_T_RING:
-            return "ring"
-        case consts.ITEM_T_ARMOR:
-            return "armor"
-        case consts.ITEM_T_SHIELD:
-            return "shield"
-        case consts.ITEM_T_HELMET:
-            return "helmet"
-        case consts.ITEM_T_GLOVES:
-            return "gloves"
-        case consts.ITEM_T_BOOTS:
-            return "boots"
-        case consts.ITEM_T_WEAPON:
-            return "weapon"
-        case consts.ITEM_T_POTION:
-            return "potion"
-        case consts.ITEM_T_SCROLL:
-            return "scroll"
-    }
-    return "somethingElse"
-}
-
 type Bonus struct {
     characteristic int
     effectCalculation int
@@ -160,10 +134,23 @@ func (i *Item) GetType() string {
     return consts.ITEM_TYPE
 }
 
+var IotaItemType2Name = map[int] string {
+    consts.ITEM_T_AMULET : "amulet",
+    consts.ITEM_T_RING   : "ring",
+    consts.ITEM_T_ARMOR  : "armor",
+    consts.ITEM_T_SHIELD : "shield",
+    consts.ITEM_T_HELMET : "helmet",
+    consts.ITEM_T_GLOVES : "gloves",
+    consts.ITEM_T_BOOTS  : "boots",
+    consts.ITEM_T_WEAPON : "weapon",
+    consts.ITEM_T_POTION : "potion",
+    consts.ITEM_T_SCROLL : "scroll",
+}
+
 func (i *Item) GetInfo() consts.JsonType {
     msg := i.GameObject.GetInfo()
     msg["name"] = i.kind.name
-    msg["itemType"] = GetItemTypeByIota(i.kind.itemType)
+    msg["itemType"] = IotaItemType2Name[i.kind.itemType]
     msg["type"] = consts.ITEM_TYPE
     return msg
 }
