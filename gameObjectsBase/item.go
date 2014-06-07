@@ -6,7 +6,7 @@ import (
     "MonsterQuest/connect"
     "MonsterQuest/utils"
     "strings"
-    "fmt"
+    "time"
 )
 
 type Bonus struct {
@@ -174,7 +174,7 @@ func InitGameItems() {
             parts := strings.Split(bonus, ":")
             val := utils.ParseInt(parts[0])
             for _, c := range strings.Split(parts[1], "|") {
-                gameItems.items[id].bonuses = append(gameItems.items[id].bonuses, NewBonus(BDString2IotaCharacteristic[c], 0, float64(val)))
+                gameItems.items[id].bonuses = append(gameItems.items[id].bonuses, NewBonus(BDString2IotaCharacteristic[c], 0, val))
             }
         } 
     }
