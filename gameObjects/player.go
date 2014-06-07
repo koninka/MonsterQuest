@@ -129,8 +129,6 @@ func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) bool {
     }
     p.Inventory.EquipItem(slot.item)
     slot.item = item
-    item.ApplyBonuses()
-    item.ApplyEffects()
     return true
 }
 
@@ -140,7 +138,6 @@ func (p *Player) Unequip(slotIota int) bool {
         return false
     }
     p.Inventory.UnequipItem(slot.item)
-    slot.item.CancelBonuses()
     slot.item = nil
     return true
 }
@@ -174,6 +171,19 @@ func (p *Player) MoveItem(item gameObjectsBase.Itemer, to_cell int) bool {
         }
         return err == nil
     }
+}
+
+func (p* Player) Use(id int64, x, y, ammoId interface{}) consts.JsonType {
+    res := make(consts.JsonType)
+    res["action"] = "use"
+    res["action"] = "badId"
+    if p.Inventory.HasItem(id) {
+        item := p.Inventory.GetItem(id)
+        if item.IsEquiped() {
+
+        }
+    }
+    return res
 }
 
 func (p *Player) GetCapacity() int {

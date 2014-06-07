@@ -5,7 +5,7 @@ import (
 )
 
 type InventoryObj struct {
-	Items map[int64] Itemer
+    Items map[int64] Itemer
     kinds map[int64] int64 //kind_id to item_id on map
     cells map[int] int64
 }
@@ -79,6 +79,7 @@ func (inv* InventoryObj) getPlaceById(id int64) int {
 func (inv *InventoryObj) EquipItem(i Itemer) {
     for cell, item_id := range inv.cells {
         if item_id == i.GetID() {
+            inv.Items[item_id].UseItem()
             delete(inv.cells, cell)
             break
         }
@@ -87,6 +88,7 @@ func (inv *InventoryObj) EquipItem(i Itemer) {
 
 func (inv *InventoryObj) UnequipItem(i Itemer) {
     inv.placeItem(i.GetID())
+    inv.Items[i.GetID()].UnuseItem()
 }
 
 func (inv* InventoryObj) MoveItem(i Itemer, from_cell, to_cell int) {
@@ -114,7 +116,12 @@ func (inv *InventoryObj) placeItem(id int64) int {
 }
 
 func (inv *InventoryObj) GetItem(id int64) Itemer {
-	return inv.Items[id]
+    return inv.Items[id]
+}
+
+func (inv *InventoryObj) HasItem(id int64) bool {
+    _, exist := inv.Items[id]
+    return exist
 }
 
 func (inv *InventoryObj) GetWeight() int {
@@ -126,5 +133,5 @@ func (inv *InventoryObj) GetWeight() int {
 }
 
 func NewInventoryObj() *InventoryObj {
-	return &InventoryObj{make(map[int64] Itemer), make(map[int64] int64), make(map[int]int64)}
+    return &InventoryObj{make(map[int64] Itemer), make(map[int64] int64), make(map[int]int64)}
 }

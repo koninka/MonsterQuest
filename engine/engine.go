@@ -136,6 +136,7 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     }
     switch action {
     case "move": g.moveAction(json)
+    case "use": g.useAction(json)
     case "attack": g.attackAction(json)
     case "getDictionary": conn.send <- g.getDictionaryAction()
     case "look": conn.send <- g.lookAction(json["sid"].(string))
@@ -277,6 +278,10 @@ func (g *Game) unequipItem(json consts.JsonType) consts.JsonType {
 func (g *Game) moveAction(json consts.JsonType) {
     p := g.players.getPlayerBySession(json["sid"].(string))
     p.SetDir(g.getIotaDir(json["direction"].(string)))
+}
+
+func (g *Game) useAction(json consts.JsonType) consts.JsonType {
+    return g.players.getPlayerBySession(json["sid"].(string)).Use(int64(json["id"].(float64)), json["x"], json["y"], json["ammoId"])
 }
 
 func (g *Game) attackAction(json consts.JsonType) {

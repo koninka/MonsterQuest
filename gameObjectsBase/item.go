@@ -220,31 +220,6 @@ func InitGameItems() {
     }
 }
 
-type Itemer interface {
-    GameObjecter
-    GetOwner() Activer
-    SetOwner(Activer)
-    SetPosition(geometry.Point)
-    IsHeapItem() bool
-    GetKindId() int64
-    HasOwner() bool
-    GetWeight() int
-    GetItemType() int
-    ApplyBonuses()
-    CancelBonuses()
-    ApplyEffects()
-}
-
-type Item struct {
-    GameObject
-    kind *ItemKind
-    owner Activer
-}
-
-func (i *Item) GetType() string {
-    return consts.ITEM_TYPE
-}
-
 var IotaItemType2Name = map[int] string {
     consts.ITEM_T_AMULET : "amulet",
     consts.ITEM_T_RING   : "ring",
@@ -256,6 +231,35 @@ var IotaItemType2Name = map[int] string {
     consts.ITEM_T_WEAPON : "weapon",
     consts.ITEM_T_POTION : "potion",
     consts.ITEM_T_SCROLL : "scroll",
+}
+
+type Itemer interface {
+    GameObjecter
+    GetOwner() Activer
+    SetOwner(Activer)
+    SetPosition(geometry.Point)
+    IsHeapItem() bool
+    IsEquiped() bool
+    GetKindId() int64
+    HasOwner() bool
+    GetWeight() int
+    GetItemType() int
+    GetAmount() int
+    UseItem()
+    UnuseItem()
+    applyBonuses()
+    applyEffects()
+    cancelBonuses()
+}
+
+type Item struct {
+    GameObject
+    kind *ItemKind
+    owner Activer
+}
+
+func (i *Item) GetType() string {
+    return consts.ITEM_TYPE
 }
 
 func (i *Item) GetInfo() consts.JsonType {
@@ -300,6 +304,10 @@ func (i* Item) IsHeapItem() bool {
     return false
 }
 
+func (i* Item) IsEquiped() bool {
+    return false
+}
+
 func (i* Item) GetKindId() int64 {
     return i.kind.dbId
 }
@@ -316,22 +324,71 @@ func (i *Item) GetItemType() int {
     return i.kind.itemType
 }
 
-func (i *Item) ApplyBonuses() {
+func (i *Item) GetAmount() int {
+    return 1
+}
+
+func (i *Item) UseItem() {
+    i.applyBonuses()
+    i.applyEffects()
+}
+
+func (i *Item) UnuseItem() {
+    i.cancelBonuses()
+}
+
+func (i *Item) applyBonuses() {
     for _, bonus := range i.kind.bonuses {
         bonus.apply(i.owner)
     }
 }
 
-func (i *Item) CancelBonuses() {
+func (i *Item) applyEffects() {
+    for _, effect := range i.kind.effects {
+        effect.apply(i.owner)
+    }
+}
+
+func (i *Item) cancelBonuses() {
     for _, bonus := range i.kind.bonuses {
         bonus.cancel(i.owner)
     }
 }
 
-func (i *Item) ApplyEffects() {
-    for _, effect := range i.kind.effects {
-        go effect.apply(i.owner)
-    }
+type GarmentItem struct {
+    Item
+    isEquiped bool
+}
+
+func (i* GarmentItem) IsEquiped() bool {
+    return i.isEquiped
+}
+
+func (i* GarmentItem) UseItem() {
+    i.Item.UseItem()
+    i.isEquiped = true
+}
+
+func (i* GarmentItem) UnuseItem() {
+    i.Item.UseItem()
+    i.isEquiped = false
+}
+
+type SummarizeItem struct {
+    Item
+    amount int
+}
+
+func (i* SummarizeItem) IsHeapItem() bool {
+    return true
+}
+
+func (i *SummarizeItem) GetAmount() int {
+    return i.amount
+}
+
+type FoodItem struct {
+    SummarizeItem
 }
 
 func NewItem(iid int64, owner Activer) *Item {
