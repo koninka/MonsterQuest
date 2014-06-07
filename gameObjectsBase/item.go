@@ -64,10 +64,35 @@ type ModifyingEffect struct {
     characteristic int
     val int
 }
+
+func (me *ModifyingEffect) apply(activator Activer) {
+    dc := int(float64(me.val) / float64(me.duration))
+    start := time.Now()
+    for time.Since(start) < me.duration {
+        activator.ModifyCharacteristic(me.characteristic, dc)
+        time.Sleep(time.Second)
+    }
+}
+
+func (me *ModifyingEffect) GetFullInfo() consts.JsonType {
+    return make(consts.JsonType)
+}
+
 type BonusEffect struct {
     Effect
     Bonus
 }
+
+func (be *BonusEffect) apply(activator Activer) {
+    be.Bonus.apply(activator)
+    time.Sleep(be.duration)
+    be.Bonus.cancel(activator)
+}
+
+func (be *BonusEffect) GetFullInfo() consts.JsonType {
+    return make(consts.JsonType)
+}
+
 func newModifyingEffect(duration time.Duration, characteristic, val int) *ModifyingEffect {
     return &ModifyingEffect{Effect{duration}, characteristic, val}
 }
