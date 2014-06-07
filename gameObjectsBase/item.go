@@ -273,6 +273,12 @@ func (i *Item) CancelBonuses() {
     }
 }
 
+func (i *Item) ApplyEffects() {
+    for _, effect := range i.kind.effects {
+        effect.apply(i.owner)
+    }
+}
+
 func NewItem(iid int64, owner Activer) *Item {
     return newItem(gameItems.items[iid], owner)
 }

@@ -130,6 +130,7 @@ func (p *Player) Equip(item *gameObjectsBase.Item, slotIota int) bool {
     p.Inventory.EquipItem(slot.item)
     slot.item = item
     item.ApplyBonuses()
+    item.ApplyEffects()
     return true
 }
 
