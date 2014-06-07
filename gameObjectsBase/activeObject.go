@@ -4,7 +4,6 @@ import (
     "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
-    "MonsterQuest/utils"
 )
 
 func GetShiftByDirection(dir int) (mx int, my int) {
@@ -109,8 +108,8 @@ type ActiveObject struct {
     Kind Kinder
     AttackPoint *geometry.Point
     Inventory *InventoryObj
-    Characteristics map[int] float64
-    Bonuses map[int] float64
+    Characteristics map[int] int
+    Bonuses map[int] int
 }
 
 func (obj *ActiveObject) GetShiftedCenter(dir int) geometry.Point {
@@ -300,17 +299,17 @@ func (obj *ActiveObject) GetFullInfo() consts.JsonType {
     info := obj.GetInfo()
     characteristics := make(consts.JsonType)
     for c, v := range obj.Characteristics {
-        characteristics[consts.CharacteristicNameMapping[c]] = utils.Round(v)
+        characteristics[consts.CharacteristicNameMapping[c]] = v
     }
     info["characteristics"] = characteristics
     return info
 }
 
-func (obj *ActiveObject) GetCharacteristic(charIota int) float64 {
+func (obj *ActiveObject) GetCharacteristic(charIota int) int {
     return obj.Characteristics[charIota]
 }
 
-func (obj *ActiveObject) SetCharacteristic(charIota int, newVal float64) {
+func (obj *ActiveObject) SetCharacteristic(charIota int, newVal int) {
     obj.Characteristics[charIota] = newVal
 }
 
@@ -318,20 +317,20 @@ func (obj *ActiveObject) ModifyBonus(charIota int, val float64) {
     obj.Bonuses[charIota] += val
 }
 
-func newCharacteristicsMap() map[int] float64 {
-    characteristics := make(map[int] float64)
+func newCharacteristicsMap() map[int] int {
+    characteristics := make(map[int] int)
     for i := 0; i < consts.CHARACTERISTICS_COUNT; i++ {
         characteristics[i] = consts.CharacteristicDefaultValueMapping[i]
     }
     return characteristics
 }
 
-func newBonusMap() map[int] float64 {
-    characteristics := make(map[int] float64)
+func newBonusMap() map[int] int {
+    bonuses := make(map[int] int)
     for i := 0; i < consts.CHARACTERISTICS_COUNT; i++ {
-        characteristics[i] = 0.0
+        bonuses[i] = 0.0
     }
-    return characteristics
+    return bonuses
 }
 
 func NewActiveObject(id int64, hp, mp int, x, y float64, kind Kinder) ActiveObject {
