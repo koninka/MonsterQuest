@@ -6,6 +6,7 @@ import (
     "MonsterQuest/connect"
     "MonsterQuest/utils"
     "strings"
+    "fmt"
 )
 
 func GetItemTypeByIota(itemType int) string {
@@ -37,7 +38,8 @@ func GetItemTypeByIota(itemType int) string {
 type Bonus struct {
     characteristic int
     effectCalculation int
-    val int
+    val float64
+}
 
 func (b *Bonus) calcActualValue(owner Activer) float64 {
     bonusVal := b.val
@@ -56,7 +58,7 @@ func (b *Bonus) cancel(owner Activer) {
     owner.ModifyBonus(b.characteristic, - b.calcActualValue(owner))
 }
 
-func NewBonus(characteristic, effectCalculation, val int) *Bonus {
+func NewBonus(characteristic, effectCalculation int, val float64) *Bonus {
     return &Bonus{characteristic, effectCalculation, val}
 }
 
@@ -142,7 +144,7 @@ func InitGameItems() {
             parts := strings.Split(bonus, ":")
             val := utils.ParseInt(parts[0])
             for _, c := range strings.Split(parts[1], "|") {
-                gameItems.items[id].bonuses = append(gameItems.items[id].bonuses, NewBonus(BDString2IotaCharacteristic[c], 0, val))
+                gameItems.items[id].bonuses = append(gameItems.items[id].bonuses, NewBonus(BDString2IotaCharacteristic[c], 0, float64(val)))
             }
         } 
     }
@@ -174,7 +176,7 @@ func (i *Item) GetFullInfo() consts.JsonType {
         for _, bonus := range i.kind.bonuses {
             bonusInfo := make(consts.JsonType)
             bonusInfo["characteristic"] = IotaCharacteristic2String[bonus.characteristic]
-            effect := string(bonus.val)
+            effect := string(fmt.Sprintf("%02f", bonus.val))
             if bonus.effectCalculation == consts.BONUS_PERCENT {
                 effect += "%"
             }
