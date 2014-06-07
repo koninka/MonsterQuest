@@ -146,18 +146,50 @@ var BDString2IotaCharacteristic = map[string] int {
     "CON"   : consts.CHARACTERISTIC_DEFENSE,
     "SPEED" : consts.CHARACTERISTIC_SPEED,
     "RES"   : consts.CHARACTERISTIC_MAGICK_RESISTANCE,
+func parseBonusFromDB(bonusStr string) [] *Bonus {
+    bonuses := make([] *Bonus, 0, 30)
+    parts := strings.Split(bonusStr, ":")
+    val := utils.ParseInt(parts[0])
+    for _, c := range strings.Split(parts[1], "|") {
+        bonuses = append(bonuses, NewBonus(BDString2IotaCharacteristic[c], 0, val))
+    }
+    return bonuses
+}
+
+func parseEffectFromDB(effectStr string) [] Effecter {
+    effects := make([] Effecter, 0, 30)
+    parts := strings.Split(effectStr, ":")
+    duration := time.Duration(utils.ParseInt(parts[3]))
+    characteristics := strings.Split(parts[1], "|")
+    if parts[0] == "M" {
+        val := utils.ParseInt(parts[2])
+        for _, c := range characteristics {
+            effects = append(effects, newModifyingEffect(duration, BDString2IotaCharacteristic[c], val))
+        }
+    } else {
+        bonusType := consts.BONUS_CONSTANT
+        if last := len(parts[1]) - 1; parts[1][last] == '%' {
+            bonusType = consts.BONUS_PERCENT
+            parts[1] = parts[1][:last - 1]
+        }
+        val := utils.ParseInt(parts[1])
+        for _, c := range characteristics {
+            effects = append(effects, newBonusEffect(duration, NewBonus(BDString2IotaCharacteristic[c], bonusType, val)))
+        }
+    }
+    return effects
 }
 
 func InitGameItems() {
     db := connect.CreateConnect()
-    rows, _ := db.Query("SELECT id, name, atype, weight, allocation_info, message, description, bonus FROM artifacts")
+    rows, _ := db.Query("SELECT id, name, atype, weight, allocation_info, message, description, bonus, effects FROM artifacts")
     for rows.Next() {
         var (
             id int64
             weight int
-            atype_str, name, alloc_info_str, msg, desc, bonusStr string
+            atype_str, name, alloc_info_str, msg, desc, bonusesStr, effectsStr string
         )
-        rows.Scan(&id, &name, &atype_str, &weight, &alloc_info_str, &msg, &desc, &bonusStr)
+        rows.Scan(&id, &name, &atype_str, &weight, &alloc_info_str, &msg, &desc, &bonusesStr, &effectsStr)
         atype := strings.Split(atype_str, ":")
         gameItems.items[id] = &ItemKind{id, name, weight, msg, desc, utils.ParseInt(atype[0]), utils.ParseInt(atype[1]), make([] *Bonus, 0, 30), make([] Effecter, 0, 30)}
         alloc_info := strings.Split(alloc_info_str, ":");
@@ -167,16 +199,20 @@ func InitGameItems() {
         for i := min_d; i <= max_d; i++ {
             gameItems.items_depth_gen[i] = append(gameItems.items_depth_gen[i], &gameItemGen{gameItems.items[id], prob})
         }
-        for _, bonus := range strings.Split(bonusStr, "@") {
-            if len(bonus) == 0 {
-                continue
+        if len(bonusesStr) > 0 {
+            for _, bonusStr := range strings.Split(bonusesStr, "@") {
+                for _, bonus := range parseBonusFromDB(bonusStr) {
+                    gameItems.items[id].bonuses = append(gameItems.items[id].bonuses, bonus)
+                }
             }
-            parts := strings.Split(bonus, ":")
-            val := utils.ParseInt(parts[0])
-            for _, c := range strings.Split(parts[1], "|") {
-                gameItems.items[id].bonuses = append(gameItems.items[id].bonuses, NewBonus(BDString2IotaCharacteristic[c], 0, val))
+        }
+        if len(effectsStr) > 0 {
+            for _, effectStr := range strings.Split(effectsStr, "@") {
+                for _, effect := range parseEffectFromDB(effectStr) {
+                    gameItems.items[id].effects = append(gameItems.items[id].effects, effect)
+                }
             }
-        } 
+        }
     }
 }
 
