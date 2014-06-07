@@ -146,6 +146,10 @@ var BDString2IotaCharacteristic = map[string] int {
     "CON"   : consts.CHARACTERISTIC_DEFENSE,
     "SPEED" : consts.CHARACTERISTIC_SPEED,
     "RES"   : consts.CHARACTERISTIC_MAGICK_RESISTANCE,
+    "HP"    : consts.CHARACTERISTIC_HP,
+    "MP"    : consts.CHARACTERISTIC_MP,
+}
+
 func parseBonusFromDB(bonusStr string) [] *Bonus {
     bonuses := make([] *Bonus, 0, 30)
     parts := strings.Split(bonusStr, ":")
