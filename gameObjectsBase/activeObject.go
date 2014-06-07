@@ -211,6 +211,9 @@ func (obj *ActiveObject) GetMaxHP() int {
 func (obj *ActiveObject) GetMP() int {
     return obj.MP
 }
+
+func (obj *ActiveObject) GetMaxMP() int {
+    return obj.Characteristics[consts.CHARACTERISTIC_MP]
 }
 
 func (obj *ActiveObject) GetAttackRadius() int {
@@ -288,6 +291,8 @@ func (obj *ActiveObject) GetInfo() consts.JsonType {
     info := obj.GameObject.GetInfo()
     info["hp"] = obj.HP
     info["max_hp"] = obj.Characteristics[consts.CHARACTERISTIC_HP]
+    info["mp"] = obj.MP
+    info["max_mp"] = obj.Characteristics[consts.CHARACTERISTIC_MP]
     return info
 }
 
