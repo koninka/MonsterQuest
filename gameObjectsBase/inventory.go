@@ -5,7 +5,7 @@ import (
 )
 
 type InventoryObj struct {
-	Items map[int64] *Item
+	Items map[int64] Itemer
     kinds map[int64] int64 //kind_id to item_id on map
     cells map[int] int64
 }
@@ -19,7 +19,7 @@ func (inv* InventoryObj) GetInfo() []consts.JsonType {
     return inventory
 }
 
-func (inv* InventoryObj) DropItem(i* Item) int {
+func (inv* InventoryObj) DropItem(i Itemer) int {
     delete(inv.Items, i.GetID())
     i.SetOwner(nil)
     var needDeleteKind bool = true
@@ -36,7 +36,7 @@ func (inv* InventoryObj) DropItem(i* Item) int {
     return place
 }
 
-func (inv* InventoryObj) AddItem(i* Item, owner Activer) int {
+func (inv* InventoryObj) AddItem(i Itemer, owner Activer) int {
     var place int = -1
     if item_id, isExist := inv.kinds[i.GetKindId()]; isExist {
         if inv.Items[item_id].IsHeapItem() {
@@ -56,7 +56,7 @@ func (inv* InventoryObj) AddItem(i* Item, owner Activer) int {
     return place
 }
 
-func (inv* InventoryObj) RestoreItem(i* Item, place int) {
+func (inv* InventoryObj) RestoreItem(i Itemer, place int) {
     var id int64 = i.GetID()
     inv.cells[place] = id
     inv.kinds[i.GetKindId()] = id
@@ -76,7 +76,7 @@ func (inv* InventoryObj) getPlaceById(id int64) int {
     return -1
 }
 
-func (inv *InventoryObj) EquipItem(i* Item) {
+func (inv *InventoryObj) EquipItem(i Itemer) {
     for cell, item_id := range inv.cells {
         if item_id == i.GetID() {
             delete(inv.cells, cell)
@@ -85,11 +85,11 @@ func (inv *InventoryObj) EquipItem(i* Item) {
     }
 }
 
-func (inv *InventoryObj) UnequipItem(i* Item) {
+func (inv *InventoryObj) UnequipItem(i Itemer) {
     inv.placeItem(i.GetID())
 }
 
-func (inv* InventoryObj) MoveItem(i* Item, from_cell, to_cell int) {
+func (inv* InventoryObj) MoveItem(i Itemer, from_cell, to_cell int) {
     if iid, isExist := inv.cells[to_cell]; isExist {
         if i.GetID() == iid {
             return
@@ -113,7 +113,7 @@ func (inv *InventoryObj) placeItem(id int64) int {
     return idx
 }
 
-func (inv *InventoryObj) GetItem(id int64) *Item {
+func (inv *InventoryObj) GetItem(id int64) Itemer {
 	return inv.Items[id]
 }
 
@@ -126,5 +126,5 @@ func (inv *InventoryObj) GetWeight() int {
 }
 
 func NewInventoryObj() *InventoryObj {
-	return &InventoryObj{make(map[int64]*Item), make(map[int64] int64), make(map[int]int64)}
+	return &InventoryObj{make(map[int64] Itemer), make(map[int64] int64), make(map[int]int64)}
 }

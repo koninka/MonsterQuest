@@ -51,7 +51,7 @@ func GetInstance() *Game {
                 make(map[int64] []*gameObjects.MobKind),
             },
             itemList{
-                make(map[int64] *gameObjectsBase.Item),
+                make(map[int64] gameObjectsBase.Itemer),
             },
             make(map[string] consts.JsonType),
             make(chan consts.JsonType),
@@ -183,7 +183,7 @@ func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
             if p.CanPickUp(item) {
                 if p.PickUpItem(item) {
                     g.field.UnlinkFromCells(item)
-                    res["result"] = "ok"    
+                    res["result"] = "ok"
                 }
             } else {
                 res["result"] = "tooHeavy"

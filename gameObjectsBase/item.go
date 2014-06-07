@@ -220,6 +220,21 @@ func InitGameItems() {
     }
 }
 
+type Itemer interface {
+    GameObjecter
+    GetOwner() Activer
+    SetOwner(Activer)
+    SetPosition(geometry.Point)
+    IsHeapItem() bool
+    GetKindId() int64
+    HasOwner() bool
+    GetWeight() int
+    GetItemType() int
+    ApplyBonuses()
+    CancelBonuses()
+    ApplyEffects()
+}
+
 type Item struct {
     GameObject
     kind *ItemKind

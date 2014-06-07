@@ -36,7 +36,7 @@ func getPlayerKind() *playerKind {
 
 type slot struct {
     itemType int
-    item *gameObjectsBase.Item
+    item gameObjectsBase.Itemer
 }
 
 func newSlot(itemType int) *slot {
@@ -98,11 +98,11 @@ func (p *Player) Attack() consts.JsonType {
     return res
 }
 
-func (p* Player) RestoreItem(item *gameObjectsBase.Item, place int) {
+func (p* Player) RestoreItem(item gameObjectsBase.Itemer, place int) {
     p.Inventory.RestoreItem(item, place)
 }
 
-func (p* Player) DropItem(item *gameObjectsBase.Item) int {
+func (p* Player) DropItem(item gameObjectsBase.Itemer) int {
     db := connect.CreateConnect()
     place := p.ActiveObject.DropItem(item)
     _, err := db.Exec("CALL drop_user_item(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, 1);
@@ -113,7 +113,7 @@ func (p* Player) DropItem(item *gameObjectsBase.Item) int {
     // return err == nil
 }
 
-func (p* Player) PickUpItem(item *gameObjectsBase.Item) bool {
+func (p* Player) PickUpItem(item gameObjectsBase.Itemer) bool {
     db := connect.CreateConnect()
     _, err := db.Exec("CALL add_user_item(?, ?, ?, ?)", p.DBId, item.GetKindId(), p.AddItem(item), 1);
     if err != nil {
@@ -122,7 +122,7 @@ func (p* Player) PickUpItem(item *gameObjectsBase.Item) bool {
     return err == nil
 }
 
-func (p *Player) Equip(item *gameObjectsBase.Item, slotIota int) bool {
+func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) bool {
     slot := p.slots[slotIota]
     if slot == nil || slot.itemType != item.GetItemType() {
         return false
@@ -150,7 +150,7 @@ func (p *Player) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer)
     return res
 }
 
-func (p *Player) Equipped(item *gameObjectsBase.Item) bool {
+func (p *Player) Equipped(item gameObjectsBase.Itemer) bool {
     for _, slot := range p.slots {
         if slot.item == item {
             return true
@@ -159,7 +159,7 @@ func (p *Player) Equipped(item *gameObjectsBase.Item) bool {
     return false
 }
 
-func (p *Player) MoveItem(item *gameObjectsBase.Item, to_cell int) bool {
+func (p *Player) MoveItem(item gameObjectsBase.Itemer, to_cell int) bool {
     if item.GetOwner() != p || p.Equipped(item) {
         return false
     }
@@ -180,7 +180,7 @@ func (p *Player) GetCapacity() int {
     return 100
 }
 
-func (p *Player) CanPickUp(item *gameObjectsBase.Item) bool {
+func (p *Player) CanPickUp(item gameObjectsBase.Itemer) bool {
     return p.Inventory.GetWeight() + item.GetWeight() <= p.GetCapacity()
 }
 
