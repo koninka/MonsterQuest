@@ -5,7 +5,17 @@ import (
     "strconv"
     "math"
     "math/rand"
+    "MonsterQuest/consts"
 )
+
+func JsonAction(action string, result ...interface{}) consts.JsonType{
+    res := make(consts.JsonType)
+    res["action"] = action
+    if len(result) == 1 {
+        res["result"] = result[0].(string)
+    }
+    return res
+}
 
 func Randint0(max int) int {
     return rand.Intn(max)

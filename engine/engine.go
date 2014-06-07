@@ -154,10 +154,8 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     }
 }
 
-func (g *Game) moveItem(json consts.JsonType) consts.JsonType{
-    res := make(consts.JsonType)
-    res["action"] = "moveItem"
-    res["result"] = "badId"
+func (g *Game) moveItem(json consts.JsonType) consts.JsonType {
+    res := utils.JsonAction("moveItem", "badId")
     idParam := json["id"]
     cellParam := json["cell"]
     if cellParam == nil {
@@ -173,9 +171,7 @@ func (g *Game) moveItem(json consts.JsonType) consts.JsonType{
 }
 
 func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
-    res := make(consts.JsonType)
-    res["action"] = "pickUp"
-    res["result"] = "badId"
+    res := utils.JsonAction("pickUp", "badId")
     idParam := json["id"]
     if idParam != nil {
         item := g.items.items[int64(idParam.(float64))]
@@ -195,9 +191,7 @@ func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
 }
 
 func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
-    res := make(consts.JsonType)
-    res["action"] = "drop"
-    res["result"] = "badId"
+    res := utils.JsonAction("drop", "badId")
     idParam := json["id"]
     if idParam != nil {
         item := g.items.items[int64(idParam.(float64))]
@@ -213,18 +207,13 @@ func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
 }
 
 func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
-    res := make(consts.JsonType)
-    res["action"] = "destroyItem"
+    res := utils.JsonAction("destroyItem", "badId")
     idParam := json["id"]
-    if idParam == nil {
-        res["result"] = "badId"
-    } else {
+    if idParam != nil {
         id := int64(idParam.(float64))
         item := g.items.items[id]
         p := g.players.getPlayerBySession(json["sid"].(string))
-        if item == nil || (item.HasOwner() && item.GetOwner() != p) || geometry.Distance(p.GetCenter(), item.GetCenter()) > consts.PICK_UP_RADIUS {
-            res["result"] = "badId"
-        } else {
+        if !(item == nil || (item.HasOwner() && item.GetOwner() != p) || geometry.Distance(p.GetCenter(), item.GetCenter()) > consts.PICK_UP_RADIUS) {
             g.items.deleteItem(item)
             if item.HasOwner() {
                 p.DeleteItem(item)
@@ -236,7 +225,7 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
 }
 
 func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
-    res := make(consts.JsonType)
+    res := utils.JsonAction("equip")
     res["action"] = "equip"
     idParam := json["id"]
     slotParam := json["slot"]
@@ -259,17 +248,12 @@ func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
 }
 
 func (g *Game) unequipItem(json consts.JsonType) consts.JsonType {
-    res := make(consts.JsonType)
-    res["action"] = "unequip"
+    res := utils.JsonAction("unequip", "badSlot")
     slotParam := json["slot"]
-    if slotParam == nil {
-        res["result"] = "badSlot"
-    } else {
+    if slotParam != nil {
         p := g.players.getPlayerBySession(json["sid"].(string))
         if p.Unequip(consts.NameSlotMapping[slotParam.(string)]) {
             res["result"] = "ok"
-        } else {
-            res["result"] = "badSlot"
         }
     }
     return res
@@ -298,14 +282,11 @@ func (g *Game) inDictionary(k string) bool {
 }
 
 func (g *Game) setUpMap(json consts.JsonType) consts.JsonType {
-    res := make(consts.JsonType)
-    res["action"] = "setUpMap"
-    res["result"] = "badAction"
+    res := utils.JsonAction("setUpMap", "badAction")
     loadingFailed := func () consts.JsonType {
         res["result"] = "badMap"
         return res
     }
-
     if *consts.TEST && consts.TEST_MODE {
         var mapStrs []string
         data, ok := json["map"].([]interface{})
@@ -342,16 +323,11 @@ func (g *Game) setUpMap(json consts.JsonType) consts.JsonType {
 }
 
 func (g* Game) badAction(action string) consts.JsonType {
-    res := make(consts.JsonType)
-    res["action"] = action
-    res["result"] = "badAction"
-    return res
+    return utils.JsonAction(action, "badAction")
 }
 
 func (g *Game) startTesting() consts.JsonType {
-    res := make(consts.JsonType)
-    res["action"] = "startTesting"
-    res["result"] = "badAction"
+    res := utils.JsonAction("startTesting", "badAction")
     if *consts.TEST && !consts.TEST_MODE {
         res["result"] = "ok"
         consts.TEST_MODE = true
@@ -360,9 +336,7 @@ func (g *Game) startTesting() consts.JsonType {
 }
 
 func (g *Game) endTesting() consts.JsonType {
-    res := make(consts.JsonType)
-    res["action"] = "endTesting"
-    res["result"] = "badAction"
+    res := utils.JsonAction("endTesting", "badAction")
     if *consts.TEST && consts.TEST_MODE {
         res["result"] = "ok"
         consts.TEST_MODE = false
@@ -371,14 +345,12 @@ func (g *Game) endTesting() consts.JsonType {
 }
 
 func (g *Game) getDictionaryAction() consts.JsonType {
-    dict := make(consts.JsonType) 
-    res := make(consts.JsonType)
+    dict := make(consts.JsonType)
     for k, v := range g.dictionary {
         dict[k] = v
     }
-    res["action"] = "getDictionary"
+    res := utils.JsonAction("getDictionary", "ok")
     res["dictionary"] = dict
-    res["result"] = "ok"
     return res
 }
 
@@ -422,17 +394,12 @@ func (g *Game) getObjectById(id int64) (gameObjectsBase.GameObjecter, bool) {
 }
 
 func (g *Game) examineAction(json consts.JsonType) consts.JsonType {
-    res := make(consts.JsonType)
+    res := utils.JsonAction("examine", "badId")
     idParam := json["id"]
-    if idParam == nil {
-        res["result"] = "badId"
-    } else {
+    if idParam != nil {
         id := int64(idParam.(float64))
-        res["action"] = "examine"
         obj, isExists := g.getObjectById(id)
-        if !isExists {
-            res["result"] = "badId"
-        } else {
+        if isExists {
             for k, v := range obj.GetFullInfo() {
                 res[k] = v
             }
@@ -447,8 +414,7 @@ func (g *Game) examineAction(json consts.JsonType) consts.JsonType {
 }
 
 func (g *Game) lookAction(sid string) consts.JsonType {
-    res := make(consts.JsonType)
-    res["action"] = "look"
+    res := utils.JsonAction("look")
     player := g.players.getPlayerBySession(sid)
     if player == nil {
         return nil
