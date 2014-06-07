@@ -287,7 +287,13 @@ func (obj *ActiveObject) GetInfo() consts.JsonType {
 }
 
 func (obj *ActiveObject) GetFullInfo() consts.JsonType {
-    return obj.GetInfo()
+    info := obj.GetInfo()
+    characteristics := make(consts.JsonType)
+    for c, v := range obj.Characteristics {
+        characteristics[consts.CharacteristicNameMapping[c]] = utils.Round(v)
+    }
+    info["characteristics"] = characteristics
+    return info
 }
 
 func (obj *ActiveObject) GetCharacteristic(charIota int) float64 {
