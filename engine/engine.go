@@ -213,13 +213,15 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
     if idParam != nil {
         p := g.players.getPlayerBySession(json["sid"].(string))
         item := p.Inventory.GetItem(int64(idParam.(float64)))
-        if !(item == nil || (item.GetOwner() == nil || item.IsOwner(p)) || geometry.Distance(p.GetCenter(), item.GetCenter()) > consts.PICK_UP_RADIUS) {
-            if item.HasOwner() {
-                p.DeleteItem(item)
-            } else {
-                g.items.deleteItem(item)
-            }
+        if item != nil && item.IsOwner(p) {
+            p.DeleteItem(item)
             res["result"] = "ok"
+        } else {
+            item := g.items.items[int64(idParam.(float64))]
+            if item != nil && geometry.Distance(p.GetCenter(), item.GetCenter()) > consts.PICK_UP_RADIUS {
+                g.items.deleteItem(item)
+                res["result"] = "ok"
+            }
         }
     }
     return res
