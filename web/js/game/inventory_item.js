@@ -96,6 +96,7 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
             var slot = CellToSlot(cell);
             var qp_numb = CoordsToPanel(data.global)
             if(number !== null){
+                GLOBAL.game.sendViaWS({action: "unequip", id: m.id});
                 GLOBAL.game.sendViaWS({action: "moveItem", id: m.id, cell: number});
             } else if(slot !== null){
                 GLOBAL.game.sendViaWS({action: "equip", id: m.id, slot: slot});
