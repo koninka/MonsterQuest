@@ -102,17 +102,6 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             "FEET" : 8
         }
    // }
-        var ItemToSlot = {
-            "HEAD" : 0,
-            "NECK" : 1,
-            "BODY" : 2,
-            "HANDS" : 3,
-            "LEFT" : 4,
-            "RIGHT" : 5,
-            "WEAPON" : 6,
-            "ARM" : 7,
-            "FEET" : 8
-        }
 
     Inventory.prototype.FindSlot = function(item){
         var itemType = {
@@ -131,6 +120,7 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
                 return slot[s];
             }
         }
+        return null;
     }
 
     Inventory.prototype.SetItems = function(items, slots){
