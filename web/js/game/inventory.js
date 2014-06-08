@@ -125,6 +125,17 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
 
     Inventory.prototype.SetItems = function(items, slots){
         if(!items) return;
+        this.slots = {
+            "HEAD" : null,
+            "NECK" : null,
+            "BODY" : null,
+            "HANDS" : null,
+            "LEFT" : null,
+            "RIGHT" : null,
+            "WEAPON" : null,
+            "ARM" : null,
+            "FEET" : null
+        };
         var founded_items = {};
         var cell_x = 0;
         var cell_y = -1;
@@ -154,6 +165,7 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
                         x = -1;
                         y = slotType[item.slot];
                         this.slots[item.slot] = id;
+                        this.items[id].equiped = true;
                     } else {
                         y = Math.floor(item.cell / inventory_size.x);
                         x = item.cell % inventory_size.x;
