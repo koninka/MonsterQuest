@@ -191,11 +191,15 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
             if(data["action"] == "examine"){
                 th.initInventory();
                 th.SetInventory(data.inventory);
-                th.setExamineData(data);
+                //th.setExamineData(data);
                 th.InitChain(chain_number + 1);
             }
         }
-        th.sendViaWS({action: "examine", id: th.player.id});
+        th.SelfExamine();
+    }
+
+    Game.prototype.SelfExamine = function(){
+        this.sendViaWS({action: "examine", id: game.player.id})
     }
 
     Game.prototype.InitKeyboard = function() {
@@ -232,6 +236,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         });
 
         KeyboardJS.on('i', function(){
+            game.SelfExamine();
             game.ShowInventory();
         })
 

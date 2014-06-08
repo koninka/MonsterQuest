@@ -44,8 +44,10 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
             data.originalEvent.preventDefault();
             if(m.equiped){
                 GLOBAL.game.sendViaWS({action: "unequip", id: m.id});
+                GLOBAL.game.SelfExamine();
             }else{
                 GLOBAL.game.sendViaWS({action: "equip", id: m.id, slot: m.itemType});
+                GLOBAL.game.SelfExamine();
             }
         }
         this.onClick = function(data){}
@@ -58,6 +60,7 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
                 GLOBAL.game.sendViaWS({action: "destroyItem", id: m.id});
             else
                 GLOBAL.game.sendViaWS({action: "examine", id: m.id});
+            GLOBAL.game.SelfExamine();
         }
         this.drawable.mousedown = function(data){
             var event = data.originalEvent;
@@ -80,11 +83,10 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
             var slot = CellToSlot(cell);
             if(number !== null){
                 GLOBAL.game.sendViaWS({action: "moveItem", id: m.id, cell: number});
-                GLOBAL.game.sendViaWS({action: "examine", id: GLOBAL.game.player.id});
             } else if(slot !== null){
                 GLOBAL.game.sendViaWS({action: "equip", id: m.id, slot: slot});
-                GLOBAL.game.sendViaWS({action: "examine", id: GLOBAL.game.player.id});
             }
+            GLOBAL.game.SelfExamine();
             data.originalEvent.preventDefault();
         }
         this.drawable.mousemove =  function(data){

@@ -108,6 +108,8 @@ define(['options', 'global', 'actor'] ,function(OPTIONS, GLOBAL, Actor){
             var event = data.originalEvent;
             if(event.which == 3 || event.button == 2) {
             //this was a right click;
+                if(m.id == GLOBAL.game.player.id)
+                    GLOBAL.SELFEXAMINE = true;
                 GLOBAL.game.sendViaWS({action: "examine", id: m.id});
             } else if(lc && (diff < 350)) {
                 m.container.click.lastClick = 0;
