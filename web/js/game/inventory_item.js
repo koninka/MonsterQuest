@@ -125,5 +125,39 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
             this.drawable.position = {x: cell.x * OPTIONS.TILE_SIZE, y: cell.y * OPTIONS.TILE_SIZE};
     }
 
+    function IsArmor(item){
+        var a = [
+            "amulet",
+            "ring" ,
+            "armor",
+            "shield",
+            "helmet",
+            "gloves",
+            "boots",
+            "weapon",
+        ]
+        return item.IndexOf(item.itemType) != -1;
+    }
+
+    function UseOnTarget(item){
+        var a = ['scroll'];
+        return item.IndexOf(item.itemType) != -1;
+    }
+
+    InventoryItem.prototype.qiuckAction = function(){
+        if(IsArmor(this.item)){
+            var s = GLOBAL.game.inventory.FindSlot(this);
+            GLOBAL.game.sendViaWS({action: "equip", id: this.item.id, slot: s});
+        } else if(UseOnTarget(item)){
+            GLOBAL.game.inventory.Hide();
+            GLOBAL.use_mode = {
+                action : "use",
+                id : this.item.id
+            };
+        } else {
+            GLOBAL.game.sendViaWS({action: "use", id: this.item.id })
+        }
+    }
+
     return InventoryItem;
 })
