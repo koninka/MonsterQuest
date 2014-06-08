@@ -196,7 +196,7 @@ func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
     if idParam != nil {
         p := g.players.getPlayerBySession(json["sid"].(string))
         item := p.Inventory.GetItem(int64(idParam.(float64)))
-        if item != nil && item.GetOwner().GetID() == p.GetID() {
+        if item != nil && item.IsOwner(p) {
             p.DropItem(item, 1)//second param must me amount
             g.items.addItem(item)
             g.field.LinkToCells(item)
@@ -236,7 +236,7 @@ func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
     } else {
         item := g.items.items[int64(idParam.(float64))]
         p := g.players.getPlayerBySession(json["sid"].(string))
-        if item == nil || item.GetOwner().GetID() != p.GetID() {
+        if item == nil || item.GetOwner() == nil || !item.IsOwner(p){
             res["result"] = "badId"
         } else if p.Equip(item, consts.NameSlotMapping[slotParam.(string)]) {
             res["result"] = "ok"

@@ -238,6 +238,7 @@ type Itemer interface {
     GameObjecter
     GetOwner() Activer
     SetOwner(Activer)
+    IsOwner(Activer) bool
     SetPosition(geometry.Point)
     IsHeapItem() bool
     IsEquiped() bool
@@ -303,6 +304,10 @@ func (i *Item) GetOwner() Activer {
 
 func (i *Item) SetOwner(owner Activer) {
     i.owner = owner
+}
+
+func (i* Item) IsOwner(a Activer) bool {
+    return i.HasOwner() && i.GetOwner().GetID() == a.GetID()
 }
 
 func (i* Item) SetPosition(p geometry.Point) {
