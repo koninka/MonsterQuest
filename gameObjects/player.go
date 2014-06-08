@@ -199,6 +199,10 @@ func (p *Player) CanPickUp(item gameObjectsBase.Itemer) bool {
     return p.Inventory.GetWeight() + item.GetWeight() <= p.GetCapacity()
 }
 
+func (p *Player) GetItem(id int64) gameObjectsBase.Itemer {
+    return p.Inventory.GetItem(id)
+}
+
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) *Player {
     slots := make(map[int] *slot)
     for slotType, itemType := range consts.SlotItemMapping {
