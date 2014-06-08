@@ -36,6 +36,19 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
         return null;
     }
 
+    function CoordsToPanel(coords){
+        var panel = GLOBAL.game.quickpanel.position;
+        var size  = OPTIONS.quickpanel.size;
+        var x_l = panel.x;
+        var y_t = panel.y;
+        var y_b = y_t + OPTIONS.TILE_SIZE;
+        var x_r = x_l + OPTIONS.TILE_SIZE * size;
+        if(coords.y >= y_t && coords.y < y_b && coords.x >= x_l && coords.x < x_r){
+            return Math.floor((coords.x - x_l) / OPTIONS.TILE_SIZE);
+        }
+        return null;
+    }
+
     function InventoryItem(item){
         Item.call(this, item);
         var m = this.item;
@@ -81,10 +94,13 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
             var cell = CoordsToCell(this.position);
             var number = CellToNumber(cell);
             var slot = CellToSlot(cell);
+            var qp_numb = CoordsToPanel(data.global)
             if(number !== null){
                 GLOBAL.game.sendViaWS({action: "moveItem", id: m.id, cell: number});
             } else if(slot !== null){
                 GLOBAL.game.sendViaWS({action: "equip", id: m.id, slot: slot});
+            } else if(qp_numb !== null){
+                GLOBAL.game.quickpanel.SetToPanel(m, qp_numb);
             }
             GLOBAL.game.SelfExamine();
             data.originalEvent.preventDefault();
