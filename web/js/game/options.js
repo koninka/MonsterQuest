@@ -35,5 +35,9 @@ define({
         //"waist_slot",
         
         //"wrists_slot"
-    ]
+    ],
+    quickpanel : {
+        size : 10
+    }
+
 })
