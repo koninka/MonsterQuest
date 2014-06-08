@@ -158,7 +158,7 @@ func (p *Player) Equipped(item gameObjectsBase.Itemer) bool {
 }
 
 func (p *Player) MoveItem(item gameObjectsBase.Itemer, to_cell int) bool {
-    if item.GetOwner() != p || p.Equipped(item) {
+    if item.GetOwner().GetID() != p.GetID() || p.Equipped(item) {
         return false
     }
     from_cell := p.Inventory.GetPlace(item.GetID())
