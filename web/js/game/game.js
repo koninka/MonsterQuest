@@ -251,7 +251,8 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         });
 
         KeyboardJS.on('i', function(){
-            game.SelfExamine();
+            if(!game.inventory.drawable.visible)
+                game.SelfExamine();
             game.ShowInventory();
         })
 
