@@ -12,7 +12,7 @@ import (
 type fieldCell struct {
     background byte
     actors map[int64] gameObjectsBase.Activer
-    items map[int64] *gameObjectsBase.Item
+    items map[int64] gameObjectsBase.Itemer
 }
 
 func (cell *fieldCell) isBlocked() bool {
@@ -26,7 +26,7 @@ func (cell *fieldCell) isFree() bool {
 func (cell *fieldCell) link(obj gameObjectsBase.GameObjecter) {
     if actor, ok := obj.(gameObjectsBase.Activer); ok {
         cell.actors[actor.GetID()] = actor
-    } else if item, ok := obj.(*gameObjectsBase.Item); ok {
+    } else if item, ok := obj.(gameObjectsBase.Itemer); ok {
         cell.items[item.GetID()] = item
     } else {
         panic(fmt.Sprintf("Link to cell something wrong"))
@@ -36,7 +36,7 @@ func (cell *fieldCell) link(obj gameObjectsBase.GameObjecter) {
 func (cell *fieldCell) unlink(obj gameObjectsBase.GameObjecter) {
     if actor, ok := obj.(gameObjectsBase.Activer); ok {
         delete(cell.actors, actor.GetID())
-    } else if item, ok := obj.(*gameObjectsBase.Item); ok {
+    } else if item, ok := obj.(gameObjectsBase.Itemer); ok {
         delete(cell.items, item.GetID())
     } else {
         panic(fmt.Sprintf("Unlink from cell something wrong"))
@@ -49,7 +49,7 @@ type GameField struct {
 }
 
 func newFieldCell(background byte) *fieldCell {
-    return &fieldCell{background, make(map[int64] gameObjectsBase.Activer), make(map[int64] *gameObjectsBase.Item)}
+    return &fieldCell{background, make(map[int64] gameObjectsBase.Activer), make(map[int64] gameObjectsBase.Itemer)}
 }
 
 func NewGameField() GameField {

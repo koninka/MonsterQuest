@@ -123,8 +123,8 @@ func (gigi* gameItemGen) Probability() int {
     return gigi.probability
 }
 
-func (gigi* gameItemGen) GenItem(owner Activer) *Item {
-    return &Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, gigi.item_kind, owner}
+func (gigi* gameItemGen) GenItem(owner Activer) Itemer {
+    return NewItem(gigi.item_kind.dbId, owner)
 }
 
 type gameItemsList struct {
@@ -456,20 +456,22 @@ func (i* FoodItem) UseItem(inv* InventoryObj) {
     }
 }
 
-func NewItem(iid int64, owner Activer) *Item {
-    return newItem(gameItems.items[iid], owner)
+func NewItem(iid int64, owner Activer, amount ...interface{}) Itemer {
+    var i Itemer = nil
+    switch gameItems.items[iid].class {
+        case consts.ITEM_CLASS_FOOD:    i = newFoodItem(gameItems.items[iid], owner, amount[0].(int))
+        case consts.ITEM_CLASS_GARMENT: i = &GarmentItem{newItem(gameItems.items[iid], owner), false}
+        // case consts.ITEM_CLASS_AMMO:
+    }
+    return i
 }
 
-func newItem(ik *ItemKind, owner Activer) *Item {
-    return &Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, ik, owner}
-}
-
-func newSummarizeItem(ik *ItemKind, owner Activer, amount int) SummarizeItem {
-    return SummarizeItem{*newItem(ik, owner), amount}
+func newItem(ik *ItemKind, owner Activer) Item {
+    return Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, ik, owner}
 }
 
 func newFoodItem(ik* ItemKind, owner Activer, amount int) *FoodItem {
-    return &FoodItem{newSummarizeItem(ik, owner, amount)}
+    return &FoodItem{SummarizeItem{newItem(ik, owner), amount}}
 }
 
 func splitItem(inv* InventoryObj, i Itemer, amount int) int {
