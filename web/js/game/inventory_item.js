@@ -19,15 +19,15 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
 
     function CellToSlot(cell){
         var itemType = [
-            "helmet",
-            "amulet",
-            "armor",
-            "gloves",
-            "ring",
-            "ring",
-            "weapon",
-            "shield",
-            "boots"
+             "HEAD" ,
+            "NECK" ,
+            "BODY" ,
+            "HANDS",
+            "LEFT" ,
+            "RIGHT" ,
+            "WEAPON",
+            "ARM" ,
+            "FEET" 
 
         ]
         if(cell.x >= -1 && cell.x < 0 && cell.y > 0 && cell.y < OPTIONS.slots.length)

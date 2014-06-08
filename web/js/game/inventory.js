@@ -80,15 +80,15 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
    // function ItemToSlot(item){
     //    var n = 0;
         var itemType = {
-            "helmet" : 0,
-            "amulet" : 1,
-            "armor" : 2,
-            "gloves" : 3,
-            "ring" : 4, //5
-            "weapon" : 6,
-            "shield" : 7,
-            "boots" : 8,
-
+            "HEAD" : 0,
+            "NECK" : 1,
+            "BODY" : 2,
+            "HANDS" : 3,
+            "LEFT" : 4,
+            "RIGHT" : 5,
+            "WEAPON" : 6,
+            "ARM" : 7,
+            "FEET" : 8
         }
    // }
 
