@@ -42,8 +42,15 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
                 x: I.pointer.x / OPTIONS.TILE_SIZE + game.player.pt.x,
                 y: I.pointer.y / OPTIONS.TILE_SIZE + game.player.pt.y,
             }
-            game.sendViaWS({action: "attack", point: point});
-            console.log({action: "attack", point: point});
+            if(global.use_mode){
+                global.use_mode.point = point;
+                game.sendViaWS(global.use_mode);
+                global.use_mode = null;
+            } else {
+                game.sendViaWS({action: "attack", point: point});
+            }
+            
+            //console.log({action: "attack", point: point});
         })
         global.graphic = this;
 
