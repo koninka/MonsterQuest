@@ -173,21 +173,16 @@ func (p *Player) MoveItem(item gameObjectsBase.Itemer, to_cell int) bool {
     }
 }
 
-func (p* Player) Use(id int64, x, y, ammoId interface{}) consts.JsonType {
-    res := make(consts.JsonType)
-    res["action"] = "use"
-    res["action"] = "badId"
+func (p* Player) UseItem(id int64) consts.JsonType {
+    res := utils.JsonAction("useItem", "badId")
     if p.Inventory.HasItem(id) {
-        item := p.Inventory.GetItem(id)
-        if item.IsEquiped() {
-
-        }
+        p.Inventory.GetItem(id).UseItem(p.Inventory)
     }
     return res
 }
 
 func (p *Player) GetCapacity() int {
-    return 100
+    return 700
 }
 
 func (p *Player) CanPickUp(item gameObjectsBase.Itemer) bool {
