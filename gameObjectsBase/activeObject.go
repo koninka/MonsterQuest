@@ -275,10 +275,6 @@ func (obj *ActiveObject) AddItem(item Itemer) int {
     return obj.Inventory.AddItem(item, obj)
 }
 
-func (obj *ActiveObject) DeleteItem(item Itemer) {
-    delete(obj.Inventory.Items, item.GetID())
-}
-
 func (obj *ActiveObject) DropItem(item Itemer, amount int) int {
     return obj.Inventory.DropItem(item, amount)
 }

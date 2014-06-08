@@ -457,7 +457,7 @@ func (i* FoodItem) UseItem(inv* InventoryObj) {
     i.Item.UseItem(inv)
     i.amount--
     if (i.amount <= 0) {
-        inv.deleteItem(i)
+        inv.DeleteItem(i)
     }
 }
 

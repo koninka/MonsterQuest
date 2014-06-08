@@ -107,6 +107,12 @@ BEGIN
    END IF;
 END//
 
+DROP PROCEDURE IF EXISTS `delete_item` //
+CREATE PROCEDURE `delete_item`(IN `uid` INT, IN `iid` INT, IN `place_num` INT)
+BEGIN
+   DELETE FROM `users_inventory` WHERE `user_id` = uid  AND `item_id` = iid AND `place` = place_num;
+END//
+
 DROP PROCEDURE IF EXISTS `move_item` //
 CREATE PROCEDURE `move_item`(IN `uid` INT, IN `from_place` INT,  IN `to_place` INT)
 BEGIN

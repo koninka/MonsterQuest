@@ -123,6 +123,15 @@ func (p* Player) PickUpItem(item gameObjectsBase.Itemer) bool {
     return err == nil
 }
 
+func (p* Player) DeleteItem(item gameObjectsBase.Itemer) bool {
+    db := connect.CreateConnect()
+    _, err := db.Exec("CALL delete_item(?, ?, ?)", p.DBId, item.GetKindId(), p.Inventory.DeleteItem(item));
+    if err != nil {
+        //
+    }
+    return err == nil
+}
+
 func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) bool {
     slot := p.slots[slotIota]
     if slot == nil || slot.itemType != item.GetItemType() || item.GetItemClass() != consts.ITEM_CLASS_GARMENT {

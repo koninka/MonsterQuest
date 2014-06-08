@@ -32,12 +32,14 @@ func (inv* InventoryObj) dropItem(i Itemer) int {
         delete(inv.kinds, i.GetKindId())
     }
     place := inv.getPlaceById(i.GetID())
+    delete(inv.cells, place)
     return place
 }
 
-func (inv* InventoryObj) deleteItem(i Itemer) {
-    inv.dropItem(i)
+func (inv* InventoryObj) DeleteItem(i Itemer) int {
+    place := inv.dropItem(i)
     i = nil
+    return place
 }
 
 func (inv* InventoryObj) DropItem(i Itemer, amount int) int {
