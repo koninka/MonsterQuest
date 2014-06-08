@@ -482,8 +482,7 @@ func splitItem(inv* InventoryObj, i Itemer, amount int) int {
     inv.Items[new_i.GetID()] = new_i
     inv.kinds[new_i.GetKindId()] = new_i.GetID()
     i.SetOwner(nil)
+    i.ForcePlace(i.GetOwner().GetCenter())
     i.setAmount(amount)
-    // new_i := SummarizeItem{*newItem(i.GetKind(), i.GetOwner()), 0}
-    // inv.cells[]
     return place
 }

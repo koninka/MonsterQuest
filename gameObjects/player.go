@@ -101,6 +101,7 @@ func (p *Player) Attack() consts.JsonType {
 
 func (p* Player) RestoreItem(item gameObjectsBase.Itemer, place int) {
     p.Inventory.RestoreItem(item, place)
+    item.SetOwner(p)
 }
 
 func (p* Player) DropItem(item gameObjectsBase.Itemer, amount int) int {

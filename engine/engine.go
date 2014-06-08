@@ -198,7 +198,7 @@ func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
         item := p.Inventory.GetItem(int64(idParam.(float64)))
         if item != nil && item.GetOwner().GetID() == p.GetID() {
             p.DropItem(item, 1)//second param must me amount
-            item.ForcePlace(p.GetCenter())
+            g.items.addItem(item)
             g.field.LinkToCells(item)
             res["result"] = "ok"
         }

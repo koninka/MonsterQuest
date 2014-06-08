@@ -53,6 +53,7 @@ func (inv* InventoryObj) DropItem(i Itemer, amount int) int {
     }
     if v {
         place = inv.dropItem(i)
+        i.ForcePlace(i.GetOwner().GetCenter())
         i.SetOwner(nil)
     }
     return place
