@@ -19,14 +19,8 @@ func (inv* InventoryObj) GetInfo() []consts.JsonType {
     return inventory
 }
 
-func (inv* InventoryObj) deleteItem(i Itemer) {
-    inv.DropItem(i)
-    i = nil
-}
-
-func (inv* InventoryObj) DropItem(i Itemer) int {
+func (inv* InventoryObj) dropItem(i Itemer) int {
     delete(inv.Items, i.GetID())
-    i.SetOwner(nil)
     var needDeleteKind bool = true
     for kind_id, item_id := range inv.kinds {
         if kind_id == i.GetKindId() && item_id != i.GetID() {
@@ -38,6 +32,29 @@ func (inv* InventoryObj) DropItem(i Itemer) int {
         delete(inv.kinds, i.GetKindId())
     }
     place := inv.getPlaceById(i.GetID())
+    return place
+}
+
+func (inv* InventoryObj) deleteItem(i Itemer) {
+    inv.dropItem(i)
+    i = nil
+}
+
+func (inv* InventoryObj) DropItem(i Itemer, amount int) int {
+    var (
+        v bool =  true
+        place int
+    )
+    if i.IsHeapItem() {
+        if i.GetAmount() - amount > 0 {
+            place = splitItem(inv, i, amount)
+            v = false
+        }
+    }
+    if v {
+        place = inv.dropItem(i)
+        i.SetOwner(nil)
+    }
     return place
 }
 

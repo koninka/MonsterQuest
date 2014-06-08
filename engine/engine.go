@@ -194,10 +194,10 @@ func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("drop", "badId")
     idParam := json["id"]
     if idParam != nil {
-        item := g.items.items[int64(idParam.(float64))]
         p := g.players.getPlayerBySession(json["sid"].(string))
-        if item != nil && item.GetOwner() == p {
-            p.DropItem(item)
+        item := p.Inventory.GetItem(int64(idParam.(float64)))
+        if item != nil && item.GetOwner().GetID() == p.GetID() {
+            p.DropItem(item, 1)//second param must me amount
             item.ForcePlace(p.GetCenter())
             g.field.LinkToCells(item)
             res["result"] = "ok"

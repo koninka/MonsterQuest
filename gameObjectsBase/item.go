@@ -241,12 +241,16 @@ type Itemer interface {
     SetPosition(geometry.Point)
     IsHeapItem() bool
     IsEquiped() bool
+    GetKind() *ItemKind
     GetKindId() int64
     HasOwner() bool
     GetWeight() int
     GetItemType() int
     GetAmount() int
     GetItemClass() int
+    getAmount() int
+    decAmount(int)
+    setAmount(int)
     UseItem(*InventoryObj)
     UnuseItem()
     EquipItem(*InventoryObj)
@@ -313,6 +317,10 @@ func (i* Item) IsEquiped() bool {
     return false
 }
 
+func (i* Item) GetKind() *ItemKind {
+    return i.kind
+}
+
 func (i* Item) GetKindId() int64 {
     return i.kind.dbId
 }
@@ -329,12 +337,22 @@ func (i *Item) GetItemType() int {
     return i.kind.itemType
 }
 
-func (i *Item) GetItemClass() int {
+func (i* Item) GetItemClass() int {
     return i.kind.class
 }
 
-func (i *Item) GetAmount() int {
+func (i* Item) GetAmount() int {
     return 1
+}
+
+func (i* Item) getAmount() int {
+    return 1
+}
+
+func (i* Item) decAmount(int) {
+}
+
+func (i* Item) setAmount(int) {
 }
 
 func (i *Item) UseItem(*InventoryObj) {
@@ -410,12 +428,20 @@ type SummarizeItem struct {
     amount int
 }
 
-func (i* SummarizeItem) IsHeapItem() bool {
-    return true
+func (i* SummarizeItem) getAmount() int {
+    return i.amount
 }
 
-func (i *SummarizeItem) GetAmount() int {
-    return i.amount
+func (i* SummarizeItem) decAmount(amount int) {
+    i.amount -= amount
+}
+
+func (i* SummarizeItem) setAmount(amount int) {
+    i.amount = amount
+}
+
+func (i* SummarizeItem) IsHeapItem() bool {
+    return true
 }
 
 type FoodItem struct {
@@ -436,4 +462,26 @@ func NewItem(iid int64, owner Activer) *Item {
 
 func newItem(ik *ItemKind, owner Activer) *Item {
     return &Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, ik, owner}
+}
+
+func newSummarizeItem(ik *ItemKind, owner Activer, amount int) SummarizeItem {
+    return SummarizeItem{*newItem(ik, owner), amount}
+}
+
+func newFoodItem(ik* ItemKind, owner Activer, amount int) *FoodItem {
+    return &FoodItem{newSummarizeItem(ik, owner, amount)}
+}
+
+func splitItem(inv* InventoryObj, i Itemer, amount int) int {
+    new_i := newFoodItem(i.GetKind(), i.GetOwner(), i.GetAmount() - amount)
+    place := inv.getPlaceById(i.GetID())
+    inv.cells[place] = new_i.GetID()
+    delete(inv.Items, i.GetID())
+    inv.Items[new_i.GetID()] = new_i
+    inv.kinds[new_i.GetKindId()] = new_i.GetID()
+    i.SetOwner(nil)
+    i.setAmount(amount)
+    // new_i := SummarizeItem{*newItem(i.GetKind(), i.GetOwner()), 0}
+    // inv.cells[]
+    return place
 }

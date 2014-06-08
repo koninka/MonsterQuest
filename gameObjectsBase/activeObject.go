@@ -62,7 +62,7 @@ type Activer interface {
     ClearAttackPoint()
     GetItems() map[int64] Itemer
     AddItem(Itemer) int
-    DropItem(Itemer) int
+    DropItem(Itemer, int) int
     GetCharacteristic(charIota int) int
     SetCharacteristic(charIota, newVal int)
     ModifyCharacteristic(charIota, val int)
@@ -279,8 +279,8 @@ func (obj *ActiveObject) DeleteItem(item Itemer) {
     delete(obj.Inventory.Items, item.GetID())
 }
 
-func (obj *ActiveObject) DropItem(item Itemer) int {
-    return obj.Inventory.DropItem(item)
+func (obj *ActiveObject) DropItem(item Itemer, amount int) int {
+    return obj.Inventory.DropItem(item, amount)
 }
 
 func (obj *ActiveObject) GetItems() map[int64] Itemer {

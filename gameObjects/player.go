@@ -103,10 +103,10 @@ func (p* Player) RestoreItem(item gameObjectsBase.Itemer, place int) {
     p.Inventory.RestoreItem(item, place)
 }
 
-func (p* Player) DropItem(item gameObjectsBase.Itemer) int {
+func (p* Player) DropItem(item gameObjectsBase.Itemer, amount int) int {
     db := connect.CreateConnect()
-    place := p.ActiveObject.DropItem(item)
-    _, err := db.Exec("CALL drop_user_item(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, 1);
+    place := p.ActiveObject.DropItem(item, amount)
+    _, err := db.Exec("CALL drop_user_item(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, amount);
     if err != nil {
         //-
     }
