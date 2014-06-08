@@ -1,5 +1,5 @@
-define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'options', 'global'], 
-    function(JQuery, utils, Player, View, Graphic, Inventory, OPTIONS, GLOBAL) {
+define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'options', 'global', 'quickpanel'], 
+    function(JQuery, utils, Player, View, Graphic, Inventory, OPTIONS, GLOBAL, QuickPanel) {
 
     function Game(sid, wsuri) {
         this.sid      = sid;
@@ -12,7 +12,6 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         this.graphic  = null;  //initGraphic
         this.inventory = null; // initInventory
         GLOBAL.game   = this;
-
     }
 
     Game.prototype.setDictionary = function(dict) {
@@ -98,6 +97,8 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         }
     }
 
+    
+
     Game.prototype.initInventory = function(){
         this.inventory = new Inventory();
     }
@@ -126,6 +127,9 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
             //utils.gameShutDown("Bad ID");
         } else {
             switch (data["action"]) {
+                case "equip":
+                    th.inventory.items[data.id].equiped = true;
+                    break;
                 case "examine":
                     if(data.id != th.player.id || GLOBAL.SELFEXAMINE){
                         if(data.id == th.player.id){
@@ -163,6 +167,12 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
             this.sock.onmessage = OnMessage;
         }
     }
+
+    Game.prototype.InitQuickPanel = function(chain_number) {
+        var th = game;
+        th.quickpanel = new QuickPanel(); 
+        th.InitChain(chain_number + 1);   
+    };
 
     Game.prototype.InitDictionary = function (chain_number){
         var th = game;
@@ -256,7 +266,8 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         this.init_chain = [];
         this.init_chain[0] = this.InitDictionary;
         this.init_chain[1] = this.InitLook;
-        this.init_chain[2] = this.InitPlayer;
+        this.init_chain[2] = this.InitQuickPanel;
+        this.init_chain[3] = this.InitPlayer;
         this.InitChain(0);
         this.InitKeyboard()
     };
