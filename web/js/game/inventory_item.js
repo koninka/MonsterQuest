@@ -54,7 +54,7 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
         var m = this.item;
         var I = this;
         this.onDoubleClick = function(data){
-            m.qiuckAction();
+            I.quickAction();
         }
         this.onClick = function(data){}
         this.onRightClick = function(data){
@@ -72,7 +72,7 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
             var event = data.originalEvent;
             if(event.which == 3 || event.button == 2)
                 return;
-            //event.preventDefault();
+            event.preventDefault();
             this.data = data;
             this.alpha = 0.9;
             this.dragging = true;
@@ -129,17 +129,17 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
             "boots",
             "weapon",
         ]
-        return item.IndexOf(item.itemType) != -1;
+        return a.indexOf(item.itemType) != -1;
     }
 
     function UseOnTarget(item){
         var a = ['scroll'];
-        return item.IndexOf(item.itemType) != -1;
+        return a.indexOf(item.itemType) != -1;
     }
 
-    InventoryItem.prototype.qiuckAction = function(){
+    InventoryItem.prototype.quickAction = function(){
         if(IsArmor(this.item)){
-            var s = GLOBAL.game.inventory.FindSlot(this);
+            var s = GLOBAL.game.inventory.FindSlot(this.item);
             GLOBAL.game.sendViaWS({action: "equip", id: this.item.id, slot: s});
         } else if(UseOnTarget(item)){
             GLOBAL.game.inventory.Hide();
