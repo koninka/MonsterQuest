@@ -236,7 +236,7 @@ func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
     } else {
         item := g.items.items[int64(idParam.(float64))]
         p := g.players.getPlayerBySession(json["sid"].(string))
-        if item.GetOwner() != p {
+        if item == nil || item.GetOwner().GetID() != p.GetID() {
             res["result"] = "badId"
         } else if p.Equip(item, consts.NameSlotMapping[slotParam.(string)]) {
             res["result"] = "ok"
