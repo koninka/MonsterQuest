@@ -54,14 +54,7 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
         var m = this.item;
         var I = this;
         this.onDoubleClick = function(data){
-            data.originalEvent.preventDefault();
-            if(m.equiped){
-                GLOBAL.game.sendViaWS({action: "unequip", id: m.id});
-                GLOBAL.game.SelfExamine();
-            }else{
-                GLOBAL.game.sendViaWS({action: "equip", id: m.id, slot: m.itemType});
-                GLOBAL.game.SelfExamine();
-            }
+            m.qiuckAction();
         }
         this.onClick = function(data){}
         this.onRightClick = function(data){
