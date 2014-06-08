@@ -5,6 +5,17 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
     function Inventory(screen){
         this.items = [];
         this.InitContainer();
+        this.slots = {
+            "HEAD" : null,
+            "NECK" : null,
+            "BODY" : null,
+            "HANDS" : null,
+            "LEFT" : null,
+            "RIGHT" : null,
+            "WEAPON" : null,
+            "ARM" : null,
+            "FEET" : null
+        };
     }
 
     Inventory.prototype.constructor = Inventory;
@@ -79,7 +90,7 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         case consts.ITEM_T_S*/
    // function ItemToSlot(item){
     //    var n = 0;
-        var itemType = {
+        var slotType = {
             "HEAD" : 0,
             "NECK" : 1,
             "BODY" : 2,
@@ -91,6 +102,36 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             "FEET" : 8
         }
    // }
+        var ItemToSlot = {
+            "HEAD" : 0,
+            "NECK" : 1,
+            "BODY" : 2,
+            "HANDS" : 3,
+            "LEFT" : 4,
+            "RIGHT" : 5,
+            "WEAPON" : 6,
+            "ARM" : 7,
+            "FEET" : 8
+        }
+
+    Inventory.prototype.FindSlot = function(item){
+        var itemType = {
+            "amulet" : ["NECK"],
+            "ring" : ["LEFT", "RIGHT"],
+            "armor" : ["BODY"],
+            "shield" : ["ARM"],
+            "helmet" : ["HEAD"],
+            "gloves" : ["HANDS"],
+            "boots" : ["FEET"],
+            "weapon" : ["WEAPON"]
+        }
+        var slot = itemType[item.itemType];
+        for(var s = 0; s < slot.length; ++s){
+            if(this.slots[slot[s]] == null){
+                return slot[s];
+            }
+        }
+    }
 
     Inventory.prototype.SetItems = function(items, slots){
         if(!items) return;
@@ -121,7 +162,8 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
                 if(item.cell !== null){
                     if(item.cell == -1){
                         x = -1;
-                        y = itemType[item.slot];
+                        y = slotType[item.slot];
+                        this.slots[item.slot] = id;
                     } else {
                         y = Math.floor(item.cell / inventory_size.x);
                         x = item.cell % inventory_size.x;
