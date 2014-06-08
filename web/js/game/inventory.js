@@ -115,12 +115,14 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             "weapon" : ["WEAPON"]
         }
         var slot = itemType[item.itemType];
+        if(!slot)
+            return null;
         for(var s = 0; s < slot.length; ++s){
             if(this.slots[slot[s]] == null){
                 return slot[s];
             }
         }
-        return null;
+        return slot[0];
     }
 
     Inventory.prototype.SetItems = function(items, slots){
