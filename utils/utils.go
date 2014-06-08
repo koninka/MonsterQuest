@@ -8,13 +8,11 @@ import (
     "MonsterQuest/consts"
 )
 
-func JsonAction(action string, result ...interface{}) consts.JsonType{
-    res := make(consts.JsonType)
-    res["action"] = action
-    if len(result) == 1 {
-        res["result"] = result[0].(string)
+func JsonAction(action, result string) consts.JsonType{
+    return consts.JsonType {
+        "action" : action,
+        "result" : result,
     }
-    return res
 }
 
 func Randint0(max int) int {

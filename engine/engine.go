@@ -228,23 +228,20 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
 }
 
 func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
-    res := utils.JsonAction("equip")
-    res["action"] = "equip"
+    res := utils.JsonAction("equip", "badId")
     idParam := json["id"]
     slotParam := json["slot"]
-    if idParam == nil {
-        res["result"] = "badId"
-    } else if slotParam == nil {
+    if slotParam == nil {
         res["result"] = "badSlot"
-    } else {
+    } else if idParam != nil {
         p := g.players.getPlayerBySession(json["sid"].(string))
         item := p.GetItem(int64(idParam.(float64)))
-        if item == nil {
-            res["result"] = "badId"
-        } else if p.Equip(item, consts.NameSlotMapping[slotParam.(string)]) {
-            res["result"] = "ok"
-        } else {
-            res["result"] = "badSlot"
+        if item != nil {
+            if p.Equip(item, consts.NameSlotMapping[slotParam.(string)]) {
+                res["result"] = "ok"
+            } else {
+                res["result"] = "badSlot"
+            }
         }
     }
     return res
@@ -417,7 +414,7 @@ func (g *Game) examineAction(json consts.JsonType) consts.JsonType {
 }
 
 func (g *Game) lookAction(sid string) consts.JsonType {
-    res := utils.JsonAction("look")
+    res := utils.JsonAction("look", "ok")
     player := g.players.getPlayerBySession(sid)
     if player == nil {
         return nil

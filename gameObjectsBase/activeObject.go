@@ -4,7 +4,6 @@ import (
     "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
-    "MonsterQuest/utils"
 )
 
 func GetShiftByDirection(dir int) (mx int, my int) {
@@ -229,7 +228,7 @@ func (obj *ActiveObject) GetKind() Kinder {
 }
 
 func (obj *ActiveObject) GetHit(blow fightBase.Blower, attacker Activer) consts.JsonType {
-    res := utils.JsonAction("attack")
+    var res = consts.JsonType { "action" : "attack" }
     res["description"] = consts.JsonType {
         "blowType" : blow.GetType(),
         "dealtDamage" : blow.GetDamage(),
