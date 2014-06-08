@@ -174,12 +174,11 @@ func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("pickUp", "badId")
     idParam := json["id"]
     if idParam != nil {
-        item := g.items.items[int64(idParam.(float64))]
+        item := g.items.getItem(int64(idParam.(float64)))
         p := g.players.getPlayerBySession(json["sid"].(string))
         if item != nil && !item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) <= float64(consts.PICK_UP_RADIUS) {
             if p.CanPickUp(item) {
                 if p.PickUpItem(item) {
-                    g.items.deleteItem(item)
                     g.field.UnlinkFromCells(item)
                     res["result"] = "ok"
                 }
@@ -188,6 +187,7 @@ func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
             }
         }
     }
+    fmt.Println(res)
     return res
 }
 
@@ -195,11 +195,10 @@ func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("drop", "badId")
     idParam := json["id"]
     if idParam != nil {
+        item := g.items.getItem(int64(idParam.(float64)))
         p := g.players.getPlayerBySession(json["sid"].(string))
-        item := p.Inventory.GetItem(int64(idParam.(float64)))
         if item != nil && item.IsOwner(p) {
             p.DropItem(item, 1)//second param must me amount
-            g.items.addItem(item)
             g.field.LinkToCells(item)
             res["result"] = "ok"
         }
@@ -211,17 +210,14 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("destroyItem", "badId")
     idParam := json["id"]
     if idParam != nil {
+        item := g.items.getItem(int64(idParam.(float64)))
         p := g.players.getPlayerBySession(json["sid"].(string))
-        item := p.Inventory.GetItem(int64(idParam.(float64)))
-        if item != nil && item.IsOwner(p) {
-            p.DeleteItem(item)
-            res["result"] = "ok"
-        } else {
-            item := g.items.items[int64(idParam.(float64))]
-            if item != nil && geometry.Distance(p.GetCenter(), item.GetCenter()) > consts.PICK_UP_RADIUS {
-                g.items.deleteItem(item)
-                res["result"] = "ok"
+        if item != nil && (item.IsOwner(p) || (!item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) < consts.PICK_UP_RADIUS)) {
+            g.items.deleteItem(item)
+            if item.IsOwner(p) {
+                p.DeleteItem(item)
             }
+            res["result"] = "ok"
         }
     }
     return res
@@ -376,7 +372,9 @@ func (g *Game) CreatePlayer(sid string) int64 {
             amount, place int
         )
         rows.Scan(&iid, &amount, &place)
-        p.RestoreItem(gameObjectsBase.NewItem(iid, p), place)
+        item := gameObjectsBase.NewItem(iid, p)
+        p.RestoreItem(item, place)
+        g.items.addItem(item)
     }
     return p.GetID()
 }
@@ -492,8 +490,12 @@ func (g *Game) IsSIDValid(sid string) bool {
 }
 
 func (g *Game) LogoutPlayer(sid string) {
-    delete(g.id2conn, g.players.getPlayerBySession(sid).GetID())
-    g.field.UnlinkFromCells(g.players.getPlayerBySession(sid))
+    p := g.players.getPlayerBySession(sid)
+    delete(g.id2conn, p.GetID())
+    g.field.UnlinkFromCells(p)
+    for _, item := range p.GetItems() {
+        g.items.deleteItem(item)
+    }
     g.players.deletePlayerBySession(sid)
 }
 
