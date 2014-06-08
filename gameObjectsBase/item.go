@@ -107,6 +107,7 @@ type ItemKind struct {
     weight int
     message string
     description string
+    class int
     itemType int
     subtype int
     bonuses [] *Bonus
@@ -195,7 +196,7 @@ func InitGameItems() {
         )
         rows.Scan(&id, &name, &atype_str, &weight, &alloc_info_str, &msg, &desc, &bonusesStr, &effectsStr)
         atype := strings.Split(atype_str, ":")
-        gameItems.items[id] = &ItemKind{id, name, weight, msg, desc, utils.ParseInt(atype[0]), utils.ParseInt(atype[1]), make([] *Bonus, 0, 30), make([] Effecter, 0, 30)}
+        gameItems.items[id] = &ItemKind{id, name, weight, msg, desc, utils.ParseInt(atype[0]), utils.ParseInt(atype[1]), utils.ParseInt(atype[2]), make([] *Bonus, 0, 30), make([] Effecter, 0, 30)}
         alloc_info := strings.Split(alloc_info_str, ":");
         prob := utils.ParseInt(alloc_info[0])
         min_d := utils.ParseInt64(alloc_info[1]) - 1
@@ -245,11 +246,15 @@ type Itemer interface {
     GetWeight() int
     GetItemType() int
     GetAmount() int
-    UseItem()
+    GetItemClass() int
+    UseItem(*InventoryObj)
     UnuseItem()
+    EquipItem(*InventoryObj)
+    UnequipItem(*InventoryObj)
     applyBonuses()
     applyEffects()
     cancelBonuses()
+
 }
 
 type Item struct {
@@ -324,17 +329,29 @@ func (i *Item) GetItemType() int {
     return i.kind.itemType
 }
 
+func (i *Item) GetItemClass() int {
+    return i.kind.class
+}
+
 func (i *Item) GetAmount() int {
     return 1
 }
 
-func (i *Item) UseItem() {
+func (i *Item) UseItem(*InventoryObj) {
     i.applyBonuses()
     i.applyEffects()
 }
 
 func (i *Item) UnuseItem() {
     i.cancelBonuses()
+}
+
+func (i *Item) EquipItem(*InventoryObj) {
+
+}
+
+func (i *Item) UnequipItem(*InventoryObj) {
+
 }
 
 func (i *Item) applyBonuses() {
@@ -364,14 +381,28 @@ func (i* GarmentItem) IsEquiped() bool {
     return i.isEquiped
 }
 
-func (i* GarmentItem) UseItem() {
-    i.Item.UseItem()
-    i.isEquiped = true
+func (i* GarmentItem) UseItem(inv* InventoryObj) {
+    if (i.isEquiped) {
+        i.UnequipItem(inv)
+    } else {
+        i.EquipItem(inv)
+    }
 }
 
-func (i* GarmentItem) UnuseItem() {
-    i.Item.UseItem()
-    i.isEquiped = false
+func (i* GarmentItem) EquipItem(inv *InventoryObj) {
+    if !i.isEquiped {
+        i.Item.UseItem(inv)
+        inv.unplaceItem(i.GetID())
+        i.isEquiped = true
+    }
+}
+
+func (i* GarmentItem) UnequipItem(inv *InventoryObj) {
+    if i.isEquiped {
+        i.Item.UnuseItem()
+        inv.placeItem(i.GetID())
+        i.isEquiped = false
+    }
 }
 
 type SummarizeItem struct {
@@ -389,6 +420,14 @@ func (i *SummarizeItem) GetAmount() int {
 
 type FoodItem struct {
     SummarizeItem
+}
+
+func (i* FoodItem) UseItem(inv* InventoryObj) {
+    i.Item.UseItem(inv)
+    i.amount--
+    if (i.amount <= 0) {
+        inv.deleteItem(i)
+    }
 }
 
 func NewItem(iid int64, owner Activer) *Item {

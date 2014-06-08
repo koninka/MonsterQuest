@@ -72,6 +72,12 @@ const (
 )
 
 const (
+    ITEM_CLASS_GARMENT = iota
+    ITEM_CLASS_FOOD
+    ITEM_CLASS_AMMO
+)
+
+const (
     SLOT_WEAPON = iota
     SLOT_LEFT
     SLOT_RIGHT

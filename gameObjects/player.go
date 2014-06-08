@@ -118,17 +118,16 @@ func (p* Player) PickUpItem(item gameObjectsBase.Itemer) bool {
     db := connect.CreateConnect()
     _, err := db.Exec("CALL add_user_item(?, ?, ?, ?)", p.DBId, item.GetKindId(), p.AddItem(item), 1);
     if err != nil {
-        //
     }
     return err == nil
 }
 
 func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) bool {
     slot := p.slots[slotIota]
-    if slot == nil || slot.itemType != item.GetItemType() {
+    if slot == nil || slot.itemType != item.GetItemType() || item.GetItemClass() != consts.ITEM_CLASS_GARMENT {
         return false
     }
-    p.Inventory.EquipItem(slot.item)
+    item.EquipItem(p.Inventory)
     slot.item = item
     return true
 }
@@ -138,7 +137,7 @@ func (p *Player) Unequip(slotIota int) bool {
     if slot == nil {
         return false
     }
-    p.Inventory.UnequipItem(slot.item)
+    slot.item.UnequipItem(p.Inventory)
     slot.item = nil
     return true
 }

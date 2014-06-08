@@ -19,6 +19,11 @@ func (inv* InventoryObj) GetInfo() []consts.JsonType {
     return inventory
 }
 
+func (inv* InventoryObj) deleteItem(i Itemer) {
+    inv.DropItem(i)
+    i = nil
+}
+
 func (inv* InventoryObj) DropItem(i Itemer) int {
     delete(inv.Items, i.GetID())
     i.SetOwner(nil)
@@ -76,21 +81,6 @@ func (inv* InventoryObj) getPlaceById(id int64) int {
     return -1
 }
 
-func (inv *InventoryObj) EquipItem(i Itemer) {
-    for cell, item_id := range inv.cells {
-        if item_id == i.GetID() {
-            inv.Items[item_id].UseItem()
-            delete(inv.cells, cell)
-            break
-        }
-    }
-}
-
-func (inv *InventoryObj) UnequipItem(i Itemer) {
-    inv.placeItem(i.GetID())
-    inv.Items[i.GetID()].UnuseItem()
-}
-
 func (inv* InventoryObj) MoveItem(i Itemer, from_cell, to_cell int) {
     if iid, isExist := inv.cells[to_cell]; isExist {
         if i.GetID() == iid {
@@ -101,6 +91,15 @@ func (inv* InventoryObj) MoveItem(i Itemer, from_cell, to_cell int) {
         delete(inv.cells, from_cell)
     }
     inv.cells[to_cell] = i.GetID()
+}
+
+func (inv *InventoryObj) unplaceItem(id int64) {
+    for cell, item_id := range inv.cells {
+        if item_id == id {
+            delete(inv.cells, cell)
+            break
+        }
+    }
 }
 
 func (inv *InventoryObj) placeItem(id int64) int {

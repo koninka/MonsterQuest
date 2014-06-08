@@ -4,6 +4,7 @@ import (
     "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
+    "MonsterQuest/utils"
 )
 
 func GetShiftByDirection(dir int) (mx int, my int) {
