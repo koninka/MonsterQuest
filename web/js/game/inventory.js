@@ -92,11 +92,16 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         }
    // }
 
-    Inventory.prototype.SetItems = function(items){
+    Inventory.prototype.SetItems = function(items, slots){
         if(!items) return;
         var founded_items = {};
         var cell_x = 0;
         var cell_y = -1;
+        var slt_id = {};
+        if(slots)
+        for(var s = 0; s < slots.length; ++s){
+            slt_id[slots[s]] = true;
+        }
         for(var i = 0; i < items.length; ++i){
             if(i % inventory_size.x == 0){
                 cell_x = 0;
@@ -106,6 +111,9 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             }
             var item = items[i];
             var id = item.id;
+            if(slt_id[id]){
+                item.cell = -1;
+            }
             if(this.items[id]){
                 var x = cell_x;
                 var y = cell_y;

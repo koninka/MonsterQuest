@@ -37,6 +37,7 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
             I.pointer.x = event.clientX - $(this).offset().left - I.width  / 2;
             I.pointer.y = event.clientY - $(this).offset().top  - I.height / 2;
         }).click(function(event){
+            //if(global.game.inventory.visible) return;
             var point = {
                 x: I.pointer.x / OPTIONS.TILE_SIZE + game.player.pt.x,
                 y: I.pointer.y / OPTIONS.TILE_SIZE + game.player.pt.y,

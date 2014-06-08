@@ -106,8 +106,10 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         this.inventory.Toggle();
     };
 
-    Game.prototype.SetInventory = function(inventory) {
-        this.inventory.SetItems(inventory);
+    Game.prototype.SetInventory = function(inventory, slots) {
+        console.log(inventory);
+        console.log(slots);
+        this.inventory.SetItems(inventory, slots);
     };
 
     function OnMessage(e){
@@ -125,10 +127,13 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         } else {
             switch (data["action"]) {
                 case "examine":
-                    if(data.id != th.player.id)
+                    if(data.id != th.player.id || GLOBAL.SELFEXAMINE){
+                        if(data.id == th.player.id){
+                            GLOBAL.SELFEXAMINE = false;
+                        }
                         th.setExamineData(data);
-                    else
-                        th.SetInventory(data.inventory);
+                    } else
+                        th.SetInventory(data.inventory, data.slots);
                     console.log(JSON.stringify(data));
                     break
                 case "getOptions":
