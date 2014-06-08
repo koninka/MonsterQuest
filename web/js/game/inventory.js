@@ -99,8 +99,8 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         var cell_y = -1;
         var slt_id = {};
         if(slots)
-        for(var s = 0; s < slots.length; ++s){
-            slt_id[slots[s]] = true;
+        for(var s in slots){
+            slt_id[slots[s].id] = s;
         }
         for(var i = 0; i < items.length; ++i){
             if(i % inventory_size.x == 0){
@@ -112,6 +112,7 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             var item = items[i];
             var id = item.id;
             if(slt_id[id]){
+                item.slot = slt_id[id];
                 item.cell = -1;
             }
             if(this.items[id]){
@@ -120,7 +121,7 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
                 if(item.cell !== null){
                     if(item.cell == -1){
                         x = -1;
-                        y = itemType[item.itemType];
+                        y = itemType[item.slot];
                     } else {
                         y = Math.floor(item.cell / inventory_size.x);
                         x = item.cell % inventory_size.x;
