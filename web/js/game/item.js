@@ -13,7 +13,11 @@ define(['global', 'options'], function(GLOBAL, OPTIONS){
         }
         this.onRightClick = function(data){
             data.originalEvent.preventDefault();
-            GLOBAL.game.sendViaWS({action: "examine", id: m.id});
+            var keys = KeyboardJS.activeKeys();
+            if(keys[0] == 'ctrl')
+                GLOBAL.game.sendViaWS({action: "destroyItem", id: m.id});
+            else
+                GLOBAL.game.sendViaWS({action: "examine", id: m.id});
         }
     }
 
