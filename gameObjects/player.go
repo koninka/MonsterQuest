@@ -192,7 +192,7 @@ func (p* Player) UseItem(id int64) consts.JsonType {
 }
 
 func (p *Player) GetCapacity() int {
-    return 700
+    return p.Characteristics[consts.CHARACTERISTIC_CAPACITY]
 }
 
 func (p *Player) CanPickUp(item gameObjectsBase.Itemer) bool {
