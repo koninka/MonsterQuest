@@ -17,7 +17,7 @@ import (
 type mobList struct {
     mobs map[int64] *gameObjects.Mob
     mobGens []*mobGenerator
-    pipeline chan gameObjects.Mob
+    pipeline chan *gameObjects.Mob
     mobsDepth map[int64] []*gameObjects.MobKind
 }
 
@@ -90,8 +90,8 @@ func (ml *mobList) run() {
 	for {
 		m := <-ml.pipeline
 		id := utils.GenerateId()
-		ml.mobs[id] = &m
+		ml.mobs[id] = m
 		m.SetID(id)
-		GetInstance().field.LinkToCells(&m)
+		GetInstance().field.LinkToCells(m)
 	}
 }

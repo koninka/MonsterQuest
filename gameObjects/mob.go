@@ -177,10 +177,10 @@ func (m *Mob) createDrop(depth int64) {
     }
 }
 
-func NewMob(kind *MobKind, x, y float64, depth int64) Mob {
+func NewMob(kind *MobKind, x, y float64, depth int64) *Mob {
     d := kind.GenHP()
     m := Mob{gameObjectsBase.NewActiveObject(-1, d, d, x, y, kind), 0}
     m.chooseDir()
     m.createDrop(int64(depth))
-    return m
+    return &m
 }

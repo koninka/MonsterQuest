@@ -13,7 +13,7 @@ type mobGenerator struct {
     area *geometry.Rectangle
     depth int64
     respawnDuration time.Duration
-    pipeline chan gameObjects.Mob
+    pipeline chan *gameObjects.Mob
 }
 
 func (gen *mobGenerator) run() {
@@ -45,6 +45,6 @@ func (gen *mobGenerator) run() {
     }
 }
 
-func NewMobGenerator(kinds *[]*gameObjects.MobKind, area *geometry.Rectangle, depth int64, respawnDuration float64, pipeline chan gameObjects.Mob) *mobGenerator {
+func NewMobGenerator(kinds *[]*gameObjects.MobKind, area *geometry.Rectangle, depth int64, respawnDuration float64, pipeline chan *gameObjects.Mob) *mobGenerator {
     return &mobGenerator{kinds, area, depth, time.Duration(respawnDuration) * time.Second, pipeline}
 }
