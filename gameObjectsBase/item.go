@@ -35,14 +35,10 @@ func (b *Bonus) cancel(owner Activer) {
 func (b *Bonus) GetFullInfo() consts.JsonType {
     bonusInfo := make(consts.JsonType)
     bonusInfo["characteristic"] = consts.CharacteristicNameMapping[b.characteristic]
-    effect := string(b.val)
-    if b.val > 0 {
-        effect = "+" + effect
-    }
+    bonusInfo["val"] = b.val
     if b.effectCalculation == consts.BONUS_PERCENT {
-        effect += "%"
+        bonusInfo["percent"] = true
     }
-    bonusInfo["effect"] = effect
     return bonusInfo
 }
 
@@ -57,6 +53,10 @@ type Effecter interface {
 
 type Effect struct {
     duration time.Duration
+}
+
+func (e *Effect) GetFullInfo() consts.JsonType {
+    return consts.JsonType { "duration" : e.duration }
 }
 
 type ModifyingEffect struct {
@@ -75,7 +75,10 @@ func (me *ModifyingEffect) apply(activator Activer) {
 }
 
 func (me *ModifyingEffect) GetFullInfo() consts.JsonType {
-    return make(consts.JsonType)
+    res := me.Effect.GetFullInfo()
+    res["characteristic"] = consts.CharacteristicNameMapping[me.characteristic]
+    res["val"] = me.val
+    return res
 }
 
 type BonusEffect struct {
@@ -90,7 +93,9 @@ func (be *BonusEffect) apply(activator Activer) {
 }
 
 func (be *BonusEffect) GetFullInfo() consts.JsonType {
-    return make(consts.JsonType)
+    res := be.Effect.GetFullInfo()
+    res["bonus"] = be.Bonus.GetFullInfo()
+    return res
 }
 
 func newModifyingEffect(duration time.Duration, characteristic, val int) *ModifyingEffect {
