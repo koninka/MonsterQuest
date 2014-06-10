@@ -137,6 +137,7 @@ func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) bool {
     if slot == nil || slot.itemType != item.GetItemType() || item.GetItemClass() != consts.ITEM_CLASS_GARMENT {
         return false
     }
+    p.Unequip(slotIota)
     item.EquipItem(p.Inventory)
     slot.item = item
     return true
