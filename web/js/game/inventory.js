@@ -115,7 +115,7 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             "boots" : ["FEET"],
             "weapon" : ["WEAPON"]
         }
-        var slot = slotToNumber[item.itemType];
+        var slot = itemType[item.itemType];
         if(!slot)
             return null;
         for(var s = 0; s < slot.length; ++s){
@@ -148,6 +148,7 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             var x = -1;
             var y = slotToNumber[s];
             var id = slots[s].id;
+            this.slots[s] = true;
             if(!this.items[id])
                 this.AddItem(slots[s]);
             this.items[id].SetPosition({x: x, y: y});

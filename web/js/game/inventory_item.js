@@ -94,7 +94,7 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
             } else if(slot !== null){
                 GLOBAL.game.sendViaWS({action: "equip", id: m.id, slot: slot});
             } else if(qp_numb !== null){
-                GLOBAL.game.quickpanel.SetToPanel(m, qp_numb);
+                GLOBAL.game.quickpanel.SetToPanel(I, qp_numb);
             }
             GLOBAL.game.SelfExamine();
             data.originalEvent.preventDefault();
@@ -141,6 +141,7 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
         if(IsArmor(this.item)){
             var s = GLOBAL.game.inventory.FindSlot(this.item);
             GLOBAL.game.sendViaWS({action: "equip", id: this.item.id, slot: s});
+            GLOBAL.game.SelfExamine();
         } else if(UseOnTarget(item)){
             GLOBAL.game.inventory.Hide();
             GLOBAL.use_mode = {
