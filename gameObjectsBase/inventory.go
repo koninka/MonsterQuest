@@ -42,14 +42,15 @@ func (inv* InventoryObj) DeleteItem(i Itemer) int {
     return place
 }
 
-func (inv* InventoryObj) DropItem(i Itemer, amount int) int {
+func (inv* InventoryObj) DropItem(i Itemer, amount int) (int, Itemer) {
     var (
         v bool =  true
         place int
+        new_item Itemer
     )
     if i.IsHeapItem() {
         if i.GetAmount() - amount > 0 {
-            place = splitItem(inv, i, amount)
+            place, new_item = splitItem(inv, i, amount)
             v = false
         }
     }
@@ -58,7 +59,7 @@ func (inv* InventoryObj) DropItem(i Itemer, amount int) int {
         i.ForcePlace(i.GetOwner().GetCenter())
         i.SetOwner(nil)
     }
-    return place
+    return place, new_item
 }
 
 func (inv* InventoryObj) AddItem(i Itemer, owner Activer) int {

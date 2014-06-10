@@ -198,7 +198,11 @@ func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
         item := g.items.getItem(int64(idParam.(float64)))
         p := g.players.getPlayerBySession(json["sid"].(string))
         if item != nil && item.IsOwner(p) {
-            p.DropItem(item, 1)//second param must me amount
+            _, new_item := p.DropItem(item, 1)//second param must me amount
+            if new_item != nil {
+                new_item.SetID(utils.GenerateId())
+                g.items.addItem(new_item)
+            }
             g.field.LinkToCells(item)
             res["result"] = "ok"
         }

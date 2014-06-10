@@ -479,7 +479,7 @@ func newFoodItem(ik* ItemKind, owner Activer, amount int) *FoodItem {
     return &FoodItem{SummarizeItem{newItem(ik, owner), amount}}
 }
 
-func splitItem(inv* InventoryObj, i Itemer, amount int) int {
+func splitItem(inv* InventoryObj, i Itemer, amount int) (int, Itemer) {
     new_i := newFoodItem(i.GetKind(), i.GetOwner(), i.GetAmount() - amount)
     place := inv.getPlaceById(i.GetID())
     inv.cells[place] = new_i.GetID()
@@ -489,5 +489,5 @@ func splitItem(inv* InventoryObj, i Itemer, amount int) int {
     i.SetOwner(nil)
     i.ForcePlace(i.GetOwner().GetCenter())
     i.setAmount(amount)
-    return place
+    return place, new_i
 }

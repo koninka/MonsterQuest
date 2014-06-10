@@ -104,14 +104,14 @@ func (p* Player) RestoreItem(item gameObjectsBase.Itemer, place int) {
     item.SetOwner(p)
 }
 
-func (p* Player) DropItem(item gameObjectsBase.Itemer, amount int) int {
+func (p* Player) DropItem(item gameObjectsBase.Itemer, amount int) (int, gameObjectsBase.Itemer) {
     db := connect.CreateConnect()
-    place := p.ActiveObject.DropItem(item, amount)
+    place, new_item := p.ActiveObject.DropItem(item, amount)
     _, err := db.Exec("CALL drop_user_item(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, amount);
     if err != nil {
         //-
     }
-    return place
+    return place, new_item
     // return err == nil
 }
 
