@@ -90,7 +90,7 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         case consts.ITEM_T_S*/
    // function ItemToSlot(item){
     //    var n = 0;
-        var slotType = {
+        var slotToNumber = {
             "HEAD" : 0,
             "NECK" : 1,
             "BODY" : 2,
@@ -103,6 +103,7 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         }
    // }
 
+
     Inventory.prototype.FindSlot = function(item){
         var itemType = {
             "amulet" : ["NECK"],
@@ -114,7 +115,7 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             "boots" : ["FEET"],
             "weapon" : ["WEAPON"]
         }
-        var slot = itemType[item.itemType];
+        var slot = slotToNumber[item.itemType];
         if(!slot)
             return null;
         for(var s = 0; s < slot.length; ++s){
@@ -144,7 +145,13 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         var slt_id = {};
         if(slots)
         for(var s in slots){
-            slt_id[slots[s].id] = s;
+            var x = -1;
+            var y = slotToNumber[s];
+            var id = slots[s].id;
+            if(!this.items[id])
+                this.AddItem(slots[s]);
+            this.items[id].SetPosition({x: x, y: y});
+            founded_items[id] = true;
         }
         for(var i = 0; i < items.length; ++i){
             if(i % inventory_size.x == 0){
@@ -155,23 +162,12 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             }
             var item = items[i];
             var id = item.id;
-            if(slt_id[id]){
-                item.slot = slt_id[id];
-                item.cell = -1;
-            }
             if(this.items[id]){
                 var x = cell_x;
                 var y = cell_y;
                 if(item.cell !== null){
-                    if(item.cell == -1){
-                        x = -1;
-                        y = slotType[item.slot];
-                        this.slots[item.slot] = id;
-                        this.items[id].equiped = true;
-                    } else {
-                        y = Math.floor(item.cell / inventory_size.x);
-                        x = item.cell % inventory_size.x;
-                    }
+                    y = Math.floor(item.cell / inventory_size.x);
+                    x = item.cell % inventory_size.x;
                 }
                 this.items[id].SetPosition({x: x, y: y});
             } else {
