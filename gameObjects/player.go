@@ -145,7 +145,7 @@ func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) bool {
 
 func (p *Player) Unequip(slotIota int) bool {
     slot := p.slots[slotIota]
-    if slot == nil {
+    if slot.item == nil {
         return false
     }
     slot.item.UnequipItem(p.Inventory)
