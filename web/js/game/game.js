@@ -70,12 +70,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
     }
 
     Game.prototype.setExamineData = function(data){
-        var txt = '';
-        delete data.action;
-        delete data.result;
-        for(var i in data)
-            txt += i + ' : ' + data[i] + "\n";
-        this.view.examine.SetText(txt);
+        this.view.examine.SetData(data);
         this.view.examine.Show();
     }
 

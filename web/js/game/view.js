@@ -55,10 +55,72 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
         this.txt = '';
         this.visible = false;
         this._text = null;
+        this.bonuses = [];
     }
 
     Examine.prototype = Object.create( PIXI.DisplayObjectContainer.prototype );
     Examine.prototype.constructor = Examine;
+
+    Examine.prototype.Bonus = function(bonus){
+        var txt = "";
+        txt += bonus.characteristic + " : " + bonus.val + (bonus.persent ? "%" : "");
+        var b = graphic.Text(
+            txt, 
+            {'font': '12px Helvetica', 'font-weight': 'bold', fill: (bonus.val > 0 ? 'green' : 'red')},
+            0, 
+            OPTIONS.TILE_SIZE + 7
+        );
+        this.bonuses.push(b);
+        this.addChild(b);
+        return b;
+    }
+
+    Examine.prototype.ClearBonuses = function(){
+       for(var b = 0; b < this.bonuses.length; ++b){
+            this.removeChild(this.bonuses[b]);
+        }
+        this.bonuses = []; 
+    }
+
+    Examine.prototype.SetBonuses = function(txt, bonuses, y0){
+        var y = y0;
+        var b = graphic.Text(
+            txt, 
+            {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'white'},
+            0, 
+            OPTIONS.TILE_SIZE + 7
+        );
+        b.position.x = 20;
+        b.position.y = y;
+        y += b.height;
+        this.bonuses.push(b);
+        this.addChild(b);
+        for(var b = 0; b < bonuses.length; ++b){
+            var bonus = this.Bonus(bonuses[b]);
+            bonus.position.y = y;
+            bonus.position.x = 20;
+            y += bonus.height;
+        }
+        return y;
+    }
+
+    Examine.prototype.SetData = function(data){
+        var txt = '';
+        var bonuses = data.bonuses;
+        var effects = data.effects;
+        delete data.action;
+        delete data.result;
+        delete data.bonuses;
+        for(var i in data)
+            txt += i + ' : ' + data[i] + "\n";
+        this.SetText(txt);
+        var y = this._text.position.y + this._text.height;
+        this.ClearBonuses();
+        if(bonuses)
+            y = this.SetBonuses("bonuses : ", bonuses, y);
+        if(effects)
+            y = this.SetBonuses("effects : ", effects, y);
+    }
 
     Examine.prototype.SetText = function(text){
         this.txt = text;
@@ -67,13 +129,14 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
         }
         this._text = graphic.Text(
             this.txt, 
-            {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'white'},
+            {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'white', wordWrap : true, wordWrapWidth : 200},
             0, 
             OPTIONS.TILE_SIZE + 7
         );
         this.addChild(this._text);
         this._text.position.x = 20;
         this._text.position.y = 20;
+        return this._text;
     }
 
     Examine.prototype.Close = function(){
