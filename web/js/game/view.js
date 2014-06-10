@@ -61,12 +61,12 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
     Examine.prototype = Object.create( PIXI.DisplayObjectContainer.prototype );
     Examine.prototype.constructor = Examine;
 
-    Examine.prototype.Bonus = function(bonus){
+    Examine.prototype.Bonus = function(bonus, color){
         var txt = "";
         txt += bonus.characteristic + " : " + bonus.val + (bonus.persent ? "%" : "");
         var b = graphic.Text(
             txt, 
-            {'font': '12px Helvetica', 'font-weight': 'bold', fill: (bonus.val > 0 ? 'green' : 'red')},
+            {'font': '12px Helvetica', 'font-weight': 'bold', fill: color || (bonus.val > 0 ? 'green' : 'red')},
             0, 
             OPTIONS.TILE_SIZE + 7
         );
@@ -104,13 +104,36 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
         return y;
     }
 
+    Examine.prototype.SetCharacteristics = function(caption, charact, y0){
+        var y = y0;
+        var txt = caption;
+        for (var c in charact){
+            txt += "\n   " + c + " : " + charact[c];
+        }
+        var b = graphic.Text(
+            txt, 
+            {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'white'},
+            0, 
+            OPTIONS.TILE_SIZE + 7
+        );
+        b.position.x = 20;
+        b.position.y = y;
+        y += b.height;
+        this.bonuses.push(b);
+        this.addChild(b);
+        return y;
+    }
+
     Examine.prototype.SetData = function(data){
         var txt = '';
         var bonuses = data.bonuses;
         var effects = data.effects;
+        var characteristics = data.characteristics;
         delete data.action;
         delete data.result;
         delete data.bonuses;
+        delete data.characteristics;
+        delete data.inventory;
         for(var i in data)
             txt += i + ' : ' + data[i] + "\n";
         this.SetText(txt);
@@ -120,6 +143,8 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
             y = this.SetBonuses("bonuses : ", bonuses, y);
         if(effects)
             y = this.SetBonuses("effects : ", effects, y);
+        if(characteristics)
+            y = this.SetCharacteristics("characteristics : ", characteristics, y);
     }
 
     Examine.prototype.SetText = function(text){
