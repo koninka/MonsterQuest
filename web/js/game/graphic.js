@@ -33,11 +33,17 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
         $('#view').bind('contextmenu', function(){
             return false;
         });
-        $(this.renderer.view).mousemove(function( event ) {
-            I.pointer.x = event.clientX - $(this).offset().left - I.width  / 2;
-            I.pointer.y = event.clientY - $(this).offset().top  - I.height / 2;
-        }).click(function(event){
-            //if(global.game.inventory.visible) return;
+        global.graphic = this;
+
+        //InitField
+        this.field = new PIXI.DisplayObjectContainer();
+        this.field.interactive = true;
+        this.field.mousemove = function(data){
+            I.pointer = data.getLocalPosition(this);
+            I.pointer.x -= I.width/2;
+            I.pointer.y -= I.height/2;
+        }
+        this.field.click = function(data){
             var point = {
                 x: I.pointer.x / OPTIONS.TILE_SIZE + game.player.pt.x,
                 y: I.pointer.y / OPTIONS.TILE_SIZE + game.player.pt.y,
@@ -49,13 +55,7 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
             } else {
                 game.sendViaWS({action: "attack", point: point});
             }
-            
-            //console.log({action: "attack", point: point});
-        })
-        global.graphic = this;
-
-        //InitField
-        this.field = new PIXI.DisplayObjectContainer();
+        }
         this.stage.addChild(this.field);
 
 

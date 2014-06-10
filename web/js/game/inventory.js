@@ -69,39 +69,18 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         this.drawable.removeChild(i.drawable);
         delete this.items[item.id];
     }
-/*case consts.ITEM_T_AMULET:
-            return "amulet"
-        case consts.ITEM_T_RING:
-            return "ring"
-        case consts.ITEM_T_ARMOR:
-            return "armor"
-        case consts.ITEM_T_SHIELD:
-            return "shield"
-        case consts.ITEM_T_HELMET:
-            return "helmet"
-        case consts.ITEM_T_GLOVES:
-            return "gloves"
-        case consts.ITEM_T_BOOTS:
-            return "boots"
-        case consts.ITEM_T_WEAPON:
-            return "weapon"
-        case consts.ITEM_T_POTION:
-            return "potion"
-        case consts.ITEM_T_S*/
-   // function ItemToSlot(item){
-    //    var n = 0;
-        var slotType = {
-            "HEAD" : 0,
-            "NECK" : 1,
-            "BODY" : 2,
-            "HANDS" : 3,
-            "LEFT" : 4,
-            "RIGHT" : 5,
-            "WEAPON" : 6,
-            "ARM" : 7,
-            "FEET" : 8
-        }
-   // }
+
+    var slotToNumber = {
+        "HEAD" : 0,
+        "NECK" : 1,
+        "BODY" : 2,
+        "HANDS" : 3,
+        "LEFT" : 4,
+        "RIGHT" : 5,
+        "WEAPON" : 6,
+        "ARM" : 7,
+        "FEET" : 8
+    }    
 
     Inventory.prototype.FindSlot = function(item){
         var itemType = {
@@ -144,7 +123,14 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         var slt_id = {};
         if(slots)
         for(var s in slots){
-            slt_id[slots[s].id] = s;
+            var x = -1;
+            var y = slotToNumber[s];
+            var id = slots[s].id;
+            this.slots[s] = true;
+            if(!this.items[id])
+                this.AddItem(slots[s]);
+            this.items[id].SetPosition({x: x, y: y});
+            founded_items[id] = true;
         }
         for(var i = 0; i < items.length; ++i){
             if(i % inventory_size.x == 0){
@@ -155,23 +141,12 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             }
             var item = items[i];
             var id = item.id;
-            if(slt_id[id]){
-                item.slot = slt_id[id];
-                item.cell = -1;
-            }
             if(this.items[id]){
                 var x = cell_x;
                 var y = cell_y;
                 if(item.cell !== null){
-                    if(item.cell == -1){
-                        x = -1;
-                        y = slotType[item.slot];
-                        this.slots[item.slot] = id;
-                        this.items[id].equiped = true;
-                    } else {
-                        y = Math.floor(item.cell / inventory_size.x);
-                        x = item.cell % inventory_size.x;
-                    }
+                    y = Math.floor(item.cell / inventory_size.x);
+                    x = item.cell % inventory_size.x;
                 }
                 this.items[id].SetPosition({x: x, y: y});
             } else {
@@ -184,10 +159,6 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
                 this.RemoveItem(this.items[i].item);
             }
         }
-    }
-
-    Inventory.prototype.MakeChanges = function(){
-        
     }
 
     Inventory.prototype.Show = function(){
