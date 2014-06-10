@@ -31,7 +31,6 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
 
         ]
         if(cell.x >= -1 && cell.x < 0 && cell.y >= 0 && cell.y < OPTIONS.slots.length)
-            //return OPTIONS.slots[cell.y];
             return itemType[cell.y]
         return null;
     }

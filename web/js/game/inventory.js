@@ -69,40 +69,18 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         this.drawable.removeChild(i.drawable);
         delete this.items[item.id];
     }
-/*case consts.ITEM_T_AMULET:
-            return "amulet"
-        case consts.ITEM_T_RING:
-            return "ring"
-        case consts.ITEM_T_ARMOR:
-            return "armor"
-        case consts.ITEM_T_SHIELD:
-            return "shield"
-        case consts.ITEM_T_HELMET:
-            return "helmet"
-        case consts.ITEM_T_GLOVES:
-            return "gloves"
-        case consts.ITEM_T_BOOTS:
-            return "boots"
-        case consts.ITEM_T_WEAPON:
-            return "weapon"
-        case consts.ITEM_T_POTION:
-            return "potion"
-        case consts.ITEM_T_S*/
-   // function ItemToSlot(item){
-    //    var n = 0;
-        var slotToNumber = {
-            "HEAD" : 0,
-            "NECK" : 1,
-            "BODY" : 2,
-            "HANDS" : 3,
-            "LEFT" : 4,
-            "RIGHT" : 5,
-            "WEAPON" : 6,
-            "ARM" : 7,
-            "FEET" : 8
-        }
-   // }
 
+    var slotToNumber = {
+        "HEAD" : 0,
+        "NECK" : 1,
+        "BODY" : 2,
+        "HANDS" : 3,
+        "LEFT" : 4,
+        "RIGHT" : 5,
+        "WEAPON" : 6,
+        "ARM" : 7,
+        "FEET" : 8
+    }    
 
     Inventory.prototype.FindSlot = function(item){
         var itemType = {
@@ -181,10 +159,6 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
                 this.RemoveItem(this.items[i].item);
             }
         }
-    }
-
-    Inventory.prototype.MakeChanges = function(){
-        
     }
 
     Inventory.prototype.Show = function(){
