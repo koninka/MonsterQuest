@@ -17,9 +17,8 @@ type Bonus struct {
 
 func (b *Bonus) calcActualValue(owner Activer) int {
     bonusVal := b.val
-    baseVal := owner.GetCharacteristic(b.characteristic)
     if b.effectCalculation == consts.BONUS_PERCENT {
-        bonusVal = int(baseVal * b.val / 100.0)
+        bonusVal = int(owner.GetCharacteristic(b.characteristic) * b.val / 100.0)
     }
     return bonusVal
 }
