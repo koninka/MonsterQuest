@@ -295,7 +295,7 @@ func (obj *ActiveObject) GetFullInfo() consts.JsonType {
     info := obj.GetInfo()
     characteristics := make(consts.JsonType)
     for c, v := range obj.Characteristics {
-        characteristics[consts.CharacteristicNameMapping[c]] = v
+        characteristics[consts.CharacteristicNameMapping[c]] = v + obj.Bonuses[c]
     }
     info["characteristics"] = characteristics
     return info
