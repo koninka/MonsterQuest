@@ -160,7 +160,7 @@ func parseBonusFromDB(bonusStr string) [] *Bonus {
     parts := strings.Split(bonusStr, ":")
     val := utils.ParseInt(parts[0])
     for _, c := range strings.Split(parts[1], "|") {
-        bonuses = append(bonuses, NewBonus(BDString2IotaCharacteristic[c], 0, val))
+        bonuses = append(bonuses, NewBonus(BDString2IotaCharacteristic[c], consts.BONUS_CONSTANT, val))
     }
     return bonuses
 }
