@@ -144,7 +144,7 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     case "look": conn.send <- g.lookAction(json["sid"].(string))
     case "examine": conn.send <- g.examineAction(json)
     case "startTesting" : conn.send <- g.startTesting()
-    case "endTesting"   : conn.send <- g.endTesting()
+    case "stopTesting"  : conn.send <- g.stopTesting()
     case "setUpMap" : conn.send <- g.setUpMap(json)
     case "pickUp" : conn.send <- g.pickUpItem(json)
     case "drop" : conn.send <- g.dropItem(json)
@@ -363,8 +363,8 @@ func (g *Game) startTesting() consts.JsonType {
     return res
 }
 
-func (g *Game) endTesting() consts.JsonType {
-    res := utils.JsonAction("endTesting", "badAction")
+func (g *Game) stopTesting() consts.JsonType {
+    res := utils.JsonAction("stopTesting", "badAction")
     if *consts.TEST && consts.TEST_MODE {
         res["result"] = "ok"
         consts.TEST_MODE = false
