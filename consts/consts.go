@@ -15,15 +15,13 @@ const (
     PLAYER_TYPE = "player"
     ITEM_TYPE = "item"
     SERVER_PORT = ":8080"
-	VELOCITY = 0.12
-	TICK_DURATION = 50 * time.Millisecond
+    ATTACK_RADIUS = 1.4
 	DATABASE_TICK_DURATION = 1 * time.Second
 	LIVING_AFTER_DEAD_DURATION = 2 * time.Second
 	DEFAULT_ATTACK_COOLDOWN = 1
 	DEFAULT_PLAYER_POS_X = 5
 	DEFAULT_PLAYER_POS_Y = 5
     INITIAL_PLAYER_HP = 100
-	VISION_RADIUS = 10
 	PATH_TO_MAPS = "resourses/maps/"
 	OBJECT_HALF = 0.5
 	NORTH_DIR = iota
@@ -33,7 +31,15 @@ const (
 	MOB_WALKING_CYCLE_DURATION = 20
     BT_MELEE = iota
     BT_RANGE
-    PICK_UP_RADIUS = 2
+)
+
+var (
+    TICKS_PER_SECOND = 20
+    TICK_DURATION = time.Duration(1000.0 / TICKS_PER_SECOND) * time.Millisecond
+    VISION_RADIUS = 10
+    SLIDE_THRESHOLD = 0.2
+    VELOCITY = 0.12
+    PICK_UP_RADIUS = 2.0
 )
 
 const (
