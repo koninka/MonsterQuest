@@ -184,3 +184,11 @@ func NewMob(kind *MobKind, x, y float64, depth int64) *Mob {
     m.createDrop(int64(depth))
     return &m
 }
+
+func NewTestMob(x, y float64, flags [] interface{}) *Mob {
+    kind := gameObjectsBase.NewKind()
+    for _, flag := range flags {
+        kind.AddFlag(gameObjectsFlags.GetFlag(flag.(string)))
+    }
+    return &Mob{gameObjectsBase.NewActiveObject(-1, -1, -1, x, y, &kind), 0}
+ }
