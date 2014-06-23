@@ -294,8 +294,8 @@ func (obj *ActiveObject) GetItems() map[int64] Itemer {
 
 func (obj *ActiveObject) GetInfo() consts.JsonType {
     info := obj.GameObject.GetInfo()
-    info["hp"] = obj.HP
-    info["max_hp"] = obj.Characteristics[consts.CHARACTERISTIC_HP]
+    info["health"] = obj.HP
+    info["maxHealth"] = obj.Characteristics[consts.CHARACTERISTIC_HP]
     info["mp"] = obj.MP
     info["max_mp"] = obj.Characteristics[consts.CHARACTERISTIC_MP]
     return info

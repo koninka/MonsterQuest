@@ -113,6 +113,8 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
                   expect(data['login']).to.equal(login);
                   expect(data['x']).to.be.at.least(0);
                   expect(data['y']).to.be.at.least(0);
+                  expect(data).to.have.property('health');
+                  expect(data).to.have.property('maxHealth')
                   ws.onmessage = undefined;
                   done();
                }
@@ -130,7 +132,7 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
             }
             ws.sendJSON({action: "look", sid: 'fds'});
          });
-         it('should successfully look and should contain positive player coordinates', function(done) {
+         it('should successfully self look and should contain positive player coordinates', function(done) {
             ws.onmessage = function(e) {
                var data = JSON.parse(e.data);
                if (data['action'] == 'look') {
@@ -142,7 +144,7 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
             }
             ws.sendJSON({action: "look", sid: ssid});
          });
-         it('should successfully look and should contain map and actors keys', function(done) {
+         it('should successfully self look and should contain map and actors keys', function(done) {
             ws.onmessage = function(e) {
                var data = JSON.parse(e.data);
                if (data['action'] == 'look') {
