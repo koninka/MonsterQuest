@@ -88,7 +88,7 @@ func (p *Player) Do() {
 func (p *Player) Attack() consts.JsonType {
     var res consts.JsonType = nil
     t, _ := p.GetTarget()
-    if d := geometry.Distance(p.GetCenter(), t.GetCenter()); d < 1.4 {
+    if d := geometry.Distance(p.GetCenter(), t.GetCenter()); d <= p.GetAttackRadius() {
         res = t.GetHit(p.weapon, p)
     }
     if res != nil {

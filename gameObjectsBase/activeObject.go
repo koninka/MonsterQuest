@@ -48,7 +48,7 @@ type Activer interface {
     GetDealtDamage() int
     GetHP() int
     GetMaxHP() int
-    GetAttackRadius() int
+    GetAttackRadius() float64
     NotifyAboutCollision()
     GetKind() Kinder
     GetHit(fightBase.Blower, Activer) consts.JsonType
@@ -216,8 +216,8 @@ func (obj *ActiveObject) GetMaxMP() int {
     return obj.Characteristics[consts.CHARACTERISTIC_MP]
 }
 
-func (obj *ActiveObject) GetAttackRadius() int {
-    return 0
+func (obj *ActiveObject) GetAttackRadius() float64 {
+    return consts.ATTACK_RADIUS
 }
 
 func (obj *ActiveObject) NotifyAboutCollision() {}
