@@ -216,6 +216,24 @@ var CharacteristicNameMapping = map[int] string {
 }
 
 const (
+    PLAYER_VELOCITY_NAME = "playerVelocity"
+    SLIDE_THRESHOLD_NAME = "slideThreshold"
+    TICKS_PER_SECOND_NAME = "ticksPerSecond"
+    SCREEN_ROW_COUNT_NAME = "screenRowCount"
+    SCREEN_COLUMN_COUNT_NAME = "screenColumnCount"
+    PICK_UP_RADIUS_NAME = "pickUpRadius"
+)
+
+var ConstNameMapping = map[string] interface{} {
+    PLAYER_VELOCITY_NAME     : &VELOCITY,
+    SLIDE_THRESHOLD_NAME     : &SLIDE_THRESHOLD,
+    TICKS_PER_SECOND_NAME    : &TICKS_PER_SECOND,
+    SCREEN_ROW_COUNT_NAME    : &VISION_RADIUS,
+    SCREEN_COLUMN_COUNT_NAME : &VISION_RADIUS,
+    PICK_UP_RADIUS_NAME      : &PICK_UP_RADIUS,
+}
+
+const (
     BONUS_PERCENT = iota
     BONUS_CONSTANT
 )
