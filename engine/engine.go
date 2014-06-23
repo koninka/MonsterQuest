@@ -300,11 +300,12 @@ func (g *Game) setUpConstants(json consts.JsonType) consts.JsonType {
 }
 
 func (g *Game) getConstants() consts.JsonType {
-    res := utils.JsonAction("setUpConst", "badAction")
+    res := utils.JsonAction("getConst", "badAction")
     if *consts.TEST && consts.TEST_MODE {
         for name, val := range consts.ConstNameMapping {
             res[name] = val
         }
+        res["result"] = "ok"
     }
     return res
 }

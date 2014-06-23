@@ -318,7 +318,13 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   ws.sendJSON({action: 'getConst', sid: data.ssid});
                } else if (response['action'] == 'getConst') {
                   expect(response['result']).to.equal('ok');
-                  expect(Object.keys(response).length).to.equal(7);
+                  expect(Object.keys(response).length).to.equal(8);
+                  expect(response).to.have.property('playerVelocity');
+                  expect(response).to.have.property('slideThreshold')
+                  expect(response).to.have.property('ticksPerSecond');
+                  expect(response).to.have.property('screenRowCount')
+                  expect(response).to.have.property('screenColumnCount');
+                  expect(response).to.have.property('pickUpRadius')
                   ws.sendJSON({action: 'stopTesting', sid: data.ssid});
                } else if (response['action'] == 'stopTesting') {
                   expect(response['result']).to.equal('ok');
