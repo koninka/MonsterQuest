@@ -69,7 +69,7 @@ func (p *Player) GetInfo() consts.JsonType {
 }
 
 func (p *Player) GetFullInfo() consts.JsonType {
-    info := p.ActiveObject.GetFullInfo()
+    info := p.MergeInfo(p.GetInfo())
     slots := make(map[string] consts.JsonType)
     for slot, slotName := range consts.SlotNameMapping {
         if p.slots[slot].item != nil {

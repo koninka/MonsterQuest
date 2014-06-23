@@ -95,7 +95,7 @@ func (m *Mob) GetInfo() consts.JsonType {
 }
 
 func (m *Mob) GetFullInfo() consts.JsonType {
-    info := m.ActiveObject.GetFullInfo()
+    info := m.MergeInfo(m.GetInfo())
     info["description"] = m.Kind.GetDescription()
     return info
 }

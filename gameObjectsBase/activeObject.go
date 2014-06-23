@@ -66,6 +66,7 @@ type Activer interface {
     SetCharacteristic(charIota, newVal int)
     ModifyCharacteristic(charIota, val int)
     ModifyBonus(charIota, val int)
+    MergeInfo(consts.JsonType) consts.JsonType
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -292,7 +293,7 @@ func (obj *ActiveObject) GetInfo() consts.JsonType {
 }
 
 func (obj *ActiveObject) GetFullInfo() consts.JsonType {
-    info := obj.GetInfo()
+    info := make(consts.JsonType)
     characteristics := make(consts.JsonType)
     for c, v := range obj.Characteristics {
         characteristics[consts.CharacteristicNameMapping[c]] = v
@@ -330,6 +331,13 @@ func (obj *ActiveObject) ModifyCharacteristic(charIota int, val int) {
 
 func (obj *ActiveObject) ModifyBonus(charIota, val int) {
     obj.Bonuses[charIota] += val
+}
+
+func (obj* ActiveObject) MergeInfo(info consts.JsonType) consts.JsonType {
+    for k, v := range obj.GetFullInfo() {
+        info[k] = v
+    }
+    return info
 }
 
 func newCharacteristicsMap() map[int] int {
