@@ -152,6 +152,8 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     case "equip" : conn.send <- g.equipItem(json)
     case "unequip" : conn.send <- g.unequipItem(json)
     case "moveItem" : conn.send <- g.moveItem(json)
+    case "getConst" : conn.send <- g.getConstants()
+    case "setUpConst" : conn.send <- g.setUpConstants(json)
     default: conn.send <- g.badAction(action)
     }
 }
@@ -281,6 +283,30 @@ func (g *Game) attackAction(json consts.JsonType) {
 
 func (g *Game) inDictionary(k string) bool {
     return g.dictionary[k] != nil
+}
+
+func (g *Game) setUpConstants(json consts.JsonType) consts.JsonType {
+    res := utils.JsonAction("setUpConst", "badAction")
+    if *consts.TEST && consts.TEST_MODE {
+        for name, val := range consts.ConstNameMapping {
+            if json[name] != nil {
+                val = json[name]
+                fmt.Println(val) // todo: check
+            }
+        }
+        res["result"] = "ok"
+    }
+    return res
+}
+
+func (g *Game) getConstants() consts.JsonType {
+    res := utils.JsonAction("setUpConst", "badAction")
+    if *consts.TEST && consts.TEST_MODE {
+        for name, val := range consts.ConstNameMapping {
+            res[name] = val
+        }
+    }
+    return res
 }
 
 func (g *Game) setUpMap(json consts.JsonType) consts.JsonType {
