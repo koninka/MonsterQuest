@@ -288,10 +288,11 @@ func (g *Game) inDictionary(k string) bool {
 func (g *Game) setUpConstants(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("setUpConst", "badAction")
     if *consts.TEST && consts.TEST_MODE {
-        for name, val := range consts.ConstNameMapping {
+        for name, _ := range consts.NameConstMapping {
             if json[name] != nil {
-                val = json[name]
-                fmt.Println(val) // todo: check
+                consts.NameConstMapping[name] = json[name]
+            } else {
+                return res
             }
         }
         res["result"] = "ok"
@@ -302,7 +303,7 @@ func (g *Game) setUpConstants(json consts.JsonType) consts.JsonType {
 func (g *Game) getConstants() consts.JsonType {
     res := utils.JsonAction("getConst", "badAction")
     if *consts.TEST && consts.TEST_MODE {
-        for name, val := range consts.ConstNameMapping {
+        for name, val := range consts.NameConstMapping {
             res[name] = val
         }
         res["result"] = "ok"

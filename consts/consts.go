@@ -252,7 +252,7 @@ const (
     PICK_UP_RADIUS_NAME = "pickUpRadius"
 )
 
-var ConstNameMapping = map[string] interface{} {
+var NameConstMapping = map[string] interface{} {
     PLAYER_VELOCITY_NAME     : &VELOCITY,
     SLIDE_THRESHOLD_NAME     : &SLIDE_THRESHOLD,
     TICKS_PER_SECOND_NAME    : &TICKS_PER_SECOND,
