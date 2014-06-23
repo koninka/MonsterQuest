@@ -25,6 +25,7 @@ type Flager interface {
 
 type Kinder interface {
     GetRace() int
+    SetRace(race int)
     GetFlags() *[]Flager
     GetName() string
     GetDescription() string
