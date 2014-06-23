@@ -130,7 +130,7 @@ func (m *Mob) Attack() consts.JsonType {
     var res consts.JsonType = nil
     bl := m.Kind.(*MobKind).blowList
     t, _ := m.GetTarget()
-    if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d <= 1.4 {
+    if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d <= m.GetAttackRadius() {
         res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE), m)
         res["attacker"] = m.GetID()
         res["target"] = t.GetID()
@@ -184,3 +184,11 @@ func NewMob(kind *MobKind, x, y float64, depth int64) *Mob {
     m.createDrop(int64(depth))
     return &m
 }
+
+func NewTestMob(x, y float64, flags [] interface{}) *Mob {
+    kind := gameObjectsBase.NewKind()
+    for _, flag := range flags {
+        kind.AddFlag(gameObjectsFlags.GetFlag(flag.(string)))
+    }
+    return &Mob{gameObjectsBase.NewActiveObject(-1, -1, -1, x, y, &kind), 0}
+ }

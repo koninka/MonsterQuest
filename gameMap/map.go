@@ -65,7 +65,7 @@ func (f *GameField) SetCell(x, y int, c byte) {
 
 func (f *GameField) LoadFromStrings(strs []string) bool {
     for idx, str := range strs {
-           if rune(str[len(str) - 1]) == rune(13) {
+           if len(str) > 0 && rune(str[len(str) - 1]) == rune(13) {
                 strs[idx] = str[:len(str) - 1]
            }
     }

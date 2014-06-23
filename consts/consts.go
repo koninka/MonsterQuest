@@ -15,15 +15,13 @@ const (
     PLAYER_TYPE = "player"
     ITEM_TYPE = "item"
     SERVER_PORT = ":8080"
-	VELOCITY = 0.12
-	TICK_DURATION = 50 * time.Millisecond
+    ATTACK_RADIUS = 1.4
 	DATABASE_TICK_DURATION = 1 * time.Second
 	LIVING_AFTER_DEAD_DURATION = 2 * time.Second
 	DEFAULT_ATTACK_COOLDOWN = 1
 	DEFAULT_PLAYER_POS_X = 5
 	DEFAULT_PLAYER_POS_Y = 5
     INITIAL_PLAYER_HP = 100
-	VISION_RADIUS = 10
 	PATH_TO_MAPS = "resourses/maps/"
 	OBJECT_HALF = 0.5
 	NORTH_DIR = iota
@@ -33,7 +31,15 @@ const (
 	MOB_WALKING_CYCLE_DURATION = 20
     BT_MELEE = iota
     BT_RANGE
-    PICK_UP_RADIUS = 2
+)
+
+var (
+    TICKS_PER_SECOND = 20
+    TICK_DURATION = time.Duration(1000.0 / TICKS_PER_SECOND) * time.Millisecond
+    VISION_RADIUS = 10
+    SLIDE_THRESHOLD = 0.2
+    VELOCITY = 0.12
+    PICK_UP_RADIUS = 2.0
 )
 
 const (
@@ -49,6 +55,34 @@ const (
     ANIMAL_RACE
     PLAYER_RACE
 )
+
+const (
+    NO_RACE_NAME = "noRace"
+    ORC_RACE_NAME = "orc"
+    EVIL_RACE_NAME = "evil"
+    TROLL_RACE_NAME = "troll"
+    GIANT_RACE_NAME = "giant"
+    DEMON_RACE_NAME = "demon"
+    METAL_RACE_NAME = "metal"
+    DRAGON_RACE_NAME = "dragon"
+    UNDEAD_RACE_NAME = "undead"
+    ANIMAL_RACE_NAME = "animal"
+    PLAYER_RACE_NAME = "player"
+)
+
+var NameRaceMapping = map[string] int {
+    NO_RACE_NAME : NO_RACE,
+    ORC_RACE_NAME : ORC_RACE,
+    EVIL_RACE_NAME : EVIL_RACE,
+    TROLL_RACE_NAME : TROLL_RACE,
+    GIANT_RACE_NAME : GIANT_RACE,
+    DEMON_RACE_NAME : DEMON_RACE,
+    METAL_RACE_NAME : METAL_RACE,
+    DRAGON_RACE_NAME : DRAGON_RACE,
+    UNDEAD_RACE_NAME : UNDEAD_RACE,
+    ANIMAL_RACE_NAME : ANIMAL_RACE,
+    PLAYER_RACE_NAME : PLAYER_RACE,
+}
 
 const (
     FIST_WEAP = "FIST"
@@ -207,6 +241,24 @@ var CharacteristicNameMapping = map[int] string {
     CHARACTERISTIC_HP                : CHARACTERISTIC_NAME_HP,
     CHARACTERISTIC_MP                : CHARACTERISTIC_NAME_MP,
     CHARACTERISTIC_CAPACITY          : CHARACTERISTIC_NAME_CAPACITY,
+}
+
+const (
+    PLAYER_VELOCITY_NAME = "playerVelocity"
+    SLIDE_THRESHOLD_NAME = "slideThreshold"
+    TICKS_PER_SECOND_NAME = "ticksPerSecond"
+    SCREEN_ROW_COUNT_NAME = "screenRowCount"
+    SCREEN_COLUMN_COUNT_NAME = "screenColumnCount"
+    PICK_UP_RADIUS_NAME = "pickUpRadius"
+)
+
+var ConstNameMapping = map[string] interface{} {
+    PLAYER_VELOCITY_NAME     : &VELOCITY,
+    SLIDE_THRESHOLD_NAME     : &SLIDE_THRESHOLD,
+    TICKS_PER_SECOND_NAME    : &TICKS_PER_SECOND,
+    SCREEN_ROW_COUNT_NAME    : &VISION_RADIUS,
+    SCREEN_COLUMN_COUNT_NAME : &VISION_RADIUS,
+    PICK_UP_RADIUS_NAME      : &PICK_UP_RADIUS,
 }
 
 const (

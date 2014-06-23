@@ -322,6 +322,96 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
             ws.sendJSON({action: 'endTesting', sid: data.ssid});
          });
 
+         it('should get constants', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'getConst') {
+                  expect(response['result']).to.equal('ok');
+                  expect(Object.keys(response).length).to.equal(7);
+               } else if (response['action'] == 'endTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+            ws.sendJSON({action: 'getConst', sid: data.ssid});
+            ws.sendJSON({action: 'endTesting', sid: data.ssid});
+         });
+
+         it('should set up constants', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'setUpConst') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'endTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+            ws.sendJSON({
+               action: 'setUpConst', 
+               playerVelocity: 0,
+               slideThreshold: 0,
+               ticksPerSecond: 1,
+               screenRowCount: 0,
+               screenColumnCount: 0,
+               pickUpRadius: 0, 
+               sid: data.ssid
+            });
+            ws.sendJSON({action: 'endTesting', sid: data.ssid});
+         });
+
+         it('should set up constants and check it', function(done){
+            ws = data.ws;
+            var consts = {
+               playerVelocity: 0,
+               slideThreshold: 0,
+               ticksPerSecond: 1,
+               screenRowCount: 0,
+               screenColumnCount: 0,
+               pickUpRadius: 0
+            };
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'setUpConst') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'getConst') {
+                  expect(response['result']).to.equal('ok');
+                  for (var name in consts) {
+                     expect(response[name]).to.equal(consts[name]);
+                  }
+               } else if (response['action'] == 'endTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+            var req = { action: 'setUpConst', sid: data.ssid };
+            for (var name in consts)
+               req[name] = consts[name];
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+            ws.sendJSON(req);
+            ws.sendJSON({action: 'endTesting', sid: data.ssid});
+         });
       }); 
    }
    

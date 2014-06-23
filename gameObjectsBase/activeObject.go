@@ -25,6 +25,7 @@ type Flager interface {
 
 type Kinder interface {
     GetRace() int
+    SetRace(race int)
     GetFlags() *[]Flager
     GetName() string
     GetDescription() string
@@ -48,7 +49,7 @@ type Activer interface {
     GetDealtDamage() int
     GetHP() int
     GetMaxHP() int
-    GetAttackRadius() int
+    GetAttackRadius() float64
     NotifyAboutCollision()
     GetKind() Kinder
     GetHit(fightBase.Blower, Activer) consts.JsonType
@@ -94,6 +95,14 @@ func (k *Kind) AddFlag(flag Flager) {
 
 func (k *Kind) CreateDropCount() int {
     return 0
+}
+
+func (k *Kind) GetName() string {
+    return ""
+}
+
+func (k *Kind) GetDescription() string {
+    return ""
 }
 
 func NewKind() Kind {
@@ -217,8 +226,8 @@ func (obj *ActiveObject) GetMaxMP() int {
     return obj.Characteristics[consts.CHARACTERISTIC_MP]
 }
 
-func (obj *ActiveObject) GetAttackRadius() int {
-    return 0
+func (obj *ActiveObject) GetAttackRadius() float64 {
+    return consts.ATTACK_RADIUS
 }
 
 func (obj *ActiveObject) NotifyAboutCollision() {}
@@ -296,7 +305,7 @@ func (obj *ActiveObject) GetFullInfo() consts.JsonType {
     info := make(consts.JsonType)
     characteristics := make(consts.JsonType)
     for c, v := range obj.Characteristics {
-        characteristics[consts.CharacteristicNameMapping[c]] = v
+        characteristics[consts.CharacteristicNameMapping[c]] = v + obj.Bonuses[c]
     }
     info["characteristics"] = characteristics
     return info
@@ -306,11 +315,11 @@ func (obj *ActiveObject) GetCharacteristic(charIota int) int {
     return obj.Characteristics[charIota]
 }
 
-func (obj *ActiveObject) SetCharacteristic(charIota int, newVal int) {
+func (obj *ActiveObject) SetCharacteristic(charIota, newVal int) {
     obj.Characteristics[charIota] = newVal
 }
 
-func (obj *ActiveObject) modifyInRange(charIota int, val, maxVal int) {
+func (obj *ActiveObject) modifyInRange(charIota, val, maxVal int) {
     cVal := obj.GetCharacteristic(charIota)
     if cVal + val >= maxVal {
         obj.SetCharacteristic(charIota, maxVal)
@@ -351,7 +360,7 @@ func newCharacteristicsMap() map[int] int {
 func newBonusMap() map[int] int {
     bonuses := make(map[int] int)
     for i := 0; i < consts.CHARACTERISTICS_COUNT; i++ {
-        bonuses[i] = 0.0
+        bonuses[i] = 0
     }
     return bonuses
 }
