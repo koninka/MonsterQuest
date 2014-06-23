@@ -95,6 +95,14 @@ func (k *Kind) CreateDropCount() int {
     return 0
 }
 
+func (k *Kind) GetName() string {
+    return ""
+}
+
+func (k *Kind) GetDescription() string {
+    return ""
+}
+
 func NewKind() Kind {
     return Kind{consts.NO_RACE, make([]Flager, 0, 1000)}
 }
