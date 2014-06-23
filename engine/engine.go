@@ -57,16 +57,18 @@ func GetInstance() *Game {
             make(chan consts.JsonType),
             make(map[int64] *connection),
             make(map[*connection] int64),
-            nil,
+            make(consts.JsonType),
         }
         gameObjectsBase.InitGameItems()
         gameInstance.field.LoadFromFile("map.txt")
         gameInstance.dictionary = gameInstance.mobs.initializeMobTypes()
-        gameInstance.mobs.initializeMobsGenerators("areas.txt")
+        if !*consts.TEST {
+            gameInstance.mobs.initializeMobsGenerators("areas.txt")
+            go gameInstance.players.save()
+        }
         gameInstance.initializeDictionary()
         go gameInstance.mobs.run()
         go gameInstance.websocketHub.run()
-        go gameInstance.players.save()
         notifier.GameNotifier = gameInstance
     }
     return gameInstance
