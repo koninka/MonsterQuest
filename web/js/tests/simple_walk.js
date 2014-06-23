@@ -69,6 +69,17 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
             }
             ws.sendJSON({action: "getDictionary", sid: '1231'});
          });
+         it('should fail get dictionary by badSid[no sid send]', function(done) {
+            ws.onmessage = function(e) {
+               var data = JSON.parse(e.data);
+               if (data['action'] == 'getDictionary') {
+                  expect(data['result']).to.equal('badSid');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            }
+            ws.sendJSON({action: "getDictionary"});
+         });
          it('should successfully get dictionary', function(done) {
             ws.onmessage = function(e) {
                var data = JSON.parse(e.data);
@@ -90,7 +101,18 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
                   done();
                }
             }
-            ws.sendJSON({action: "examine", sid: 'fdsf'});
+            ws.sendJSON({action: "examine", sid: 'fdsf', id: actor_id});
+         });
+         it('should fail examine by badSid[no sid send]', function(done) {
+            ws.onmessage = function(e) {
+               var data = JSON.parse(e.data);
+               if (data['action'] == 'examine') {
+                  expect(data['result']).to.equal('badSid');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            }
+            ws.sendJSON({action: "examine", id: actor_id});
          });
          it('should fail examine by badId', function(done) {
             ws.onmessage = function(e) {
@@ -102,6 +124,17 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
                }
             }
             ws.sendJSON({action: "examine", sid: ssid, id: 10000000});
+         });
+         it('should fail examine by badId[no id send]', function(done) {
+            ws.onmessage = function(e) {
+               var data = JSON.parse(e.data);
+               if (data['action'] == 'examine') {
+                  expect(data['result']).to.equal('badId');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            }
+            ws.sendJSON({action: "examine", sid: ssid});
          });
          it('should successfully make self examine', function(done) {
             ws.onmessage = function(e) {
