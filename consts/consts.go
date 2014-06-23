@@ -57,6 +57,34 @@ const (
 )
 
 const (
+    NO_RACE_NAME = "noRace"
+    ORC_RACE_NAME = "orc"
+    EVIL_RACE_NAME = "evil"
+    TROLL_RACE_NAME = "troll"
+    GIANT_RACE_NAME = "giant"
+    DEMON_RACE_NAME = "demon"
+    METAL_RACE_NAME = "metal"
+    DRAGON_RACE_NAME = "dragon"
+    UNDEAD_RACE_NAME = "undead"
+    ANIMAL_RACE_NAME = "animal"
+    PLAYER_RACE_NAME = "player"
+)
+
+var NameRaceMapping = map[string] int {
+    NO_RACE_NAME : NO_RACE,
+    ORC_RACE_NAME : ORC_RACE,
+    EVIL_RACE_NAME : EVIL_RACE,
+    TROLL_RACE_NAME : TROLL_RACE,
+    GIANT_RACE_NAME : GIANT_RACE,
+    DEMON_RACE_NAME : DEMON_RACE,
+    METAL_RACE_NAME : METAL_RACE,
+    DRAGON_RACE_NAME : DRAGON_RACE,
+    UNDEAD_RACE_NAME : UNDEAD_RACE,
+    ANIMAL_RACE_NAME : ANIMAL_RACE,
+    PLAYER_RACE_NAME : PLAYER_RACE,
+}
+
+const (
     FIST_WEAP = "FIST"
 )
 
