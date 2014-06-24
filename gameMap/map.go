@@ -182,3 +182,8 @@ func (f *GameField) GetObjects(col, row int) map[int64] gameObjectsBase.GameObje
 func (f *GameField) GetBackground(col, row int) byte {
     return f.Field[row][col].background
 }
+
+func (f *GameField) Clear() {
+    f.Field = make([][]*fieldCell, 1000)
+    f.Width, f.Height = 0, 0
+}

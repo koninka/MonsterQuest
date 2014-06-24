@@ -370,6 +370,8 @@ func (g *Game) stopTesting() consts.JsonType {
     if *consts.TEST && consts.TEST_MODE {
         res["result"] = "ok"
         consts.TEST_MODE = false
+        g.mobs.Clear()
+        g.field.Clear()
     }
     return res
 }

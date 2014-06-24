@@ -94,4 +94,10 @@ func (ml *mobList) run() {
 		m.SetID(id)
 		GetInstance().field.LinkToCells(m)
 	}
+
+func (ml *mobList) Clear() {
+    for _, mob := range ml.mobs {
+        GetInstance().field.UnlinkFromCells(mob)
+    }
+    ml.mobs = make(map[int64] *gameObjects.Mob)
 }
