@@ -404,7 +404,230 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
             };
             ws.sendJSON({action: 'startTesting', sid: data.ssid});
          });
-      });
+
+         it('should load map and then put mob', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpMap', 
+                     map: 
+                        [
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                        ],
+                     sid : data.ssid
+                  });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: "putMob",
+                     x: 0.5,
+                     y: 0.5,
+                     characteristics: { HP: 100 },
+                     flags: [],
+                     inventory: [],
+                     race: "DEVIL",
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'putMob') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
+               } else if (response['action'] == 'stopTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+         
+         it('should load map and then put mobs in all cells', function(done){
+            ws = data.ws;
+
+            var map = [
+                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                  ];
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                  action: 'setUpMap', 
+                  map: map,
+                  sid : data.ssid
+               });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  for (var i = 0; i < map.length - 1; i++)
+                  {
+                     for (var j = 0; j < map[i].length - 1; j++)
+                     ws.sendJSON({
+                        action: "putMob",
+                        x: j + 0.5, 
+                        y: i + 0.5,
+                        flags: [],
+                        race: "DEVIL",
+                        sid: data.ssid
+                     });
+                  }
+                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
+               } else if (response['action'] == 'putMob') {
+                  expect(response['result']).to.equal('ok');
+               } else if (response['action'] == 'stopTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+            
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should fail put mob[not map loaded]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                   ws.sendJSON({
+                     action: "putMob",
+                     x: 0.5,
+                     y: 0.5,
+                     flags: [],
+                     race: "DEVIL",
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'putMob') {
+                  expect(response['result']).to.equal('badPoint');
+                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
+               } else if (response['action'] == 'stopTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should fail put mob[put mob to wall]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpMap', 
+                     map: 
+                        [
+                           ["#", "#", "#"],
+                           ["#", "#", "#"], 
+                           ["#", "#", "#"], 
+                        ],
+                     sid : data.ssid
+                  });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: "putMob",
+                     x: 1.5,
+                     y: 1.5,
+                     flags: [],
+                     race: "DEVIL",
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'putMob') {
+                  expect(response['result']).to.equal('badPoint');
+                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
+               } else if (response['action'] == 'stopTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should fail put mob[cross with another mob]', function(done){
+            ws = data.ws;
+            var counter = 0;
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpMap', 
+                     map: 
+                        [
+                           [".", ".", "."],
+                           [".", ".", "."],
+                           [".", ".", "."],
+                        ],
+                     sid : data.ssid
+                  });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: "putMob",
+                     x: 1.5,
+                     y: 1.5,
+                     flags: [],
+                     race: "DEVIL",
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'putMob') {
+                  if (counter == 0)
+                  {
+                     expect(response['result']).to.equal('ok');
+                     ws.sendJSON({
+                        action: "putMob",
+                        x: 2.0,
+                        y: 2.0,
+                        flags: [],
+                        race: "DEVIL",
+                        sid: data.ssid
+                     });             
+                  } else {
+                     expect(response['result']).to.equal('badPoint');
+                     ws.sendJSON({action: 'stopTesting', sid: data.ssid});
+                  }
+                  counter++;
+               } else if (response['action'] == 'stopTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.onmessage = undefined;
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+
+
+      }); 
    }
 
 
