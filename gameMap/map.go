@@ -183,6 +183,29 @@ func (f *GameField) GetBackground(col, row int) byte {
     return f.Field[row][col].background
 }
 
+func (f *GameField) FreeForObject(x, y float64) bool {
+    tl := geometry.MakePoint(x - consts.OBJECT_HALF, y - consts.OBJECT_HALF)
+    br := geometry.MakePoint(x + consts.OBJECT_HALF, y + consts.OBJECT_HALF)
+    tr := geometry.MakePoint(x + consts.OBJECT_HALF, y - consts.OBJECT_HALF)
+    bl := geometry.MakePoint(x - consts.OBJECT_HALF, y + consts.OBJECT_HALF)
+    if f.IsBlocked(int(tl.X), int(tl.Y)) || f.IsBlocked(int(br.X), int(br.Y)) ||
+        f.IsBlocked(int(tr.X), int(tr.Y)) || f.IsBlocked(int(bl.X), int(bl.Y)) {
+        return false
+    }
+    rect := geometry.MakeRectangle(tl, br)
+    var pts = []*geometry.Point { tl, br, bl, tr }
+    for _, point := range pts {
+        for _, actor := range f.GetActors(int(point.X), int(point.Y)) {
+            r := actor.GetRectangle()
+            fmt.Println(r, rect, rect.CrossedByRect(&r))
+            if rect.CrossedByRect(&r) {
+                return false
+            }
+        }
+    }
+    return true
+}
+
 func (f *GameField) Clear() {
     f.Field = make([][]*fieldCell, 1000)
     f.Width, f.Height = 0, 0
