@@ -53,10 +53,9 @@ func newFieldCell(background byte) *fieldCell {
 }
 
 func NewGameField() GameField {
-    field := GameField{
+    return GameField{
         Field: make([][]*fieldCell, 1000),
     }
-    return field
 }
 
 func (f *GameField) SetCell(x, y int, c byte) {
