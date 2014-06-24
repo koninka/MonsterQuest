@@ -60,9 +60,9 @@ func GetInstance() *Game {
             make(consts.JsonType),
         }
         gameObjectsBase.InitGameItems()
-        gameInstance.field.LoadFromFile("map.txt")
         gameInstance.dictionary = gameInstance.mobs.initializeMobTypes()
         if !*consts.TEST {
+            gameInstance.field.LoadFromFile("map.txt")
             gameInstance.mobs.initializeMobsGenerators("areas.txt")
             go gameInstance.players.save()
         }
