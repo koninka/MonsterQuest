@@ -10,6 +10,7 @@ import (
     "MonsterQuest/gameMap"
     "MonsterQuest/gameObjects"
     "MonsterQuest/gameObjectsBase"
+    "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/notifier"
     "MonsterQuest/geometry"
 )
@@ -154,6 +155,7 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     case "moveItem" : conn.send <- g.moveItem(json)
     case "getConst" : conn.send <- g.getConstants()
     case "setUpConst" : conn.send <- g.setUpConstants(json)
+    case "putMob" : conn.send <- g.putMob(json)
     default: conn.send <- g.badAction(action)
     }
 }
@@ -308,6 +310,46 @@ func (g *Game) getConstants() consts.JsonType {
         }
         res["result"] = "ok"
     }
+    return res
+}
+
+func (g *Game) putMob(json consts.JsonType) consts.JsonType {
+    res := utils.JsonAction("putMob", "badAction")
+    if *consts.TEST && consts.TEST_MODE {
+        var requiredFields = map[string] string {
+            "x" : "badPoint",
+            "y" : "badPoint",
+            "flags" : "badFlag",
+            "race" : "badRace",
+        }
+        var ok bool
+        if ok, res["result"] = utils.CheckJsonRequest(json, requiredFields); ok {
+            x, y := json["x"].(float64), json["y"].(float64)
+            flags := json["flags"].([] interface{})
+            var chars = map[string] interface{} {}
+            if json["chars"] != nil {
+                chars = json["chars"].(map[string] interface{})
+            }
+            if !g.field.FreeForObject(x, y) {
+                res["result"] = "badPoint"
+            } else if !gameObjectsFlags.CheckFlags(flags) {
+                res["result"] = "badFlag"
+            } else {
+                m := gameObjects.NewTestMob(x, y, flags)
+                for c, v := range consts.CharacteristicDefaultValueMapping {
+                    if chars[consts.CharacteristicNameMapping[c]] == nil {
+                        m.SetCharacteristic(c, v)
+                    } else {
+                        m.SetCharacteristic(c, chars[consts.CharacteristicNameMapping[c]].(int))
+                    }
+                }
+                m.GetKind().SetRace(consts.NameRaceMapping[json["race"].(string)])
+                res["id"] = g.mobs.registerMob(m)
+                res["result"] = "ok"
+            }
+        }
+    }
+    fmt.Println("result to putMob action:", res)
     return res
 }
 
