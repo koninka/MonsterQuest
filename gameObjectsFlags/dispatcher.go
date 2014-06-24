@@ -38,6 +38,15 @@ func InitFlags(field *gameMap.GameField, msgsChan chan consts.JsonType) {
 	raceFlags["ANIMAL"] = consts.ANIMAL_RACE
 }
 
+func CheckFlags(flagsNames [] interface{}) bool {
+	for _, flagName := range flagsNames {
+		if flags[flagName.(string)] == nil {
+			return false
+		}
+	}
+	return true
+}
+
 func GetFlag(name string) gameObjectsBase.Flager {
 	return flags[name]
 }

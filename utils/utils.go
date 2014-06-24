@@ -8,6 +8,15 @@ import (
     "MonsterQuest/consts"
 )
 
+func CheckJsonRequest(req consts.JsonType, results map[string] string) (bool, string) {
+    for field, errorMsg := range results {
+        if req[field] == nil {
+            return false, errorMsg
+        }
+    }
+    return true, "ok"
+}
+
 func JsonAction(action, result string) consts.JsonType{
     return consts.JsonType {
         "action" : action,
