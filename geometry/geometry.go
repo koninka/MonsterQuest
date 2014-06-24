@@ -30,8 +30,30 @@ func (r *Rectangle) In(p *Point) bool {
 		p.Y >= r.LeftTop.Y && p.Y <= r.RightBottom.Y
 }
 
+func (r *Rectangle) StrongIn(p *Point) bool {
+	return p.X > r.LeftTop.X && p.X < r.RightBottom.X &&
+		p.Y > r.LeftTop.Y && p.Y < r.RightBottom.Y
+}
+
 func (r *Rectangle) CrossedBySegment(s *Segment) bool {
 	return r.In(&s.Point1) || r.In(&s.Point2)
+}
+
+func (r *Rectangle) RightTop() *Point {
+	return MakePoint(r.RightBottom.X, r.LeftTop.Y)
+}
+
+func (r *Rectangle) LeftBottom() *Point {
+	return MakePoint(r.LeftTop.X, r.RightBottom.Y)
+}
+
+func (r *Rectangle) InRect(rect *Rectangle) bool {
+	return r.StrongIn(&rect.LeftTop) || r.StrongIn(&rect.RightBottom) ||
+		r.StrongIn(rect.LeftBottom()) || r.StrongIn(rect.RightTop())
+}
+
+func (r *Rectangle) CrossedByRect(rect *Rectangle) bool {
+	return r.InRect(rect) || rect.InRect(r)
 }
 
 func MakeRectangle(lt, rb *Point) *Rectangle {
