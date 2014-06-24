@@ -85,15 +85,21 @@ func (ml *mobList) runGens() {
     }
 }
 
+func (ml *mobList) registerMob(m *gameObjects.Mob) int64 {
+    id := utils.GenerateId()
+    ml.mobs[id] = m
+    m.SetID(id)
+    GetInstance().field.LinkToCells(m)
+    return id
+}
+
 func (ml *mobList) run() {
-	ml.runGens()
-	for {
-		m := <-ml.pipeline
-		id := utils.GenerateId()
-		ml.mobs[id] = m
-		m.SetID(id)
-		GetInstance().field.LinkToCells(m)
-	}
+    ml.runGens()
+    for {
+        m := <-ml.pipeline
+        ml.registerMob(m)
+    }
+}
 
 func (ml *mobList) Clear() {
     for _, mob := range ml.mobs {
