@@ -2,4 +2,4 @@
 lib/monsters.txt
 MonsterQuest/tests/mocha/*
 MonsterQuest/tests/chai/*
-init_db
+init_db.sh
