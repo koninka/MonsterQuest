@@ -210,6 +210,7 @@ func (f *GameField) FreeForObject(x, y float64) bool {
 func (f *GameField) Clear() {
     f.Field = make([][]*fieldCell, 1000)
     f.Width, f.Height = 0, 0
+    f.initialized = false
 }
 
 func (f *GameField) Initialized() bool {
