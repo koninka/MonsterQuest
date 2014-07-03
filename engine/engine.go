@@ -293,10 +293,9 @@ func (g *Game) setUpConstants(json consts.JsonType) consts.JsonType {
         for name, _ := range consts.NameConstMapping {
             if json[name] != nil {
                 consts.NameConstMapping[name] = json[name]
-            } else {
-                return res
             }
         }
+        consts.Refresh()
         res["result"] = "ok"
     }
     return res

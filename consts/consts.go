@@ -293,3 +293,7 @@ func ParseCommandLine(){
     flag.Parse()
     fmt.Println(*TEST)
 }
+
+func Refresh() {
+    TICK_DURATION = time.Duration(1000.0 / TICKS_PER_SECOND) * time.Millisecond
+}
