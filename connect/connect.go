@@ -14,9 +14,9 @@ type DBComps interface {
 var db *sql.DB = nil
 
 func CreateConnect() *sql.DB {
-	if db == nil {
-		db, _ = sql.Open("mysql", "monster_user:qwerty@/monsterquest")
-	}
+    if db == nil {
+        db, _ = sql.Open("mysql", "monster_user:qwerty@/monsterquest")
+    }
     return db
 }
 
