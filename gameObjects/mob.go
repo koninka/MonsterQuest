@@ -67,6 +67,7 @@ func CreateMobKind(id int64, name string, base_hp int, hp_inc, description, blow
 type Mob struct {
     gameObjectsBase.ActiveObject
     walkingCycle int
+    active bool
 }
 
 func (m *Mob) GetDir() int {
@@ -120,7 +121,9 @@ func (m *Mob) think() {
 }
 
 func (m *Mob) Do() {
-    m.think()
+    if m.active {
+        m.think()
+    }
     if !m.Killed() {
         m.DoWithObj(m)
     }
