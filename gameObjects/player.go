@@ -214,6 +214,8 @@ func NewPlayer(id, dbId int64, login, sid string, x, y float64) *Player {
     for slotType, itemType := range consts.SlotItemMapping {
         slots[slotType] = newSlot(itemType)
     }
-    return &Player{gameObjectsBase.NewActiveObject(id, x, y, getPlayerKind()),
+    p := &Player{gameObjectsBase.NewActiveObject(id, x, y, getPlayerKind()),
         login, sid, dbId, slots, wpns.GetWeapon(consts.FIST_WEAP), nil}
+    p.fist  = gameObjectsBase.NewFistItem(p)
+    return p
 }
