@@ -18,7 +18,8 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
 
    function Test(){
       Prepare();
-      describe('Test mode', function() {
+
+      describe('Beginning and end of the test mode', function() {
 
          it('should take badSid on startTesting', function(done){
             ws = data.ws;
@@ -141,6 +142,15 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
             ws.sendJSON({action: "stopTesting", sid: data.ssid});
          })
 
+      });
+
+      describe('Functions of the test mode', function() {
+
+         afterEach(function(){
+            data.ws.onmessage = undefined;
+            data.ws.sendJSON({action: "stopTesting", sid: data.ssid});
+         });
+
          it('should successfully load map', function(done){
             ws = data.ws;
             ws.onmessage = function(e) {
@@ -152,9 +162,6 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                } else if (response['action'] == 'setUpMap') {
                   expect(response['result']).to.equal('ok');
                   ws.sendJSON({action: 'stopTesting', sid: data.ssid});
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
                   done();
                }
             };
@@ -177,10 +184,6 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   });
                } else if (response['action'] == 'setUpMap') {
                   expect(response['result']).to.equal('ok');
-                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
                   done();
                }
             };
@@ -197,10 +200,6 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   ws.sendJSON({action: 'setUpMap', sid: data.ssid});
                } else if (response['action'] == 'setUpMap') {
                   expect(response['result']).to.equal('badMap');
-                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
                   done();
                }
             };
@@ -217,10 +216,6 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   ws.sendJSON({action: 'setUpMap', map: [], sid: data.ssid});
                } else if (response['action'] == 'setUpMap') {
                   expect(response['result']).to.equal('badMap');
-                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
                   done();
                }
             };
@@ -237,10 +232,6 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   ws.sendJSON({action: 'setUpMap', map: [[], [], [], []], sid: data.ssid});
                } else if (response['action'] == 'setUpMap') {
                   expect(response['result']).to.equal('badMap');
-                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
                   done();
                }
             };
@@ -257,10 +248,6 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   ws.sendJSON({action: 'setUpMap', map: [["#"], ["#"], ["A"]], sid: data.ssid});
                } else if (response['action'] == 'setUpMap') {
                   expect(response['result']).to.equal('badMap');
-                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
                   done();
                }
             };
@@ -277,10 +264,6 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   ws.sendJSON({action: 'setUpMap', map: [["#", "#"], ["#"], ["#"]], sid: data.ssid});
                } else if (response['action'] == 'setUpMap') {
                   expect(response['result']).to.equal('badMap');
-                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
                   done();
                }
             };
@@ -297,10 +280,6 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   ws.sendJSON({action: 'setUpMap', map: [["#", "#"], ["#", "#"], ["#", "#"], []], sid: data.ssid});
                } else if (response['action'] == 'setUpMap') {
                   expect(response['result']).to.equal('badMap');
-                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
                   done();
                }
             };
@@ -320,15 +299,11 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   expect(response['result']).to.equal('ok');
                   expect(Object.keys(response).length).to.equal(8);
                   expect(response).to.have.property('playerVelocity');
-                  expect(response).to.have.property('slideThreshold')
+                  expect(response).to.have.property('slideThreshold');
                   expect(response).to.have.property('ticksPerSecond');
-                  expect(response).to.have.property('screenRowCount')
+                  expect(response).to.have.property('screenRowCount');
                   expect(response).to.have.property('screenColumnCount');
-                  expect(response).to.have.property('pickUpRadius')
-                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
+                  expect(response).to.have.property('pickUpRadius');
                   done();
                }
             };
@@ -355,14 +330,9 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   });
                } else if (response['action'] == 'setUpConst') {
                   expect(response['result']).to.equal('ok');
-                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
                   done();
                }
             };
-
             ws.sendJSON({action: 'startTesting', sid: data.ssid});
          });
 
@@ -395,10 +365,6 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   for (var name in consts) {
                      expect(response[name]).to.equal(consts[name]);
                   }
-                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
                   done();
                }
             };
@@ -414,17 +380,17 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                if (response['action'] == 'startTesting') {
                   expect(response['result']).to.equal('ok');
                   ws.sendJSON({
-                     action: 'setUpMap', 
-                     map: 
+                     action: 'setUpMap',
+                     map:
                         [
-                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
-                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
-                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
-                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
-                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
-                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
-                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
-                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
                         ],
                      sid : data.ssid
                   });
@@ -442,37 +408,31 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   });
                } else if (response['action'] == 'putMob') {
                   expect(response['result']).to.equal('ok');
-                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
                   done();
                }
             };
             ws.sendJSON({action: 'startTesting', sid: data.ssid});
          });
-         
+
          it('should load map and then put mobs in all cells', function(done){
             ws = data.ws;
-
             var map = [
-                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
-                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
-                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
-                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
-                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
-                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
-                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
-                     [".", ".", ".", ".", ".", ".", ".", ".", ".", "."], 
-                  ];
-
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+            ];
             ws.onmessage = function(e) {
                var response = JSON.parse(e.data);
                console.log(e.data);
                if (response['action'] == 'startTesting') {
                   expect(response['result']).to.equal('ok');
                   ws.sendJSON({
-                  action: 'setUpMap', 
+                  action: 'setUpMap',
                   map: map,
                   sid : data.ssid
                });
@@ -483,23 +443,19 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                      for (var j = 0; j < map[i].length - 1; j++)
                      ws.sendJSON({
                         action: "putMob",
-                        x: j + 0.5, 
+                        x: j + 0.5,
                         y: i + 0.5,
                         flags: [],
                         race: "DEVIL",
                         sid: data.ssid
                      });
                   }
-                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
                } else if (response['action'] == 'putMob') {
                   expect(response['result']).to.equal('ok');
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
                   done();
                }
             };
-            
+
             ws.sendJSON({action: 'startTesting', sid: data.ssid});
          });
 
@@ -521,10 +477,6 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   });
                } else if (response['action'] == 'putMob') {
                   expect(response['result']).to.equal('badPoint');
-                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
                   done();
                }
             };
@@ -540,12 +492,12 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                if (response['action'] == 'startTesting') {
                   expect(response['result']).to.equal('ok');
                   ws.sendJSON({
-                     action: 'setUpMap', 
-                     map: 
+                     action: 'setUpMap',
+                     map:
                         [
                            ["#", "#", "#"],
-                           ["#", "#", "#"], 
-                           ["#", "#", "#"], 
+                           ["#", "#", "#"],
+                           ["#", "#", "#"],
                         ],
                      sid : data.ssid
                   });
@@ -561,10 +513,6 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   });
                } else if (response['action'] == 'putMob') {
                   expect(response['result']).to.equal('badPoint');
-                  ws.sendJSON({action: 'stopTesting', sid: data.ssid});
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
                   done();
                }
             };
@@ -580,8 +528,8 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                if (response['action'] == 'startTesting') {
                   expect(response['result']).to.equal('ok');
                   ws.sendJSON({
-                     action: 'setUpMap', 
-                     map: 
+                     action: 'setUpMap',
+                     map:
                         [
                            [".", ".", "."],
                            [".", ".", "."],
@@ -610,24 +558,18 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                         flags: [],
                         race: "DEVIL",
                         sid: data.ssid
-                     });             
+                     });
                   } else {
                      expect(response['result']).to.equal('badPoint');
-                     ws.sendJSON({action: 'stopTesting', sid: data.ssid});
+                     done();
                   }
                   counter++;
-               } else if (response['action'] == 'stopTesting') {
-                  expect(response['result']).to.equal('ok');
-                  ws.onmessage = undefined;
-                  done();
                }
             };
             ws.sendJSON({action: 'startTesting', sid: data.ssid});
          });
 
-
-
-      }); 
+      });
    }
 
 
