@@ -232,16 +232,15 @@ func InitGameItems() {
 }
 
 var IotaItemType2Name = map[int] string {
-    consts.ITEM_T_AMULET : "amulet",
-    consts.ITEM_T_RING   : "ring",
-    consts.ITEM_T_ARMOR  : "armor",
-    consts.ITEM_T_SHIELD : "shield",
-    consts.ITEM_T_HELMET : "helmet",
-    consts.ITEM_T_GLOVES : "gloves",
-    consts.ITEM_T_BOOTS  : "boots",
-    consts.ITEM_T_WEAPON : "weapon",
-    consts.ITEM_T_POTION : "potion",
-    consts.ITEM_T_SCROLL : "scroll",
+    consts.ITEM_T_AMULET     : "amulet",
+    consts.ITEM_T_RING       : "ring",
+    consts.ITEM_T_ARMOR      : "armor",
+    consts.ITEM_T_SHIELD     : "shield",
+    consts.ITEM_T_HELMET     : "helmet",
+    consts.ITEM_T_GLOVES     : "gloves",
+    consts.ITEM_T_BOOTS      : "boots",
+    consts.ITEM_T_WEAPON     : "weapon",
+    consts.ITEM_T_EXPENDABLE : "expendable",
 }
 
 type Itemer interface {
@@ -451,32 +450,32 @@ func (i* WeaponItem) UseItem(inv* InventoryObj) {
     }
 }
 
-type SummarizeItem struct {
+type StackItem struct {
     Item
     amount int
 }
 
-func (i* SummarizeItem) getAmount() int {
+func (i* StackItem) getAmount() int {
     return i.amount
 }
 
-func (i* SummarizeItem) decAmount(amount int) {
+func (i* StackItem) decAmount(amount int) {
     i.amount -= amount
 }
 
-func (i* SummarizeItem) setAmount(amount int) {
+func (i* StackItem) setAmount(amount int) {
     i.amount = amount
 }
 
-func (i* SummarizeItem) IsHeapItem() bool {
+func (i* StackItem) IsHeapItem() bool {
     return true
 }
 
-type FoodItem struct {
-    SummarizeItem
+type ConsumableItem struct {
+    StackItem
 }
 
-func (i* FoodItem) UseItem(inv* InventoryObj) {
+func (i* ConsumableItem) UseItem(inv* InventoryObj) {
     i.Item.UseItem(inv)
     i.amount--
     if (i.amount <= 0) {
@@ -487,7 +486,7 @@ func (i* FoodItem) UseItem(inv* InventoryObj) {
 func NewItem(iid int64, owner Activer, amount ...interface{}) Itemer {
     var i Itemer = nil
     switch gameItems.items[iid].class {
-        case consts.ITEM_CLASS_FOOD:    i = newFoodItem(gameItems.items[iid], owner, amount[0].(int))
+        case consts.ITEM_CLASS_CONSUMABLE: i = newConsumableItem(gameItems.items[iid], owner, amount[0].(int))
         case consts.ITEM_CLASS_GARMENT:
             garment := GarmentItem{newItem(gameItems.items[iid], owner), false};
             if gameItems.items[iid].itemType == consts.ITEM_T_WEAPON {
@@ -512,12 +511,12 @@ func newItem(ik *ItemKind, owner Activer) Item {
     return Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, ik, owner}
 }
 
-func newFoodItem(ik* ItemKind, owner Activer, amount int) *FoodItem {
-    return &FoodItem{SummarizeItem{newItem(ik, owner), amount}}
+func newConsumableItem(ik* ItemKind, owner Activer, amount int) *ConsumableItem {
+    return &ConsumableItem{StackItem{newItem(ik, owner), amount}}
 }
 
 func splitItem(inv* InventoryObj, i Itemer, amount int) (int, Itemer) {
-    new_i := newFoodItem(i.GetKind(), i.GetOwner(), i.GetAmount() - amount)
+    new_i := newConsumableItem(i.GetKind(), i.GetOwner(), i.GetAmount() - amount)
     place := inv.getPlaceById(i.GetID())
     inv.cells[place] = new_i.GetID()
     delete(inv.Items, i.GetID())
