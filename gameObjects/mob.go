@@ -127,6 +127,10 @@ func (m *Mob) Do() {
     if !m.Killed() {
         m.DoWithObj(m)
     }
+    if m.ClearDir {
+        m.Dir = -1
+        m.ClearDir = false
+    }
 }
 
 func (m *Mob) Attack() consts.JsonType {

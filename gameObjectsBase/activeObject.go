@@ -68,6 +68,7 @@ type Activer interface {
     ModifyCharacteristic(charIota, val int)
     ModifyBonus(charIota, val int)
     MergeInfo(consts.JsonType) consts.JsonType
+    ClearDirAfterTick()
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -119,6 +120,7 @@ type ActiveObject struct {
     Inventory *InventoryObj
     Characteristics map[int] int
     Bonuses map[int] int
+    ClearDir bool
 }
 
 func (obj *ActiveObject) GetShiftedCenter(dir int) geometry.Point {
@@ -362,7 +364,11 @@ func newBonusMap() map[int] int {
     return bonuses
 }
 
-func NewActiveObject(id int64, hp, mp int, x, y float64, kind Kinder) ActiveObject {
-    return ActiveObject{NewGameObject(id, geometry.Point{x, y}), -1, hp, mp, consts.DEFAULT_ATTACK_COOLDOWN, nil, kind, nil,
-        NewInventoryObj(), newCharacteristicsMap(), newBonusMap()}
+func (obj *ActiveObject) ClearDirAfterTick() {
+    obj.ClearDir = true
+}
+
+func NewActiveObject(id int64, x, y float64, kind Kinder) ActiveObject {
+    return ActiveObject{NewGameObject(id, geometry.Point{x, y}), -1, consts.DEFAULT_ATTACK_COOLDOWN, nil, kind, nil,
+        NewInventoryObj(), newCharacteristicsMap(), newBonusMap(), false}
 }

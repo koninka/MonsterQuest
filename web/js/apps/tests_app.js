@@ -6,7 +6,7 @@ requirejs.config({
    }
 });
 
-requirejs(['jquery', 'tester', 'auth', 'simple_walk', 'test_mode'], function($, tester, auth, simple_walk, test_mode) {
+requirejs(['jquery', 'tester', 'auth', 'simple_walk', 'test_mode', 'move_flag'], function($, tester, auth, simple_walk, test_mode, move_flag) {
    $(function() {
       var StartTesting = function(){
         $('#mocha').empty();
@@ -15,6 +15,7 @@ requirejs(['jquery', 'tester', 'auth', 'simple_walk', 'test_mode'], function($, 
          auth.Test();
          simple_walk.Test();
          test_mode.Test();
+         move_flag.Test();
 
          mocha.run(); 
       }
