@@ -427,7 +427,7 @@ func (g *Game) getDictionaryAction() consts.JsonType {
     return res
 }
 
-func (g *Game) CreatePlayer(sid string) int64 {
+func (g *Game) CreatePlayer(sid string) *gameObjects.Player {
     db := connect.CreateConnect()
     stmt, _ := db.Prepare(`
         SELECT u.id, u.login, up.x, up.y
@@ -453,7 +453,7 @@ func (g *Game) CreatePlayer(sid string) int64 {
         p.RestoreItem(item, place)
         g.items.addItem(item)
     }
-    return p.GetID()
+    return p
 }
 
 func (g *Game) getObjectById(id int64) (gameObjectsBase.GameObjecter, bool) {

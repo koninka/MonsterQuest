@@ -81,6 +81,7 @@ var NameRaceMapping = map[string] int {
 }
 
 const (
+    FIST_ID = -1
     FIST_WEAP = "FIST"
 )
 

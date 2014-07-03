@@ -1,12 +1,13 @@
 package gameObjectsBase
 
 import (
+    "time"
+    "strings"
+    "MonsterQuest/utils"
     "MonsterQuest/consts"
     "MonsterQuest/geometry"
     "MonsterQuest/connect"
-    "MonsterQuest/utils"
-    "strings"
-    "time"
+    "MonsterQuest/gameFight/fightBase"
 )
 
 type Bonus struct {
@@ -109,6 +110,7 @@ type ItemKind struct {
     dbId int64
     name string
     weight int
+    power string
     message string
     description string
     class int
@@ -191,16 +193,20 @@ func parseEffectFromDB(effectStr string) [] Effecter {
 
 func InitGameItems() {
     db := connect.CreateConnect()
-    rows, _ := db.Query("SELECT id, name, atype, weight, allocation_info, message, description, bonus, effects FROM artifacts")
+    rows, _ := db.Query("SELECT id, name, atype, weight, allocation_info, power_info, message, description, bonus, effects FROM artifacts")
     for rows.Next() {
         var (
             id int64
             weight int
-            atype_str, name, alloc_info_str, msg, desc, bonusesStr, effectsStr string
+            atype_str, name, alloc_info_str, power_info_str, msg, desc, bonusesStr, effectsStr, power string
         )
-        rows.Scan(&id, &name, &atype_str, &weight, &alloc_info_str, &msg, &desc, &bonusesStr, &effectsStr)
+        rows.Scan(&id, &name, &atype_str, &weight, &alloc_info_str, &power_info_str, &msg, &desc, &bonusesStr, &effectsStr)
         atype := strings.Split(atype_str, ":")
-        gameItems.items[id] = &ItemKind{id, name, weight, msg, desc, utils.ParseInt(atype[0]), utils.ParseInt(atype[1]), utils.ParseInt(atype[2]), make([] *Bonus, 0, 30), make([] Effecter, 0, 30)}
+        power_arry := strings.Split(power_info_str, ":")
+        if len(power_arry) > 1 {
+            power = power_arry[1]
+        }
+        gameItems.items[id] = &ItemKind{id, name, weight, power, msg, desc, utils.ParseInt(atype[0]), utils.ParseInt(atype[1]), utils.ParseInt(atype[2]), make([] *Bonus, 0, 30), make([] Effecter, 0, 30)}
         alloc_info := strings.Split(alloc_info_str, ":");
         prob := utils.ParseInt(alloc_info[0])
         min_d := utils.ParseInt64(alloc_info[1]) - 1
@@ -296,7 +302,7 @@ func (i *Item) GetFullInfo() consts.JsonType {
     if len(i.kind.effects) > 0 {
         msg["effects"] = make([] consts.JsonType, 0, 30)
         for _, effect := range i.kind.effects {
-             msg["effects"] = append(msg["effects"].([] consts.JsonType), effect.GetFullInfo())
+            msg["effects"] = append(msg["effects"].([] consts.JsonType), effect.GetFullInfo())
         }
     }
     return msg
@@ -432,6 +438,19 @@ func (i* GarmentItem) UnequipItem(inv *InventoryObj) {
     }
 }
 
+type WeaponItem struct {
+    GarmentItem
+    dmg fightBase.DmgDescription
+}
+
+func (i* WeaponItem) UseItem(inv* InventoryObj) {
+    if (i.isEquiped) {
+        i.UnequipItem(inv)
+    } else {
+        i.EquipItem(inv)
+    }
+}
+
 type SummarizeItem struct {
     Item
     amount int
@@ -469,10 +488,24 @@ func NewItem(iid int64, owner Activer, amount ...interface{}) Itemer {
     var i Itemer = nil
     switch gameItems.items[iid].class {
         case consts.ITEM_CLASS_FOOD:    i = newFoodItem(gameItems.items[iid], owner, amount[0].(int))
-        case consts.ITEM_CLASS_GARMENT: i = &GarmentItem{newItem(gameItems.items[iid], owner), false}
+        case consts.ITEM_CLASS_GARMENT:
+            garment := GarmentItem{newItem(gameItems.items[iid], owner), false};
+            if gameItems.items[iid].itemType == consts.ITEM_T_WEAPON {
+                i = &WeaponItem{garment, fightBase.CreateDmgDescription(gameItems.items[iid].power)}
+            } else {
+                i = &garment
+            }
+
         // case consts.ITEM_CLASS_AMMO:
     }
     return i
+}
+
+func NewFistItem(owner Activer) Itemer {
+    if _, ok := gameItems.items[consts.FIST_ID]; !ok {
+        gameItems.items[consts.FIST_ID] = &ItemKind{consts.FIST_ID, "кулаки от бога", 0, "10d4", "", "", consts.ITEM_CLASS_GARMENT, consts.ITEM_T_WEAPON, consts.ITEM_ST_DEFAULT, make([] *Bonus, 0, 0), make([] Effecter, 0, 0)}
+    }
+    return NewItem(consts.FIST_ID, owner)
 }
 
 func newItem(ik *ItemKind, owner Activer) Item {
@@ -495,3 +528,5 @@ func splitItem(inv* InventoryObj, i Itemer, amount int) (int, Itemer) {
     i.setAmount(amount)
     return place, new_i
 }
+
+
