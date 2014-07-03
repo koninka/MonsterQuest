@@ -426,6 +426,8 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
                [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
             ];
+            var counter = 0;
+            var cellsCount = (map.length - 1) * (map[0].length - 1);
             ws.onmessage = function(e) {
                var response = JSON.parse(e.data);
                console.log(e.data);
@@ -452,7 +454,9 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   }
                } else if (response['action'] == 'putMob') {
                   expect(response['result']).to.equal('ok');
-                  done();
+                  counter++;
+                  if (counter == cellsCount)
+                     done();
                }
             };
 
