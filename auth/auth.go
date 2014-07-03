@@ -66,7 +66,9 @@ func loginAction(login, pass string) string {
             result["sid"] = sid
             result["result"] = "ok"
             result["webSocket"] = "ws://" + host + consts.SERVER_PORT + "/websocket"
-            result["id"] = engine.GetInstance().CreatePlayer(sid)
+            p := engine.GetInstance().CreatePlayer(sid)
+            result["id"] = p.GetID()
+            result["fistId"] = p.GetFistID()
         }
     }
     resJSON, _ := json.Marshal(result)
