@@ -81,7 +81,13 @@ var NameRaceMapping = map[string] int {
 }
 
 const (
+    FIST_ID = -1
     FIST_WEAP = "FIST"
+)
+
+const (
+    ITEM_CLASS_GARMENT = iota
+    ITEM_CLASS_CONSUMABLE
 )
 
 const (
@@ -93,18 +99,11 @@ const (
     ITEM_T_GLOVES
     ITEM_T_BOOTS
     ITEM_T_WEAPON
-    ITEM_T_POTION
-    ITEM_T_SCROLL
+    ITEM_T_EXPENDABLE
     ITEM_ST_DEFAULT = -1
-    ITEM_ST_SWORD = iota
-    ITEM_ST_POLEARM
+    ITEM_ST_ONE_HANDED = iota
+    ITEM_ST_TWO_HANDED
     ITEM_ST_BOW
-)
-
-const (
-    ITEM_CLASS_GARMENT = iota
-    ITEM_CLASS_FOOD
-    ITEM_CLASS_AMMO
 )
 
 const (

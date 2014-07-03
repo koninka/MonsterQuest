@@ -1,7 +1,6 @@
 /*about artifact class
    0-garment
-   1-food
-   2-bow
+   1-consumable
 */
 /*about artifact types
    0-amulet
@@ -12,11 +11,15 @@
    5-gloves
    6-boots
    7-weapon
+   8-expendable
 */
 /*about artifact subtype
-   0-sword
-   1-polearms
+   subtypes for weapon type of garment class:
+   0-one-handed
+   1-two-handed
    2-bow
+   subtypes for expendable type of garment class:
+   4-arrows
 */
 INSERT INTO artifacts(name, atype, weight, allocation_info, power_info, flags, effects, bonus, message, description) VALUES
    ('Amulet of Carlammas', '0:0:-1', 3, '10:1:100', '', 'RES_FIRE', '', '3:CON@1:STR', '', 'A fiery circle of bronze, with mighty spells:ward off and banish evil'),

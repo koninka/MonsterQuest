@@ -124,6 +124,10 @@ define(['tester'], function(tester) {
             }
             tester.send(data, function (data) {
                expect(data['result']).to.equal('ok');
+               expect(data).to.have.property('id');
+               expect(data).to.have.property('sid');
+               expect(data).to.have.property('webSocket');
+               expect(data).to.have.property('fistId');
                sid = data['sid'];
                done();
             });

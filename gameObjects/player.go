@@ -49,8 +49,9 @@ type Player struct {
     Login string
     SID string
     DBId int64
-    weapon fightBase.Blower
     slots map[int] *slot
+    weapon fightBase.Blower
+    fist gameObjectsBase.Itemer
 }
 
 func (p *Player) GetType() string {
@@ -204,11 +205,15 @@ func (p *Player) GetItem(id int64) gameObjectsBase.Itemer {
     return p.Inventory.GetItem(id)
 }
 
+func (p *Player) GetFistID() int64 {
+    return p.fist.GetID()
+}
+
 func NewPlayer(id, dbId int64, login, sid string, x, y float64) *Player {
     slots := make(map[int] *slot)
     for slotType, itemType := range consts.SlotItemMapping {
         slots[slotType] = newSlot(itemType)
     }
     return &Player{gameObjectsBase.NewActiveObject(id, x, y, getPlayerKind()),
-        login, sid, dbId, wpns.GetWeapon(consts.FIST_WEAP), slots}
+        login, sid, dbId, slots, wpns.GetWeapon(consts.FIST_WEAP), nil}
 }
