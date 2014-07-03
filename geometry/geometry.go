@@ -49,7 +49,8 @@ func (r *Rectangle) LeftBottom() *Point {
 
 func (r *Rectangle) InRect(rect *Rectangle) bool {
     return r.StrongIn(&rect.LeftTop) || r.StrongIn(&rect.RightBottom) ||
-        r.StrongIn(rect.LeftBottom()) || r.StrongIn(rect.RightTop())
+        r.StrongIn(rect.LeftBottom()) || r.StrongIn(rect.RightTop()) ||
+        r.StrongIn(MakePoint(rect.LeftTop.X + 0.5, rect.LeftTop.Y + 0.5))
 }
 
 func (r *Rectangle) CrossedByRect(rect *Rectangle) bool {
