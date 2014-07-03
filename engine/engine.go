@@ -557,7 +557,9 @@ func (g *Game) IsSIDValid(sid string) bool {
 func (g *Game) LogoutPlayer(sid string) {
     p := g.players.getPlayerBySession(sid)
     delete(g.id2conn, p.GetID())
-    g.field.UnlinkFromCells(p)
+    if g.field.Initialized() {
+        g.field.UnlinkFromCells(p)
+    }
     for _, item := range p.GetItems() {
         g.items.deleteItem(item)
     }

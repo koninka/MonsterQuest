@@ -46,6 +46,7 @@ func (cell *fieldCell) unlink(obj gameObjectsBase.GameObjecter) {
 type GameField struct {
     Width, Height int
     Field [][]*fieldCell
+    initialized bool
 }
 
 func newFieldCell(background byte) *fieldCell {
@@ -90,6 +91,7 @@ func (f *GameField) LoadFromStrings(strs []string) bool {
                 f.Field[idx][i] = newFieldCell(byte(b))
            }
         }
+        f.initialized = true
     }
     return correct
 }
@@ -208,4 +210,8 @@ func (f *GameField) FreeForObject(x, y float64) bool {
 func (f *GameField) Clear() {
     f.Field = make([][]*fieldCell, 1000)
     f.Width, f.Height = 0, 0
+}
+
+func (f *GameField) Initialized() bool {
+    return f.initialized
 }
