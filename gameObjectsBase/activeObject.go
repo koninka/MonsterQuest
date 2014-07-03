@@ -112,8 +112,6 @@ func NewKind() Kind {
 type ActiveObject struct {
     GameObject
     Dir int
-    HP int
-    MP int
     AttackCooldownCounter int
     Target Activer
     Kind Kinder
@@ -211,19 +209,19 @@ func (obj *ActiveObject) GetDealtDamage() int {
 }
 
 func (obj *ActiveObject) GetHP() int {
-    return obj.HP
-}
-
-func (obj *ActiveObject) GetMaxHP() int {
     return obj.Characteristics[consts.CHARACTERISTIC_HP]
 }
 
+func (obj *ActiveObject) GetMaxHP() int {
+    return obj.Characteristics[consts.CHARACTERISTIC_MAX_HP]
+}
+
 func (obj *ActiveObject) GetMP() int {
-    return obj.MP
+    return obj.Characteristics[consts.CHARACTERISTIC_MP]
 }
 
 func (obj *ActiveObject) GetMaxMP() int {
-    return obj.Characteristics[consts.CHARACTERISTIC_MP]
+    return obj.Characteristics[consts.CHARACTERISTIC_MAX_MP]
 }
 
 func (obj *ActiveObject) GetAttackRadius() float64 {
@@ -231,7 +229,6 @@ func (obj *ActiveObject) GetAttackRadius() float64 {
 }
 
 func (obj *ActiveObject) NotifyAboutCollision() {}
-
 
 func (obj *ActiveObject) GetKind() Kinder {
     return obj.Kind
@@ -243,15 +240,15 @@ func (obj *ActiveObject) GetHit(blow fightBase.Blower, attacker Activer) consts.
         "blowType" : blow.GetType(),
         "dealtDamage" : blow.GetDamage(),
     }
-    obj.HP -= blow.GetDamage()
-    if obj.HP <= 0 {
+    obj.Characteristics[consts.CHARACTERISTIC_HP] -= blow.GetDamage()
+    if obj.Characteristics[consts.CHARACTERISTIC_HP] <= 0 {
         res["killed"] = true
     }
     return res
 }
 
 func (obj *ActiveObject) Killed() bool {
-    return obj.HP <= 0
+    return obj.Characteristics[consts.CHARACTERISTIC_HP] <= 0
 }
 
 func (obj *ActiveObject) ReadyAttack() bool {
@@ -294,10 +291,10 @@ func (obj *ActiveObject) GetItems() map[int64] Itemer {
 
 func (obj *ActiveObject) GetInfo() consts.JsonType {
     info := obj.GameObject.GetInfo()
-    info["health"] = obj.HP
-    info["maxHealth"] = obj.Characteristics[consts.CHARACTERISTIC_HP]
-    info["mp"] = obj.MP
-    info["max_mp"] = obj.Characteristics[consts.CHARACTERISTIC_MP]
+    info["health"] = obj.Characteristics[consts.CHARACTERISTIC_HP]
+    info["maxHealth"] = obj.Characteristics[consts.CHARACTERISTIC_MAX_HP]
+    info["mana"] = obj.Characteristics[consts.CHARACTERISTIC_MP]
+    info["maxMana"] = obj.Characteristics[consts.CHARACTERISTIC_MAX_MP]
     return info
 }
 

@@ -147,7 +147,6 @@ var BDString2IotaCharacteristic = map[string] int {
     "STR"   : consts.CHARACTERISTIC_STRENGTH,
     "INT"   : consts.CHARACTERISTIC_INTELLEGENCE,
     "DEX"   : consts.CHARACTERISTIC_DEXTERITY,
-    "WIS"   : consts.CHARACTERISTIC_WISDOM,
     "CON"   : consts.CHARACTERISTIC_DEFENSE,
     "SPEED" : consts.CHARACTERISTIC_SPEED,
     "RES"   : consts.CHARACTERISTIC_MAGICK_RESISTANCE,
