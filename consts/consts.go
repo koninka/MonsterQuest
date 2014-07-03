@@ -24,10 +24,6 @@ const (
     INITIAL_PLAYER_HP = 100
 	PATH_TO_MAPS = "resourses/maps/"
 	OBJECT_HALF = 0.5
-	NORTH_DIR = iota
-	SOUTH_DIR
-	EAST_DIR
-	WEST_DIR
 	MOB_WALKING_CYCLE_DURATION = 20
     BT_MELEE = iota
     BT_RANGE
@@ -260,6 +256,28 @@ var NameConstMapping = map[string] interface{} {
     SCREEN_COLUMN_COUNT_NAME : &VISION_RADIUS,
     PICK_UP_RADIUS_NAME      : &PICK_UP_RADIUS,
 }
+
+const (
+    NORTH_DIR = iota
+    SOUTH_DIR
+    EAST_DIR
+    WEST_DIR
+)
+
+const (
+    WEST_DIR_NAME = "west"
+    EAST_DIR_NAME = "east"
+    NORTH_DIR_NAME = "north"
+    SOUTH_DIR_NAME = "south"
+)
+
+var NameDirMapping = map[string] int {
+    WEST_DIR_NAME : WEST_DIR,
+    EAST_DIR_NAME : EAST_DIR,
+    NORTH_DIR_NAME : NORTH_DIR,
+    SOUTH_DIR_NAME : SOUTH_DIR,
+}
+
 
 const (
     BONUS_PERCENT = iota

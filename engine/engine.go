@@ -267,7 +267,7 @@ func (g *Game) unequipItem(json consts.JsonType) consts.JsonType {
 
 func (g *Game) moveAction(json consts.JsonType) {
     p := g.players.getPlayerBySession(json["sid"].(string))
-    p.SetDir(g.getIotaDir(json["direction"].(string)))
+    p.SetDir(consts.NameDirMapping[json["direction"].(string)])
 }
 
 func (g *Game) useItemAction(json consts.JsonType) consts.JsonType {
@@ -536,18 +536,6 @@ func (g *Game) lookAction(sid string) consts.JsonType {
     res["actors"] = visibleObjects
 	res["x"] = player.Center.X
 	res["y"] = player.Center.Y
-    return res
-}
-
-
-func (g *Game) getIotaDir(dir string) int {
-    var res int
-    switch dir {
-    case "north": res = consts.NORTH_DIR
-    case "south": res = consts.SOUTH_DIR
-    case "west" : res = consts.WEST_DIR
-    case "east" : res = consts.EAST_DIR
-    }
     return res
 }
 
