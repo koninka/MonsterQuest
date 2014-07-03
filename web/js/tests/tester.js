@@ -19,7 +19,7 @@ define(['utils/utils' , 'utils/ws'], function(utils, wsock) {
    }
 
 
-   function regAndLog(data){
+   function regAndLog(data, done){
       send({
          'login'    : data.login,
          'password' : data.password,
@@ -30,10 +30,13 @@ define(['utils/utils' , 'utils/ws'], function(utils, wsock) {
          'password' : data.password,
          'login'    : data.login
       }, function (response){
+         if(response["result"] == 'invalidCredentials')  return;
          data.ssid     = response['sid'];
          data.wsuri    = response['webSocket'];
          data.actor_id = response['id'];
          data.ws       = wsock(data.wsuri, null, null, null, null);
+         if(done)
+            done();
       })
 
    }

@@ -11,13 +11,16 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
    var ws = null;
 
 
-   function Prepare(){
+   function Prepare(done){
       tester.updateData(data);
-      tester.registerAndLogin(data);
+      tester.registerAndLogin(data, done);
    }
 
    function Test(){
-      Prepare();
+        before(function(done){
+            Prepare(done);
+        })
+      
 
       describe('Beginning and end of the test mode', function() {
 
@@ -146,8 +149,12 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
 
       describe('Functions of the test mode', function() {
 
-         afterEach(function(){
-            data.ws.onmessage = undefined;
+         afterEach(function(done){
+            data.ws.onmessage = function(e){
+                var resp = JSON.parse(e.data);
+                if(resp['action'] == 'stopTesting')
+                    done();
+            };
             data.ws.sendJSON({action: "stopTesting", sid: data.ssid});
          });
 
