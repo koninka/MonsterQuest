@@ -530,6 +530,42 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
             ws.sendJSON({action: 'startTesting', sid: data.ssid});
          });
 
+         it('should fail put mob[cross mob with wall]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpMap',
+                     map:
+                        [
+                           ["#", "#", "#"],
+                           ["#", ".", "#"],
+                           ["#", "#", "#"],
+                        ],
+                     sid : data.ssid
+                  });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: "putMob",
+                     x: 1.7,
+                     y: 1.7,
+                     flags: [],
+                     race: "DEVIL",
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'putMob') {
+                  expect(response['result']).to.equal('badPoint');
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
          it('should fail put mob[cross with another mob]', function(done){
             ws = data.ws;
             var counter = 0;
@@ -566,6 +602,56 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                         action: "putMob",
                         x: 2.0,
                         y: 2.0,
+                        flags: [],
+                        race: "DEVIL",
+                        sid: data.ssid
+                     });
+                  } else {
+                     expect(response['result']).to.equal('badPoint');
+                     done();
+                  }
+                  counter++;
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should fail put mob[mobs\' centers are same]', function(done){
+            ws = data.ws;
+            var counter = 0;
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpMap',
+                     map:
+                        [
+                           [".", ".", "."],
+                           [".", ".", "."],
+                           [".", ".", "."],
+                        ],
+                     sid : data.ssid
+                  });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: "putMob",
+                     x: 1.5,
+                     y: 1.5,
+                     flags: [],
+                     race: "DEVIL",
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'putMob') {
+                  if (counter == 0)
+                  {
+                     expect(response['result']).to.equal('ok');
+                     ws.sendJSON({
+                        action: "putMob",
+                        x: 1.5,
+                        y: 1.5,
                         flags: [],
                         race: "DEVIL",
                         sid: data.ssid

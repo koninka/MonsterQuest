@@ -184,17 +184,29 @@ func (f *GameField) GetBackground(col, row int) byte {
     return f.Field[row][col].background
 }
 
+func (f *GameField) GetCellRectangle(col, row int) *geometry.Rectangle {
+    return geometry.MakeRectangle(geometry.MakePoint(float64(col), float64(row)), geometry.MakePoint(float64(col + 1), float64(row + 1)))
+}
+
 func (f *GameField) FreeForObject(x, y float64) bool {
     tl := geometry.MakePoint(x - consts.OBJECT_HALF, y - consts.OBJECT_HALF)
     br := geometry.MakePoint(x + consts.OBJECT_HALF, y + consts.OBJECT_HALF)
     tr := geometry.MakePoint(x + consts.OBJECT_HALF, y - consts.OBJECT_HALF)
     bl := geometry.MakePoint(x - consts.OBJECT_HALF, y + consts.OBJECT_HALF)
-    if f.IsBlocked(int(tl.X), int(tl.Y)) || f.IsBlocked(int(br.X), int(br.Y)) ||
-        f.IsBlocked(int(tr.X), int(tr.Y)) || f.IsBlocked(int(bl.X), int(bl.Y)) {
-        return false
-    }
     rect := geometry.MakeRectangle(tl, br)
     var pts = []*geometry.Point { tl, br, bl, tr }
+    blockeds := make([]*geometry.Rectangle, 0, 100)
+    for _, point := range pts {
+        col, row := int(point.X), int(point.Y)
+       if f.IsBlocked(col, row) {
+            blockeds = append(blockeds, f.GetCellRectangle(col, row))
+       }
+    }
+    for _, blocked := range blockeds {
+        if rect.CrossedByRect(blocked) {
+            return false
+        }
+    }
     for _, point := range pts {
         for _, actor := range f.GetActors(int(point.X), int(point.Y)) {
             r := actor.GetRectangle()
