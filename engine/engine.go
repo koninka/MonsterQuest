@@ -313,6 +313,16 @@ func (g *Game) getConstants() consts.JsonType {
     return res
 }
 
+func (g *Game) setCharacteristicsToActiveObject(obj gameObjectsBase.Activer, characteristics map[string] interface{}) {
+    for c, v := range consts.CharacteristicDefaultValueMapping {
+        if characteristics[consts.CharacteristicNameMapping[c]] == nil {
+            obj.SetCharacteristic(c, v)
+        } else {
+            obj.SetCharacteristic(c, characteristics[consts.CharacteristicNameMapping[c]].(int))
+        }
+    }
+}
+
 func (g *Game) putMob(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("putMob", "badAction")
     if *consts.TEST && consts.TEST_MODE {
@@ -326,9 +336,9 @@ func (g *Game) putMob(json consts.JsonType) consts.JsonType {
         if ok, res["result"] = utils.CheckJsonRequest(json, requiredFields); ok {
             x, y := json["x"].(float64), json["y"].(float64)
             flags := json["flags"].([] interface{})
-            var chars = map[string] interface{} {}
-            if json["chars"] != nil {
-                chars = json["chars"].(map[string] interface{})
+            var stats = map[string] interface{} {}
+            if json["stats"] != nil {
+                stats = json["stats"].(map[string] interface{})
             }
             if !g.field.FreeForObject(x, y) {
                 res["result"] = "badPoint"
@@ -336,13 +346,7 @@ func (g *Game) putMob(json consts.JsonType) consts.JsonType {
                 res["result"] = "badFlag"
             } else {
                 m := gameObjects.NewTestMob(x, y, flags)
-                for c, v := range consts.CharacteristicDefaultValueMapping {
-                    if chars[consts.CharacteristicNameMapping[c]] == nil {
-                        m.SetCharacteristic(c, v)
-                    } else {
-                        m.SetCharacteristic(c, chars[consts.CharacteristicNameMapping[c]].(int))
-                    }
-                }
+                g.setCharacteristicsToActiveObject(m, stats)
                 m.GetKind().SetRace(consts.NameRaceMapping[json["race"].(string)])
                 res["id"] = g.mobs.registerMob(m)
                 res["result"] = "ok"
