@@ -666,6 +666,327 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
             ws.sendJSON({action: 'startTesting', sid: data.ssid});
          });
 
+         it('should load map and then put player', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpMap',
+                     map:
+                        [
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                        ],
+                     sid : data.ssid
+                  });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: "putPlayer",
+                     x: 0.5,
+                     y: 0.5,
+                     characteristics: { HP: 100 },
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'putPlayer') {
+                  expect(response['result']).to.equal('ok');
+                  expect(response).to.have.property('sid');
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should put two players and get different sids', function(done){
+            ws = data.ws;
+            var firstPlayer = true;
+            var firstSID = null;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpMap',
+                     map:
+                        [
+                           [".", ".", ".", "."],
+                           [".", ".", ".", "."],
+                           [".", ".", ".", "."],
+                           [".", ".", ".", "."]
+                        ],
+                     sid : data.ssid
+                  });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: "putPlayer",
+                     x: 0.5,
+                     y: 0.5,
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'putPlayer') {
+                  expect(response['result']).to.equal('ok');
+                  expect(response).to.have.property('sid');
+                  if (firstPlayer) {
+                     firstPlayer = false;
+                     firstSID = response['sid'];
+                     ws.sendJSON({
+                        action: "putPlayer",
+                        x: 2.5,
+                        y: 2.5,
+                        sid: data.ssid
+                     });
+                  } else {
+                     expect(firstSID).to.not.be.equal(response['sid']);
+                     done();
+                  }
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should load map and then put players in all cells', function(done){
+            ws = data.ws;
+            var map = [
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+               [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+            ];
+            var counter = 0;
+            var cellsCount = (map.length - 1) * (map[0].length - 1);
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                  action: 'setUpMap',
+                  map: map,
+                  sid : data.ssid
+               });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  for (var i = 0; i < map.length - 1; i++)
+                  {
+                     for (var j = 0; j < map[i].length - 1; j++)
+                     ws.sendJSON({
+                        action: "putPlayer",
+                        x: j + 0.5,
+                        y: i + 0.5,
+                        sid: data.ssid
+                     });
+                  }
+               } else if (response['action'] == 'putPlayer') {
+                  expect(response['result']).to.equal('ok');
+                  counter++;
+                  if (counter == cellsCount)
+                     done();
+               }
+            };
+
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should fail put player[not map loaded]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                   ws.sendJSON({
+                     action: "putPlayer",
+                     x: 0.5,
+                     y: 0.5,
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'putPlayer') {
+                  expect(response['result']).to.equal('badPoint');
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should fail put player[put player to wall]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpMap',
+                     map:
+                        [
+                           ["#", "#", "#"],
+                           ["#", "#", "#"],
+                           ["#", "#", "#"],
+                        ],
+                     sid : data.ssid
+                  });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: "putPlayer",
+                     x: 1.5,
+                     y: 1.5,
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'putPlayer') {
+                  expect(response['result']).to.equal('badPoint');
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should fail put player[cross player with wall]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpMap',
+                     map:
+                        [
+                           ["#", "#", "#"],
+                           ["#", ".", "#"],
+                           ["#", "#", "#"],
+                        ],
+                     sid : data.ssid
+                  });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: "putPlayer",
+                     x: 1.7,
+                     y: 1.7,
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'putPlayer') {
+                  expect(response['result']).to.equal('badPoint');
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should fail put second player[cross with first player]', function(done){
+            ws = data.ws;
+            var counter = 0;
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpMap',
+                     map:
+                        [
+                           [".", ".", "."],
+                           [".", ".", "."],
+                           [".", ".", "."],
+                        ],
+                     sid : data.ssid
+                  });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: "putPlayer",
+                     x: 1.5,
+                     y: 1.5,
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'putPlayer') {
+                  if (counter == 0)
+                  {
+                     expect(response['result']).to.equal('ok');
+                     ws.sendJSON({
+                        action: "putPlayer",
+                        x: 2.0,
+                        y: 2.0,
+                        sid: data.ssid
+                     });
+                  } else {
+                     expect(response['result']).to.equal('badPoint');
+                     done();
+                  }
+                  counter++;
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should fail put players[players\' centers are same]', function(done){
+            ws = data.ws;
+            var counter = 0;
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpMap',
+                     map:
+                        [
+                           [".", ".", "."],
+                           [".", ".", "."],
+                           [".", ".", "."],
+                        ],
+                     sid : data.ssid
+                  });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: "putPlayer",
+                     x: 1.5,
+                     y: 1.5,
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'putPlayer') {
+                  if (counter == 0)
+                  {
+                     expect(response['result']).to.equal('ok');
+                     ws.sendJSON({
+                        action: "putPlayer",
+                        x: 1.5,
+                        y: 1.5,
+                        sid: data.ssid
+                     });
+                  } else {
+                     expect(response['result']).to.equal('badPoint');
+                     done();
+                  }
+                  counter++;
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
       });
    }
 

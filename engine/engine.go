@@ -156,6 +156,7 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     case "getConst" : conn.send <- g.getConstants()
     case "setUpConst" : conn.send <- g.setUpConstants(json)
     case "putMob" : conn.send <- g.putMob(json)
+    case "putPlayer" : conn.send <- g.putPlayer(json)
     case "makeMove" : conn.send <- g.makeMove(json)
     default: conn.send <- g.badAction(action)
     }
@@ -350,6 +351,35 @@ func (g *Game) putMob(json consts.JsonType) consts.JsonType {
                 m.GetKind().SetRace(consts.NameRaceMapping[json["race"].(string)])
                 res["id"] = g.mobs.registerMob(m)
                 res["result"] = "ok"
+            }
+        }
+    }
+    return res
+}
+
+func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
+    res := utils.JsonAction("putPlayer", "badAction")
+    if *consts.TEST && consts.TEST_MODE {
+        var requiredFields = map[string] string {
+            "x" : "badPoint",
+            "y" : "badPoint",
+        }
+        var ok bool
+        if ok, res["result"] = utils.CheckJsonRequest(json, requiredFields); ok {
+            x, y := json["x"].(float64), json["y"].(float64)
+            var stats = map[string] interface{} {}
+            if json["stats"] != nil {
+                stats = json["stats"].(map[string] interface{})
+            }
+            if !g.field.FreeForObject(x, y) {
+                res["result"] = "badPoint"
+            } else {
+                p := gameObjects.NewPlayer(utils.GenerateId(), -1, "", utils.GenerateSID(), x, y)
+                g.setCharacteristicsToActiveObject(p, stats)
+                g.players.add(p)
+                g.field.LinkToCells(p)
+                res["result"] = "ok"
+                res["sid"] = p.SID
             }
         }
     }
