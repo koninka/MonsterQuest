@@ -4,6 +4,7 @@ import (
     "fmt"
     "strconv"
     "math"
+    "github.com/nu7hatch/gouuid"
     "math/rand"
     "MonsterQuest/consts"
 )
@@ -57,4 +58,9 @@ var lastId int64 = -1
 func GenerateId() int64 {
     lastId++
     return lastId
+}
+
+func GenerateSID() string {
+    u4, _ := uuid.NewV4()
+    return u4.String()
 }

@@ -10,7 +10,7 @@ import (
     "MonsterQuest/connect"
     "MonsterQuest/consts"
     "MonsterQuest/engine"
-    "github.com/nu7hatch/gouuid"
+    "MonsterQuest/utils"
     "regexp"
 )
 
@@ -56,10 +56,10 @@ func loginAction(login, pass string) string {
     result := map[string] interface{} {"result": "invalidCredentials"}
     if isExistUser(login, pass) {
         db := connect.CreateConnect()
-        u4, _ := uuid.NewV4()
+        sid := utils.GenerateSID()
         stmt, _ := db.Prepare("CALL add_user_session(?, ?)")
         defer stmt.Close()
-        _, err := stmt.Exec(login, u4.String())
+        _, err := stmt.Exec(login, sid)
         if err == nil {
             sid := u4.String()
             host, _ := os.Hostname()
