@@ -61,7 +61,6 @@ func loginAction(login, pass string) string {
         defer stmt.Close()
         _, err := stmt.Exec(login, sid)
         if err == nil {
-            sid := u4.String()
             host, _ := os.Hostname()
             result["sid"] = sid
             result["result"] = "ok"
