@@ -14,8 +14,11 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
    }
 
    function Test(){
+
       updateData();
+
       describe('Simple walk', function() {
+
          it('should successfully register', function(done) {
             data = {
                'login'    : login,
@@ -188,6 +191,10 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
                }
             }
             ws.sendJSON({action: "look", sid: ssid});
+         });
+
+         after(function(done) {
+            tester.send({action: "logout", sid: ssid}, function() { done(); });
          });
       });
    }
