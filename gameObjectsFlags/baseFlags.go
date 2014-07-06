@@ -15,15 +15,11 @@ type Flag struct {
     MsgsChannel chan consts.JsonType
 }
 
-type WallCollisioner interface {
-    checkCollisionWithWalls(obj gameObjectsBase.Activer, dir int) (bool, geometry.Point)
+type MoveFlag struct {
+    Flag
 }
 
-type MoveCollision struct {
-    field *gameMap.GameField
-}
-
-func (m *MoveCollision) checkCollisionWithWalls(obj gameObjectsBase.Activer, dir int) (bool, geometry.Point) {
+func (m *MoveFlag) checkCollisionWithWalls(obj gameObjectsBase.Activer, dir int) (bool, geometry.Point) {
     pos := obj.GetShiftedFrontSide(dir)
     if m.field.IsBlocked(int(pos.X), int(pos.Y)) {
         switch dir {
@@ -76,25 +72,7 @@ func (m *MoveCollision) checkCollisionWithWalls(obj gameObjectsBase.Activer, dir
     return true, pos
 }
 
-type PassWallCollision struct {
-    field *gameMap.GameField
-}
-
-func (p *PassWallCollision) checkCollisionWithWalls(obj gameObjectsBase.Activer, dir int) (bool, geometry.Point) {
-    pos := obj.GetShiftedFrontSide(dir)
-    if !p.field.OutOfRange(int(math.Floor(pos.X)), int(math.Floor(pos.Y))) {
-        return true, pos
-    } else {
-        return false, obj.GetCenter()
-    }
-}
-
-type BaseMoveFlag struct {
-    Flag
-    WallCollisioner
-}
-
-func (m *BaseMoveFlag) checkCollisionWithActorsInCell(col, row int, segment *geometry.Segment) bool {
+func (m *MoveFlag) checkCollisionWithActorsInCell(col, row int, segment *geometry.Segment) bool {
     res := false
     for _, actor := range m.field.GetActors(col, row) {
         r := actor.GetRectangle()
@@ -103,7 +81,7 @@ func (m *BaseMoveFlag) checkCollisionWithActorsInCell(col, row int, segment *geo
     return res
 }
 
-func (m *BaseMoveFlag) checkCollisionWithActors(obj gameObjectsBase.Activer, dir int) (bool, geometry.Point) {
+func (m *MoveFlag) checkCollisionWithActors(obj gameObjectsBase.Activer, dir int) (bool, geometry.Point) {
     segment, pos := obj.GetCollisionableSide(dir)
     col1, row1 := int(segment.Point1.X), int(segment.Point1.Y)
     col2, row2 := int(segment.Point2.X), int(segment.Point2.Y)
@@ -114,7 +92,7 @@ func (m *BaseMoveFlag) checkCollisionWithActors(obj gameObjectsBase.Activer, dir
     return res, pos
 }
 
-func (m *BaseMoveFlag) calcNewCenterForActor(obj gameObjectsBase.Activer, dir int) (bool, geometry.Point) {
+func (m *MoveFlag) calcNewCenterForActor(obj gameObjectsBase.Activer, dir int) (bool, geometry.Point) {
     collisionOccured := false
     noCollisionWithWall, res := m.checkCollisionWithWalls(obj, dir)
     if noCollisionWithWall {
@@ -129,7 +107,7 @@ func (m *BaseMoveFlag) calcNewCenterForActor(obj gameObjectsBase.Activer, dir in
     return collisionOccured, res
 }
 
-func (m *BaseMoveFlag) Do(obj gameObjectsBase.Activer) {
+func (m *MoveFlag) Do(obj gameObjectsBase.Activer) {
     dir := obj.GetDir()
     if dir == -1 {
         return
