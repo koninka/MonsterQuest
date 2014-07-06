@@ -25,6 +25,10 @@ type Segment struct {
     Point1, Point2 Point
 }
 
+func (s *Segment) Middle() *Point {
+    return MakePoint((s.Point1.X + s.Point2.X) / 2, (s.Point1.Y + s.Point2.Y) / 2)
+}
+
 func (r *Rectangle) In(p *Point) bool {
     return p.X >= r.LeftTop.X && p.X <= r.RightBottom.X &&
         p.Y >= r.LeftTop.Y && p.Y <= r.RightBottom.Y
@@ -36,7 +40,8 @@ func (r *Rectangle) StrongIn(p *Point) bool {
 }
 
 func (r *Rectangle) CrossedBySegment(s *Segment) bool {
-    return r.In(&s.Point1) || r.In(&s.Point2)
+    return r.StrongIn(&s.Point1) || r.StrongIn(&s.Point2) ||
+        r.StrongIn(s.Middle())
 }
 
 func (r *Rectangle) RightTop() *Point {
