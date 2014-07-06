@@ -384,6 +384,64 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                 StartTesting();
              });
 
+            it('should successfully move player in east and west[bound collision with wall(north) and player(south)]', function(done){
+                ws = data.ws;
+                var originX = 1.5, originY = 1.5;
+                var player = { x: originX, y: originY };
+                var moveCounter = 0;
+                var putFirstPlayer = false;
+                var dirs = ["east", "west", "west", "east"];
+
+                ws.onmessage = function(e) {
+
+                   var response = JSON.parse(e.data);
+
+                    if (response['action'] == 'startTesting') {
+                        expect(response['result']).to.equal('ok');
+                        SetUpConstants();
+                        SetUpMap([
+                            [".", "#", "."],
+                            [".", ".", "."],
+                            [".", ".", "."],
+                            [".", ".", "."]
+                        ]);
+                    } else if (response['action'] == 'setUpConst') {
+                        expect(response['result']).to.equal('ok');
+                    } else if (response['action'] == 'setUpMap') {
+                        expect(response['result']).to.equal('ok');
+                        PutPlayer(player['x'], player['y']);
+                        PutPlayer(player['x'], player['y'] + 1);
+                    } else if (response['action'] == 'putPlayer') {
+                        expect(response['result']).to.equal('ok');
+                        if (!putFirstPlayer) {
+                            putFirstPlayer = true;
+                            player['id'] = response['id'];
+                            player['sid'] = response['sid'];
+                        } else {
+                            MovePlayer(player['sid'], dirs[moveCounter++]);
+                            Sleep(tickDuration * 2.5, Examine, player['id']);
+                        }
+                    } else if (response['action'] == 'examine') {
+                        var shift = GetShiftByDir(dirs[moveCounter - 1]);
+                        player['x'] += shift[0];
+                        player['y'] += shift[1];
+                        expect(response['result']).to.equal('ok');
+                        expect(response['x']).to.equal(player['x']);
+                        expect(response['y']).to.equal(player['y']);
+                        if (moveCounter < dirs.length) {
+                            MovePlayer(player['sid'], dirs[moveCounter++]);
+                            Sleep(tickDuration * 2.5, Examine, player['id']);
+                        } else {
+                            expect(response['x']).to.equal(originX);
+                            expect(response['y']).to.equal(originY);
+                            done();
+                        }
+                    }
+                };
+
+                StartTesting();
+             });
+
              it('should successfully move player[wall sliding(left, north)]', function(done){
                 ws = data.ws;
                 var player = { x: 1.5 - 1 + slideThreshold, y: 2.5 };
