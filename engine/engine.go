@@ -131,7 +131,7 @@ func (g *Game) doPlayersAction(action string, json consts.JsonType) consts.JsonT
     var res consts.JsonType
     switch action {
     case "move": g.moveAction(json)
-    case "useItem": g.useItemAction(json)
+    case "use": g.useAction(json)
     case "attack": g.attackAction(json)
     case "getDictionary": res = g.getDictionaryAction()
     case "look": res = g.lookAction(json["sid"].(string))
@@ -281,8 +281,31 @@ func (g *Game) moveAction(json consts.JsonType) {
     p.SetDir(consts.NameDirMapping[json["direction"].(string)])
 }
 
-func (g *Game) useItemAction(json consts.JsonType) consts.JsonType {
-    return g.players.getPlayerBySession(json["sid"].(string)).UseItem(int64(json["id"].(float64)))
+func (g *Game) useAction(json consts.JsonType) consts.JsonType {
+    res := utils.JsonAction("use", "badId")
+    res["message"] = "some string"
+    idParam := json["id"]
+    if idParam != nil {
+        id := int64(idParam.(float64))
+        p := g.players.getPlayerBySession(json["sid"].(string))
+        xParam := json["x"]
+        yParam := json["y"]
+        res["result"] = "badSlot"
+        if xParam != nil && yParam != nil {
+            if item := p.GetItem(id); item.IsWeapon() {
+                if p.IsEquippedItem(item) {
+                    fmt.Println("is equipped")
+                    p.SetAttackPoint(xParam.(float64), yParam.(float64))
+                    res["message"] = fmt.Sprintf("attack point (%f, %f)", xParam.(float64), yParam.(float64))
+                    res["result"] = "ok"
+                }
+            }
+        } else {
+            p.UseItem(int64(json["id"].(float64)))
+            res["result"] = "ok"
+        }
+    }
+    return res
 }
 
 func (g *Game) attackAction(json consts.JsonType) {

@@ -8,7 +8,6 @@ import (
     "MonsterQuest/consts"
     "MonsterQuest/geometry"
     "MonsterQuest/connect"
-    "MonsterQuest/utils"
 )
 
 type playerKind struct {
@@ -185,12 +184,10 @@ func (p *Player) MoveItem(item gameObjectsBase.Itemer, to_cell int) bool {
     }
 }
 
-func (p* Player) UseItem(id int64) consts.JsonType {
-    res := utils.JsonAction("useItem", "badId")
+func (p* Player) UseItem(id int64) {
     if p.Inventory.HasItem(id) {
         p.Inventory.GetItem(id).UseItem(p.Inventory)
     }
-    return res
 }
 
 func (p *Player) GetCapacity() int {
@@ -202,7 +199,15 @@ func (p *Player) CanPickUp(item gameObjectsBase.Itemer) bool {
 }
 
 func (p *Player) GetItem(id int64) gameObjectsBase.Itemer {
-    return p.Inventory.GetItem(id)
+    if p.fist.GetID() == id {
+        return p.fist
+    } else {
+        return p.Inventory.GetItem(id)
+    }
+}
+
+func (p *Player) IsEquippedItem(item gameObjectsBase.Itemer) bool {
+    return (item.GetID() == p.fist.GetID() && p.slots[consts.SLOT_LEFT_HAND].item == nil) || item.IsEquiped()
 }
 
 func (p *Player) GetFistID() int64 {
