@@ -249,7 +249,7 @@ type Itemer interface {
     IsOwner(Activer) bool
     SetPosition(geometry.Point)
     IsHeapItem() bool
-    IsEquiped() bool
+    IsEquipped() bool
     IsWeapon() bool
     GetKind() *ItemKind
     GetKindId() int64
@@ -327,7 +327,7 @@ func (i* Item) IsHeapItem() bool {
     return false
 }
 
-func (i* Item) IsEquiped() bool {
+func (i* Item) IsEquipped() bool {
     return false
 }
 
@@ -413,7 +413,7 @@ type GarmentItem struct {
     isEquiped bool
 }
 
-func (i* GarmentItem) IsEquiped() bool {
+func (i* GarmentItem) IsEquipped() bool {
     return i.isEquiped
 }
 
