@@ -119,17 +119,25 @@ const (
     SLOT_FEET
 )
 
-var SlotItemMapping = map[int] int {
-    SLOT_AMMO           : ITEM_T_EXPENDABLE,
-    SLOT_NECK           : ITEM_T_ARMOR,
-    SLOT_BODY           : ITEM_T_ARMOR,
-    SLOT_HEAD           : ITEM_T_HELMET,
-    SLOT_FEET           : ITEM_T_BOOTS,
-    SLOT_FOREARM        : ITEM_T_GLOVES,
-    SLOT_LEFT_HAND      : ITEM_T_WEAPON,
-    SLOT_RIGHT_HAND     : ITEM_T_SHIELD,
-    SLOT_LEFT_FINGER    : ITEM_T_RING,
-    SLOT_RIGHT_FINGER   : ITEM_T_RING,
+func it(types ...int) []int {
+    res := make([]int, 0)
+    for _, v := range types {
+        res = append(res, v)
+    }
+    return res
+}
+
+var SlotItemMapping = map[int] []int {
+    SLOT_AMMO           : it(ITEM_T_EXPENDABLE),
+    SLOT_NECK           : it(ITEM_T_AMULET),
+    SLOT_BODY           : it(ITEM_T_ARMOR),
+    SLOT_HEAD           : it(ITEM_T_HELMET),
+    SLOT_FEET           : it(ITEM_T_BOOTS),
+    SLOT_FOREARM        : it(ITEM_T_GLOVES),
+    SLOT_LEFT_HAND      : it(ITEM_T_WEAPON, ITEM_T_SHIELD),
+    SLOT_RIGHT_HAND     : it(ITEM_T_WEAPON, ITEM_T_SHIELD),
+    SLOT_LEFT_FINGER    : it(ITEM_T_RING),
+    SLOT_RIGHT_FINGER   : it(ITEM_T_RING),
 }
 
 const (

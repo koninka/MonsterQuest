@@ -35,12 +35,20 @@ func getPlayerKind() *playerKind {
 }
 
 type slot struct {
-    itemType int
+    itemTypes []int
     item gameObjectsBase.Itemer
 }
 
-func newSlot(itemType int) *slot {
-    return &slot{itemType, nil}
+func (s* slot) isSuitableType(it int) bool {
+    var result bool = false
+    for _, v := range s.itemTypes {
+        result = result || it == v
+    }
+    return result
+}
+
+func newSlot(itemTypes []int) *slot {
+    return &slot{itemTypes, nil}
 }
 
 type Player struct {
@@ -134,7 +142,7 @@ func (p* Player) DeleteItem(item gameObjectsBase.Itemer) bool {
 
 func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) bool {
     slot := p.slots[slotIota]
-    if slot == nil || slot.itemType != item.GetItemType() || item.GetItemClass() != consts.ITEM_CLASS_GARMENT {
+    if slot == nil || !slot.isSuitableType(item.GetItemType())  || item.GetItemClass() != consts.ITEM_CLASS_GARMENT {
         return false
     }
     p.Unequip(slotIota)

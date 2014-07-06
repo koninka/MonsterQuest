@@ -294,7 +294,6 @@ func (g *Game) useAction(json consts.JsonType) consts.JsonType {
         if xParam != nil && yParam != nil {
             if item := p.GetItem(id); item.IsWeapon() {
                 if p.IsEquippedItem(item) {
-                    fmt.Println("is equipped")
                     p.SetAttackPoint(xParam.(float64), yParam.(float64))
                     res["message"] = fmt.Sprintf("attack point (%f, %f)", xParam.(float64), yParam.(float64))
                     res["result"] = "ok"
