@@ -157,7 +157,6 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     case "setUpConst" : conn.send <- g.setUpConstants(json)
     case "putMob" : conn.send <- g.putMob(json)
     case "putPlayer" : conn.send <- g.putPlayer(json)
-    case "makeMove" : conn.send <- g.makeMove(json)
     default: conn.send <- g.badAction(action)
     }
 }
@@ -386,22 +385,7 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
     return res
 }
 
-func (g *Game) makeMove(json consts.JsonType) consts.JsonType {
-    res := utils.JsonAction("makeMove", "badAction")
     if *consts.TEST && consts.TEST_MODE {
-        var fields = map[string] string {
-            "id" : "badId",
-            "direction" : "badDirection",
-        }
-        var ok bool
-        if ok, res["result"] = utils.CheckJsonRequest(json, fields); ok {
-            id := int64(json["id"].(float64))
-            dir := consts.NameDirMapping[json["direction"].(string)]
-            obj, isExists := g.getObjectById(id)
-            if activer, ok := obj.(gameObjectsBase.Activer); isExists && ok {
-                activer.SetDir(dir)
-                activer.ClearDirAfterTick()
-                res["result"] = "ok"
             }
         }
     }
