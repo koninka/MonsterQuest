@@ -63,3 +63,14 @@ func (s *playerList) deletePlayerBySession(sid string) {
     delete(s.players, s.sessions[sid].GetID())
     delete(s.sessions, sid)
 }
+
+func (s *playerList) Clear(testerSid string) {
+    for sid, p := range s.sessions {
+        if sid != testerSid {
+            if GetInstance().field.Initialized() {
+                GetInstance().field.UnlinkFromCells(p)
+            }
+            s.deletePlayerBySession(sid)
+        }
+    }
+}
