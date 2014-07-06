@@ -149,6 +149,7 @@ func (g *Game) doPlayersAction(action string, json consts.JsonType) consts.JsonT
     case "setUpConst" : res = g.setUpConstants(json)
     case "putMob" : res = g.putMob(json)
     case "putPlayer" : res = g.putPlayer(json)
+    case "enforce" : res = g.enforceAction(json)
     default: res = g.badAction(action)
     }
     return res
@@ -394,8 +395,19 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
     return res
 }
 
+func (g *Game) enforceAction(json consts.JsonType) consts.JsonType {
+    res := utils.JsonAction("enforce", "badAction")
     if *consts.TEST && consts.TEST_MODE {
+        enforcedAction, ok := json["enforcedAction"].(map[string] interface{})
+        if !ok {
+            res["result"] = "badEnforcedAction"
+        } else {
+            res["result"] = "ok"
+            action, ok := enforcedAction["action"].(string)
+            if !ok {
+                action = ""
             }
+            res["actionResult"] = g.doPlayersAction(action, enforcedAction)
         }
     }
     return res
