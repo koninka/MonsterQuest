@@ -389,6 +389,7 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                 g.field.LinkToCells(p)
                 res["result"] = "ok"
                 res["sid"] = p.SID
+                res["id"] = p.GetID()
             }
         }
     }
