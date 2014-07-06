@@ -127,6 +127,33 @@ func (g *Game) linkConnectionWithPlayer(sid string, conn *connection) {
     }
 }
 
+func (g *Game) doPlayersAction(action string, json consts.JsonType) consts.JsonType {
+    var res consts.JsonType
+    switch action {
+    case "move": g.moveAction(json)
+    case "useItem": g.useItemAction(json)
+    case "attack": g.attackAction(json)
+    case "getDictionary": res = g.getDictionaryAction()
+    case "look": res = g.lookAction(json["sid"].(string))
+    case "examine": res = g.examineAction(json)
+    case "startTesting" : res = g.startTesting()
+    case "stopTesting"  : res = g.stopTesting(json["sid"].(string))
+    case "setUpMap" : res = g.setUpMap(json)
+    case "pickUp" : res = g.pickUpItem(json)
+    case "drop" : res = g.dropItem(json)
+    case "destroyItem" : res = g.destroyItem(json)
+    case "equip" : res = g.equipItem(json)
+    case "unequip" : res = g.unequipItem(json)
+    case "moveItem" : res = g.moveItem(json)
+    case "getConst" : res = g.getConstants()
+    case "setUpConst" : res = g.setUpConstants(json)
+    case "putMob" : res = g.putMob(json)
+    case "putPlayer" : res = g.putPlayer(json)
+    default: res = g.badAction(action)
+    }
+    return res
+}
+
 func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     action, ok := json["action"].(string)
     if !ok {
@@ -137,27 +164,9 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     if action != "look" && action != "move" {
         fmt.Println(json)
     }
-    switch action {
-    case "move": g.moveAction(json)
-    case "useItem": g.useItemAction(json)
-    case "attack": g.attackAction(json)
-    case "getDictionary": conn.send <- g.getDictionaryAction()
-    case "look": conn.send <- g.lookAction(json["sid"].(string))
-    case "examine": conn.send <- g.examineAction(json)
-    case "startTesting" : conn.send <- g.startTesting()
-    case "stopTesting"  : conn.send <- g.stopTesting()
-    case "setUpMap" : conn.send <- g.setUpMap(json)
-    case "pickUp" : conn.send <- g.pickUpItem(json)
-    case "drop" : conn.send <- g.dropItem(json)
-    case "destroyItem" : conn.send <- g.destroyItem(json)
-    case "equip" : conn.send <- g.equipItem(json)
-    case "unequip" : conn.send <- g.unequipItem(json)
-    case "moveItem" : conn.send <- g.moveItem(json)
-    case "getConst" : conn.send <- g.getConstants()
-    case "setUpConst" : conn.send <- g.setUpConstants(json)
-    case "putMob" : conn.send <- g.putMob(json)
-    case "putPlayer" : conn.send <- g.putPlayer(json)
-    default: conn.send <- g.badAction(action)
+    res := g.doPlayersAction(action, json)
+    if res != nil {
+        conn.send <- res
     }
 }
 
