@@ -91,6 +91,16 @@ const (
 )
 
 const (
+    ITEM_CLASS_GARMENT_NAME = "garment"
+    ITEM_CLASS_CONSUMABLE_NAME = "consumable"
+)
+
+var NameItemClassMapping = map[string] int {
+    ITEM_CLASS_CONSUMABLE_NAME : ITEM_CLASS_CONSUMABLE,
+    ITEM_CLASS_GARMENT_NAME    : ITEM_CLASS_GARMENT,
+}
+
+const (
     ITEM_T_AMULET = iota
     ITEM_T_RING
     ITEM_T_ARMOR
