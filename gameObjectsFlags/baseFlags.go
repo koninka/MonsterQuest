@@ -163,7 +163,7 @@ func (h *HateFlag) Do(obj gameObjectsBase.Activer) {
     for i := int(lt.Y); i < int(rb.Y); i++ {
         for j := int(lt.X); j < int(rb.X); j++ {
             for _, m := range h.field.GetActors(j, i) {
-                if m.GetKind().GetRace() == h.hated {
+                if m.GetKind().GetRace() == h.hated && obj.GetID() != m.GetID() {
                     obj.SetTarget(m)
                     return
                 }
