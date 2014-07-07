@@ -59,13 +59,13 @@ func (e *Effect) GetFullInfo() consts.JsonType {
     return consts.JsonType { "duration" : e.duration }
 }
 
-type ModifyingEffect struct {
+type OnGoingEffect struct {
     Effect
     characteristic int
     val int
 }
 
-func (me *ModifyingEffect) apply(activator Activer) {
+func (me *OnGoingEffect) apply(activator Activer) {
     dc := int(float64(me.val) / float64(me.duration))
     start := time.Now()
     for time.Since(start) < me.duration {
@@ -74,7 +74,7 @@ func (me *ModifyingEffect) apply(activator Activer) {
     }
 }
 
-func (me *ModifyingEffect) GetFullInfo() consts.JsonType {
+func (me *OnGoingEffect) GetFullInfo() consts.JsonType {
     res := me.Effect.GetFullInfo()
     res["characteristic"] = consts.CharacteristicNameMapping[me.characteristic]
     res["val"] = me.val
@@ -98,8 +98,8 @@ func (be *BonusEffect) GetFullInfo() consts.JsonType {
     return res
 }
 
-func newModifyingEffect(duration time.Duration, characteristic, val int) *ModifyingEffect {
-    return &ModifyingEffect{Effect{duration}, characteristic, val}
+func newOnGoingEffect(duration time.Duration, characteristic, val int) *OnGoingEffect {
+    return &OnGoingEffect{Effect{duration}, characteristic, val}
 }
 
 func newBonusEffect(duration time.Duration, bonus *Bonus) *BonusEffect {
@@ -174,7 +174,7 @@ func parseEffectFromDB(effectStr string) [] Effecter {
     if parts[0] == "M" {
         val := utils.ParseInt(parts[2])
         for _, c := range characteristics {
-            effects = append(effects, newModifyingEffect(duration, BDString2IotaCharacteristic[c], val))
+            effects = append(effects, newOnGoingEffect(duration, BDString2IotaCharacteristic[c], val))
         }
     } else {
         bonusType := consts.BONUS_CONSTANT
