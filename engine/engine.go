@@ -351,7 +351,7 @@ func (g *Game) setCharacteristicsToActiveObject(obj gameObjectsBase.Activer, cha
         if characteristics[consts.CharacteristicNameMapping[c]] == nil {
             obj.SetCharacteristic(c, v)
         } else {
-            obj.SetCharacteristic(c, characteristics[consts.CharacteristicNameMapping[c]].(int))
+            obj.SetCharacteristic(c, int(characteristics[consts.CharacteristicNameMapping[c]].(float64)))
         }
     }
 }
