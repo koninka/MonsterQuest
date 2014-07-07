@@ -13,7 +13,7 @@ type BlowLister interface {
     HasRangeBlows() bool
     GetReachesRangeBlows(float64) BlowLister
     ChooseBlowMethod(int) fightBase.Blower
-    AddMobBlowDesc(string)
+    AddBlowMethods(string)
 }
 
 type BlowList struct {
@@ -65,7 +65,7 @@ func (bl *BlowList) ChooseBlowMethod(bt int) fightBase.Blower {
     return blow
 }
 
-func (bl *BlowList) AddMobBlowDesc(desc string) {
+func (bl *BlowList) addMobBlowDesc(desc string) {
     bda := strings.Split(desc, "|")
     var (
         blow_name string = bda[0]
@@ -80,4 +80,10 @@ func (bl *BlowList) AddMobBlowDesc(desc string) {
     }
     // bl.addBlow(&BlowDescription{fightBase.CreateDmgDescription(blow_damage), blows.GetBlowMethod(blow_name)})
     bl.addBlow(blows.NewMobBlow(blow_damage, blow_name))
+}
+
+func (bl *BlowList) AddBlowMethods(blowMethods string) {
+    for _, blowDesc := range strings.Split(blowMethods, "@") {
+        bl.addMobBlowDesc(blowDesc)
+    }
 }

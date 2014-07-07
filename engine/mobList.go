@@ -37,17 +37,16 @@ func (ml *mobList) initializeMobTypes() consts.JsonType {
     blows.InitMobBlows();
     gameObjectsFlags.InitFlags(&GetInstance().field, GetInstance().msgsChannel)
     db := connect.CreateConnect()
-    rows, _ := db.Query("SELECT id, name, base_hp, hp_inc, symbol, description, blow_method, flags, level_info FROM mobs_types")
+    rows, _ := db.Query("SELECT name, base_hp, hp_inc, symbol, description, blow_method, flags, level_info FROM mobs_types")
     mobDictionary := make(consts.JsonType)
     for rows.Next() {
         var (
-            id int64
             base_hp int
             name, hp_inc, symbol, desc, flags, blowMethods, level_info string
         )
-        rows.Scan(&id, &name, &base_hp, &hp_inc, &symbol, &desc, &blowMethods, &flags, &level_info)
+        rows.Scan(&name, &base_hp, &hp_inc, &symbol, &desc, &blowMethods, &flags, &level_info)
         depth := utils.ParseInt64(strings.Split(level_info, "|")[0])
-        ml.mobsDepth[depth] = append(ml.mobsDepth[depth], gameObjects.CreateMobKind(id, name, base_hp, hp_inc, desc, blowMethods, flags))
+        ml.mobsDepth[depth] = append(ml.mobsDepth[depth], gameObjects.CreateMobKind(name, base_hp, hp_inc, desc, blowMethods, flags))
         mobDictionary[symbol] = name
     }
     return mobDictionary

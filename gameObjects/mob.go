@@ -14,7 +14,6 @@ import (
 
 type MobKind struct {
     gameObjectsBase.Kind
-    id int64
     name string
     base_hp int
     hp_inc dice.Dice
@@ -38,12 +37,10 @@ func (mk *MobKind) CreateDropCount() int {
     return 1
 }
 
-func CreateMobKind(id int64, name string, base_hp int, hp_inc, description, blowMethods, flagsStr string) *MobKind {
+func CreateMobKind(name string, base_hp int, hp_inc, description, blowMethods, flagsStr string) *MobKind {
     added := make(map[string] bool)
-    kind := MobKind{gameObjectsBase.NewKind(), id, name, base_hp, dice.CreateDice(hp_inc), description, blowList.NewBlowList()}
-    for _, blowDesc := range strings.Split(blowMethods, "@") {
-        kind.blowList.AddMobBlowDesc(blowDesc)
-    }
+    kind := MobKind{gameObjectsBase.NewKind(), name, base_hp, dice.CreateDice(hp_inc), description, blowList.NewBlowList()}
+    kind.blowList.AddBlowMethods(blowMethods)
     for _, flagName := range strings.Split(flagsStr, "|") {
         if race, isExist := gameObjectsFlags.GetRaceFlag(flagName); isExist {
             kind.SetRace(race)
