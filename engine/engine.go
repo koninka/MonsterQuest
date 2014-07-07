@@ -395,10 +395,12 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
         var requiredFields = map[string] string {
             "x" : "badPoint",
             "y" : "badPoint",
+            //"inventory" : "badInventory",
         }
         var ok bool
         if ok, res["result"] = utils.CheckJsonRequest(json, requiredFields); ok {
             x, y := json["x"].(float64), json["y"].(float64)
+            inventory, ok := json["inventory"].([] interface{})
             var stats = map[string] interface{} {}
             if json["stats"] != nil {
                 stats = json["stats"].(map[string] interface{})
