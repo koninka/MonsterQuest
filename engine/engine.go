@@ -410,9 +410,39 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                 g.setCharacteristicsToActiveObject(p, stats)
                 g.players.add(p)
                 g.field.LinkToCells(p)
-                res["result"] = "ok"
+                if ok {
+                    var idxs []int64
+                    for _, itemDesc := range inventory {
+                        item := gameObjectsBase.ItemFromJson(consts.JsonType(itemDesc.(map[string] interface{})))
+                        if item != nil {
+                            g.items.addItem(item)
+                            p.AddItem(item)
+                            idxs = append(idxs, item.GetID())
+                        }
+                    }
+                    res["items"] = idxs
+                }
+                var idxs []int64
+                if slots, okey := json["slots"].(map[string] interface{}); okey {
+                    fmt.Println(slots)
+                    for slotName, itemDesc := range slots {
+                        item := gameObjectsBase.ItemFromJson(consts.JsonType(itemDesc.(map[string] interface{})))
+                        if item != nil && p.Equip(item, consts.NameSlotMapping[slotName]) {
+                            g.items.addItem(item)
+                            idxs = append(idxs, item.GetID())
+                        }
+                    }
+                }
+                res["slots"] = idxs
                 res["sid"] = p.SID
                 res["id"] = p.GetID()
+                res["result"] = "ok"
+            }
+        }
+    }
+    return res
+}
+
 func (g *Game) putItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("putItem", "badAction")
     if *consts.TEST && consts.TEST_MODE {
