@@ -3,6 +3,7 @@ package utils
 import (
     "fmt"
     "strconv"
+    "strings"
     "math"
     "github.com/nu7hatch/gouuid"
     "math/rand"
@@ -63,4 +64,14 @@ func GenerateId() int64 {
 func GenerateSID() string {
     u4, _ := uuid.NewV4()
     return u4.String()
+}
+
+func IsDiceDesc(dice string) bool {
+    d := strings.Split(dice, "d")
+    if strings.Index(dice, "d") == -1 || len(d) != 2 {
+        return false
+    }
+    _, err1   := strconv.Atoi(d[0])
+    _, err2 := strconv.Atoi(d[1])
+    return err1 == nil && err2 == nil
 }

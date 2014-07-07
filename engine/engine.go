@@ -364,25 +364,33 @@ func (g *Game) putMob(json consts.JsonType) consts.JsonType {
             "y" : "badPoint",
             "flags" : "badFlag",
             "race" : "badRace",
+            "dealtDamage" : "badDamage",
         }
         var ok bool
         if ok, res["result"] = utils.CheckJsonRequest(json, requiredFields); ok {
-            x, y := json["x"].(float64), json["y"].(float64)
-            flags := json["flags"].([] interface{})
-            var stats = map[string] interface{} {}
-            if json["stats"] != nil {
-                stats = json["stats"].(map[string] interface{})
-            }
-            if !g.field.FreeForObject(x, y) {
-                res["result"] = "badPoint"
-            } else if !gameObjectsFlags.CheckFlags(flags) {
-                res["result"] = "badFlag"
+            damage := json["dealtDamage"].(string)
+            if utils.IsDiceDesc(damage) {
+                x, y := json["x"].(float64), json["y"].(float64)
+                flags := json["flags"].([] interface{})
+                var stats = map[string] interface{} {}
+                race, isExistRace := consts.NameRaceMapping[json["race"].(string)]
+                if json["stats"] != nil {
+                    stats = json["stats"].(map[string] interface{})
+                }
+                if !g.field.FreeForObject(x, y) {
+                    res["result"] = "badPoint"
+                } else if !gameObjectsFlags.CheckFlags(flags) {
+                    res["result"] = "badFlag"
+                } else if !isExistRace {
+                    res["result"] = "badRace"
+                } else {
+                    m := gameObjects.NewTestMob(x, y, race, damage, flags)
+                    g.setCharacteristicsToActiveObject(m, stats)
+                    res["id"] = g.mobs.registerMob(m)
+                    res["result"] = "ok"
+                }
             } else {
-                m := gameObjects.NewTestMob(x, y, flags)
-                g.setCharacteristicsToActiveObject(m, stats)
-                m.GetKind().SetRace(consts.NameRaceMapping[json["race"].(string)])
-                res["id"] = g.mobs.registerMob(m)
-                res["result"] = "ok"
+                res["result"] = "badDamage"
             }
         }
     }
