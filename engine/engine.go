@@ -149,6 +149,7 @@ func (g *Game) doPlayersAction(action string, json consts.JsonType) consts.JsonT
     case "setUpConst" : res = g.setUpConstants(json)
     case "putMob" : res = g.putMob(json)
     case "putPlayer" : res = g.putPlayer(json)
+    case "putItem" : res = g.putItem(json)
     case "enforce" : res = g.enforceAction(json)
     default: res = g.badAction(action)
     }
@@ -412,6 +413,37 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                 res["result"] = "ok"
                 res["sid"] = p.SID
                 res["id"] = p.GetID()
+func (g *Game) putItem(json consts.JsonType) consts.JsonType {
+    res := utils.JsonAction("putItem", "badAction")
+    if *consts.TEST && consts.TEST_MODE {
+        var requiredFields = map[string] string {
+            "x" : "badPoint",
+            "y" : "badPoint",
+            "item" : "badItem",
+        }
+        var ok bool
+        if ok, _ = utils.CheckJsonRequest(json, requiredFields); ok {
+            itemDesc, ok1 := json["item"].(map[string] interface{})
+            x, ok2 := json["x"].(float64)
+            y, ok3 := json["y"].(float64)
+            if ok2 && ok3 && !g.field.IsBlocked(int(x), int(y)) {
+                if ok1 {
+                    item := gameObjectsBase.ItemFromJson(itemDesc)
+                    if item != nil {
+                        item.ForcePlace(*geometry.MakePoint(x, y))
+                        g.items.addItem(item)
+                        g.field.LinkToCells(item)
+                        res["id"] = item.GetID()
+                        res["result"] = "ok"
+                        fmt.Println(res)
+                    } else {
+                        res["result"] = "badItem"
+                    }
+                } else {
+                    res["result"] = "badItem"
+                }
+            } else {
+                res["result"] = "badPoint"
             }
         }
     }
