@@ -13,16 +13,16 @@ func InitFlags(field *gameMap.GameField, msgsChan chan consts.JsonType) {
     flags["CAN_MOVE"] = &MoveFlag{Flag{field, msgsChan}}
     flags["CAN_BLOW"] = &BlowFlag{Flag{field, msgsChan}}
 
-    flags["HATE_ORCS"]    = &HateFlag{Flag{field, msgsChan}, consts.ORC_RACE}
-    flags["HATE_EVILS"]   = &HateFlag{Flag{field, msgsChan}, consts.EVIL_RACE}
-    flags["HATE_TROLLS"]  = &HateFlag{Flag{field, msgsChan}, consts.TROLL_RACE}
-    flags["HATE_GIANTS"]  = &HateFlag{Flag{field, msgsChan}, consts.GIANT_RACE}
-    flags["HATE_DEMONS"]  = &HateFlag{Flag{field, msgsChan}, consts.DEMON_RACE}
-    flags["HATE_METALS"]  = &HateFlag{Flag{field, msgsChan}, consts.METAL_RACE}
-    flags["HATE_PLAYERS"] = &HateFlag{Flag{field, msgsChan}, consts.PLAYER_RACE}
-    flags["HATE_DRAGONS"] = &HateFlag{Flag{field, msgsChan}, consts.DRAGON_RACE}
-    flags["HATE_UNDEADS"] = &HateFlag{Flag{field, msgsChan}, consts.UNDEAD_RACE}
-    flags["HATE_ANIMALS"] = &HateFlag{Flag{field, msgsChan}, consts.ANIMAL_RACE}
+    flags["HATE_ORC"]    = &HateFlag{Flag{field, msgsChan}, consts.ORC_RACE}
+    flags["HATE_EVIL"]   = &HateFlag{Flag{field, msgsChan}, consts.EVIL_RACE}
+    flags["HATE_TROLL"]  = &HateFlag{Flag{field, msgsChan}, consts.TROLL_RACE}
+    flags["HATE_GIANT"]  = &HateFlag{Flag{field, msgsChan}, consts.GIANT_RACE}
+    flags["HATE_DEMON"]  = &HateFlag{Flag{field, msgsChan}, consts.DEMON_RACE}
+    flags["HATE_METAL"]  = &HateFlag{Flag{field, msgsChan}, consts.METAL_RACE}
+    flags["HATE_PLAYER"] = &HateFlag{Flag{field, msgsChan}, consts.PLAYER_RACE}
+    flags["HATE_DRAGON"] = &HateFlag{Flag{field, msgsChan}, consts.DRAGON_RACE}
+    flags["HATE_UNDEAD"] = &HateFlag{Flag{field, msgsChan}, consts.UNDEAD_RACE}
+    flags["HATE_ANIMAL"] = &HateFlag{Flag{field, msgsChan}, consts.ANIMAL_RACE}
 
     raceFlags["ORC"]    = consts.ORC_RACE
     raceFlags["EVIL"]   = consts.EVIL_RACE

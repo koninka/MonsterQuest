@@ -350,7 +350,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
 
                 it('mob(orc) shouldn\'t attack themselves[orc hate orc]', function(done){
                     ws = data.ws;
-                    var mob = { x: 2.5, y: 3.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_ORCS", "CAN_BLOW"]};
+                    var mob = { x: 2.5, y: 3.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_ORC", "CAN_BLOW"]};
                     var isSetMap = false;
                     var isSetConst = false;
                     var isPutMob = false;
@@ -396,7 +396,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
 
                 it('mob(orc) should attack another mob(animal) and after then the animal mustn\'t attack the orc(animal don\'t have blow flag)[orc hate animal, orc and animal are close]', function(done){
                     ws = data.ws;
-                    var mob1 = { x: 2.5, y: 3.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_ANIMALS", "CAN_BLOW"]};
+                    var mob1 = { x: 2.5, y: 3.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_ANIMAL", "CAN_BLOW"]};
                     var mob2 = { x: 2.5, y: 4.2, hp: 450, max_hp: 450, race: "ANIMAL", flags: []};
                     var isSetMap = false;
                     var isSetConst = false;
@@ -461,7 +461,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
 
                 it('mob(orc) should attack another mob(animal) and after then the animal must attack the orc[orc hate animal, orc and animal are close]', function(done){
                     ws = data.ws;
-                    var mob1 = { x: 2.5, y: 3.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_ANIMALS", "CAN_BLOW"]};
+                    var mob1 = { x: 2.5, y: 3.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_ANIMAL", "CAN_BLOW"]};
                     var mob2 = { x: 2.5, y: 4.2, hp: 450, max_hp: 450, race: "ANIMAL", flags: ["CAN_BLOW"]};
                     var isSetMap = false;
                     var isSetConst = false;
@@ -526,7 +526,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
 
                 it('mob(orc) and mob(animal) should stay in place[orc hate animal, orc and animal located far]', function(done){
                     ws = data.ws;
-                    var mob1 = { x: 1.5, y: 1.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_ANIMALS", "CAN_BLOW"]};
+                    var mob1 = { x: 1.5, y: 1.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_ANIMAL", "CAN_BLOW"]};
                     var mob2 = { x: 3.8, y: 5, hp: 450, max_hp: 450, race: "ANIMAL", flags: []};
                     var isSetMap = false;
                     var isSetConst = false;
@@ -593,7 +593,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                 it('mob(orc) shouldn\'t attack player, player shouldn\'t attack mob[orc don\'t hate player]', function(done){
                     ws = data.ws;
                     var player = { x: 3.5, y: 2.5, hp: 1000, max_hp: 1000};
-                    var mob = { x: 2.4, y: 2.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_ANIMALS", "CAN_BLOW"]};
+                    var mob = { x: 2.4, y: 2.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_ANIMAL", "CAN_BLOW"]};
                     var isSetMap = false;
                     var isSetConst = false;
                     var counter = 0;
@@ -655,7 +655,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                 it('mob(orc) should attack player[orc hate player]', function(done){
                     ws = data.ws;
                     var player = { x: 3.3, y: 2.5, hp: 1000, max_hp: 1000};
-                    var mob = { x: 2.4, y: 2.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_PLAYERS", "CAN_BLOW"]};
+                    var mob = { x: 2.4, y: 2.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_PLAYER", "CAN_BLOW"]};
                     var isSetMap = false;
                     var isSetConst = false;
                     var counter = 0;
@@ -716,7 +716,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                 it('mob should walk around in narrow tunnel and attack player at least once[orc hate player]', function(done){
                     ws = data.ws;
                     var player = { x: 1.5, y: 1.5, hp: 1000, max_hp: 1000};
-                    var mob = { x: 3.1, y: 1.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_PLAYERS", "CAN_BLOW", "CAN_MOVE"]};
+                    var mob = { x: 3.1, y: 1.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_PLAYER", "CAN_BLOW", "CAN_MOVE"]};
                     var isSetMap = false;
                     var isSetConst = false;
                     var counter = 0;
