@@ -68,7 +68,6 @@ type Activer interface {
     ModifyCharacteristic(charIota, val int)
     ModifyBonus(charIota, val int)
     MergeInfo(consts.JsonType) consts.JsonType
-    ClearDirAfterTick()
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -362,10 +361,6 @@ func newBonusMap() map[int] int {
         bonuses[i] = 0
     }
     return bonuses
-}
-
-func (obj *ActiveObject) ClearDirAfterTick() {
-    obj.ClearDir = true
 }
 
 func NewActiveObject(id int64, x, y float64, kind Kinder) ActiveObject {

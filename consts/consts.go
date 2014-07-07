@@ -9,6 +9,10 @@ import (
 type JsonType map[string] interface{}
 
 const (
+    DEFAULT_DICE = "0d0"
+)
+
+const (
     WALL_SYMBOL = '#'
     GRASS_SYMBOL = '.'
     MOB_TYPE = "mob"

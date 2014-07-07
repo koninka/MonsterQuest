@@ -1,6 +1,7 @@
 package gameObjects
 
 import (
+    "fmt"
     "strings"
     "MonsterQuest/gameFight/blowList"
     "MonsterQuest/gameFight/fightBase"
@@ -64,7 +65,6 @@ func CreateMobKind(name string, base_hp int, hp_inc, description, blowMethods, f
 type Mob struct {
     gameObjectsBase.ActiveObject
     walkingCycle int
-    active bool
 }
 
 func (m *Mob) GetDir() int {
@@ -118,15 +118,9 @@ func (m *Mob) think() {
 }
 
 func (m *Mob) Do() {
-    if m.active {
-        m.think()
-    }
+    m.think()
     if !m.Killed() {
         m.DoWithObj(m)
-    }
-    if m.ClearDir {
-        m.Dir = -1
-        m.ClearDir = false
     }
 }
 
@@ -135,6 +129,8 @@ func (m *Mob) Attack() consts.JsonType {
     bl := m.Kind.(*MobKind).blowList
     t, _ := m.GetTarget()
     if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d <= m.GetAttackRadius() {
+        // fmt.Printf("dist %f, attack radius %f\n", geometry.Distance(m.GetCenter(), t.GetCenter()), m.GetAttackRadius())
+        // fmt.Printf("mob %d attack obj race - %d, id - %d\n", m.GetID(), t.GetKind().GetRace(), t.GetID())
         res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE), m)
         res["attacker"] = m.GetID()
         res["target"] = t.GetID()
@@ -155,6 +151,7 @@ func (m *Mob) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer) co
             }
         }
     } else {
+        // fmt.Println("set target")
         m.SetTarget(attacker)
     }
     return res
@@ -182,17 +179,22 @@ func (m *Mob) createDrop(depth int64) {
 }
 
 func NewMob(kind *MobKind, x, y float64, depth int64) *Mob {
-    m := Mob{gameObjectsBase.NewActiveObject(-1, x, y, kind), 0, true}
+    m := Mob{gameObjectsBase.NewActiveObject(-1, x, y, kind), 0}
     m.SetCharacteristic(consts.CHARACTERISTIC_HP, kind.GenHP())
     m.chooseDir()
     m.createDrop(int64(depth))
     return &m
 }
 
-func NewTestMob(x, y float64, flags [] interface{}) *Mob {
-    kind := gameObjectsBase.NewKind()
+func NewTestMob(x, y float64, race int, damage string, flags [] interface{}) *Mob {
+    // "25d2", "CLAW|HURT|1d1"
+    kind := MobKind{gameObjectsBase.NewKind(), "", 0, dice.CreateDice(consts.DEFAULT_DICE), "", blowList.NewBlowList()}
+    kind.blowList.AddBlowMethods(fmt.Sprintf("HIT|HURT|%s", damage))
+    // kind := gameObjectsBase.NewKind()
+    kind.SetRace(race)
     for _, flag := range flags {
         kind.AddFlag(gameObjectsFlags.GetFlag(flag.(string)))
     }
-    return &Mob{gameObjectsBase.NewActiveObject(-1, x, y, &kind), 0, false}
+    fmt.Println(kind.GetFlags())
+    return &Mob{gameObjectsBase.NewActiveObject(-1, x, y, &kind), 5}
  }
