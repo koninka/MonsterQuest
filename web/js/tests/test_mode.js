@@ -16,6 +16,31 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
       tester.registerAndLogin(data, done);
    }
 
+   function PutItem(x, y, weight, iClass, type, bonuses, effects, subtype) {
+        weight = 10 || weight;
+        iClass = "garment" || iClass;
+        type = "weapon" || type;
+        bonuses = [] || bonuses;
+        effects = [] || effects;
+        var item = {
+            weight: weight,
+            class: iClass,
+            type: type,
+            bonuses: bonuses,
+            effects: effects
+        };
+        if (subtype) {
+            item["subtype"] = subtype
+        }
+        ws.sendJSON({
+            action: "putItem",
+            x: x,
+            y: y,
+            item: item,
+            sid: data.ssid
+        });
+    }
+
    function Test(){
         before(function(done){
             Prepare(done);
@@ -987,6 +1012,78 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
             ws.sendJSON({action: 'startTesting', sid: data.ssid});
          });
 
+         it('should successfully put item', function(done){
+            ws = data.ws;
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({action: 'setUpMap', map: [[".", "."], [".", "."], [".", "."]], sid: data.ssid});
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  PutItem(0.5, 0.5)
+               } else if (response['action'] == 'putItem') {
+                  expect(response['result']).to.equal('ok');
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should successfully put item with bonus', function(done){
+            ws = data.ws;
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({action: 'setUpMap', map: [[".", "."], [".", "."], [".", "."]], sid: data.ssid});
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  PutItem(0.5, 0.5, 100, "consumable", [{stat: "HP", effectCalculation: "const", value: 100}])
+               } else if (response['action'] == 'putItem') {
+                  expect(response['result']).to.equal('ok');
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should successfully put item with ongoing effect', function(done){
+            ws = data.ws;
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({action: 'setUpMap', map: [[".", "."], [".", "."], [".", "."]], sid: data.ssid});
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  PutItem(0.5, 0.5, 100, "consumable", [], [{stat: "HP", type: "ongoing", value: 100, duration: 100}])
+               } else if (response['action'] == 'putItem') {
+                  expect(response['result']).to.equal('ok');
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should successfully put item with bonus effect', function(done){
+            ws = data.ws;
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({action: 'setUpMap', map: [[".", "."], [".", "."], [".", "."]], sid: data.ssid});
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  PutItem(0.5, 0.5, 100, "consumable", [], [{stat: "HP", type: "bonus", duration: 100,
+                     bonus: {stat: "HP", effectCalculation: "const", value: 100}}])
+               } else if (response['action'] == 'putItem') {
+                  expect(response['result']).to.equal('ok');
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
       });
    }
 
