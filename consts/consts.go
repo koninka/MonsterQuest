@@ -146,11 +146,13 @@ var NameItemTypeMapping = map[string] int {
     ITEM_ST_BOW_NAME  : ITEM_ST_BOW,
 }
 
+const (
     SLOT_LEFT_HAND = iota
     SLOT_RIGHT_HAND
     SLOT_AMMO
     SLOT_LEFT_FINGER
     SLOT_RIGHT_FINGER
+    SLOT_WEAPON
     SLOT_NECK
     SLOT_BODY
     SLOT_HEAD
