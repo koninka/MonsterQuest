@@ -249,7 +249,8 @@ type Itemer interface {
     IsOwner(Activer) bool
     SetPosition(geometry.Point)
     IsHeapItem() bool
-    IsEquiped() bool
+    IsEquipped() bool
+    IsWeapon() bool
     GetKind() *ItemKind
     GetKindId() int64
     HasOwner() bool
@@ -326,8 +327,12 @@ func (i* Item) IsHeapItem() bool {
     return false
 }
 
-func (i* Item) IsEquiped() bool {
+func (i* Item) IsEquipped() bool {
     return false
+}
+
+func (i* Item) IsWeapon() bool {
+    return i.kind.itemType == consts.ITEM_T_WEAPON
 }
 
 func (i* Item) GetKind() *ItemKind {
@@ -408,16 +413,8 @@ type GarmentItem struct {
     isEquiped bool
 }
 
-func (i* GarmentItem) IsEquiped() bool {
+func (i* GarmentItem) IsEquipped() bool {
     return i.isEquiped
-}
-
-func (i* GarmentItem) UseItem(inv* InventoryObj) {
-    if (i.isEquiped) {
-        i.UnequipItem(inv)
-    } else {
-        i.EquipItem(inv)
-    }
 }
 
 func (i* GarmentItem) EquipItem(inv *InventoryObj) {
@@ -439,14 +436,6 @@ func (i* GarmentItem) UnequipItem(inv *InventoryObj) {
 type WeaponItem struct {
     GarmentItem
     dmg fightBase.DmgDescription
-}
-
-func (i* WeaponItem) UseItem(inv* InventoryObj) {
-    if (i.isEquiped) {
-        i.UnequipItem(inv)
-    } else {
-        i.EquipItem(inv)
-    }
 }
 
 type StackItem struct {

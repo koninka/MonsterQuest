@@ -107,63 +107,76 @@ const (
 )
 
 const (
-    SLOT_WEAPON = iota
-    SLOT_LEFT
-    SLOT_RIGHT
+    SLOT_LEFT_HAND = iota
+    SLOT_RIGHT_HAND
+    SLOT_AMMO
+    SLOT_LEFT_FINGER
+    SLOT_RIGHT_FINGER
     SLOT_NECK
     SLOT_BODY
-    SLOT_ARM
     SLOT_HEAD
-    SLOT_HANDS
+    SLOT_FOREARM
     SLOT_FEET
 )
 
-var SlotItemMapping = map[int] int {
-    SLOT_WEAPON : ITEM_T_WEAPON,
-    SLOT_LEFT   : ITEM_T_RING,
-    SLOT_RIGHT  : ITEM_T_RING,
-    SLOT_NECK   : ITEM_T_AMULET,
-    SLOT_BODY   : ITEM_T_ARMOR,
-    SLOT_ARM    : ITEM_T_SHIELD,
-    SLOT_HEAD   : ITEM_T_HELMET,
-    SLOT_HANDS  : ITEM_T_GLOVES,
-    SLOT_FEET   : ITEM_T_BOOTS,
+func it(types ...int) []int {
+    res := make([]int, 0)
+    for _, v := range types {
+        res = append(res, v)
+    }
+    return res
+}
+
+var SlotItemMapping = map[int] []int {
+    SLOT_AMMO           : it(ITEM_T_EXPENDABLE),
+    SLOT_NECK           : it(ITEM_T_AMULET),
+    SLOT_BODY           : it(ITEM_T_ARMOR),
+    SLOT_HEAD           : it(ITEM_T_HELMET),
+    SLOT_FEET           : it(ITEM_T_BOOTS),
+    SLOT_FOREARM        : it(ITEM_T_GLOVES),
+    SLOT_LEFT_HAND      : it(ITEM_T_WEAPON, ITEM_T_SHIELD),
+    SLOT_RIGHT_HAND     : it(ITEM_T_WEAPON, ITEM_T_SHIELD),
+    SLOT_LEFT_FINGER    : it(ITEM_T_RING),
+    SLOT_RIGHT_FINGER   : it(ITEM_T_RING),
 }
 
 const (
-    SLOT_NAME_WEAPON = "WEAPON"
-    SLOT_NAME_LEFT   = "LEFT"
-    SLOT_NAME_RIGHT  = "RIGHT"
-    SLOT_NAME_NECK   = "NECK"
-    SLOT_NAME_BODY   = "BODY"
-    SLOT_NAME_ARM    = "ARM"
-    SLOT_NAME_HEAD   = "HEAD"
-    SLOT_NAME_HANDS  = "HANDS"
-    SLOT_NAME_FEET   = "FEET"
+    SLOT_NAME_AMMO         = "AMMO"
+    SLOT_NAME_FEET         = "FEET"
+    SLOT_NAME_NECK         = "NECK"
+    SLOT_NAME_BODY         = "BODY"
+    SLOT_NAME_HEAD         = "HEAD"
+    SLOT_NAME_FOREARM      = "FOREARM"
+    SLOT_NAME_LEFT_HAND    = "LEFT-HAND"
+    SLOT_NAME_RIGHT_HAND   = "RIGHT-HAND"
+    SLOT_NAME_LEFT_FINGER  = "LEFT FINGER"
+    SLOT_NAME_RIGHT_FINGER = "RIGHT FINGER"
 )
 
 var NameSlotMapping = map[string] int {
-    SLOT_NAME_WEAPON : SLOT_WEAPON,
-    SLOT_NAME_LEFT   : SLOT_LEFT,
-    SLOT_NAME_RIGHT  : SLOT_RIGHT,
-    SLOT_NAME_NECK   : SLOT_NECK,
-    SLOT_NAME_BODY   : SLOT_BODY,
-    SLOT_NAME_ARM    : SLOT_ARM,
-    SLOT_NAME_HEAD   : SLOT_HEAD,
-    SLOT_NAME_HANDS  : SLOT_HANDS,
-    SLOT_NAME_FEET   : SLOT_FEET,
+    SLOT_NAME_AMMO         : SLOT_AMMO,
+    SLOT_NAME_FEET         : SLOT_FEET,
+    SLOT_NAME_NECK         : SLOT_NECK,
+    SLOT_NAME_BODY         : SLOT_BODY,
+    SLOT_NAME_HEAD         : SLOT_HEAD,
+    SLOT_NAME_FOREARM      : SLOT_FOREARM,
+    SLOT_NAME_LEFT_HAND    : SLOT_LEFT_HAND,
+    SLOT_NAME_RIGHT_HAND   : SLOT_RIGHT_HAND,
+    SLOT_NAME_LEFT_FINGER  : SLOT_LEFT_FINGER,
+    SLOT_NAME_RIGHT_FINGER : SLOT_RIGHT_FINGER,
 }
 
 var SlotNameMapping = map[int] string {
-    SLOT_WEAPON : SLOT_NAME_WEAPON,
-    SLOT_LEFT   : SLOT_NAME_LEFT,
-    SLOT_RIGHT  : SLOT_NAME_RIGHT,
-    SLOT_NECK   : SLOT_NAME_NECK,
-    SLOT_BODY   : SLOT_NAME_BODY,
-    SLOT_ARM    : SLOT_NAME_ARM,
-    SLOT_HEAD   : SLOT_NAME_HEAD,
-    SLOT_HANDS  : SLOT_NAME_HANDS,
-    SLOT_FEET   : SLOT_NAME_FEET,
+    SLOT_AMMO         : SLOT_NAME_AMMO,
+    SLOT_FEET         : SLOT_NAME_FEET,
+    SLOT_NECK         : SLOT_NAME_NECK,
+    SLOT_BODY         : SLOT_NAME_BODY,
+    SLOT_HEAD         : SLOT_NAME_HEAD,
+    SLOT_FOREARM      : SLOT_NAME_FOREARM,
+    SLOT_LEFT_HAND    : SLOT_NAME_LEFT_HAND,
+    SLOT_RIGHT_HAND   : SLOT_NAME_RIGHT_HAND,
+    SLOT_LEFT_FINGER  : SLOT_NAME_LEFT_FINGER,
+    SLOT_RIGHT_FINGER : SLOT_NAME_RIGHT_FINGER,
 }
 
 const (
