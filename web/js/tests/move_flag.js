@@ -87,7 +87,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
 
     function GetShiftByDir(dir) {
       switch (dir) {
-         case "north": 
+         case "north":
             return [0, - playerVelocity];
          case "south":
             return [0, playerVelocity];
@@ -120,6 +120,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                 var player = { x: 1.5, y: 1.5 };
                 var moveCounter = 0;
                 var dirs = ["north", "south", "west", "east"];
+                this.timeout(8000);
 
                 ws.onmessage = function(e) {
 
@@ -199,7 +200,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                         if (moveCounter < dirs.length) {
                             MovePlayer(player['sid'], dirs[moveCounter++]);
                             Sleep(tickDuration * 2.5, Examine, player['id']);
-                        } else 
+                        } else
                             done();
                     }
                 };
@@ -758,7 +759,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                 tester.send({action: 'logout', sid: data.ssid}, function() { done(); });
             });
 
-      }); 
+      });
     }
 
 
