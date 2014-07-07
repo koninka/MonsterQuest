@@ -9,6 +9,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
       ws       : null
    }
    var ws = null;
+   var default_damage = "3d2";
 
 
    function Prepare(done){
@@ -41,11 +42,35 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
         });
     }
 
+   function SendViaWS(obj) {
+      obj["sid"] = data.ssid;
+      ws.sendJSON(obj);
+      console.log(obj);
+   }
+
+   function PutMob(x, y, race, damage, flags, inventory, stats) {
+      flags = flags || [];
+      inventory = inventory || [];
+      stats = stats || {};
+      damage = damage || default_damage;
+      SendViaWS({
+         action: "putMob",
+         x: x,
+         y: y,
+         flags: flags,
+         race: race,
+         inventory: inventory,
+         stats: stats,
+         dealtDamage: damage
+      });
+   }
+
    function Test(){
-        before(function(done){
-            Prepare(done);
-        })
-      
+
+      before(function(done){
+         Prepare(done);
+      })
+
 
       describe('Beginning and end of the test mode', function() {
 
@@ -428,16 +453,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   });
                } else if (response['action'] == 'setUpMap') {
                   expect(response['result']).to.equal('ok');
-                  ws.sendJSON({
-                     action: "putMob",
-                     x: 0.5,
-                     y: 0.5,
-                     characteristics: { HP: 100 },
-                     flags: [],
-                     inventory: [],
-                     race: "DEVIL",
-                     sid: data.ssid
-                  });
+                  PutMob(0.5, 0.5, "ORC", undefined, [], [], { HP: 100 });
                } else if (response['action'] == 'putMob') {
                   expect(response['result']).to.equal('ok');
                   done();
@@ -445,6 +461,72 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
             };
             ws.sendJSON({action: 'startTesting', sid: data.ssid});
          });
+
+         it('should load map and then put mobs with all possible races', function(done){
+            ws = data.ws;
+            var possible_races = ["ORC", "EVIL", "TROLL", "GIANT", "DEMON", "METAL", "DRAGON", "UNDEAD", "ANIMAL", "PLAYER"];
+            var counter = 0;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpMap',
+                     map: [
+                        [".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                        [".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."]
+                     ],
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  for (var i = 0; i < possible_races.length; i++) {
+                     PutMob(0.5 + i, 0.5, possible_races[i], undefined, [], [], { HP: 100 });
+                  }
+               } else if (response['action'] == 'putMob') {
+                  expect(response['result']).to.equal('ok');
+                  counter++;
+               }
+               if (counter == possible_races.length) {
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+
+         it('should fail put mob[badRace]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpMap',
+                     map:
+                        [
+                           [".", ".", "."],
+                           [".", ".", "."],
+                           [".", ".", "."],
+                        ],
+                     sid : data.ssid
+                  });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  PutMob(1.5, 1.5, "BAD RACE STRING");
+               } else if (response['action'] == 'putMob') {
+                  expect(response['result']).to.equal('badRace');
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+
 
          it('should load map and then put mobs in all cells', function(done){
             ws = data.ws;
@@ -466,23 +548,16 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                if (response['action'] == 'startTesting') {
                   expect(response['result']).to.equal('ok');
                   ws.sendJSON({
-                  action: 'setUpMap',
-                  map: map,
-                  sid : data.ssid
-               });
+                     action: 'setUpMap',
+                     map: map,
+                     sid : data.ssid
+                  });
                } else if (response['action'] == 'setUpMap') {
                   expect(response['result']).to.equal('ok');
-                  for (var i = 0; i < map.length - 1; i++)
-                  {
-                     for (var j = 0; j < map[i].length - 1; j++)
-                     ws.sendJSON({
-                        action: "putMob",
-                        x: j + 0.5,
-                        y: i + 0.5,
-                        flags: [],
-                        race: "DEVIL",
-                        sid: data.ssid
-                     });
+                  for (var i = 0; i < map.length - 1; i++) {
+                     for (var j = 0; j < map[i].length - 1; j++) {
+                        PutMob(j + 0.5, i + 0.5, "ORC");
+                     }
                   }
                } else if (response['action'] == 'putMob') {
                   expect(response['result']).to.equal('ok');
@@ -495,6 +570,23 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
             ws.sendJSON({action: 'startTesting', sid: data.ssid});
          });
 
+         it('should fail put mob[bad damage string]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  PutMob(0.5, 0.5, "ORC", "f3f");
+               } else if (response['action'] == 'putMob') {
+                  expect(response['result']).to.equal('badDamage');
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
          it('should fail put mob[not map loaded]', function(done){
             ws = data.ws;
 
@@ -503,14 +595,15 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                console.log(e.data);
                if (response['action'] == 'startTesting') {
                   expect(response['result']).to.equal('ok');
-                   ws.sendJSON({
-                     action: "putMob",
-                     x: 0.5,
-                     y: 0.5,
-                     flags: [],
-                     race: "DEVIL",
-                     sid: data.ssid
-                  });
+                  PutMob(0.5, 0.5, "ORC");
+                  //  ws.sendJSON({
+                  //    action: "putMob",
+                  //    x: 0.5,
+                  //    y: 0.5,
+                  //    flags: [],
+                  //    race: "ORC",
+                  //    sid: data.ssid
+                  // });
                } else if (response['action'] == 'putMob') {
                   expect(response['result']).to.equal('badPoint');
                   done();
@@ -539,14 +632,15 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   });
                } else if (response['action'] == 'setUpMap') {
                   expect(response['result']).to.equal('ok');
-                  ws.sendJSON({
-                     action: "putMob",
-                     x: 1.5,
-                     y: 1.5,
-                     flags: [],
-                     race: "DEVIL",
-                     sid: data.ssid
-                  });
+                  PutMob(1.5, 1.5, "ORC");
+                  // ws.sendJSON({
+                  //    action: "putMob",
+                  //    x: 1.5,
+                  //    y: 1.5,
+                  //    flags: [],
+                  //    race: "ORC",
+                  //    sid: data.ssid
+                  // });
                } else if (response['action'] == 'putMob') {
                   expect(response['result']).to.equal('badPoint');
                   done();
@@ -575,14 +669,15 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   });
                } else if (response['action'] == 'setUpMap') {
                   expect(response['result']).to.equal('ok');
-                  ws.sendJSON({
-                     action: "putMob",
-                     x: 1.7,
-                     y: 1.7,
-                     flags: [],
-                     race: "DEVIL",
-                     sid: data.ssid
-                  });
+                  PutMob(1.7, 1.7, "ORC");
+                  // ws.sendJSON({
+                  //    action: "putMob",
+                  //    x: 1.7,
+                  //    y: 1.7,
+                  //    flags: [],
+                  //    race: "ORC",
+                  //    sid: data.ssid
+                  // });
                } else if (response['action'] == 'putMob') {
                   expect(response['result']).to.equal('badPoint');
                   done();
@@ -611,26 +706,11 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   });
                } else if (response['action'] == 'setUpMap') {
                   expect(response['result']).to.equal('ok');
-                  ws.sendJSON({
-                     action: "putMob",
-                     x: 1.5,
-                     y: 1.5,
-                     flags: [],
-                     race: "DEVIL",
-                     sid: data.ssid
-                  });
+                  PutMob(1.5, 1.5, "ORC");
                } else if (response['action'] == 'putMob') {
-                  if (counter == 0)
-                  {
+                  if (counter == 0) {
                      expect(response['result']).to.equal('ok');
-                     ws.sendJSON({
-                        action: "putMob",
-                        x: 2.0,
-                        y: 2.0,
-                        flags: [],
-                        race: "DEVIL",
-                        sid: data.ssid
-                     });
+                     PutMob(2.0, 2.0, "ORC");
                   } else {
                      expect(response['result']).to.equal('badPoint');
                      done();
@@ -661,26 +741,11 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   });
                } else if (response['action'] == 'setUpMap') {
                   expect(response['result']).to.equal('ok');
-                  ws.sendJSON({
-                     action: "putMob",
-                     x: 1.5,
-                     y: 1.5,
-                     flags: [],
-                     race: "DEVIL",
-                     sid: data.ssid
-                  });
+                  PutMob(1.5, 1.5, "ORC");
                } else if (response['action'] == 'putMob') {
-                  if (counter == 0)
-                  {
+                  if (counter == 0) {
                      expect(response['result']).to.equal('ok');
-                     ws.sendJSON({
-                        action: "putMob",
-                        x: 1.5,
-                        y: 1.5,
-                        flags: [],
-                        race: "DEVIL",
-                        sid: data.ssid
-                     });
+                     PutMob(1.5, 1.5, "ORC", undefined, [], [], { HP: 100 });
                   } else {
                      expect(response['result']).to.equal('badPoint');
                      done();
