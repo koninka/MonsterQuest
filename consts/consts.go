@@ -340,6 +340,16 @@ const (
     BONUS_CONSTANT
 )
 
+const (
+    BONUS_PERCENT_NAME = "percent"
+    BONUS_CONSTANT_NAME = "constant"
+)
+
+var NameBonusMapping = map[string] int {
+    BONUS_PERCENT_NAME  : BONUS_PERCENT,
+    BONUS_CONSTANT_NAME : BONUS_CONSTANT,
+}
+
 var (
     TEST = flag.Bool("test", false, "a bool")
     TEST_MODE = false
