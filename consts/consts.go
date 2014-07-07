@@ -53,17 +53,17 @@ const (
 )
 
 const (
-    NO_RACE_NAME = "noRace"
-    ORC_RACE_NAME = "orc"
-    EVIL_RACE_NAME = "evil"
-    TROLL_RACE_NAME = "troll"
-    GIANT_RACE_NAME = "giant"
-    DEMON_RACE_NAME = "demon"
-    METAL_RACE_NAME = "metal"
-    DRAGON_RACE_NAME = "dragon"
-    UNDEAD_RACE_NAME = "undead"
-    ANIMAL_RACE_NAME = "animal"
-    PLAYER_RACE_NAME = "player"
+    NO_RACE_NAME = "NO_RACE"
+    ORC_RACE_NAME = "ORC"
+    EVIL_RACE_NAME = "EVIL"
+    TROLL_RACE_NAME = "TROLL"
+    GIANT_RACE_NAME = "GIANT"
+    DEMON_RACE_NAME = "DEMON"
+    METAL_RACE_NAME = "METAL"
+    DRAGON_RACE_NAME = "DRAGON"
+    UNDEAD_RACE_NAME = "UNDEAD"
+    ANIMAL_RACE_NAME = "ANIMAL"
+    PLAYER_RACE_NAME = "PLAYER"
 )
 
 var NameRaceMapping = map[string] int {
