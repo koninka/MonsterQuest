@@ -233,7 +233,7 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
     if idParam != nil {
         item := g.items.getItem(int64(idParam.(float64)))
         p := g.players.getPlayerBySession(json["sid"].(string))
-        if item != nil && (item.IsOwner(p) || (!item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) < consts.PICK_UP_RADIUS)) {
+        if item != nil && (item.IsOwner(p) || (!item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) <= consts.PICK_UP_RADIUS)) {
             g.items.deleteItem(item)
             if item.IsOwner(p) {
                 p.DeleteItem(item)
