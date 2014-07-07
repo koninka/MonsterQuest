@@ -196,7 +196,7 @@ func (gigi* gameItemGen) Probability() int {
 }
 
 func (gigi* gameItemGen) GenItem(owner Activer) Itemer {
-    return NewItem(gigi.item_kind.dbId, owner)
+    return newItem(gigi.item_kind, owner)
 }
 
 type gameItemsList struct {
@@ -537,36 +537,42 @@ func (i* ConsumableItem) UseItem(inv* InventoryObj) {
     }
 }
 
-func NewItem(iid int64, owner Activer, amount ...interface{}) Itemer {
+func newItem(ik *ItemKind, owner Activer, amount ...interface{}) Itemer {
     var i Itemer = nil
-    switch gameItems.items[iid].class {
-        case consts.ITEM_CLASS_CONSUMABLE: i = newConsumableItem(gameItems.items[iid], owner, amount[0].(int))
+    switch ik.class {
+        case consts.ITEM_CLASS_CONSUMABLE: i = newConsumableItem(ik, owner, amount[0].(int))
         case consts.ITEM_CLASS_GARMENT:
-            garment := GarmentItem{newItem(gameItems.items[iid], owner), false};
-            if gameItems.items[iid].itemType == consts.ITEM_T_WEAPON {
-                i = &WeaponItem{garment, fightBase.CreateDmgDescription(gameItems.items[iid].power)}
+            garment := GarmentItem{newBaseItem(ik, owner), false};
+            if ik.itemType == consts.ITEM_T_WEAPON {
+                i = &WeaponItem{garment, fightBase.CreateDmgDescription(ik.power)}
             } else {
                 i = &garment
             }
-
-        // case consts.ITEM_CLASS_AMMO:
     }
     return i
+}
+
+func NewItemByID(iid int64, owner Activer) Itemer {
+    var item Itemer = nil
+    if ik, ok := gameItems.items[iid]; ok {
+        item = newItem(ik, owner)
+    }
+    return item
 }
 
 func NewFistItem(owner Activer) Itemer {
     if _, ok := gameItems.items[consts.FIST_ID]; !ok {
         gameItems.items[consts.FIST_ID] = &ItemKind{consts.FIST_ID, "кулаки от бога", 0, "10d4", "", "", consts.ITEM_CLASS_GARMENT, consts.ITEM_T_WEAPON, consts.ITEM_ST_DEFAULT, make([] *Bonus, 0, 0), make([] Effecter, 0, 0)}
     }
-    return NewItem(consts.FIST_ID, owner)
+    return newItem(gameItems.items[consts.FIST_ID], owner)
 }
 
-func newItem(ik *ItemKind, owner Activer) Item {
+func newBaseItem(ik *ItemKind, owner Activer) Item {
     return Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, ik, owner}
 }
 
 func newConsumableItem(ik* ItemKind, owner Activer, amount int) *ConsumableItem {
-    return &ConsumableItem{StackItem{newItem(ik, owner), amount}}
+    return &ConsumableItem{StackItem{newBaseItem(ik, owner), amount}}
 }
 
 func splitItem(inv* InventoryObj, i Itemer, amount int) (int, Itemer) {
