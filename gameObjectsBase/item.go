@@ -46,6 +46,23 @@ func NewBonus(characteristic, effectCalculation, val int) *Bonus {
     return &Bonus{characteristic, effectCalculation, val}
 }
 
+func BonusFromJson(bonusDesc consts.JsonType) *Bonus {
+    var requiredFields = map[string] string {
+        "stat" : "badItem",
+        "effectCalculation" : "badItem",
+        "value" : "badItem",
+    }
+    if ok, _ := utils.CheckJsonRequest(bonusDesc, requiredFields); ok {
+        statParam, ok1 := bonusDesc["stat"].(string)
+        effectCalculationParam, ok2 := bonusDesc["effectCalculation"].(string)
+        val, ok3 := bonusDesc["value"].(float64)
+        if ok1 && ok2 && ok3 {
+            return NewBonus(consts.NameCharacteristicMapping[statParam], consts.NameBonusMapping[effectCalculationParam], int(val))
+        }
+    }
+    return nil
+}
+
 type Effecter interface {
     apply(activator Activer)
     GetFullInfo() consts.JsonType
@@ -81,6 +98,25 @@ func (me *OnGoingEffect) GetFullInfo() consts.JsonType {
     return res
 }
 
+func onGoingEffectFromJson(effectDesc consts.JsonType) *OnGoingEffect {
+    var res *OnGoingEffect
+    errorMsg := "badItem"
+    var requiredFields = map[string] string {
+        "stat" : errorMsg,
+        "duration" : errorMsg,
+        "value" : errorMsg,
+    }
+    if ok, _ := utils.CheckJsonRequest(effectDesc, requiredFields); ok {
+        stat, ok1 := effectDesc["stat"].(string)
+        duration, ok2 := effectDesc["duration"].(int)
+        value, ok3 := effectDesc["value"].(int)
+        if ok1 && ok2 && ok3 {
+            res = newOnGoingEffect(time.Duration(duration), consts.NameCharacteristicMapping[stat], value)
+        }
+    }
+    return res
+}
+
 type BonusEffect struct {
     Effect
     Bonus
@@ -95,6 +131,36 @@ func (be *BonusEffect) apply(activator Activer) {
 func (be *BonusEffect) GetFullInfo() consts.JsonType {
     res := be.Effect.GetFullInfo()
     res["bonus"] = be.Bonus.GetFullInfo()
+    return res
+}
+
+func bonusEffectFromJson(effectDesc consts.JsonType) *BonusEffect {
+    var res *BonusEffect
+    errorMsg := "badItem"
+    var requiredFields = map[string] string {
+        "duration" : errorMsg,
+        "bonus" : errorMsg,
+    }
+    if ok, _ := utils.CheckJsonRequest(effectDesc, requiredFields); ok {
+        duration, ok1 := effectDesc["duration"].(int)
+        bonusDesc, ok2 := effectDesc["bonus"].(map[string] interface{})
+        if ok1 && ok2 {
+            res = newBonusEffect(time.Duration(duration), BonusFromJson(bonusDesc))
+        }
+    }
+    return res
+}
+
+func EffectFromJson(effectDesc consts.JsonType) Effecter {
+    var res Effecter
+    effectType, ok := effectDesc["type"].(string)
+    if ok {
+        if effectType == "bonus" {
+            res = bonusEffectFromJson(effectDesc)
+        } else if effectType == "ongoing" {
+            res = onGoingEffectFromJson(effectDesc)
+        }
+    }
     return res
 }
 
@@ -516,4 +582,38 @@ func splitItem(inv* InventoryObj, i Itemer, amount int) (int, Itemer) {
     return place, new_i
 }
 
-
+func ItemFromJson(itemDesc consts.JsonType) Itemer {
+    var res Itemer
+    errorMsg := "badItem"
+    var requiredFields = map[string] string {
+        "weight" : errorMsg,
+        "class" : errorMsg,
+        "type" : errorMsg,
+        "bonuses" : errorMsg,
+        "effects" : errorMsg,
+    }
+    if ok, _ := utils.CheckJsonRequest(itemDesc, requiredFields); ok {
+        weight, ok1 := itemDesc["weight"].(float64)
+        class, ok2 := itemDesc["class"].(string)
+        itemType, ok3 := itemDesc["type"].(string)
+        bonuses, ok4 := itemDesc["bonuses"].([] interface{})
+        effects, ok5 := itemDesc["effects"].([] interface{})
+        if ok1 && ok2 && ok3 && ok4 && ok5 {
+            kind := ItemKind{
+                weight: int(weight),
+                class: consts.NameItemClassMapping[class],
+                itemType : consts.NameItemTypeMapping[itemType],
+                bonuses : make([]*Bonus, 0, 100),
+                effects : make([]Effecter, 0, 100),
+            }
+            for _, bonusDesc := range bonuses {
+                kind.bonuses = append(kind.bonuses, BonusFromJson(bonusDesc.(consts.JsonType)))
+            }
+            for _, effectDesc := range effects {
+                kind.effects = append(kind.effects, EffectFromJson(effectDesc.(consts.JsonType)))
+            }
+            return &Item{NewGameObject(utils.GenerateId(), *geometry.MakePoint(0, 0)), &kind, nil}
+        }
+    }
+    return res
+}
