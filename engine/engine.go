@@ -360,8 +360,8 @@ func (g *Game) putMob(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("putMob", "badAction")
     if *consts.TEST && consts.TEST_MODE {
         var requiredFields = map[string] string {
-            "x" : "badPoint",
-            "y" : "badPoint",
+            "x" : "badPlacing",
+            "y" : "badPlacing",
             "flags" : "badFlag",
             "race" : "badRace",
             "dealtDamage" : "badDamage",
@@ -378,7 +378,7 @@ func (g *Game) putMob(json consts.JsonType) consts.JsonType {
                     stats = json["stats"].(map[string] interface{})
                 }
                 if !g.field.FreeForObject(x, y) {
-                    res["result"] = "badPoint"
+                    res["result"] = "badPlacing"
                 } else if !gameObjectsFlags.CheckFlags(flags) {
                     res["result"] = "badFlag"
                 } else if !isExistRace {
@@ -401,8 +401,8 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("putPlayer", "badAction")
     if *consts.TEST && consts.TEST_MODE {
         var requiredFields = map[string] string {
-            "x" : "badPoint",
-            "y" : "badPoint",
+            "x" : "badPlacing",
+            "y" : "badPlacing",
             //"inventory" : "badInventory",
         }
         var ok bool
@@ -414,7 +414,7 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                 stats = json["stats"].(map[string] interface{})
             }
             if !g.field.FreeForObject(x, y) {
-                res["result"] = "badPoint"
+                res["result"] = "badPlacing"
             } else {
                 p := gameObjects.NewPlayer(utils.GenerateId(), -1, "", utils.GenerateSID(), x, y)
                 g.setCharacteristicsToActiveObject(p, stats)
@@ -430,7 +430,7 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                             idxs = append(idxs, item.GetID())
                         }
                     }
-                    res["items"] = idxs
+                    res["inventory"] = idxs
                 }
                 var idxs []int64
                 if slots, okey := json["slots"].(map[string] interface{}); okey {
@@ -460,8 +460,8 @@ func (g *Game) putItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("putItem", "badAction")
     if *consts.TEST && consts.TEST_MODE {
         var requiredFields = map[string] string {
-            "x" : "badPoint",
-            "y" : "badPoint",
+            "x" : "badPlacing",
+            "y" : "badPlacing",
             "item" : "badItem",
         }
         var ok bool
@@ -480,13 +480,13 @@ func (g *Game) putItem(json consts.JsonType) consts.JsonType {
                         res["result"] = "ok"
                         fmt.Println(res)
                     } else {
-                        res["result"] = "badItem"
+                        res["result"] = "badInventory"
                     }
                 } else {
-                    res["result"] = "badItem"
+                    res["result"] = "badInventory"
                 }
             } else {
-                res["result"] = "badPoint"
+                res["result"] = "badPlacing"
             }
         }
     }
