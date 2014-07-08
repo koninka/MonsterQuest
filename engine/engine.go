@@ -437,9 +437,12 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                     fmt.Println(slots)
                     for slotName, itemDesc := range slots {
                         item := gameObjectsBase.ItemFromJson(consts.JsonType(itemDesc.(map[string] interface{})))
-                        if item != nil && p.Equip(item, consts.NameSlotMapping[slotName]) {
-                            g.items.addItem(item)
-                            idxs = append(idxs, item.GetID())
+                        if item != nil {
+                            p.AddItem(item)
+                            if p.Equip(item, consts.NameSlotMapping[slotName]) {
+                                g.items.addItem(item)
+                                idxs = append(idxs, item.GetID())
+                            }
                         }
                     }
                 }
@@ -607,7 +610,7 @@ func (g *Game) CreatePlayer(sid string) *gameObjects.Player {
             amount, place int
         )
         rows.Scan(&iid, &amount, &place)
-        item := gameObjectsBase.NewItem(iid, p)
+        item := gameObjectsBase.NewItemByID(iid, p)
         p.RestoreItem(item, place)
         g.items.addItem(item)
     }

@@ -22,7 +22,9 @@ func (il *itemList) deleteItem(i gameObjectsBase.Itemer) {
 
 func (il *itemList) Clear() {
     for id, item := range il.items {
-        GetInstance().field.UnlinkFromCells(item)
+        if (!item.HasOwner()) {
+            GetInstance().field.UnlinkFromCells(item)
+        }
         delete(il.items, id)
     }
 }
