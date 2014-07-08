@@ -445,8 +445,8 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                             }
                         }
                     }
+                    res["slots"] = idxs
                 }
-                res["slots"] = idxs
                 res["sid"] = p.SID
                 res["id"] = p.GetID()
                 res["result"] = "ok"
