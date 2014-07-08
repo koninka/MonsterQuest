@@ -3,6 +3,7 @@ package gameObjects
 import (
     "fmt"
     "strings"
+    "math"
     "MonsterQuest/gameFight/blowList"
     "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/gameObjectsBase"
@@ -108,12 +109,56 @@ func (m *Mob) chooseDir() {
     m.Dir = newDir
 }
 
+func (m *Mob) chooseVerticalDir(dy float64) {
+    var dir int
+    if dy > 0 {
+        dir = consts.SOUTH_DIR
+    } else {
+        dir = consts.NORTH_DIR
+    }
+    m.SetDir(dir)
+}
+
+func (m *Mob) chooseHorizontalDir(dx float64) {
+    var dir int
+    if dx > 0 {
+        dir = consts.EAST_DIR
+    } else {
+        dir = consts.WEST_DIR
+    }
+    m.SetDir(dir)
+}
+
+func (m *Mob) goToTarget() {
+    target := m.Target.GetCenter()
+    dx := target.X - m.Center.X
+    dy := target.Y - m.Center.Y
+    eps := 0.2
+    if dice.Throw(4, 1) % 2 == 0 {
+        if math.Abs(dx) > eps {
+            m.chooseHorizontalDir(dx)
+        } else {
+            m.chooseVerticalDir(dy)
+        }
+    } else {
+        if math.Abs(dy) > eps {
+            m.chooseVerticalDir(dy)
+        } else {
+            m.chooseHorizontalDir(dx)
+        }
+    }
+}
+
 func (m *Mob) think() {
-    m.walkingCycle++
-    if m.walkingCycle == consts.MOB_WALKING_CYCLE_DURATION {
-        dice.Shake()
-        m.walkingCycle = 0
-        m.chooseDir()
+    if m.Target != nil {
+        m.goToTarget()
+    } else {
+        m.walkingCycle++
+        if m.walkingCycle == consts.MOB_WALKING_CYCLE_DURATION {
+            dice.Shake()
+            m.walkingCycle = 0
+            m.chooseDir()
+        }
     }
 }
 
