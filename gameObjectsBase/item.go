@@ -605,7 +605,7 @@ func ItemFromJson(itemDesc consts.JsonType) Itemer {
         bonuses, ok4 := itemDesc["bonuses"].([] interface{})
         effects, ok5 := itemDesc["effects"].([] interface{})
         if ok1 && ok2 && ok3 && ok4 && ok5 {
-            kind := ItemKind{
+            kind := &ItemKind{
                 weight: int(weight),
                 class: consts.NameItemClassMapping[class],
                 itemType : consts.NameItemTypeMapping[itemType],
@@ -618,7 +618,8 @@ func ItemFromJson(itemDesc consts.JsonType) Itemer {
             for _, effectDesc := range effects {
                 kind.effects = append(kind.effects, EffectFromJson(effectDesc.(consts.JsonType)))
             }
-            return &Item{NewGameObject(utils.GenerateId(), *geometry.MakePoint(0, 0)), &kind, nil}
+            return newItem(kind, nil)
+            // return &Item{NewGameObject(utils.GenerateId(), *geometry.MakePoint(0, 0)), &kind, nil}
         }
     }
     return res
