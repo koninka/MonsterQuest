@@ -49,5 +49,9 @@ define(['jquery', 'utils/utils'], function($, utils) {
          var url = $('#server').val();
          utils.sendRequest(data, registerSuccess, url);
       });
+
+      $("#testBtn").click(function(){
+         window.location.href = "/tests/";
+      })
    })
 });
