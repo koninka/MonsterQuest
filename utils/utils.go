@@ -8,7 +8,18 @@ import (
     "github.com/nu7hatch/gouuid"
     "math/rand"
     "MonsterQuest/consts"
+    "MonsterQuest/geometry"
 )
+
+func GetPointFromJson(req consts.JsonType) (*geometry.Point, bool) {
+    var pt *geometry.Point
+    x, x_ok := req["x"].(float64)
+    y, y_ok := req["y"].(float64)
+    if x_ok && y_ok {
+        pt = &geometry.Point{x, y}
+    }
+    return pt, x_ok && y_ok
+}
 
 func CheckJsonRequest(req consts.JsonType, results map[string] string) (bool, string) {
     for field, errorMsg := range results {

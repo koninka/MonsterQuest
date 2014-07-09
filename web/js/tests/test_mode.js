@@ -475,7 +475,6 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   ws.sendJSON({
                      action: 'setUpMap',
                      map: [
-                        [".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
                         [".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."]
                      ],
                      sid: data.ssid
@@ -499,7 +498,6 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
 
          it('should fail put mob[badRace]', function(done){
             ws = data.ws;
-
             ws.onmessage = function(e) {
                var response = JSON.parse(e.data);
                console.log(e.data);
@@ -520,6 +518,35 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   PutMob(1.5, 1.5, "BAD RACE STRING");
                } else if (response['action'] == 'putMob') {
                   expect(response['result']).to.equal('badRace');
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should fail put mob[badPlacing, x and y are strings]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpMap',
+                     map:
+                        [
+                           [".", ".", "."],
+                           [".", ".", "."],
+                           [".", ".", "."],
+                        ],
+                     sid : data.ssid
+                  });
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  PutMob('x', 'y', "BAD RACE STRING");
+               } else if (response['action'] == 'putMob') {
+                  expect(response['result']).to.equal('badPlacing');
                   done();
                }
             };
@@ -910,7 +937,29 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                      sid: data.ssid
                   });
                } else if (response['action'] == 'putPlayer') {
-                  expect(response['result']).to.equal('badPoint');
+                  expect(response['result']).to.equal('badPlacing');
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should fail put player[badPlacing, x and y are strings]', function(done){
+            ws = data.ws;
+
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                   ws.sendJSON({
+                     action: "putPlayer",
+                     x: 'x',
+                     y: 'y',
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'putPlayer') {
+                  expect(response['result']).to.equal('badPlacing');
                   done();
                }
             };
@@ -1089,6 +1138,24 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   PutItem(0.5, 0.5)
                } else if (response['action'] == 'putItem') {
                   expect(response['result']).to.equal('ok');
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
+         it('should fail put item[badPlacing, x and y are string]', function(done){
+            ws = data.ws;
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({action: 'setUpMap', map: [[".", "."], [".", "."], [".", "."]], sid: data.ssid});
+               } else if (response['action'] == 'setUpMap') {
+                  expect(response['result']).to.equal('ok');
+                  PutItem('x', 'y')
+               } else if (response['action'] == 'putItem') {
+                  expect(response['result']).to.equal('badPlacing');
                   done();
                }
             };
