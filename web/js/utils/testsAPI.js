@@ -50,8 +50,11 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
 
     function Logout(done) {
         SetWSHandler(undefined);
-        tester.send({action: logoutAction, sid:data.ssid}, function(){
-            done();
+        tester.send({action: logoutAction, sid:data.ssid}, function(resp){
+            if(resp['result'] == "ok")
+                done();
+            else
+                throw new Error("Logout fail");
         });
     }
 

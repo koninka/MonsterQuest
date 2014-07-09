@@ -19,9 +19,12 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
 
    function Logout(done){
         data.ws = undefined;
-        tester.send({action: 'logout', sid:data.ssid}, function(){
-            done();
-        });
+        tester.send({action: 'logout', sid:data.ssid}, function(resp){
+            if(resp['result'] == "ok")
+                done();
+            else
+                throw new Error("Logout fail");
+        })
    }
 
    function PutItem(x, y, weight, iClass, type, bonuses, effects, subtype) {
