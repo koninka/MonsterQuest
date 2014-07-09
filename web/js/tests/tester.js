@@ -19,6 +19,23 @@ define(['utils/utils' , 'utils/ws'], function(utils, wsock) {
    }
 
 
+   function waitForSocketConnection(socket, done){
+        setTimeout(
+            function () {
+                if (socket.readyState === 1) {
+                    if(done){
+                        done();
+                    }
+                    return
+                } else {
+                    console.log("wait for connection...")
+                    waitForSocketConnection(socket, done);
+                }
+            }, 
+            5
+        );
+    }
+
    function regAndLog(data, done){
       send({
          'login'    : data.login,
@@ -35,8 +52,7 @@ define(['utils/utils' , 'utils/ws'], function(utils, wsock) {
          data.wsuri    = response['webSocket'];
          data.actor_id = response['id'];
          data.ws       = wsock(data.wsuri, null, null, null, null);
-         if(done)
-            done();
+         waitForSocketConnection(data.ws, done);
       })
 
    }
