@@ -2,13 +2,15 @@ define(['utils/testsAPI'], function(testsAPI) {
     
     function Test(){
 
-        before(function(done){
-            testsAPI.Prepare(done);
-        });
+        
 
         describe('inventory', function() {
 
+            before(testsAPI.Prepare);
+
             afterEach(testsAPI.AfterEach);
+
+            after(testsAPI.Logout);
 
             it('should successfully pick up item', function(done) {
                 var player = { x: 0.5, y: 0.5 };
@@ -798,7 +800,7 @@ define(['utils/testsAPI'], function(testsAPI) {
 
         });
 
-        after(testsAPI.Logout);
+        
     }
 
 

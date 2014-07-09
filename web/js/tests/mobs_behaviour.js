@@ -4,13 +4,11 @@ define(['utils/testsAPI'], function(testsAPI) {
 
     function Test(){
 
-        before(function(done){
-            testsAPI.Prepare(done);
-        });
-
-        after(testsAPI.Logout);
-
         describe("Mob flags", function() {
+
+            before(testsAPI.Prepare);
+
+            after(testsAPI.Logout);
 
             afterEach(testsAPI.AfterEach);
 

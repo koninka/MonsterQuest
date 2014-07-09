@@ -15,9 +15,9 @@ define(['tester', 'utils/ws'], function(tester, wsock) {
 
    function Test(){
 
-      updateData();
-
       describe('Simple walk', function() {
+
+        before(updateData)
 
          it('should successfully register', function(done) {
             data = {
