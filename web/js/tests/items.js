@@ -1,14 +1,12 @@
 define(['utils/testsAPI'], function(testsAPI) {
     
-    var expect = chai.expect;
-
     function Test(){
 
         before(function(done){
             testsAPI.Prepare(done);
         });
 
-        describe('Items', function() {
+        describe('inventory', function() {
 
             afterEach(testsAPI.AfterEach);
 
@@ -21,7 +19,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", "."],
@@ -30,22 +28,22 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player['x'], player['y']);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         player['id'] = response['id'];
                         player['sid'] = response['sid'];
                         testsAPI.PutItem(player['x'] + 1, player['y'] + 1);
                     } else if (response['action'] == testsAPI.putItemAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         item_id = response['id'];
                         testsAPI.PickUp(player['sid'], item_id);
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
-                        expect(response['actionResult']['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Ok(response['actionResult']['result']);
                         done();
                     }
                 });
@@ -62,7 +60,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", ".", ".", ".", ".", "."],
@@ -74,22 +72,22 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", ".", ".", ".", ".", "."],
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player['x'], player['y']);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         player['id'] = response['id'];
                         player['sid'] = response['sid'];
                         testsAPI.PutItem(player['x'] + testsAPI.pickUpRadius + 1, player['y'] + testsAPI.pickUpRadius + 1);
                     } else if (response['action'] == testsAPI.putItemAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         item_id = response['id'];
                         testsAPI.PickUp(player['sid'], item_id);
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
-                        expect(response['actionResult']['result']).to.equal(testsAPI.actionResultBadId);
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Equal(response['actionResult']['result'], testsAPI.actionResultBadId);
                         done();
                     }
                 });
@@ -106,7 +104,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", "."],
@@ -115,19 +113,19 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player['x'], player['y'], [ testsAPI.MakeItem() ]);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         player['id'] = response['id'];
                         player['sid'] = response['sid'];
-                        item_id = response['items'][0];
+                        item_id = response['inventory'][0];
                         testsAPI.PickUp(player['sid'], item_id)
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
-                        expect(response['actionResult']['result']).to.equal(testsAPI.actionResultBadId);
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Equal(response['actionResult']['result'], testsAPI.actionResultBadId);
                         done();
                     }
                 });
@@ -143,7 +141,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", "."],
@@ -152,17 +150,17 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player['x'], player['y']);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         player['sid'] = response['sid'];
                         testsAPI.PickUp(player['sid'], 34535345)
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
-                        expect(response['actionResult']['result']).to.equal(testsAPI.actionResultBadId);
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Equal(response['actionResult']['result'], testsAPI.actionResultBadId);
                         done();
                     }
                 });
@@ -179,7 +177,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", "."],
@@ -188,25 +186,25 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player['x'], player['y']);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         player['id'] = response['id'];
                         player['sid'] = response['sid'];
                         testsAPI.PutItem(player['x'] + 1, player['y'] + 1);
                     } else if (response['action'] == testsAPI.putItemAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         item_id = response['id'];
                         testsAPI.Destroy(player['sid'], item_id);
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
-                        expect(response['actionResult']['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Ok(response['actionResult']['result']);
                         testsAPI.Sleep(testsAPI.tickDuration * 3, testsAPI.Examine, item_id);
                     } else if (response['action'] == testsAPI.examineAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultBadId);
+                        testsAPI.Equal(response['result'], testsAPI.actionResultBadId);
                         done();
                     }
                 });
@@ -223,7 +221,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", "."],
@@ -232,19 +230,19 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player['x'], player['y'], [ testsAPI.MakeItem() ]);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         player['id'] = response['id'];
                         player['sid'] = response['sid'];
-                        item_id = response['items'][0];
+                        item_id = response['inventory'][0];
                         testsAPI.Destroy(player['sid'], item_id)
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
-                        expect(response['actionResult']['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Ok(response['actionResult']['result']);
                         done();
                     }
                 });
@@ -260,7 +258,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", "."],
@@ -269,17 +267,17 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player['x'], player['y']);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         player['sid'] = response['sid'];
                         testsAPI.Destroy(player['sid'], -1)
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
-                        expect(response['actionResult']['result']).to.equal(testsAPI.actionResultBadId);
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Equal(response['actionResult']['result'], testsAPI.actionResultBadId);
                         done();
                     }
                 });
@@ -296,7 +294,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", ".", ".", ".", ".", "."],
@@ -308,25 +306,25 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", ".", ".", ".", ".", "."],
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player['x'], player['y']);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         player['id'] = response['id'];
                         player['sid'] = response['sid'];
                         testsAPI.PutItem(player['x'] + testsAPI.pickUpRadius + 1, player['y'] + testsAPI.pickUpRadius + 1);
                     } else if (response['action'] == testsAPI.putItemAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         item_id = response['id'];
                         testsAPI.Destroy(player['sid'], item_id);
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
-                        expect(response['actionResult']['result']).to.equal(testsAPI.actionResultBadId);
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Equal(response['actionResult']['result'], testsAPI.actionResultBadId);
                         testsAPI.Sleep(testsAPI.tickDuration * 3, testsAPI.Examine, item_id);
                     } else if (response['action'] == testsAPI.examineAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         done();
                     }
                 });
@@ -343,7 +341,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", "."],
@@ -352,19 +350,19 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player['x'], player['y'], [ testsAPI.MakeItem() ]);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         player['id'] = response['id'];
                         player['sid'] = response['sid'];
-                        item_id = response['items'][0];
+                        item_id = response['inventory'][0];
                         testsAPI.Drop(player['sid'], item_id)
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
-                        expect(response['actionResult']['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Ok(response['actionResult']['result']);
                         done();
                     }
                 });
@@ -381,7 +379,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", ".", ".", ".", ".", "."],
@@ -393,22 +391,22 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", ".", ".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player['x'], player['y']);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         player['id'] = response['id'];
                         player['sid'] = response['sid'];
                         testsAPI.PutItem(player['x'] + 1, player['y'] + 1);
                     } else if (response['action'] == testsAPI.putItemAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         item_id = response['id'];
                         testsAPI.Drop(player['sid'], item_id);
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
-                        expect(response['actionResult']['result']).to.equal(testsAPI.actionResultBadId);
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Equal(response['actionResult']['result'], testsAPI.actionResultBadId);
                         done();
                     }
                 });
@@ -424,7 +422,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", "."],
@@ -433,17 +431,17 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player['x'], player['y']);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         player['sid'] = response['sid'];
                         testsAPI.Drop(player['sid'], -1)
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
-                        expect(response['actionResult']['result']).to.equal(testsAPI.actionResultBadId);
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Equal(response['actionResult']['result'], testsAPI.actionResultBadId);
                         done();
                     }
                 });
@@ -462,7 +460,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", ".", ".", ".", ".", "."],
@@ -474,29 +472,29 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", ".", ".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player1['x'], player1['y'], [ testsAPI.MakeItem() ]);
                         testsAPI.PutPlayer(player2['x'], player2['y']);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         if (firstPut) {
                             firstPut = false;
                             player1['id'] = response['id'];
                             player1['sid'] = response['sid'];
-                            item_id = response['items'][0];    
+                            item_id = response['inventory'][0];    
                         } else {
                             player2['sid'] = response['sid'];
                             testsAPI.PickUp(player2['sid'], item_id);
                         }
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         if (response['actionResult']['action'] == testsAPI.pickUpAction) {
-                            expect(response['actionResult']['result']).to.equal(testsAPI.actionResultBadId);
+                            testsAPI.Equal(response['actionResult']['result'], testsAPI.actionResultBadId);
                             testsAPI.Examine(player1['id'], player1['sid']);
                         } else {
-                            expect(response['actionResult']['inventory'][0]['id']).to.equal(item_id);
+                            testsAPI.Equal(response['actionResult']['inventory'][0]['id'], item_id);
                             done();
                         }
                     }
@@ -516,7 +514,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", ".", ".", ".", ".", "."],
@@ -528,29 +526,29 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", ".", ".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player1['x'], player1['y'], [ testsAPI.MakeItem() ]);
                         testsAPI.PutPlayer(player2['x'], player2['y']);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         if (firstPut) {
                             firstPut = false;
                             player1['id'] = response['id'];
                             player1['sid'] = response['sid'];
-                            item_id = response['items'][0];    
+                            item_id = response['inventory'][0];    
                         } else {
                             player2['sid'] = response['sid'];
                             testsAPI.Destroy(player2['sid'], item_id);
                         }
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         if (response['actionResult']['action'] == testsAPI.destroyAction) {
-                            expect(response['actionResult']['result']).to.equal(testsAPI.actionResultBadId);
+                            testsAPI.Equal(response['actionResult']['result'], testsAPI.actionResultBadId);
                             testsAPI.Examine(player1['id'], player1['sid']);
                         } else {
-                            expect(response['actionResult']['inventory'][0]['id']).to.equal(item_id);
+                            testsAPI.Equal(response['actionResult']['inventory'][0]['id'], item_id);
                             done();
                         }
                     }
@@ -570,7 +568,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", ".", ".", ".", ".", "."],
@@ -582,29 +580,29 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", ".", ".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player1['x'], player1['y'], [ testsAPI.MakeItem() ]);
                         testsAPI.PutPlayer(player2['x'], player2['y']);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         if (firstPut) {
                             firstPut = false;
                             player1['id'] = response['id'];
                             player1['sid'] = response['sid'];
-                            item_id = response['items'][0];    
+                            item_id = response['inventory'][0];    
                         } else {
                             player2['sid'] = response['sid'];
                             testsAPI.Drop(player2['sid'], item_id);
                         }
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         if (response['actionResult']['action'] == testsAPI.dropAction) {
-                            expect(response['actionResult']['result']).to.equal(testsAPI.actionResultBadId);
+                            testsAPI.Equal(response['actionResult']['result'], testsAPI.actionResultBadId);
                             testsAPI.Examine(player1['id'], player1['sid']);
                         } else {
-                            expect(response['actionResult']['inventory'][0]['id']).to.equal(item_id);
+                            testsAPI.Equal(response['actionResult']['inventory'][0]['id'], item_id);
                             done();
                         }
                     }
@@ -622,7 +620,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", "."],
@@ -631,26 +629,26 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player['x'], player['y'], [], { STRENGTH : 1 });
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         player['id'] = response['id'];
                         player['sid'] = response['sid'];
                         testsAPI.PutItem(player['x'] + 1, player['y'] + 1, 1000);
                     } else if (response['action'] == testsAPI.putItemAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         item_id = response['id'];
                         testsAPI.PickUp(player['sid'], item_id);
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         if (response['actionResult']['action'] == testsAPI.pickUpAction) {
-                            expect(response['actionResult']['result']).to.equal('tooHeavy');
+                            testsAPI.Equal(response['actionResult']['result'], 'tooHeavy');
                             testsAPI.Examine(player['id'], player['sid']);    
                         } else {
-                            expect(response['actionResult']['inventory'].length).to.equal(0);
+                            testsAPI.Equal(response['actionResult']['inventory'].length, 0);
                             done();
                         }                        
                     }
@@ -668,7 +666,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", "."],
@@ -677,23 +675,23 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player['x'], player['y'], [ testsAPI.MakeItem() ]);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         player['id'] = response['id'];
                         player['sid'] = response['sid'];
-                        item_id = response['items'][0];
+                        item_id = response['inventory'][0];
                         testsAPI.Equip(player['sid'], item_id, "LEFT-HAND");
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
-                        expect(response['actionResult']['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Ok(response['actionResult']['result']);
                         if (response['actionResult']['action'] == testsAPI.equipAction) {
                             testsAPI.Examine(player['id'], player['sid']);
                         } else {
-                            expect(response['actionResult']['slots']['LEFT-HAND']['id']).to.equal(item_id);
+                            testsAPI.Equal(response['actionResult']['slots']['LEFT-HAND']['id'], item_id);
                             done();
                         }
                     }
@@ -711,7 +709,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", "."],
@@ -720,23 +718,23 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player['x'], player['y'], [ testsAPI.MakeItem() ], {}, { 'LEFT-HAND' : testsAPI.MakeItem() });
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         player['id'] = response['id'];
                         player['sid'] = response['sid'];
-                        item_id = response['items'][0];
+                        item_id = response['inventory'][0];
                         testsAPI.Unequip(player['sid'], "LEFT-HAND");
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
-                        expect(response['actionResult']['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Ok(response['actionResult']['result']);
                         if (response['actionResult']['action'] == testsAPI.unequipAction) {
                             testsAPI.Examine(player['id'], player['sid']);
                         } else {
-                            expect(response['actionResult']['slots']['LEFT-HAND']).to.equal(undefined);
+                            testsAPI.Equal(response['actionResult']['slots']['LEFT-HAND'], undefined);
                             done();
                         }
                     }
@@ -755,7 +753,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                    var response = JSON.parse(e.data);
 
                     if (response['action'] == testsAPI.startTestingAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.SetUpConstants();
                         testsAPI.SetUpMap([
                             [".", ".", ".", "."],
@@ -764,32 +762,32 @@ define(['utils/testsAPI'], function(testsAPI) {
                             [".", ".", ".", "."]
                         ]);
                     } else if (response['action'] == testsAPI.setUpConstAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                     } else if (response['action'] == testsAPI.setUpMapAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         testsAPI.PutPlayer(player['x'], player['y'], [ testsAPI.MakeItem() ]);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
                         player['id'] = response['id'];
                         player['sid'] = response['sid'];
-                        item_id = response['items'][0];
+                        item_id = response['inventory'][0];
                         testsAPI.Equip(player['sid'], item_id, "LEFT-HAND");
                     } else if (response['action'] == testsAPI.enforceAction) {
-                        expect(response['result']).to.equal(testsAPI.actionResultOk);
-                        expect(response['actionResult']['result']).to.equal(testsAPI.actionResultOk);
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Ok(response['actionResult']['result']);
                         if (response['actionResult']['action'] == testsAPI.equipAction) {
                             testsAPI.Examine(player['id'], player['sid']);
                         } else if (response['actionResult']['action'] == testsAPI.examineAction) {
                             if (first) {
                                 first = false;
-                                expect(response['actionResult']['slots']['LEFT-HAND']['id']).to.equal(item_id);
+                                testsAPI.Equal(response['actionResult']['slots']['LEFT-HAND']['id'], item_id);
                                 testsAPI.Unequip(player['sid'], 'LEFT-HAND');
                             } else {
-                                expect(response['actionResult']['slots']['LEFT-HAND']).to.equal(undefined);
+                                testsAPI.Equal(response['actionResult']['slots']['LEFT-HAND'], undefined);
                                 done();
                             }
                         } else if (response['actionResult']['action'] == testsAPI.unequipAction) {
-                            expect(response['actionResult']['result']).to.equal(testsAPI.actionResultOk);
+                            testsAPI.Ok(response['actionResult']['result']);
                             testsAPI.Examine(player['id'], player['sid']);
                         }
                     }

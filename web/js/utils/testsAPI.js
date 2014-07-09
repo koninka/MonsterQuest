@@ -269,6 +269,14 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
         data.ws.onmessage = func;
     }
 
+    function Equal(a1, a2) {
+        expect(a1).to.equal(a2);
+    }
+
+    function Ok(responseResult) {
+        expect(responseResult).to.equal(actionResultOk);
+    }
+
     return {
         Prepare: Prepare,
         Logout: Logout,
@@ -293,6 +301,8 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
         Unequip: Unequip,
         MovePlayer: MovePlayer,
         SetWSHandler: SetWSHandler,
+        Equal: Equal,
+        Ok: Ok,
         stopTestingAction: stopTestingAction,
         startTestingAction: startTestingAction,
         equipAction: equipAction,
