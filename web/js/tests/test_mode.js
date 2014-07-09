@@ -17,6 +17,13 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
       tester.registerAndLogin(data, done);
    }
 
+   function Logout(done){
+        data.ws = undefined;
+        tester.send({action: 'logout', sid:data.ssid}, function(){
+            done();
+        });
+   }
+
    function PutItem(x, y, weight, iClass, type, bonuses, effects, subtype) {
         weight = 10 || weight;
         iClass = "garment" || iClass;
@@ -67,12 +74,17 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
 
    function Test(){
 
-      before(function(done){
-         Prepare(done);
-      })
+    describe('Test mode', function(){
 
+
+
+    before(Prepare);
+
+    after(Logout);
 
       describe('Beginning and end of the test mode', function() {
+
+         
 
          it('should take badSid on startTesting', function(done){
             ws = data.ws;
@@ -198,6 +210,8 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
       });
 
       describe('Functions of the test mode', function() {
+
+        
 
          afterEach(function(done){
             data.ws.onmessage = function(e){
@@ -1243,6 +1257,8 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
             ws.sendJSON({action: 'startTesting', sid: data.ssid});
          });
       });
+
+    })
    }
 
 
