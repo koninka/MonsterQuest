@@ -475,7 +475,6 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   ws.sendJSON({
                      action: 'setUpMap',
                      map: [
-                        [".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
                         [".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."]
                      ],
                      sid: data.ssid

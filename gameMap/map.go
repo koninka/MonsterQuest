@@ -120,10 +120,13 @@ func (f *GameField) LinkToCells(obj gameObjectsBase.GameObjecter) {
     r := obj.GetRectangle()
     ltc, ltr := int(r.LeftTop.X), int(r.LeftTop.Y)
     rbc, rbr := int(r.RightBottom.X), int(r.RightBottom.Y)
+    fmt.Printf("ltc - %d, ltr - %d, rbc - %d, rbr - %d\n", ltc, ltr, rbc, rbr)
     f.Field[ltr][ltc].link(obj)
     f.Field[ltr][rbc].link(obj)
-    f.Field[rbr][rbc].link(obj)
-    f.Field[rbr][ltc].link(obj)
+    if (rbc < len(f.Field[rbr])) {
+        f.Field[rbr][rbc].link(obj)
+        f.Field[rbr][ltc].link(obj)
+    }
 }
 
 func (f *GameField) UnlinkFromCells(obj gameObjectsBase.GameObjecter) {
@@ -134,8 +137,10 @@ func (f *GameField) UnlinkFromCells(obj gameObjectsBase.GameObjecter) {
     // fmt.Printf("ltc - %d, ltr - %d, rbc - %d, rbr - %d\n", ltc, ltr, rbc, rbr)
     f.Field[ltr][ltc].unlink(obj)
     f.Field[ltr][rbc].unlink(obj)
-    f.Field[rbr][rbc].unlink(obj)
-    f.Field[rbr][ltc].unlink(obj)
+    if (rbc < len(f.Field[rbr])) {
+        f.Field[rbr][rbc].unlink(obj)
+        f.Field[rbr][ltc].unlink(obj)
+    }
 }
 
 func (f *GameField) getVisibleSpace(coord, radiusVision, bound int) (v1 int, v2 int) {
