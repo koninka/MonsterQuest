@@ -49,8 +49,10 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
     }
 
     function Logout(done) {
-        SendViaWS({action: logoutAction});
-        SetWSHandler(function() { done(); });
+        SetWSHandler(undefined);
+        tester.send({action: logoutAction, sid:data.ssid}, function(){
+            done();
+        });
     }
 
     function AfterEach(done) {
