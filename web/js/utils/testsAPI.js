@@ -22,7 +22,8 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
         examineAction = 'examine';
 
     var actionResultOk = 'ok',
-        actionResultBadId = 'badId';
+        actionResultBadId = 'badId',
+        actionResultBadPlacing = 'badPlacing';
 
 
     var data = {
