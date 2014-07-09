@@ -393,6 +393,32 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
             ws.sendJSON({action: 'startTesting', sid: data.ssid});
          });
 
+         it('should fail set up constants[some constants are not numbers]', function(done){
+            ws = data.ws;
+            this.timeout(4000);
+            ws.onmessage = function(e) {
+               var response = JSON.parse(e.data);
+               console.log(e.data);
+               if (response['action'] == 'startTesting') {
+                  expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpConst',
+                     playerVelocity: '43',
+                     slideThreshold: '4',
+                     ticksPerSecond: 'ticksPerSecond',
+                     screenRowCount: '500',
+                     screenColumnCount: 0,
+                     pickUpRadius: '4f',
+                     sid: data.ssid
+                  });
+               } else if (response['action'] == 'setUpConst') {
+                  expect(response['result']).to.equal('badAction');
+                  done();
+               }
+            };
+            ws.sendJSON({action: 'startTesting', sid: data.ssid});
+         });
+
          it('should set up constants and check it', function(done){
             ws = data.ws;
             var consts = {
