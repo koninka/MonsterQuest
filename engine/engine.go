@@ -370,21 +370,21 @@ func (g *Game) putMob(json consts.JsonType) consts.JsonType {
         if ok, res["result"] = utils.CheckJsonRequest(json, requiredFields); ok {
             damage := json["dealtDamage"].(string)
             if utils.IsDiceDesc(damage) {
-                x, y := json["x"].(float64), json["y"].(float64)
                 flags := json["flags"].([] interface{})
                 var stats = map[string] interface{} {}
-                race, isExistRace := consts.NameRaceMapping[json["race"].(string)]
                 if json["stats"] != nil {
                     stats = json["stats"].(map[string] interface{})
                 }
-                if !g.field.FreeForObject(x, y) {
+                pt, isGoodPoint := utils.GetPointFromJson(json)
+                race, isExistRace := consts.NameRaceMapping[json["race"].(string)]
+                if !(isGoodPoint && g.field.FreeForObject(pt.X, pt.Y)) {
                     res["result"] = "badPlacing"
                 } else if !gameObjectsFlags.CheckFlags(flags) {
                     res["result"] = "badFlag"
                 } else if !isExistRace {
                     res["result"] = "badRace"
                 } else {
-                    m := gameObjects.NewTestMob(x, y, race, damage, flags)
+                    m := gameObjects.NewTestMob(pt.X, pt.Y, race, damage, flags)
                     g.setCharacteristicsToActiveObject(m, stats)
                     res["id"] = g.mobs.registerMob(m)
                     res["result"] = "ok"
@@ -407,16 +407,16 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
         }
         var ok bool
         if ok, res["result"] = utils.CheckJsonRequest(json, requiredFields); ok {
-            x, y := json["x"].(float64), json["y"].(float64)
             inventory, ok := json["inventory"].([] interface{})
             var stats = map[string] interface{} {}
             if json["stats"] != nil {
                 stats = json["stats"].(map[string] interface{})
             }
-            if !g.field.FreeForObject(x, y) {
+            pt, isGoodPoint := utils.GetPointFromJson(json)
+            if !(isGoodPoint && g.field.FreeForObject(pt.X, pt.Y)) {
                 res["result"] = "badPlacing"
             } else {
-                p := gameObjects.NewPlayer(utils.GenerateId(), -1, "", utils.GenerateSID(), x, y)
+                p := gameObjects.NewPlayer(utils.GenerateId(), -1, "", utils.GenerateSID(), pt.X, pt.Y)
                 g.setCharacteristicsToActiveObject(p, stats)
                 g.players.add(p)
                 g.field.LinkToCells(p)
@@ -467,23 +467,18 @@ func (g *Game) putItem(json consts.JsonType) consts.JsonType {
         var ok bool
         if ok, _ = utils.CheckJsonRequest(json, requiredFields); ok {
             itemDesc, ok1 := json["item"].(map[string] interface{})
-            x, ok2 := json["x"].(float64)
-            y, ok3 := json["y"].(float64)
-            if ok2 && ok3 && !g.field.IsBlocked(int(x), int(y)) {
+            pt, isGoodPoint := utils.GetPointFromJson(json)
+            if isGoodPoint && !g.field.IsBlocked(int(pt.X), int(pt.Y)) {
+                res["result"] = "badInventory"
                 if ok1 {
                     item := gameObjectsBase.ItemFromJson(itemDesc)
                     if item != nil {
-                        item.ForcePlace(*geometry.MakePoint(x, y))
+                        item.ForcePlace(*geometry.MakePoint(pt.X, pt.Y))
                         g.items.addItem(item)
                         g.field.LinkToCells(item)
                         res["id"] = item.GetID()
                         res["result"] = "ok"
-                        fmt.Println(res)
-                    } else {
-                        res["result"] = "badInventory"
                     }
-                } else {
-                    res["result"] = "badInventory"
                 }
             } else {
                 res["result"] = "badPlacing"
