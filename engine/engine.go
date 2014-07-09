@@ -324,13 +324,26 @@ func (g *Game) inDictionary(k string) bool {
 func (g *Game) setUpConstants(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("setUpConst", "badAction")
     if *consts.TEST && consts.TEST_MODE {
+        var isValidConsts bool = true
         for name, _ := range consts.NameConstMapping {
             if json[name] != nil {
-                consts.NameConstMapping[name] = json[name]
+                _, ok := json[name].(float64)
+                isValidConsts = isValidConsts && ok
             }
         }
-        consts.Refresh()
-        res["result"] = "ok"
+        if isValidConsts {
+            for name, constant := range consts.NameConstMapping {
+                if json[name] != nil {
+                    if v, ok := constant.(*float64); ok {
+                        *v = json[name].(float64)
+                    } else if v, ok := constant.(*int); ok {
+                        *v = int(json[name].(float64))
+                    }
+                }
+            }
+            consts.Refresh()
+            res["result"] = "ok"
+        }
     }
     return res
 }
@@ -338,9 +351,11 @@ func (g *Game) setUpConstants(json consts.JsonType) consts.JsonType {
 func (g *Game) getConstants() consts.JsonType {
     res := utils.JsonAction("getConst", "badAction")
     if *consts.TEST && consts.TEST_MODE {
+        fmt.Println(consts.VELOCITY)
         for name, val := range consts.NameConstMapping {
             res[name] = val
         }
+        fmt.Println(consts.VELOCITY)
         res["result"] = "ok"
     }
     return res
@@ -563,6 +578,15 @@ func (g *Game) startTesting() consts.JsonType {
 func (g *Game) stopTesting(sid string) consts.JsonType {
     res := utils.JsonAction("stopTesting", "badAction")
     if *consts.TEST && consts.TEST_MODE {
+        for name, constant := range consts.NameConstMapping {
+            if v, ok := constant.(*float64); ok {
+                *v = consts.NameDefaultConstMapping[name].(float64)
+            } else if v, ok := constant.(*int); ok {
+                *v = consts.NameDefaultConstMapping[name].(int)
+            } else {
+                return res
+            }
+        }
         res["result"] = "ok"
         consts.TEST_MODE = false
         g.mobs.Clear()
