@@ -44,8 +44,8 @@ define(['utils/testsAPI'], function(testsAPI) {
                             mob['id'] = response['id'];
                             testsAPI.Sleep(testsAPI.tickDuration * 25, testsAPI.Examine, mob['id']);
                         } else if (response['action'] == testsAPI.examineAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
                             expect(mob['x'] ==  response['x'] && mob['y'] == response['y']).to.be.ok;
-                            // assert(mob['x'] !=  response['x'] || mob['y'] != response['y'], "coordiantes of the mob had to change");
                             done();
                         }
                         if (isSetMap && isSetConst) {
@@ -90,6 +90,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                             mob['id'] = response['id'];
                             testsAPI.Sleep(3000, testsAPI.Examine, mob['id']);
                         } else if (response['action'] == testsAPI.examineAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
                             expect(mob['x'] ==  response['x'] && mob['y'] == response['y']).to.not.be.ok;
                             done();
                         }
@@ -135,6 +136,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                             mob['id'] = response['id'];
                             testsAPI.Sleep(3000, testsAPI.Examine, mob['id']);
                         } else if (response['action'] == testsAPI.examineAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
                             expect(mob['x'] ==  response['x'] && mob['y'] == response['y']).to.not.be.ok;
                             done();
                         }
@@ -185,6 +187,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                                 isPutMob1 = true;
                             }
                         } else if (response['action'] == testsAPI.examineAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
                             var m = response['id'] == mob1['id'] ? mob1 : mob2;
                             m["ex_x"] = response['x'];
                             m["ex_y"] = response['y'];
@@ -247,6 +250,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                             mob['id'] = response['id'];
                             testsAPI.Sleep(3200, testsAPI.Examine, mob['id']);
                         } else if (response['action'] == testsAPI.examineAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
                             expect(response['health']).to.equal(mob.hp);
                             expect(mob.hp).to.equal(mob.max_hp);
                             done();
@@ -300,6 +304,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                                 isPutMob1 = true;
                             }
                         } else if (response['action'] == testsAPI.examineAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
                             var m = response['id'] == mob1['id'] ? mob1 : mob2;
                             m["ex_hp"] = response['health'];
                         }
@@ -364,6 +369,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                                 isPutMob1 = true;
                             }
                         } else if (response['action'] == testsAPI.examineAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
                             var m = response['id'] == mob1['id'] ? mob1 : mob2;
                             m["ex_hp"] = response['health'];
                         }
@@ -428,6 +434,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                                 isPutMob1 = true;
                             }
                         } else if (response['action'] == testsAPI.examineAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
                             var m = response['id'] == mob1['id'] ? mob1 : mob2;
                             m["ex_hp"] = response['health'];
                         }
@@ -489,6 +496,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                             mob.id = response['id'];
                             counter++;
                         } else if (response['action'] == testsAPI.examineAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
                             var actor = response["id"] == mob.id ? mob : player;
                             actor.ex_hp = response["health"];
                         }
@@ -550,6 +558,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                             mob.id = response['id'];
                             counter++;
                         } else if (response['action'] == testsAPI.examineAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
                             var actor = response["id"] == mob.id ? mob : player;
                             actor.ex_hp = response["health"];
                         }
@@ -607,6 +616,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                             mob.id = response['id'];
                             counter++;
                         } else if (response['action'] == testsAPI.examineAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
                             var actor = response["id"] == mob.id ? mob : player;
                             actor.ex_hp = response["health"];
                         }
