@@ -658,7 +658,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   //    sid: data.ssid
                   // });
                } else if (response['action'] == 'putMob') {
-                  expect(response['result']).to.equal('badPoint');
+                  expect(response['result']).to.equal('badPlacing');
                   done();
                }
             };
@@ -695,7 +695,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   //    sid: data.ssid
                   // });
                } else if (response['action'] == 'putMob') {
-                  expect(response['result']).to.equal('badPoint');
+                  expect(response['result']).to.equal('badPlacing');
                   done();
                }
             };
@@ -732,7 +732,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   //    sid: data.ssid
                   // });
                } else if (response['action'] == 'putMob') {
-                  expect(response['result']).to.equal('badPoint');
+                  expect(response['result']).to.equal('badPlacing');
                   done();
                }
             };
@@ -765,7 +765,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                      expect(response['result']).to.equal('ok');
                      PutMob(2.0, 2.0, "ORC");
                   } else {
-                     expect(response['result']).to.equal('badPoint');
+                     expect(response['result']).to.equal('badPlacing');
                      done();
                   }
                   counter++;
@@ -800,7 +800,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                      expect(response['result']).to.equal('ok');
                      PutMob(1.5, 1.5, "ORC", undefined, [], [], { HP: 100 });
                   } else {
-                     expect(response['result']).to.equal('badPoint');
+                     expect(response['result']).to.equal('badPlacing');
                      done();
                   }
                   counter++;
@@ -1019,7 +1019,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                      sid: data.ssid
                   });
                } else if (response['action'] == 'putPlayer') {
-                  expect(response['result']).to.equal('badPoint');
+                  expect(response['result']).to.equal('badPlacing');
                   done();
                }
             };
@@ -1053,7 +1053,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                      sid: data.ssid
                   });
                } else if (response['action'] == 'putPlayer') {
-                  expect(response['result']).to.equal('badPoint');
+                  expect(response['result']).to.equal('badPlacing');
                   done();
                }
             };
@@ -1097,7 +1097,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                         sid: data.ssid
                      });
                   } else {
-                     expect(response['result']).to.equal('badPoint');
+                     expect(response['result']).to.equal('badPlacing');
                      done();
                   }
                   counter++;
@@ -1143,7 +1143,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                         sid: data.ssid
                      });
                   } else {
-                     expect(response['result']).to.equal('badPoint');
+                     expect(response['result']).to.equal('badPlacing');
                      done();
                   }
                   counter++;
