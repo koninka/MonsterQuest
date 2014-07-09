@@ -248,7 +248,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                         } else if (response['action'] == testsAPI.putMobAction) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
                             mob['id'] = response['id'];
-                            testsAPI.Sleep(3200, testsAPI.Examine, mob['id']);
+                            testsAPI.Sleep(2000, testsAPI.Examine, mob['id']);
                         } else if (response['action'] == testsAPI.examineAction) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
                             expect(response['health']).to.equal(mob.hp);
@@ -256,7 +256,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                             done();
                         }
                         if (isSetMap && isSetConst) {
-                            testsAPI.PutMob(mob.x, mob.y, mob.race, "7d9", mob.flags, [], {HP: mob.hp, MAX_HP: mob.max_hp});
+                            testsAPI.PutMob(mob.x, mob.y, mob.race, "3d5", mob.flags, [], {HP: mob.hp, MAX_HP: mob.max_hp});
                             isSetMap = isSetConst = false;
                         }
                     });
@@ -374,12 +374,12 @@ define(['utils/testsAPI'], function(testsAPI) {
                             m["ex_hp"] = response['health'];
                         }
                         if (isPutMob1 && isPutMob2) {
-                            testsAPI.Sleep(3000, testsAPI.Examine, mob1['id']);
-                            testsAPI.Sleep(3000, testsAPI.Examine, mob2['id']);
+                            testsAPI.Sleep(2000, testsAPI.Examine, mob1['id']);
+                            testsAPI.Sleep(2000, testsAPI.Examine, mob2['id']);
                             isPutMob1 = isPutMob2 = false;
                         }
                         if (isSetMap && isSetConst) {
-                            testsAPI.PutMob(mob1.x, mob1.y, mob1.race, "7d9", mob1.flags, [], {HP: mob1.hp, MAX_HP: mob1.max_hp});
+                            testsAPI.PutMob(mob1.x, mob1.y, mob1.race, "4d5", mob1.flags, [], {HP: mob1.hp, MAX_HP: mob1.max_hp});
                             testsAPI.PutMob(mob2.x, mob2.y, mob2.race, "3d4", mob2.flags, [], {HP: mob2.hp, MAX_HP: mob2.max_hp});
                             isSetMap = isSetConst = false;
                         }
