@@ -65,8 +65,17 @@ CREATE TABLE users_inventory (
    user_id INT NOT NULL REFERENCES users(id)     ON DELETE CASCADE,
    item_id INT NOT NULL REFERENCES artifacts(id) ON DELETE CASCADE,
    amount  INT NOT NULL DEFAULT 1,
-   place   INT NOT NULL,
+   place   INT NOT NULL CHECK (place >= 0),
    UNIQUE(user_id, place)
+);
+
+CREATE TABLE users_slots (
+   id      INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   user_id INT NOT NULL REFERENCES users(id)     ON DELETE CASCADE,
+   item_id INT NOT NULL REFERENCES artifacts(id) ON DELETE CASCADE,
+   amount  INT NOT NULL DEFAULT 1,
+   slot    INT NOT NULL CHECK (0 <= slot AND slot <= 9),
+   UNIQUE(user_id, slot)
 );
 
 DELIMITER //
@@ -82,10 +91,9 @@ BEGIN
    END IF;
 END//
 
-DROP PROCEDURE IF EXISTS `add_user_item` //
-CREATE PROCEDURE `add_user_item`(IN `uid` INT, IN `iid` INT, IN `place_num` INT, IN `amnt` INT)
+DROP PROCEDURE IF EXISTS `inc_user_item_amount` //
+CREATE PROCEDURE `inc_user_item_amount`(IN `uid` INT, IN `iid` INT, IN `place_num` INT, IN `amnt` INT)
 BEGIN
-   SET amnt = 1;
    IF (SELECT EXISTS (SELECT 1 FROM `users_inventory` WHERE `user_id` = uid AND `item_id` = iid AND `place` = place_num)) THEN
       UPDATE `users_inventory` SET `amount` = `amount` + amnt WHERE `user_id` = uid  AND `item_id` = iid AND `place` = place_num;
    ELSE
@@ -93,11 +101,10 @@ BEGIN
    END IF;
 END//
 
-DROP PROCEDURE IF EXISTS `drop_user_item` //
-CREATE PROCEDURE `drop_user_item`(IN `uid` INT, IN `iid` INT, IN `place_num` INT, IN `amnt` INT)
+DROP PROCEDURE IF EXISTS `dec_user_item_amount` //
+CREATE PROCEDURE `dec_user_item_amount`(IN `uid` INT, IN `iid` INT, IN `place_num` INT, IN `amnt` INT)
 BEGIN
    DECLARE tbl_amnt INT;
-   SET amnt = 1;
    UPDATE `users_inventory` SET `amount` = `amount` - amnt WHERE `user_id` = uid  AND `item_id` = iid AND `place` = place_num;
    IF (SELECT EXISTS (SELECT 1 FROM `users_inventory` WHERE `user_id` = uid AND `item_id` = iid AND `place` = place_num)) THEN
       SELECT `amount` INTO tbl_amnt FROM `users_inventory` WHERE `user_id` = uid AND `item_id` = iid AND `place` = place_num;
@@ -105,12 +112,6 @@ BEGIN
          DELETE FROM `users_inventory` WHERE `user_id` = uid  AND `item_id` = iid AND `place` = place_num;
       END IF;
    END IF;
-END//
-
-DROP PROCEDURE IF EXISTS `delete_item` //
-CREATE PROCEDURE `delete_item`(IN `uid` INT, IN `iid` INT, IN `place_num` INT)
-BEGIN
-   DELETE FROM `users_inventory` WHERE `user_id` = uid  AND `item_id` = iid AND `place` = place_num;
 END//
 
 DROP PROCEDURE IF EXISTS `move_item` //

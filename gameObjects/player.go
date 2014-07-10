@@ -1,6 +1,7 @@
 package gameObjects
 
 import (
+    "fmt"
     wpns "MonsterQuest/gameStuff/weapons"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/gameFight/fightBase"
@@ -115,25 +116,26 @@ func (p* Player) RestoreItem(item gameObjectsBase.Itemer, place int) {
 func (p* Player) DropItem(item gameObjectsBase.Itemer, amount int) (int, gameObjectsBase.Itemer) {
     db := connect.CreateConnect()
     place, new_item := p.ActiveObject.DropItem(item, amount)
-    _, err := db.Exec("CALL drop_user_item(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, amount);
+    _, err := db.Exec("CALL dec_user_item_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, amount);
     if err != nil {
-        //-
+        //
     }
     return place, new_item
-    // return err == nil
 }
 
 func (p* Player) PickUpItem(item gameObjectsBase.Itemer) bool {
     db := connect.CreateConnect()
-    _, err := db.Exec("CALL add_user_item(?, ?, ?, ?)", p.DBId, item.GetKindId(), p.AddItem(item), 1);
+    _, err := db.Exec("CALL inc_user_item_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), p.AddItem(item), item.GetAmount());
     if err != nil {
+        //
+        fmt.Println(err)
     }
     return err == nil
 }
 
-func (p* Player) DeleteItem(item gameObjectsBase.Itemer) bool {
+func (p* Player) DeleteItem(item gameObjectsBase.Itemer, amount int) bool {
     db := connect.CreateConnect()
-    _, err := db.Exec("CALL delete_item(?, ?, ?)", p.DBId, item.GetKindId(), p.Inventory.DeleteItem(item));
+    _, err := db.Exec("CALL dec_user_item_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), p.Inventory.DeleteItem(item), amount);
     if err != nil {
         //
     }

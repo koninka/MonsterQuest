@@ -325,7 +325,7 @@ type Itemer interface {
     GetAmount() int
     GetItemClass() int
     getAmount() int
-    decAmount(int)
+    DecAmount(int)
     setAmount(int)
     UseItem(*InventoryObj)
     UnuseItem()
@@ -433,7 +433,7 @@ func (i* Item) getAmount() int {
     return 1
 }
 
-func (i* Item) decAmount(int) {
+func (i* Item) DecAmount(int) {
 }
 
 func (i* Item) setAmount(int) {
@@ -513,7 +513,7 @@ func (i* StackItem) getAmount() int {
     return i.amount
 }
 
-func (i* StackItem) decAmount(amount int) {
+func (i* StackItem) DecAmount(amount int) {
     i.amount -= amount
 }
 

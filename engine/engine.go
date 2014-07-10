@@ -216,7 +216,11 @@ func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
         item := g.items.getItem(int64(idParam.(float64)))
         p := g.players.getPlayerBySession(json["sid"].(string))
         if item != nil && item.IsOwner(p) {
-            _, new_item := p.DropItem(item, 1)//second param must me amount
+            var amount int = 1
+            if json["amount"] != nil {
+                amount = int(json["amount"].(float64))
+            }
+            _, new_item := p.DropItem(item, amount)
             if new_item != nil {
                 new_item.SetID(utils.GenerateId())
                 g.items.addItem(new_item)
@@ -235,9 +239,19 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
         item := g.items.getItem(int64(idParam.(float64)))
         p := g.players.getPlayerBySession(json["sid"].(string))
         if item != nil && (item.IsOwner(p) || (!item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) <= consts.PICK_UP_RADIUS)) {
-            g.items.deleteItem(item)
-            if item.IsOwner(p) {
-                p.DeleteItem(item)
+            var amount int = 1
+            if json["amount"] != nil {
+                amount = int(json["amount"].(float64))
+            }
+            if item.GetAmount() - amount <= 0 {
+                g.items.deleteItem(item)
+                if item.IsOwner(p) {
+                    p.DeleteItem(item, amount)
+                } else if !item.HasOwner() {
+                    g.field.UnlinkFromCells(item)
+                }
+            } else {
+                item.DecAmount(amount)
             }
             res["result"] = "ok"
         }
