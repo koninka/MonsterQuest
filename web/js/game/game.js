@@ -1,12 +1,14 @@
 define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'options', 'global', 'quickpanel'], 
     function(JQuery, utils, Player, View, Graphic, Inventory, OPTIONS, GLOBAL, QuickPanel) {
 
+    var player_id = (parseInt(utils.getQueryVariable('id')));
+    var inventory_ = null;
     function Game(sid, wsuri) {
         this.sid      = sid;
         this.sock     = null;
         this.tick     = null;
         this.wsuri    = wsuri;
-        this.player   = new Player(parseInt(utils.getQueryVariable('id')))
+        //this.player   = new Player(parseInt(utils.getQueryVariable('id')))
         this.view     = new View(this.player);
         this.dirsDown = [];
         this.graphic  = null;  //initGraphic
@@ -187,6 +189,8 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
             var data = JSON.parse(e.data);
             if(data["action"] == "look"){
                 th.defineRadiusFromMap(data['map']);
+                th.initInventory();
+                th.SetInventory(inventory_)
                 th.player.InitAnimation(true, th.player);
                 th.InitChain(chain_number + 1);
             }
@@ -199,8 +203,11 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         th.sock.onmessage = function(e){
             var data = JSON.parse(e.data);
             if(data["action"] == "examine"){
-                th.initInventory();
-                th.SetInventory(data.inventory);
+                th.player = new Player(player_id, data['login'], data['health'], data['maxHealth']);
+                th.view.player = th.player;
+                //th.initInventory();
+                inventory_ = data.inventory;
+                //th.SetInventory(data.inventory);
                 //th.setExamineData(data);
                 th.InitChain(chain_number + 1);
             }
@@ -209,7 +216,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
     }
 
     Game.prototype.SelfExamine = function(){
-        this.sendViaWS({action: "examine", id: game.player.id})
+        this.sendViaWS({action: "examine", id: player_id})
     }
 
     Game.prototype.InitKeyboard = function() {
@@ -260,10 +267,11 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         this.firstLook = true;
         this.initGraphic();
         this.init_chain = [];
-        this.init_chain[0] = this.InitDictionary;
+        this.init_chain[0] = this.InitPlayer;
         this.init_chain[1] = this.InitLook;
-        this.init_chain[2] = this.InitQuickPanel;
-        this.init_chain[3] = this.InitPlayer;
+        //this.init_chain[3] = this.InitGraphic;
+        this.init_chain[2] = this.InitDictionary;
+        this.init_chain[3] = this.InitQuickPanel;
         this.InitChain(0);
         this.InitKeyboard()
     };
