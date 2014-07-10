@@ -219,7 +219,7 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
             if(this.actors[id]){
                 this.actors[id].Move({x: x, y: y}, this.player);
                 if(players[i].type != 'item')
-                    this.actors[id].SetHP(players[i].hp);
+                    this.actors[id].SetHP(players[i].health);
             } else {
                 var name = players[i].name || players[i].type;
                 var t = actorInfo[name];
@@ -227,7 +227,7 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
                 if(players[i].type == 'item'){
                     this.actors[id] = new Item(players[i]);
                 } else
-                    this.actors[id] = new t.class(id, x, y, a, {cur : players[i].hp, max : players[i].max_hp}, players[i].login, true, this.player, t.opt);
+                    this.actors[id] = new t.class(id, x, y, a, {cur : players[i].health, max : players[i].maxHealth}, players[i].login, true, this.player, t.opt);
             }
             actors_on_scene[id] = true;
         }
