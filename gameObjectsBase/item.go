@@ -519,6 +519,12 @@ type StackItem struct {
     amount int
 }
 
+func (i* StackItem) GetInfo() consts.JsonType {
+    msg = i.Item.GetInfo()
+    msg["amount"] = i.amount
+    return msg
+}
+
 func (i* StackItem) getAmount() int {
     return i.amount
 }
