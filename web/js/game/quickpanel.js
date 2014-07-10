@@ -47,11 +47,16 @@ define(['options', 'global'], function(OPTIONS, GLOBAL){
 
 
     QuickPanel.prototype.SetToPanel = function(something, number){
-        if(this.onPanel[number])
+        if(this.onPanel[number]){
+            KeyboardJS.clear((number + 1).toString());
             this.removeChild(this.onPanel[number]);
+        }
         var link = new QuickButton(something, number);
         this.onPanel[number] = link;
         this.addChild(link);
+        KeyboardJS.on((number + 1).toString(), function(){
+            link.click();
+        })
     }
 
     return QuickPanel;
