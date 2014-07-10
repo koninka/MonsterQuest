@@ -133,6 +133,7 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             if(!this.items[id])
                 this.AddItem(slots[s]);
             this.items[id].SetPosition({x: x, y: y});
+            this.items[id].slot = s;
             founded_items[id] = true;
         }
         for(var i = 0; i < items.length; ++i){
@@ -154,6 +155,7 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
                 x = item.cell % inventory_size.x;
             }
             this.items[id].SetPosition({x: x, y: y});    
+            this.items[id].slot = undefined;
             founded_items[id] = true;
         }
         for(var i in this.items){
