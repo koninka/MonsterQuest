@@ -263,21 +263,23 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
 func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("equip", "badId")
     idParam := json["id"]
-    slotParam := json["slot"]
-    if slotParam == nil {
+    if idParam != nil {
         res["result"] = "badSlot"
-    } else if idParam != nil {
-        p := g.players.getPlayerBySession(json["sid"].(string))
-        item := p.GetItem(int64(idParam.(float64)))
-        if item != nil {
-            isEquip, slots := p.Equip(item, consts.NameSlotMapping[slotParam.(string)])
-            if isEquip {
-                res["result"] = "ok"
-                if slots != nil {
-                    res["slots"] = slots
+        slotParam := json["slot"]
+        if slotParam != nil {
+            slot, isExistSlot := consts.NameSlotMapping[slotParam.(string)]
+            if isExistSlot {
+                p := g.players.getPlayerBySession(json["sid"].(string))
+                item := p.GetItem(int64(idParam.(float64)))
+                if item != nil {
+                    isEquip, slots := p.Equip(item, slot)
+                    if isEquip {
+                        if slots != nil {
+                            res["slots"] = slots
+                        }
+                        res["result"] = "ok"
+                    }
                 }
-            } else {
-                res["result"] = "badSlot"
             }
         }
     }
@@ -288,12 +290,15 @@ func (g *Game) unequipItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("unequip", "badSlot")
     slotParam := json["slot"]
     if slotParam != nil {
-        p := g.players.getPlayerBySession(json["sid"].(string))
-        isUnequip, slots := p.Unequip(consts.NameSlotMapping[slotParam.(string)])
-        if isUnequip {
-            res["result"] = "ok"
-            if slots != nil {
-                res["slots"] = slots
+        slot, isExistSlot := consts.NameSlotMapping[slotParam.(string)]
+        if isExistSlot {
+            p := g.players.getPlayerBySession(json["sid"].(string))
+            isUnequip, slots := p.Unequip(slot)
+            if isUnequip {
+                res["result"] = "ok"
+                if slots != nil {
+                    res["slots"] = slots
+                }
             }
         }
     }

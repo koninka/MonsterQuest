@@ -1,8 +1,8 @@
 define(['utils/testsAPI'], function(testsAPI) {
-    
+
     function Test(){
 
-        
+
 
         describe('inventory', function() {
 
@@ -485,7 +485,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                             firstPut = false;
                             player1['id'] = response['id'];
                             player1['sid'] = response['sid'];
-                            item_id = response['inventory'][0];    
+                            item_id = response['inventory'][0];
                         } else {
                             player2['sid'] = response['sid'];
                             testsAPI.PickUp(player2['sid'], item_id);
@@ -539,7 +539,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                             firstPut = false;
                             player1['id'] = response['id'];
                             player1['sid'] = response['sid'];
-                            item_id = response['inventory'][0];    
+                            item_id = response['inventory'][0];
                         } else {
                             player2['sid'] = response['sid'];
                             testsAPI.Destroy(player2['sid'], item_id);
@@ -593,7 +593,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                             firstPut = false;
                             player1['id'] = response['id'];
                             player1['sid'] = response['sid'];
-                            item_id = response['inventory'][0];    
+                            item_id = response['inventory'][0];
                         } else {
                             player2['sid'] = response['sid'];
                             testsAPI.Drop(player2['sid'], item_id);
@@ -648,11 +648,11 @@ define(['utils/testsAPI'], function(testsAPI) {
                         testsAPI.Ok(response['result']);
                         if (response['actionResult']['action'] == testsAPI.pickUpAction) {
                             testsAPI.Equal(response['actionResult']['result'], 'tooHeavy');
-                            testsAPI.Examine(player['id'], player['sid']);    
+                            testsAPI.Examine(player['id'], player['sid']);
                         } else {
                             testsAPI.Equal(response['actionResult']['inventory'].length, 0);
                             done();
-                        }                        
+                        }
                     }
                 });
 
@@ -702,6 +702,44 @@ define(['utils/testsAPI'], function(testsAPI) {
                 testsAPI.StartTesting();
             });
 
+            it('should fail equip item[badSlot]', function(done) {
+                var player = { x: 0.5, y: 0.5 };
+                var item_id = null;
+
+                testsAPI.SetWSHandler(function(e) {
+
+                   var response = JSON.parse(e.data);
+
+                    if (response['action'] == testsAPI.startTestingAction) {
+                        testsAPI.Ok(response['result']);
+                        testsAPI.SetUpConstants();
+                        testsAPI.SetUpMap([
+                            [".", ".", ".", "."],
+                            [".", ".", ".", "."],
+                            [".", ".", ".", "."],
+                            [".", ".", ".", "."]
+                        ]);
+                    } else if (response['action'] == testsAPI.setUpConstAction) {
+                        testsAPI.Ok(response['result']);
+                    } else if (response['action'] == testsAPI.setUpMapAction) {
+                        testsAPI.Ok(response['result']);
+                        testsAPI.PutPlayer(player['x'], player['y'], [ testsAPI.MakeItem() ]);
+                    } else if (response['action'] == testsAPI.putPlayerAction) {
+                        testsAPI.Ok(response['result']);
+                        player['id'] = response['id'];
+                        player['sid'] = response['sid'];
+                        item_id = response['inventory'][0];
+                        testsAPI.Equip(player['sid'], item_id, "LEFT|HEND");
+                    } else if (response['action'] == testsAPI.enforceAction) {
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Equal(response['actionResult']['result'], 'badSlot');
+                        done();
+                    }
+                });
+
+                testsAPI.StartTesting();
+            });
+
             it('should successfully unequip item', function(done) {
                 var player = { x: 0.5, y: 0.5 };
                 var item_id = null;
@@ -739,6 +777,44 @@ define(['utils/testsAPI'], function(testsAPI) {
                             testsAPI.Equal(response['actionResult']['slots']['LEFT-HAND'], undefined);
                             done();
                         }
+                    }
+                });
+
+                testsAPI.StartTesting();
+            });
+
+            it('should fail unequip item[badSlot]', function(done) {
+                var player = { x: 0.5, y: 0.5 };
+                var item_id = null;
+
+                testsAPI.SetWSHandler(function(e) {
+
+                   var response = JSON.parse(e.data);
+
+                    if (response['action'] == testsAPI.startTestingAction) {
+                        testsAPI.Ok(response['result']);
+                        testsAPI.SetUpConstants();
+                        testsAPI.SetUpMap([
+                            [".", ".", ".", "."],
+                            [".", ".", ".", "."],
+                            [".", ".", ".", "."],
+                            [".", ".", ".", "."]
+                        ]);
+                    } else if (response['action'] == testsAPI.setUpConstAction) {
+                        testsAPI.Ok(response['result']);
+                    } else if (response['action'] == testsAPI.setUpMapAction) {
+                        testsAPI.Ok(response['result']);
+                        testsAPI.PutPlayer(player['x'], player['y'], [ testsAPI.MakeItem() ], {}, { 'LEFT-HAND' : testsAPI.MakeItem() });
+                    } else if (response['action'] == testsAPI.putPlayerAction) {
+                        testsAPI.Ok(response['result']);
+                        player['id'] = response['id'];
+                        player['sid'] = response['sid'];
+                        item_id = response['inventory'][0];
+                        testsAPI.Unequip(player['sid'], "RIGHT-HENT");
+                    } else if (response['action'] == testsAPI.enforceAction) {
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Equal(response['actionResult']['result'], 'badSlot');
+                        done();
                     }
                 });
 
@@ -800,7 +876,7 @@ define(['utils/testsAPI'], function(testsAPI) {
 
         });
 
-        
+
     }
 
 
