@@ -19,17 +19,17 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
 
     function CellToSlot(cell){
         var itemType = [
-            "HEAD" ,
-            "NECK" ,
-            "BODY" ,
-            "HANDS",
-            "LEFT" ,
-            "RIGHT" ,
-            "WEAPON",
-            "ARM" ,
-            "FEET" 
-
-        ]
+            "head",
+            "neck",
+            "body",
+            "forearm",
+            "left-finger",
+            "right-finger",
+            "left-hand",
+            "right-hand",
+            "feet",
+            "ammo"
+        ];
         if(cell.x >= -1 && cell.x < 0 && cell.y >= 0 && cell.y < OPTIONS.slots.length)
             return itemType[cell.y]
         return null;

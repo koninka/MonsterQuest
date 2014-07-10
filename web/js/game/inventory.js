@@ -6,15 +6,16 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         this.items = [];
         this.InitContainer();
         this.slots = {
-            "HEAD" : null,
-            "NECK" : null,
-            "BODY" : null,
-            "HANDS" : null,
-            "LEFT" : null,
-            "RIGHT" : null,
-            "WEAPON" : null,
-            "ARM" : null,
-            "FEET" : null
+            "head" : null,
+            "neck" : null,
+            "body" : null,
+            "forearm" : null,
+            "left-finger" : null,
+            "right-finger" : null,
+            "left-hand" : null,
+            "right-hand" : null,
+            "feet" : null,
+            "ammo" : null
         };
     }
 
@@ -71,27 +72,28 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
     }
 
     var slotToNumber = {
-        "HEAD" : 0,
-        "NECK" : 1,
-        "BODY" : 2,
-        "HANDS" : 3,
-        "LEFT" : 4,
-        "RIGHT" : 5,
-        "WEAPON" : 6,
-        "ARM" : 7,
-        "FEET" : 8
+        "head" : 0,
+        "neck" : 1,
+        "body" : 2,
+        "forearm" : 3,
+        "left-finger" : 4,
+        "right-finger" : 5,
+        "left-hand" : 6,
+        "right-hand" : 7,
+        "feet" : 8,
+        "ammo" : 9
     }    
 
     Inventory.prototype.FindSlot = function(item){
         var itemType = {
-            "amulet" : ["NECK"],
-            "ring" : ["LEFT", "RIGHT"],
-            "armor" : ["BODY"],
-            "shield" : ["ARM"],
-            "helmet" : ["HEAD"],
-            "gloves" : ["HANDS"],
-            "boots" : ["FEET"],
-            "weapon" : ["WEAPON"]
+            "amulet" : ["neck"],
+            "ring" : ["left-finger", "right-finger"],
+            "armor" : ["body"],
+            "shield" : ["right-hand"],
+            "helmet" : ["head"],
+            "gloves" : ["forearm"],
+            "boots" : ["feet"],
+            "weapon" : ["left-hand"]
         }
         var slot = itemType[item.itemType];
         if(!slot)
@@ -107,15 +109,16 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
     Inventory.prototype.SetItems = function(items, slots){
         if(!items) return;
         this.slots = {
-            "HEAD" : null,
-            "NECK" : null,
-            "BODY" : null,
-            "HANDS" : null,
-            "LEFT" : null,
-            "RIGHT" : null,
-            "WEAPON" : null,
-            "ARM" : null,
-            "FEET" : null
+            "head" : null,
+            "neck" : null,
+            "body" : null,
+            "forearm" : null,
+            "left-finger" : null,
+            "right-finger" : null,
+            "left-hand" : null,
+            "right-hand" : null,
+            "feet" : null,
+            "ammo" : null
         };
         var founded_items = {};
         var cell_x = 0;
