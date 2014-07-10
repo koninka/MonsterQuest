@@ -308,6 +308,12 @@ var IotaItemType2Name = map[int] string {
     consts.ITEM_T_EXPENDABLE : "expendable",
 }
 
+var IotaItemSubType2Name = map[int] string {
+    consts.ITEM_ST_ONE_HANDED : "one-handed",
+    consts.ITEM_ST_TWO_HANDED : "two-handed",
+    consts.ITEM_ST_BOW : "bow",
+}
+
 type Itemer interface {
     GameObjecter
     GetOwner() Activer
@@ -352,8 +358,10 @@ func (i *Item) GetInfo() consts.JsonType {
     msg["name"] = i.kind.name
     msg["itemType"] = IotaItemType2Name[i.kind.itemType]
     msg["type"] = consts.ITEM_TYPE
-    //msg["subtype"] = i.subtype
-    msg["weight"] = i.weight
+    msg["weight"] = i.kind.weight
+    if i.IsWeapon(){
+        msg["subtype"] = IotaItemSubType2Name[i.kind.subtype]
+    }
     return msg
 }
 
