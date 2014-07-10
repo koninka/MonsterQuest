@@ -324,13 +324,14 @@ type Itemer interface {
     GetItemType() int
     GetAmount() int
     GetItemClass() int
+    GetItemSubtype() int
     getAmount() int
     DecAmount(int)
     setAmount(int)
     UseItem(*InventoryObj)
     UnuseItem()
-    EquipItem(*InventoryObj)
-    UnequipItem(*InventoryObj)
+    EquipItem(*InventoryObj) int
+    UnequipItem(*InventoryObj) int
     applyBonuses()
     applyEffects()
     cancelBonuses()
@@ -425,6 +426,10 @@ func (i* Item) GetItemClass() int {
     return i.kind.class
 }
 
+func (i* Item) GetItemSubtype() int {
+    return i.kind.subtype
+}
+
 func (i* Item) GetAmount() int {
     return 1
 }
@@ -448,12 +453,12 @@ func (i *Item) UnuseItem() {
     i.cancelBonuses()
 }
 
-func (i *Item) EquipItem(*InventoryObj) {
-
+func (i *Item) EquipItem(*InventoryObj) int {
+    return 0
 }
 
-func (i *Item) UnequipItem(*InventoryObj) {
-
+func (i *Item) UnequipItem(*InventoryObj) int {
+    return -1
 }
 
 func (i *Item) applyBonuses() {
@@ -483,20 +488,24 @@ func (i* GarmentItem) IsEquipped() bool {
     return i.isEquiped
 }
 
-func (i* GarmentItem) EquipItem(inv *InventoryObj) {
+func (i* GarmentItem) EquipItem(inv *InventoryObj) int {
+    var place int = -1
     if !i.isEquiped {
         i.Item.UseItem(inv)
-        inv.unplaceItem(i.GetID())
+        place = inv.unplaceItem(i.GetID())
         i.isEquiped = true
     }
+    return place
 }
 
-func (i* GarmentItem) UnequipItem(inv *InventoryObj) {
+func (i* GarmentItem) UnequipItem(inv *InventoryObj) int {
+    var place int = -1
     if i.isEquiped {
         i.Item.UnuseItem()
-        inv.placeItem(i.GetID())
+        place = inv.placeItem(i.GetID())
         i.isEquiped = false
     }
+    return place
 }
 
 type WeaponItem struct {
@@ -552,10 +561,10 @@ func newItem(ik *ItemKind, owner Activer, amount ...interface{}) Itemer {
     return i
 }
 
-func NewItemByID(iid int64, owner Activer) Itemer {
+func NewItemByID(iid int64, owner Activer, amount int) Itemer {
     var item Itemer = nil
     if ik, ok := gameItems.items[iid]; ok {
-        item = newItem(ik, owner)
+        item = newItem(ik, owner, amount)
     }
     return item
 }

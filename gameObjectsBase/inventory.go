@@ -114,13 +114,16 @@ func (inv* InventoryObj) MoveItem(i Itemer, from_cell, to_cell int) {
     inv.cells[to_cell] = i.GetID()
 }
 
-func (inv *InventoryObj) unplaceItem(id int64) {
-    for cell, item_id := range inv.cells {
+func (inv *InventoryObj) unplaceItem(id int64) int {
+    var cell int = -1
+    for c, item_id := range inv.cells {
         if item_id == id {
+            cell = c
             delete(inv.cells, cell)
             break
         }
     }
+    return cell
 }
 
 func (inv *InventoryObj) placeItem(id int64) int {

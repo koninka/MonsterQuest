@@ -113,6 +113,11 @@ func (p* Player) RestoreItem(item gameObjectsBase.Itemer, place int) {
     item.SetOwner(p)
 }
 
+func (p* Player) RestoreSlot(item gameObjectsBase.Itemer, slotIota int) {
+    p.slots[slotIota].item = item
+    item.SetOwner(p)
+}
+
 func (p* Player) DropItem(item gameObjectsBase.Itemer, amount int) (int, gameObjectsBase.Itemer) {
     db := connect.CreateConnect()
     place, new_item := p.ActiveObject.DropItem(item, amount)
@@ -142,25 +147,68 @@ func (p* Player) DeleteItem(item gameObjectsBase.Itemer, amount int) bool {
     return err == nil
 }
 
-func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) bool {
+func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) (bool, consts.JsonType) {
+    var res consts.JsonType = nil
     slot := p.slots[slotIota]
     if slot == nil || !slot.isSuitableType(item.GetItemType())  || item.GetItemClass() != consts.ITEM_CLASS_GARMENT {
-        return false
+        return false, res
     }
     p.Unequip(slotIota)
-    item.EquipItem(p.Inventory)
-    slot.item = item
-    return true
+    db := connect.CreateConnect()
+    _, err := db.Exec("CALL equip_item(?, ?, ?, ?)", p.DBId, item.GetKindId(), item.EquipItem(p.Inventory), slotIota);
+    if err == nil {
+        if slotIota == consts.SLOT_LEFT_HAND || slotIota == consts.SLOT_RIGHT_HAND {
+            st := item.GetItemSubtype()
+            if st == consts.ITEM_ST_BOW || st == consts.ITEM_ST_TWO_HANDED {
+                var s int
+                if slotIota == consts.SLOT_LEFT_HAND {
+                    s = consts.SLOT_RIGHT_HAND
+                } else {
+                    s = consts.SLOT_LEFT_HAND
+                }
+                if p.slots[s].item.GetID() != item.GetID() {
+                    res = consts.JsonType {}
+                    res[consts.SlotNameMapping[s]] = item.GetID()
+                    p.Unequip(s)
+                    p.slots[s].item = item
+                    db.Exec("CALL clone_slot(?, ?, ?)", p.DBId, slotIota, s)
+                }
+            }
+        }
+        slot.item = item
+    }
+    return err == nil, res
 }
 
-func (p *Player) Unequip(slotIota int) bool {
+func (p *Player) Unequip(slotIota int) (bool, consts.JsonType) {
+    var res consts.JsonType = nil
     slot := p.slots[slotIota]
     if slot.item == nil {
-        return false
+        return false, res
     }
-    slot.item.UnequipItem(p.Inventory)
-    slot.item = nil
-    return true
+    db := connect.CreateConnect()
+    _, err := db.Exec("CALL unequip_item(?, ?, ?, ?)", p.DBId, slot.item.GetKindId(), slot.item.UnequipItem(p.Inventory), slotIota)
+    if err == nil {
+        if slotIota == consts.SLOT_LEFT_HAND || slotIota == consts.SLOT_RIGHT_HAND {
+            st := slot.item.GetItemSubtype()
+            if st == consts.ITEM_ST_BOW || st == consts.ITEM_ST_TWO_HANDED {
+                var s int
+                if slotIota == consts.SLOT_LEFT_HAND {
+                    s = consts.SLOT_RIGHT_HAND
+                } else {
+                    s = consts.SLOT_LEFT_HAND
+                }
+                if p.slots[s].item.GetID() == slot.item.GetID() {
+                    res = consts.JsonType {}
+                    res[consts.SlotNameMapping[s]] = slot.item.GetID()
+                    p.slots[s].item = nil
+                    db.Exec("CALL delete_clone_slot(?, ?)", p.DBId, s)
+                }
+            }
+        }
+        slot.item = nil
+    }
+    return err == nil, res
 }
 
 func (p *Player) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer) consts.JsonType {

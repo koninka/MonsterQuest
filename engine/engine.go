@@ -269,8 +269,12 @@ func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
         p := g.players.getPlayerBySession(json["sid"].(string))
         item := p.GetItem(int64(idParam.(float64)))
         if item != nil {
-            if p.Equip(item, consts.NameSlotMapping[slotParam.(string)]) {
+            isEquip, slots := p.Equip(item, consts.NameSlotMapping[slotParam.(string)])
+            if isEquip {
                 res["result"] = "ok"
+                if slots != nil {
+                    res["slots"] = slots
+                }
             } else {
                 res["result"] = "badSlot"
             }
@@ -284,8 +288,12 @@ func (g *Game) unequipItem(json consts.JsonType) consts.JsonType {
     slotParam := json["slot"]
     if slotParam != nil {
         p := g.players.getPlayerBySession(json["sid"].(string))
-        if p.Unequip(consts.NameSlotMapping[slotParam.(string)]) {
+        isUnequip, slots := p.Unequip(consts.NameSlotMapping[slotParam.(string)])
+        if isUnequip {
             res["result"] = "ok"
+            if slots != nil {
+                res["slots"] = slots
+            }
         }
     }
     return res
@@ -468,7 +476,8 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                         item := gameObjectsBase.ItemFromJson(consts.JsonType(itemDesc.(map[string] interface{})))
                         if item != nil {
                             p.AddItem(item)
-                            if p.Equip(item, consts.NameSlotMapping[slotName]) {
+                            isEquip, _ := p.Equip(item, consts.NameSlotMapping[slotName])
+                            if isEquip {
                                 g.items.addItem(item)
                                 idxs = append(idxs, item.GetID())
                             }
@@ -643,8 +652,19 @@ func (g *Game) CreatePlayer(sid string) *gameObjects.Player {
             amount, place int
         )
         rows.Scan(&iid, &amount, &place)
-        item := gameObjectsBase.NewItemByID(iid, p)
+        item := gameObjectsBase.NewItemByID(iid, p, amount)
         p.RestoreItem(item, place)
+        g.items.addItem(item)
+    }
+    rows, _ = db.Query("SELECT item_id, amount, slot FROM users_slots WHERE user_id = ?", dbId)
+    for rows.Next() {
+        var (
+            iid int64
+            amount, slot int
+        )
+        rows.Scan(&iid, &amount, &slot)
+        item := gameObjectsBase.NewItemByID(iid, p, amount)
+        p.RestoreSlot(item, slot)
         g.items.addItem(item)
     }
     return p
