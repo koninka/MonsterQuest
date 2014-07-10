@@ -14,13 +14,14 @@ define({
         "hands_slot",
         "finger_slot",
         "finger_slot",
-        //"ammo_slot",
+        
         "weapon_slot",
         "shield_slot",
         //"back_slot",
         //"bow_slot",
         
         "feet_slot",
+        "ammo_slot"
         
         
         
