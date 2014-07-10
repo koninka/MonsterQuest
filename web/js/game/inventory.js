@@ -144,17 +144,16 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             }
             var item = items[i];
             var id = item.id;
-            if(this.items[id]){
-                var x = cell_x;
-                var y = cell_y;
-                if(item.cell !== null){
-                    y = Math.floor(item.cell / inventory_size.x);
-                    x = item.cell % inventory_size.x;
-                }
-                this.items[id].SetPosition({x: x, y: y});
-            } else {
-                this.AddItem(item);
+            if(!this.items[id]){
+                this.AddItem(item)
             }
+            var x = cell_x;
+            var y = cell_y;
+            if(item.cell !== null){
+                y = Math.floor(item.cell / inventory_size.x);
+                x = item.cell % inventory_size.x;
+            }
+            this.items[id].SetPosition({x: x, y: y});    
             founded_items[id] = true;
         }
         for(var i in this.items){
