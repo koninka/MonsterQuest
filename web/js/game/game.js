@@ -274,8 +274,9 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         AddToChain(this.InitPlayer);
         
         AddToChain(this.InitLook);
-        AddToChain(this.InitQuickPanel);
         AddToChain(this.InitDictionary);
+        AddToChain(this.InitQuickPanel);
+        
         this.InitChain(0);
         this.InitKeyboard()
     };

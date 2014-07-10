@@ -5,6 +5,7 @@ define(['global', 'options'], function(GLOBAL, OPTIONS){
         this.type = item.type;
         this.name = item.name;
         this.id = item.id;
+        this.amount = item.amount;
         this.InitSprite();
         var m = this.item;
         this.onClick = function(data){
