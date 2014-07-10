@@ -352,6 +352,8 @@ func (i *Item) GetInfo() consts.JsonType {
     msg["name"] = i.kind.name
     msg["itemType"] = IotaItemType2Name[i.kind.itemType]
     msg["type"] = consts.ITEM_TYPE
+    //msg["subtype"] = i.subtype
+    msg["weight"] = i.weight
     return msg
 }
 
