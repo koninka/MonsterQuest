@@ -540,10 +540,7 @@ type ConsumableItem struct {
 
 func (i* ConsumableItem) UseItem(inv* InventoryObj) {
     i.Item.UseItem(inv)
-    i.amount--
-    if (i.amount <= 0) {
-        inv.DeleteItem(i)
-    }
+    inv.DeleteItem(i, 1)
 }
 
 func newItem(ik *ItemKind, owner Activer, amount ...interface{}) Itemer {

@@ -118,12 +118,27 @@ func (p* Player) RestoreSlot(item gameObjectsBase.Itemer, slotIota int) {
     item.SetOwner(p)
 }
 
+func (p* Player) getSlotByItem(item gameObjectsBase.Itemer) int {
+    var slot int = consts.SLOT_DEFAULT
+    for i, s := range p.slots {
+        if s.item != nil && s.item.GetID() == item.GetID() {
+            slot = i
+            break
+        }
+    }
+    return slot
+}
+
 func (p* Player) DropItem(item gameObjectsBase.Itemer, amount int) (int, gameObjectsBase.Itemer) {
     db := connect.CreateConnect()
     place, new_item := p.ActiveObject.DropItem(item, amount)
-    _, err := db.Exec("CALL dec_user_item_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, amount);
-    if err != nil {
-        //
+    if s := p.getSlotByItem(item); s != consts.SLOT_DEFAULT {
+        if item.GetAmount() - amount <= 0 {
+            p.slots[s].item = nil
+        }
+        db.Exec("CALL dec_user_slot_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), s, amount)
+    } else {
+        db.Exec("CALL dec_user_item_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, amount)
     }
     return place, new_item
 }
@@ -139,12 +154,19 @@ func (p* Player) PickUpItem(item gameObjectsBase.Itemer) bool {
 }
 
 func (p* Player) DeleteItem(item gameObjectsBase.Itemer, amount int) bool {
+    var res bool = false
     db := connect.CreateConnect()
-    _, err := db.Exec("CALL dec_user_item_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), p.Inventory.DeleteItem(item), amount);
-    if err != nil {
-        //
+    if s := p.getSlotByItem(item); s != consts.SLOT_DEFAULT {
+        if item.GetAmount() - amount <= 0 {
+            p.slots[s].item = nil
+        }
+        _, err := db.Exec("CALL dec_user_slot_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), s, amount);
+        res = err == nil
+    } else {
+        _, err := db.Exec("CALL dec_user_item_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), p.Inventory.DeleteItem(item, amount), amount);
+        res = err == nil
     }
-    return err == nil
+    return res
 }
 
 func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) (bool, consts.JsonType) {

@@ -157,4 +157,12 @@ BEGIN
    DELETE FROM `users_slots` WHERE `user_id` = uid  AND `item_id` = iid AND `slot` = slot_num;
 END//
 
+DROP PROCEDURE IF EXISTS `dec_user_slot_amount` //
+CREATE PROCEDURE `dec_user_slot_amount`(IN `uid` INT, IN `iid` INT, IN `slot_num` INT, IN `amnt` INT)
+BEGIN
+   DECLARE tbl_amnt INT;
+   UPDATE `users_slots` SET `amount` = `amount` - amnt WHERE `user_id` = uid  AND `item_id` = iid AND `slot` = slot_num;
+   DELETE FROM `users_slots` WHERE `user_id` = uid  AND `item_id` = iid AND `slot` = slot_num AND `amount` <= 0;
+END//
+
 DELIMITER ;

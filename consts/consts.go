@@ -171,6 +171,7 @@ const (
     SLOT_HEAD
     SLOT_FOREARM
     SLOT_FEET
+    SLOT_DEFAULT
 )
 
 func it(types ...int) []int {

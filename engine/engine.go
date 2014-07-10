@@ -243,19 +243,20 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
             if json["amount"] != nil {
                 amount = int(json["amount"].(float64))
             }
-            if item.GetAmount() - amount <= 0 {
-                g.items.deleteItem(item)
-                if item.IsOwner(p) {
-                    p.DeleteItem(item, amount)
-                } else if !item.HasOwner() {
-                    g.field.UnlinkFromCells(item)
-                }
-            } else {
-                item.DecAmount(amount)
+            // if item.GetAmount() - amount <= 0 {
+            g.items.deleteItem(item)
+            if item.IsOwner(p) {
+                p.DeleteItem(item, amount)
+            } else if !item.HasOwner() {
+                g.field.UnlinkFromCells(item)
             }
+            // } else {
+            //     item.DecAmount(amount)
+            // }
             res["result"] = "ok"
         }
     }
+    fmt.Println(res)
     return res
 }
 
