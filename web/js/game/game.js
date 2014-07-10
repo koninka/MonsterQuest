@@ -50,7 +50,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
     }
 
     Game.prototype.setHP = function(hp){
-        this.player.setHP(hp);
+        this.player.SetHP(hp);
     }
 
     Game.prototype.checkKeys = function(){
@@ -145,7 +145,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
                 case "look":
                   
                     th.setPlayerCoords(data.x, data.y);
-                    //th.setHp(data['hp']);
+                    th.setHP(data['health']);
                     th.setMap(data['map'], th.player.pt);
                     th.setActors(data['actors']);
                   

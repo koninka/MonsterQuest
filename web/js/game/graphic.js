@@ -63,7 +63,7 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
         var prevtick;
         var animate = function(){
             stats.begin();
-            if(view.player.container)
+            if(view.player && view.player.container)
                 view.player.Rotate();
             I.renderer.render(I.stage);
             requestAnimFrame( animate );

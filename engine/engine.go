@@ -715,6 +715,7 @@ func (g *Game) lookAction(sid string) consts.JsonType {
     res["actors"] = visibleObjects
 	res["x"] = player.Center.X
 	res["y"] = player.Center.Y
+    res["health"] = player.GetHP()
     return res
 }
 
