@@ -168,6 +168,8 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
     Game.prototype.InitQuickPanel = function(chain_number) {
         var th = game;
         th.quickpanel = new QuickPanel(); 
+        th.initInventory();
+        th.SetInventory(inventory_)
         th.InitChain(chain_number + 1);   
     };
 
@@ -189,8 +191,6 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
             var data = JSON.parse(e.data);
             if(data["action"] == "look"){
                 th.defineRadiusFromMap(data['map']);
-                th.initInventory();
-                th.SetInventory(inventory_)
                 th.player.InitAnimation(true, th.player);
                 th.InitChain(chain_number + 1);
             }
@@ -267,11 +267,22 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         this.firstLook = true;
         this.initGraphic();
         this.init_chain = [];
-        this.init_chain[0] = this.InitPlayer;
-        this.init_chain[1] = this.InitLook;
+        var I = this;
+        function AddToChain(initFunc){
+            I.init_chain.push(initFunc)
+        }
+        AddToChain(this.InitPlayer);
+        
+        AddToChain(this.InitLook);
+        AddToChain(this.InitQuickPanel);
+        AddToChain(this.InitDictionary);
+        
+        ///this.init_chain[0] = this.InitPlayer;
+        //this.init_chain
+        //this.init_chain[1] = this.InitLook;
         //this.init_chain[3] = this.InitGraphic;
-        this.init_chain[2] = this.InitDictionary;
-        this.init_chain[3] = this.InitQuickPanel;
+        //this.init_chain[2] = this.InitDictionary;
+        //this.init_chain[3] = this.InitQuickPanel;
         this.InitChain(0);
         this.InitKeyboard()
     };
