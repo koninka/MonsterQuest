@@ -2,7 +2,7 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
     /* cells 20 * 10 */
     var inventory_size = OPTIONS.inventory_size;
     var TS = OPTIONS.TILE_SIZE;
-    function Inventory(screen){
+    function Inventory(fistId){
         this.items = [];
         this.InitContainer();
         this.slots = {
@@ -17,6 +17,23 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             "feet" : null,
             "ammo" : null
         };
+        this.weapon_id = [];
+        this.fistId = fistId;
+        var I = this;
+        GLOBAL.graphic.field.click = function(){
+            var point = GLOBAL.graphic.PointerToGameCoords();
+            if(GLOBAL.use_mode){
+                GLOBAL.use_mode.x = point.x;
+                GLOBAL.use_mode.y = point.y;
+                GLOBAL.game.sendViaWS(GLOBAL.use_mode);
+                GLOBAL.use_mode = null;
+            } else {
+                for(var i = 0; i < I.weapon_id.length; ++i){
+                    var id = I.weapon_id[i];
+                    GLOBAL.game.sendViaWS({action: "use", id: id, x: point.x, y: point.y});
+                }
+            }
+        }
     }
 
     Inventory.prototype.constructor = Inventory;
@@ -124,14 +141,17 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         var cell_x = 0;
         var cell_y = -1;
         var slt_id = {};
+        this.weapon_id = [];
+        
         if(slots)
         for(var s in slots){
             var x = -1;
             var y = slotToNumber[s];
             var id = slots[s].id;
-            this.slots[s] = true;
+            //this.slots[s] = true;
             if(!this.items[id])
                 this.AddItem(slots[s]);
+            this.slots[s] = this.items[id];
             this.items[id].SetPosition({x: x, y: y});
             this.items[id].slot = s;
             founded_items[id] = true;
@@ -163,6 +183,15 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
                 this.RemoveItem(this.items[i].item);
             }
         }
+        var left = this.slots["left-hand"];
+        var right = this.slots["right-hand"];
+        if(left && left.item.itemType == "weapon")
+            this.weapon_id.push(left.id);
+        if(right && right.item.itemType == "weapon")
+            this.weapon_id.push(right.id);
+        if(this.weapon_id.length == 0)
+            this.weapon_id.push(this.fistId);
+        
     }
 
     Inventory.prototype.Show = function(){

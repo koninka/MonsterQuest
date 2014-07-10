@@ -2,6 +2,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
     function(JQuery, utils, Player, View, Graphic, Inventory, OPTIONS, GLOBAL, QuickPanel) {
 
     var player_id = (parseInt(utils.getQueryVariable('id')));
+    var fist_id = parseInt(utils.getQueryVariable('fistId'));
     var inventory_ = null;
     function Game(sid, wsuri) {
         this.sid      = sid;
@@ -97,7 +98,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
     
 
     Game.prototype.initInventory = function(){
-        this.inventory = new Inventory();
+        this.inventory = new Inventory(fist_id);
     }
 
     Game.prototype.ShowInventory = function() {
@@ -125,7 +126,6 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         } else {
             switch (data["action"]) {
                 case "equip":
-                    th.inventory.items[data.id].equiped = true;
                     break;
                 case "examine":
                     if(data.id != th.player.id || GLOBAL.SELFEXAMINE){
@@ -169,7 +169,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         var th = game;
         th.quickpanel = new QuickPanel(); 
         th.initInventory();
-        th.SetInventory(inventory_)
+        th.SetInventory(inventory_);
         th.InitChain(chain_number + 1);   
     };
 

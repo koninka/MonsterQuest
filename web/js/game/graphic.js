@@ -43,17 +43,10 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
             I.pointer.x -= I.width/2;
             I.pointer.y -= I.height/2;
         }
-        this.field.click = function(data){
-            var point = {
+        this.PointerToGameCoords = function(){
+            return {
                 x: I.pointer.x / OPTIONS.TILE_SIZE + game.player.pt.x,
                 y: I.pointer.y / OPTIONS.TILE_SIZE + game.player.pt.y,
-            }
-            if(global.use_mode){
-                global.use_mode.point = point;
-                game.sendViaWS(global.use_mode);
-                global.use_mode = null;
-            } else {
-                game.sendViaWS({action: "attack", point: point});
             }
         }
         this.stage.addChild(this.field);
