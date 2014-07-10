@@ -195,16 +195,16 @@ var SlotItemMapping = map[int] []int {
 }
 
 const (
-    SLOT_NAME_AMMO         = "AMMO"
-    SLOT_NAME_FEET         = "FEET"
-    SLOT_NAME_NECK         = "NECK"
-    SLOT_NAME_BODY         = "BODY"
-    SLOT_NAME_HEAD         = "HEAD"
-    SLOT_NAME_FOREARM      = "FOREARM"
-    SLOT_NAME_LEFT_HAND    = "LEFT-HAND"
-    SLOT_NAME_RIGHT_HAND   = "RIGHT-HAND"
-    SLOT_NAME_LEFT_FINGER  = "LEFT-FINGER"
-    SLOT_NAME_RIGHT_FINGER = "RIGHT-FINGER"
+    SLOT_NAME_AMMO         = "ammo"
+    SLOT_NAME_FEET         = "feet"
+    SLOT_NAME_NECK         = "neck"
+    SLOT_NAME_BODY         = "body"
+    SLOT_NAME_HEAD         = "head"
+    SLOT_NAME_FOREARM      = "forearm"
+    SLOT_NAME_LEFT_HAND    = "left-hand"
+    SLOT_NAME_RIGHT_HAND   = "right-hand"
+    SLOT_NAME_LEFT_FINGER  = "left-finger"
+    SLOT_NAME_RIGHT_FINGER = "right-finger"
 )
 
 var NameSlotMapping = map[string] int {
