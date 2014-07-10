@@ -24,7 +24,7 @@ type mobList struct {
 func (ml *mobList) takeAwayMob(m *gameObjects.Mob) {
     for _, item := range m.GetItems() {
         instance := GetInstance()
-        m.DropItem(item, 1)
+        m.DropItem(item, item.GetAmount())
         instance.field.LinkToCells(item)
         instance.items.addItem(item)
     }

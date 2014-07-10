@@ -64,9 +64,18 @@ CREATE TABLE users_inventory (
    id      INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
    user_id INT NOT NULL REFERENCES users(id)     ON DELETE CASCADE,
    item_id INT NOT NULL REFERENCES artifacts(id) ON DELETE CASCADE,
-   amount  INT NOT NULL DEFAULT 1,
-   place   INT NOT NULL,
+   amount  INT NOT NULL DEFAULT 1 CHECK(amount > 0),
+   place   INT NOT NULL CHECK (place >= 0),
    UNIQUE(user_id, place)
+);
+
+CREATE TABLE users_slots (
+   id      INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   user_id INT NOT NULL REFERENCES users(id)     ON DELETE CASCADE,
+   item_id INT NOT NULL REFERENCES artifacts(id) ON DELETE CASCADE,
+   amount  INT NOT NULL DEFAULT 1 CHECK(amount > 0),
+   slot    INT NOT NULL CHECK (0 <= slot AND slot <= 9),
+   UNIQUE(user_id, slot)
 );
 
 DELIMITER //
@@ -82,10 +91,9 @@ BEGIN
    END IF;
 END//
 
-DROP PROCEDURE IF EXISTS `add_user_item` //
-CREATE PROCEDURE `add_user_item`(IN `uid` INT, IN `iid` INT, IN `place_num` INT, IN `amnt` INT)
+DROP PROCEDURE IF EXISTS `inc_user_item_amount` //
+CREATE PROCEDURE `inc_user_item_amount`(IN `uid` INT, IN `iid` INT, IN `place_num` INT, IN `amnt` INT)
 BEGIN
-   SET amnt = 1;
    IF (SELECT EXISTS (SELECT 1 FROM `users_inventory` WHERE `user_id` = uid AND `item_id` = iid AND `place` = place_num)) THEN
       UPDATE `users_inventory` SET `amount` = `amount` + amnt WHERE `user_id` = uid  AND `item_id` = iid AND `place` = place_num;
    ELSE
@@ -93,11 +101,10 @@ BEGIN
    END IF;
 END//
 
-DROP PROCEDURE IF EXISTS `drop_user_item` //
-CREATE PROCEDURE `drop_user_item`(IN `uid` INT, IN `iid` INT, IN `place_num` INT, IN `amnt` INT)
+DROP PROCEDURE IF EXISTS `dec_user_item_amount` //
+CREATE PROCEDURE `dec_user_item_amount`(IN `uid` INT, IN `iid` INT, IN `place_num` INT, IN `amnt` INT)
 BEGIN
    DECLARE tbl_amnt INT;
-   SET amnt = 1;
    UPDATE `users_inventory` SET `amount` = `amount` - amnt WHERE `user_id` = uid  AND `item_id` = iid AND `place` = place_num;
    IF (SELECT EXISTS (SELECT 1 FROM `users_inventory` WHERE `user_id` = uid AND `item_id` = iid AND `place` = place_num)) THEN
       SELECT `amount` INTO tbl_amnt FROM `users_inventory` WHERE `user_id` = uid AND `item_id` = iid AND `place` = place_num;
@@ -107,18 +114,55 @@ BEGIN
    END IF;
 END//
 
-DROP PROCEDURE IF EXISTS `delete_item` //
-CREATE PROCEDURE `delete_item`(IN `uid` INT, IN `iid` INT, IN `place_num` INT)
-BEGIN
-   DELETE FROM `users_inventory` WHERE `user_id` = uid  AND `item_id` = iid AND `place` = place_num;
-END//
-
 DROP PROCEDURE IF EXISTS `move_item` //
 CREATE PROCEDURE `move_item`(IN `uid` INT, IN `from_place` INT,  IN `to_place` INT)
 BEGIN
    UPDATE `users_inventory` SET `place` = -1 WHERE `user_id` = uid AND `place` = from_place;
    UPDATE `users_inventory` SET `place` = from_place WHERE `user_id` = uid AND `place` = to_place;
    UPDATE `users_inventory` SET `place` = to_place WHERE `user_id` = uid AND `place` = -1;
+END//
+
+DROP PROCEDURE IF EXISTS `equip_item` //
+CREATE PROCEDURE `equip_item`(IN `uid` INT, IN `iid` INT, IN `place_num` INT, IN `slot_num` INT)
+BEGIN
+   DECLARE amnt INT;
+   SELECT `amount` INTO amnt FROM `users_inventory` WHERE `user_id` = uid  AND `item_id` = iid AND `place` = place_num;
+   DELETE FROM `users_slots` WHERE `user_id` = uid  AND `item_id` = iid AND `slot` = slot_num;
+   INSERT INTO `users_slots`(`user_id`, `item_id`, `slot`) VALUES(uid, iid, slot_num);
+   CALL `dec_user_item_amount`(uid, iid, place_num, amnt);
+END//
+
+DROP PROCEDURE IF EXISTS `unequip_item` //
+CREATE PROCEDURE `unequip_item`(IN `uid` INT, IN `iid` INT, IN `place_num` INT, IN `slot_num` INT)
+BEGIN
+   DECLARE amnt INT;
+   SELECT `amount` INTO amnt FROM `users_slots` WHERE `user_id` = uid  AND `item_id` = iid AND `slot` = slot_num;
+   DELETE FROM `users_slots` WHERE `user_id` = uid  AND `item_id` = iid AND `slot` = slot_num;
+   DELETE FROM `users_inventory` WHERE `user_id` = uid  AND `item_id` = iid AND `place` = place_num;
+   CALL `inc_user_item_amount`(uid, iid, place_num, amnt);
+END//
+
+DROP PROCEDURE IF EXISTS `clone_slot` //
+CREATE PROCEDURE `clone_slot`(IN `uid` INT, IN `slot_num` INT, IN `new_slot_num` INT)
+BEGIN
+   DECLARE amnt, iid INT;
+   DELETE FROM `users_slots` WHERE `user_id` = uid  AND `item_id` = iid AND `slot` = new_slot_num;
+   SELECT `amount`, `item_id` INTO amnt, iid  FROM `users_slots` WHERE `user_id` = uid AND `slot` = slot_num;
+   INSERT INTO `users_slots`(`user_id`, `item_id`, `slot`) VALUES(uid, iid, new_slot_num);
+END//
+
+DROP PROCEDURE IF EXISTS `delete_clone_slot` //
+CREATE PROCEDURE `delete_clone_slot`(IN `uid` INT, IN `slot_num` INT)
+BEGIN
+   DELETE FROM `users_slots` WHERE `user_id` = uid  AND `item_id` = iid AND `slot` = slot_num;
+END//
+
+DROP PROCEDURE IF EXISTS `dec_user_slot_amount` //
+CREATE PROCEDURE `dec_user_slot_amount`(IN `uid` INT, IN `iid` INT, IN `slot_num` INT, IN `amnt` INT)
+BEGIN
+   DECLARE tbl_amnt INT;
+   UPDATE `users_slots` SET `amount` = `amount` - amnt WHERE `user_id` = uid  AND `item_id` = iid AND `slot` = slot_num;
+   DELETE FROM `users_slots` WHERE `user_id` = uid  AND `item_id` = iid AND `slot` = slot_num AND `amount` <= 0;
 END//
 
 DELIMITER ;

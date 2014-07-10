@@ -216,7 +216,11 @@ func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
         item := g.items.getItem(int64(idParam.(float64)))
         p := g.players.getPlayerBySession(json["sid"].(string))
         if item != nil && item.IsOwner(p) {
-            _, new_item := p.DropItem(item, 1)//second param must me amount
+            var amount int = 1
+            if json["amount"] != nil {
+                amount = int(json["amount"].(float64))
+            }
+            _, new_item := p.DropItem(item, amount)
             if new_item != nil {
                 new_item.SetID(utils.GenerateId())
                 g.items.addItem(new_item)
@@ -235,30 +239,47 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
         item := g.items.getItem(int64(idParam.(float64)))
         p := g.players.getPlayerBySession(json["sid"].(string))
         if item != nil && (item.IsOwner(p) || (!item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) <= consts.PICK_UP_RADIUS)) {
+            var amount int = 1
+            if json["amount"] != nil {
+                amount = int(json["amount"].(float64))
+            }
+            // if item.GetAmount() - amount <= 0 {
             g.items.deleteItem(item)
             if item.IsOwner(p) {
-                p.DeleteItem(item)
+                p.DeleteItem(item, amount)
+            } else if !item.HasOwner() {
+                g.field.UnlinkFromCells(item)
             }
+            // } else {
+            //     item.DecAmount(amount)
+            // }
             res["result"] = "ok"
         }
     }
+    fmt.Println(res)
     return res
 }
 
 func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("equip", "badId")
     idParam := json["id"]
-    slotParam := json["slot"]
-    if slotParam == nil {
+    if idParam != nil {
         res["result"] = "badSlot"
-    } else if idParam != nil {
-        p := g.players.getPlayerBySession(json["sid"].(string))
-        item := p.GetItem(int64(idParam.(float64)))
-        if item != nil {
-            if p.Equip(item, consts.NameSlotMapping[slotParam.(string)]) {
-                res["result"] = "ok"
-            } else {
-                res["result"] = "badSlot"
+        slotParam := json["slot"]
+        if slotParam != nil {
+            slot, isExistSlot := consts.NameSlotMapping[slotParam.(string)]
+            if isExistSlot {
+                p := g.players.getPlayerBySession(json["sid"].(string))
+                item := p.GetItem(int64(idParam.(float64)))
+                if item != nil {
+                    isEquip, slots := p.Equip(item, slot)
+                    if isEquip {
+                        if slots != nil {
+                            res["slots"] = slots
+                        }
+                        res["result"] = "ok"
+                    }
+                }
             }
         }
     }
@@ -269,9 +290,16 @@ func (g *Game) unequipItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("unequip", "badSlot")
     slotParam := json["slot"]
     if slotParam != nil {
-        p := g.players.getPlayerBySession(json["sid"].(string))
-        if p.Unequip(consts.NameSlotMapping[slotParam.(string)]) {
-            res["result"] = "ok"
+        slot, isExistSlot := consts.NameSlotMapping[slotParam.(string)]
+        if isExistSlot {
+            p := g.players.getPlayerBySession(json["sid"].(string))
+            isUnequip, slots := p.Unequip(slot)
+            if isUnequip {
+                res["result"] = "ok"
+                if slots != nil {
+                    res["slots"] = slots
+                }
+            }
         }
     }
     return res
@@ -454,7 +482,8 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                         item := gameObjectsBase.ItemFromJson(consts.JsonType(itemDesc.(map[string] interface{})))
                         if item != nil {
                             p.AddItem(item)
-                            if p.Equip(item, consts.NameSlotMapping[slotName]) {
+                            isEquip, _ := p.Equip(item, consts.NameSlotMapping[slotName])
+                            if isEquip {
                                 g.items.addItem(item)
                                 idxs = append(idxs, item.GetID())
                             }
@@ -629,8 +658,19 @@ func (g *Game) CreatePlayer(sid string) *gameObjects.Player {
             amount, place int
         )
         rows.Scan(&iid, &amount, &place)
-        item := gameObjectsBase.NewItemByID(iid, p)
+        item := gameObjectsBase.NewItemByID(iid, p, amount)
         p.RestoreItem(item, place)
+        g.items.addItem(item)
+    }
+    rows, _ = db.Query("SELECT item_id, amount, slot FROM users_slots WHERE user_id = ?", dbId)
+    for rows.Next() {
+        var (
+            iid int64
+            amount, slot int
+        )
+        rows.Scan(&iid, &amount, &slot)
+        item := gameObjectsBase.NewItemByID(iid, p, amount)
+        p.RestoreSlot(item, slot)
         g.items.addItem(item)
     }
     return p

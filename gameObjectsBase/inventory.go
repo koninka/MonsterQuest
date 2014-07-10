@@ -36,9 +36,14 @@ func (inv* InventoryObj) dropItem(i Itemer) int {
     return place
 }
 
-func (inv* InventoryObj) DeleteItem(i Itemer) int {
-    place := inv.dropItem(i)
-    i = nil
+func (inv* InventoryObj) DeleteItem(i Itemer, amount int) int {
+    var place int = inv.getPlaceById(i.GetID())
+    if i.GetAmount() - amount <= 0 {
+        place = inv.dropItem(i)
+        i = nil
+    } else {
+        i.DecAmount(amount)
+    }
     return place
 }
 
@@ -46,7 +51,7 @@ func (inv* InventoryObj) DropItem(i Itemer, amount int) (int, Itemer) {
     var (
         v bool =  true
         place int
-        new_item Itemer
+        new_item Itemer = nil
     )
     if i.IsHeapItem() {
         if i.GetAmount() - amount > 0 {
@@ -114,13 +119,16 @@ func (inv* InventoryObj) MoveItem(i Itemer, from_cell, to_cell int) {
     inv.cells[to_cell] = i.GetID()
 }
 
-func (inv *InventoryObj) unplaceItem(id int64) {
-    for cell, item_id := range inv.cells {
+func (inv *InventoryObj) unplaceItem(id int64) int {
+    var cell int = -1
+    for c, item_id := range inv.cells {
         if item_id == id {
+            cell = c
             delete(inv.cells, cell)
             break
         }
     }
+    return cell
 }
 
 func (inv *InventoryObj) placeItem(id int64) int {

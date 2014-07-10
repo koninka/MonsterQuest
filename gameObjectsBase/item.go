@@ -196,7 +196,11 @@ func (gigi* gameItemGen) Probability() int {
 }
 
 func (gigi* gameItemGen) GenItem(owner Activer) Itemer {
-    return newItem(gigi.item_kind, owner)
+    var amount int = 1
+    if gigi.item_kind.class == consts.ITEM_CLASS_CONSUMABLE || gigi.item_kind.itemType == consts.ITEM_T_EXPENDABLE {
+        amount = utils.Randint0(150) + 1
+    }
+    return newItem(gigi.item_kind, owner, amount)
 }
 
 type gameItemsList struct {
@@ -330,13 +334,13 @@ type Itemer interface {
     GetItemType() int
     GetAmount() int
     GetItemClass() int
-    getAmount() int
-    decAmount(int)
+    GetItemSubtype() int
+    DecAmount(int)
     setAmount(int)
     UseItem(*InventoryObj)
     UnuseItem()
-    EquipItem(*InventoryObj)
-    UnequipItem(*InventoryObj)
+    EquipItem(*InventoryObj) int
+    UnequipItem(*InventoryObj) int
     applyBonuses()
     applyEffects()
     cancelBonuses()
@@ -435,15 +439,15 @@ func (i* Item) GetItemClass() int {
     return i.kind.class
 }
 
+func (i* Item) GetItemSubtype() int {
+    return i.kind.subtype
+}
+
 func (i* Item) GetAmount() int {
     return 1
 }
 
-func (i* Item) getAmount() int {
-    return 1
-}
-
-func (i* Item) decAmount(int) {
+func (i* Item) DecAmount(int) {
 }
 
 func (i* Item) setAmount(int) {
@@ -458,12 +462,12 @@ func (i *Item) UnuseItem() {
     i.cancelBonuses()
 }
 
-func (i *Item) EquipItem(*InventoryObj) {
-
+func (i *Item) EquipItem(*InventoryObj) int {
+    return 0
 }
 
-func (i *Item) UnequipItem(*InventoryObj) {
-
+func (i *Item) UnequipItem(*InventoryObj) int {
+    return -1
 }
 
 func (i *Item) applyBonuses() {
@@ -493,20 +497,24 @@ func (i* GarmentItem) IsEquipped() bool {
     return i.isEquiped
 }
 
-func (i* GarmentItem) EquipItem(inv *InventoryObj) {
+func (i* GarmentItem) EquipItem(inv *InventoryObj) int {
+    var place int = -1
     if !i.isEquiped {
         i.Item.UseItem(inv)
-        inv.unplaceItem(i.GetID())
+        place = inv.unplaceItem(i.GetID())
         i.isEquiped = true
     }
+    return place
 }
 
-func (i* GarmentItem) UnequipItem(inv *InventoryObj) {
+func (i* GarmentItem) UnequipItem(inv *InventoryObj) int {
+    var place int = -1
     if i.isEquiped {
         i.Item.UnuseItem()
-        inv.placeItem(i.GetID())
+        place = inv.placeItem(i.GetID())
         i.isEquiped = false
     }
+    return place
 }
 
 type WeaponItem struct {
@@ -525,11 +533,11 @@ func (i* StackItem) GetInfo() consts.JsonType {
     return msg
 }
 
-func (i* StackItem) getAmount() int {
+func (i* StackItem) GetAmount() int {
     return i.amount
 }
 
-func (i* StackItem) decAmount(amount int) {
+func (i* StackItem) DecAmount(amount int) {
     i.amount -= amount
 }
 
@@ -541,16 +549,42 @@ func (i* StackItem) IsHeapItem() bool {
     return true
 }
 
+func (i* StackItem) UseItem(inv* InventoryObj) {
+    i.Item.UseItem(inv)
+    inv.DeleteItem(i, 1)
+}
+
 type ConsumableItem struct {
     StackItem
 }
 
-func (i* ConsumableItem) UseItem(inv* InventoryObj) {
-    i.Item.UseItem(inv)
-    i.amount--
-    if (i.amount <= 0) {
-        inv.DeleteItem(i)
+type ExpandableItem struct {
+    StackItem
+    isEquiped bool
+}
+
+func (i* ExpandableItem) IsEquipped() bool {
+    return i.isEquiped
+}
+
+func (i* ExpandableItem) EquipItem(inv *InventoryObj) int {
+    var place int = -1
+    if !i.isEquiped {
+        i.Item.UseItem(inv)
+        place = inv.unplaceItem(i.GetID())
+        i.isEquiped = true
     }
+    return place
+}
+
+func (i* ExpandableItem) UnequipItem(inv *InventoryObj) int {
+    var place int = -1
+    if i.isEquiped {
+        i.Item.UnuseItem()
+        place = inv.placeItem(i.GetID())
+        i.isEquiped = false
+    }
+    return place
 }
 
 func newItem(ik *ItemKind, owner Activer, amount ...interface{}) Itemer {
@@ -558,20 +592,24 @@ func newItem(ik *ItemKind, owner Activer, amount ...interface{}) Itemer {
     switch ik.class {
         case consts.ITEM_CLASS_CONSUMABLE: i = newConsumableItem(ik, owner, amount[0].(int))
         case consts.ITEM_CLASS_GARMENT:
-            garment := GarmentItem{newBaseItem(ik, owner), false};
-            if ik.itemType == consts.ITEM_T_WEAPON {
-                i = &WeaponItem{garment, fightBase.CreateDmgDescription(ik.power)}
+            if ik.itemType == consts.ITEM_T_EXPENDABLE {
+                i = &ExpandableItem{newStackItem(ik, owner, amount[0].(int)), false}
             } else {
-                i = &garment
+                garment := GarmentItem{newBaseItem(ik, owner), false};
+                if ik.itemType == consts.ITEM_T_WEAPON {
+                    i = &WeaponItem{garment, fightBase.CreateDmgDescription(ik.power)}
+                } else {
+                    i = &garment
+                }
             }
     }
     return i
 }
 
-func NewItemByID(iid int64, owner Activer) Itemer {
+func NewItemByID(iid int64, owner Activer, amount int) Itemer {
     var item Itemer = nil
     if ik, ok := gameItems.items[iid]; ok {
-        item = newItem(ik, owner)
+        item = newItem(ik, owner, amount)
     }
     return item
 }
@@ -588,8 +626,16 @@ func newBaseItem(ik *ItemKind, owner Activer) Item {
 }
 
 func newConsumableItem(ik* ItemKind, owner Activer, amount int) *ConsumableItem {
-    return &ConsumableItem{StackItem{newBaseItem(ik, owner), amount}}
+    return &ConsumableItem{newStackItem(ik, owner, amount)}
 }
+
+func newStackItem(ik *ItemKind, owner Activer, amount int) StackItem {
+    return StackItem{newBaseItem(ik, owner), amount}
+}
+
+// func newExpandableItem(ik* ItemKind, owner Activer, amount int) *ConsumableItem {
+//     return &ExpandableItem{StackItem{newBaseItem(ik, owner), amount}}
+// }
 
 func splitItem(inv* InventoryObj, i Itemer, amount int) (int, Itemer) {
     new_i := newConsumableItem(i.GetKind(), i.GetOwner(), i.GetAmount() - amount)
