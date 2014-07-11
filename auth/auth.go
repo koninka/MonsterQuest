@@ -107,14 +107,21 @@ func JsonHandler(w http.ResponseWriter, r *http.Request) {
     json.Unmarshal(body, &rawData)
     data := rawData.(map[string] interface{})
     var response string
+    fmt.Println("http json handler", data)
     if data["action"] == "logout" {
         response = logoutAction(data["sid"].(string))
     } else {
-        login, pass := data["login"].(string), data["password"].(string)
-        switch data["action"] {
-            case "login":    response = loginAction(login, pass)
-            case "register": response = registerAction(login, pass)
+        if data["action"] == "startTesting" {
+            r, _ := json.Marshal(map[string] string{"result": "ok"})
+            response = string(r)
+        } else {
+            login, pass := data["login"].(string), data["password"].(string)
+            switch data["action"] {
+                case "login":    response = loginAction(login, pass)
+                case "register": response = registerAction(login, pass)
+            }
         }
+
     }
     fmt.Fprintf(w, "%s", response)
 }
