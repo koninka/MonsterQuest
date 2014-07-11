@@ -11,6 +11,18 @@ import (
     "MonsterQuest/geometry"
 )
 
+func GetIdFromJson(req consts.JsonType) (int64, bool) {
+    var (
+        ok bool = false
+        id float64 = -1
+    )
+    idParam := req["id"]
+    if idParam != nil {
+        id, ok = idParam.(float64)
+    }
+    return int64(id), ok
+}
+
 func GetPointFromJson(req consts.JsonType) (*geometry.Point, bool) {
     var pt *geometry.Point
     x, x_ok := req["x"].(float64)

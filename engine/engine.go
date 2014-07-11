@@ -151,6 +151,7 @@ func (g *Game) doPlayersAction(action string, json consts.JsonType) consts.JsonT
     case "putPlayer" : res = g.putPlayer(json)
     case "putItem" : res = g.putItem(json)
     case "enforce" : res = g.enforceAction(json)
+    case "setLocation" : res = g.setLocationAction(json)
     default: res = g.badAction(action)
     }
     return res
@@ -184,6 +185,16 @@ func (g *Game) moveItem(json consts.JsonType) consts.JsonType {
         if p.MoveItem(p.Inventory.GetItem(int64(idParam.(float64))), cell) {
             res["result"] = "ok"
         }
+    }
+    return res;
+}
+
+func (g *Game) setLocationAction(json consts.JsonType) consts.JsonType {
+    res := utils.JsonAction("setLocation", "badPlacing")
+    pt, ok := utils.GetPointFromJson(json)
+    if ok {
+        g.players.getPlayerBySession(json["sid"].(string)).ForcePlace(*pt)
+        res["result"] = "ok"
     }
     return res;
 }
@@ -691,9 +702,8 @@ func (g *Game) getObjectById(id int64) (gameObjectsBase.GameObjecter, bool) {
 
 func (g *Game) examineAction(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("examine", "badId")
-    idParam := json["id"]
-    if idParam != nil {
-        id := int64(idParam.(float64))
+    id, ok := utils.GetIdFromJson(json)
+    if ok {
         obj, isExists := g.getObjectById(id)
         if isExists {
             for k, v := range obj.GetFullInfo() {
