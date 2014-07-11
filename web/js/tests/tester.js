@@ -15,7 +15,7 @@ define(['utils/utils' , 'utils/ws'], function(utils, wsock) {
 
    function updateData(data) {
       data.login = 'tester' + getRandomString();
-      data.password = getRandomString()
+      data.password = getRandomString();
    }
 
 
@@ -50,6 +50,7 @@ define(['utils/utils' , 'utils/ws'], function(utils, wsock) {
          if(response["result"] == 'invalidCredentials')  return;
          data.ssid     = response['sid'];
          data.wsuri    = response['webSocket'];
+         data.fist_id  = response['fistId'];
          data.actor_id = response['id'];
          data.ws       = wsock(data.wsuri, null, null, null, null);
          waitForSocketConnection(data.ws, done);

@@ -30,6 +30,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
       ssid     : null,
       wsuri    : null,
       login    : null,
+      fist_id  : null,
       actor_id : null,
       password : null,
       ws       : null
@@ -56,6 +57,10 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
             else
                 throw new Error("Logout fail");
         });
+    }
+
+    function GetPlayerFistID() {
+        return data.fist_id;
     }
 
     function AfterEach(done) {
@@ -290,6 +295,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
         StopTesting: StopTesting,
         SetUpConstants: SetUpConstants,
         GetConstants: GetConstants,
+        GetPlayerFistID: GetPlayerFistID,
         SetUpMap: SetUpMap,
         PutPlayer: PutPlayer,
         PutItem: PutItem,

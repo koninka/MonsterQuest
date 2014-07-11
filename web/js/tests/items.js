@@ -2,8 +2,6 @@ define(['utils/testsAPI'], function(testsAPI) {
 
     function Test(){
 
-
-
         describe('inventory', function() {
 
             before(testsAPI.Prepare);
@@ -334,6 +332,41 @@ define(['utils/testsAPI'], function(testsAPI) {
                 testsAPI.StartTesting();
             });
 
+            it('should fail destroy player fist item[default weapon]', function(done) {
+                var player = { x: 0.5, y: 0.5 };
+
+                testsAPI.SetWSHandler(function(e) {
+
+                   var response = JSON.parse(e.data);
+
+                    if (response['action'] == testsAPI.startTestingAction) {
+                        testsAPI.Ok(response['result']);
+                        testsAPI.SetUpConstants();
+                        testsAPI.SetUpMap([
+                            [".", ".", ".", "."],
+                            [".", ".", ".", "."],
+                            [".", ".", ".", "."],
+                            [".", ".", ".", "."]
+                        ]);
+                    } else if (response['action'] == testsAPI.setUpConstAction) {
+                        testsAPI.Ok(response['result']);
+                    } else if (response['action'] == testsAPI.setUpMapAction) {
+                        testsAPI.Ok(response['result']);
+                        testsAPI.PutPlayer(player['x'], player['y']);
+                    } else if (response['action'] == testsAPI.putPlayerAction) {
+                        testsAPI.Ok(response['result']);
+                        player['sid'] = response['sid'];
+                        testsAPI.Destroy(player['sid'], testsAPI.GetPlayerFistID())
+                    } else if (response['action'] == testsAPI.enforceAction) {
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Equal(response['actionResult']['result'], testsAPI.actionResultBadId);
+                        done();
+                    }
+                });
+
+                testsAPI.StartTesting();
+            });
+
             it('should successfully drop item', function(done) {
                 var player = { x: 0.5, y: 0.5 };
                 var item_id = null;
@@ -450,6 +483,42 @@ define(['utils/testsAPI'], function(testsAPI) {
 
                 testsAPI.StartTesting();
             });
+
+            it('should fail drop player fist item[default weapon]', function(done) {
+                var player = { x: 0.5, y: 0.5 };
+
+                testsAPI.SetWSHandler(function(e) {
+
+                   var response = JSON.parse(e.data);
+
+                    if (response['action'] == testsAPI.startTestingAction) {
+                        testsAPI.Ok(response['result']);
+                        testsAPI.SetUpConstants();
+                        testsAPI.SetUpMap([
+                            [".", ".", ".", "."],
+                            [".", ".", ".", "."],
+                            [".", ".", ".", "."],
+                            [".", ".", ".", "."]
+                        ]);
+                    } else if (response['action'] == testsAPI.setUpConstAction) {
+                        testsAPI.Ok(response['result']);
+                    } else if (response['action'] == testsAPI.setUpMapAction) {
+                        testsAPI.Ok(response['result']);
+                        testsAPI.PutPlayer(player['x'], player['y']);
+                    } else if (response['action'] == testsAPI.putPlayerAction) {
+                        testsAPI.Ok(response['result']);
+                        player['sid'] = response['sid'];
+                        testsAPI.Drop(player['sid'], testsAPI.GetPlayerFistID())
+                    } else if (response['action'] == testsAPI.enforceAction) {
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Equal(response['actionResult']['result'], testsAPI.actionResultBadId);
+                        done();
+                    }
+                });
+
+                testsAPI.StartTesting();
+            });
+
 
             it('should fail pick up item[item in other player\'s inventory]', function(done) {
                 var player1 = { x: 0.5, y: 0.5 };
@@ -740,6 +809,44 @@ define(['utils/testsAPI'], function(testsAPI) {
                 testsAPI.StartTesting();
             });
 
+            it('should fail equip player fist item[default weapon]', function(done) {
+                var player = { x: 0.5, y: 0.5 };
+                var item_id = null;
+
+                testsAPI.SetWSHandler(function(e) {
+
+                   var response = JSON.parse(e.data);
+
+                    if (response['action'] == testsAPI.startTestingAction) {
+                        testsAPI.Ok(response['result']);
+                        testsAPI.SetUpConstants();
+                        testsAPI.SetUpMap([
+                            [".", ".", ".", "."],
+                            [".", ".", ".", "."],
+                            [".", ".", ".", "."],
+                            [".", ".", ".", "."]
+                        ]);
+                    } else if (response['action'] == testsAPI.setUpConstAction) {
+                        testsAPI.Ok(response['result']);
+                    } else if (response['action'] == testsAPI.setUpMapAction) {
+                        testsAPI.Ok(response['result']);
+                        testsAPI.PutPlayer(player['x'], player['y'], [ testsAPI.MakeItem() ]);
+                    } else if (response['action'] == testsAPI.putPlayerAction) {
+                        testsAPI.Ok(response['result']);
+                        player['id'] = response['id'];
+                        player['sid'] = response['sid'];
+                        item_id = response['inventory'][0];
+                        testsAPI.Equip(player['sid'], testsAPI.GetPlayerFistID(), 'left-hand')
+                    } else if (response['action'] == testsAPI.enforceAction) {
+                        testsAPI.Ok(response['result']);
+                        testsAPI.Equal(response['actionResult']['result'], 'badSlot');
+                        done();
+                    }
+                });
+
+                testsAPI.StartTesting();
+            });
+
             it('should successfully unequip item', function(done) {
                 var player = { x: 0.5, y: 0.5 };
                 var item_id = null;
@@ -873,6 +980,69 @@ define(['utils/testsAPI'], function(testsAPI) {
 
                 testsAPI.StartTesting();
             });
+
+            function HardItemTest(Action, ActionName, desc) {
+                it('should successfully equip, then ' + desc + ' equipped item and equip new item', function(done) {
+                    var player = { x: 0.5, y: 0.5 };
+                    var item_id1 = null;
+                    var item_id2 = null;
+                    var isAction = false;
+
+                    testsAPI.SetWSHandler(function(e) {
+
+                       var response = JSON.parse(e.data);
+
+                        if (response['action'] == testsAPI.startTestingAction) {
+                            testsAPI.Ok(response['result']);
+                            testsAPI.SetUpConstants();
+                            testsAPI.SetUpMap([
+                                [".", ".", ".", "."],
+                                [".", ".", ".", "."],
+                                [".", ".", ".", "."],
+                                [".", ".", ".", "."]
+                            ]);
+                        } else if (response['action'] == testsAPI.setUpConstAction) {
+                            testsAPI.Ok(response['result']);
+                        } else if (response['action'] == testsAPI.setUpMapAction) {
+                            testsAPI.Ok(response['result']);
+                            testsAPI.PutPlayer(player['x'], player['y'], [ testsAPI.MakeItem(), testsAPI.MakeItem()  ]);
+                        } else if (response['action'] == testsAPI.putPlayerAction) {
+                            testsAPI.Ok(response['result']);
+                            testsAPI.Equal(response['inventory'].length, 2);
+                            player['id'] = response['id'];
+                            player['sid'] = response['sid'];
+                            item_id1 = response['inventory'][0];
+                            item_id2 = response['inventory'][1];
+                            testsAPI.Equip(player['sid'], item_id1, "left-hand");
+                        } else if (response['action'] == testsAPI.enforceAction) {
+                            testsAPI.Ok(response['result']);
+                            testsAPI.Ok(response['actionResult']['result']);
+                            if (response['actionResult']['action'] == testsAPI.equipAction) {
+                                if (isAction) {
+                                    testsAPI.Examine(player['id'], player['sid']);
+                                } else {
+                                    Action(player['sid'], item_id1);
+                                }
+                            } else if (response['actionResult']['action'] == ActionName) {
+                                isAction = true;
+                                testsAPI.Equip(player['sid'], item_id2, "left-hand");
+                            } else if (response['actionResult']['action'] == testsAPI.examineAction) {
+                                testsAPI.Equal(response['actionResult']['slots']['left-hand']['id'], item_id2);
+                                testsAPI.Equal(response['actionResult']['inventory'].length, 0)
+                                done();
+                            } else if (response['actionResult']['action'] == testsAPI.unequipAction) {
+                                testsAPI.Ok(response['actionResult']['result']);
+                                testsAPI.Examine(player['id'], player['sid']);
+                            }
+                        }
+                    });
+
+                    testsAPI.StartTesting();
+                });
+            }
+
+            HardItemTest(testsAPI.Drop, testsAPI.dropAction, 'drop');
+            HardItemTest(testsAPI.Destroy, testsAPI.destroyAction, 'destroy');
 
         });
 
