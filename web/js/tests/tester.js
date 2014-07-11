@@ -41,20 +41,23 @@ define(['utils/utils' , 'utils/ws'], function(utils, wsock) {
          'login'    : data.login,
          'password' : data.password,
          'action'   : 'register'
-      }, null)
-      send({
-         'action'   : 'login',
-         'password' : data.password,
-         'login'    : data.login
-      }, function (response){
-         if(response["result"] == 'invalidCredentials')  return;
-         data.ssid     = response['sid'];
-         data.wsuri    = response['webSocket'];
-         data.fist_id  = response['fistId'];
-         data.actor_id = response['id'];
-         data.ws       = wsock(data.wsuri, null, null, null, null);
-         waitForSocketConnection(data.ws, done);
-      })
+      }, function() {
+           send({
+              'action'   : 'login',
+              'password' : data.password,
+              'login'    : data.login
+           }, function (response){
+              if(response["result"] == 'invalidCredentials')  return;
+              data.ssid     = response['sid'];
+              data.wsuri    = response['webSocket'];
+              data.fist_id  = response['fistId'];
+              data.actor_id = response['id'];
+              data.ws       = wsock(data.wsuri, null, function () {
+                console.log("SOCKET OPEN")
+              }, null, null);
+              waitForSocketConnection(data.ws, done);
+           });
+      });
 
    }
 
