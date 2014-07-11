@@ -199,14 +199,19 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
         });
     }
 
-    function Use(sid, id) {
+    function Use(sid, id, x, y) {
+        var action = {
+            sid: sid,
+            action: useAction,
+            id: id
+        };
+        if (x && y) {
+            action.x = x;
+            action.y = y;
+        }
         SendViaWS({
             action: enforceAction,
-            enforcedAction: {
-                sid: sid,
-                action: useAction,
-                id: id
-            }
+            enforcedAction: action
         });
     }
 

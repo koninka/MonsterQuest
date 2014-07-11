@@ -131,7 +131,7 @@ func (g *Game) doPlayersAction(action string, json consts.JsonType) consts.JsonT
     var res consts.JsonType
     switch action {
     case "move": g.moveAction(json)
-    case "use": g.useAction(json)
+    case "use": res = g.useAction(json)
     case "attack": g.attackAction(json)
     case "getDictionary": res = g.getDictionaryAction()
     case "look": res = g.lookAction(json["sid"].(string))
@@ -321,7 +321,7 @@ func (g *Game) useAction(json consts.JsonType) consts.JsonType {
         yParam := json["y"]
         res["result"] = "badSlot"
         if xParam != nil && yParam != nil {
-            if item := p.GetItem(id); item.IsWeapon() {
+            if item := p.GetItem(id); item != nil && item.IsWeapon() {
                 if p.IsEquippedItem(item) {
                     p.SetAttackPoint(xParam.(float64), yParam.(float64))
                     res["message"] = fmt.Sprintf("attack point (%f, %f)", xParam.(float64), yParam.(float64))
@@ -493,6 +493,7 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                 }
                 res["sid"] = p.SID
                 res["id"] = p.GetID()
+                res["fistId"] = p.GetFistID()
                 res["result"] = "ok"
             }
         }
