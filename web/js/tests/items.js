@@ -355,8 +355,9 @@ define(['utils/testsAPI'], function(testsAPI) {
                         testsAPI.PutPlayer(player['x'], player['y']);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
                         testsAPI.Ok(response['result']);
-                        player['sid'] = response['sid'];
-                        testsAPI.Destroy(player['sid'], testsAPI.GetPlayerFistID())
+                        player.sid = response['sid'];
+                        player.fist_id = response['fist_id'];
+                        testsAPI.Destroy(player.sid, player.fist_id);
                     } else if (response['action'] == testsAPI.enforceAction) {
                         testsAPI.Ok(response['result']);
                         testsAPI.Equal(response['actionResult']['result'], testsAPI.actionResultBadId);
@@ -507,8 +508,9 @@ define(['utils/testsAPI'], function(testsAPI) {
                         testsAPI.PutPlayer(player['x'], player['y']);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
                         testsAPI.Ok(response['result']);
-                        player['sid'] = response['sid'];
-                        testsAPI.Drop(player['sid'], testsAPI.GetPlayerFistID())
+                        player.sid = response['sid'];
+                        player.fist_id = response['fist_id'];
+                        testsAPI.Drop(player.sid, player.fist_id);
                     } else if (response['action'] == testsAPI.enforceAction) {
                         testsAPI.Ok(response['result']);
                         testsAPI.Equal(response['actionResult']['result'], testsAPI.actionResultBadId);
@@ -833,13 +835,13 @@ define(['utils/testsAPI'], function(testsAPI) {
                         testsAPI.PutPlayer(player['x'], player['y'], [ testsAPI.MakeItem() ]);
                     } else if (response['action'] == testsAPI.putPlayerAction) {
                         testsAPI.Ok(response['result']);
-                        player['id'] = response['id'];
-                        player['sid'] = response['sid'];
                         item_id = response['inventory'][0];
-                        testsAPI.Equip(player['sid'], testsAPI.GetPlayerFistID(), 'left-hand')
+                        player.sid = response['sid'];
+                        player.fist_id = response['fist_id'];
+                        testsAPI.Equip(player.sid, player.fist_id, 'left-hand');
                     } else if (response['action'] == testsAPI.enforceAction) {
                         testsAPI.Ok(response['result']);
-                        testsAPI.Equal(response['actionResult']['result'], 'badSlot');
+                        testsAPI.Equal(response['actionResult']['result'], testsAPI.actionResultBadId);
                         done();
                     }
                 });
