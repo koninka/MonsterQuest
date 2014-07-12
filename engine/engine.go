@@ -610,8 +610,8 @@ func (g* Game) badAction(action string) consts.JsonType {
 func (g *Game) startTesting() consts.JsonType {
     res := utils.JsonAction("startTesting", "badAction")
     if *consts.TEST && !consts.TEST_MODE {
-        res["result"] = "ok"
         consts.TEST_MODE = true
+        res["result"] = "ok"
     }
     return res
 }
@@ -628,12 +628,12 @@ func (g *Game) stopTesting(sid string) consts.JsonType {
                 return res
             }
         }
-        res["result"] = "ok"
         consts.TEST_MODE = false
         g.mobs.Clear()
         g.players.Clear(sid)
         g.items.Clear()
         g.field.Clear()
+        res["result"] = "ok"
     }
     return res
 }
