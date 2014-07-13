@@ -629,6 +629,7 @@ func (g *Game) stopTesting(sid string) consts.JsonType {
             }
         }
         consts.TEST_MODE = false
+        consts.SetDefaultConstantsValues()
         g.mobs.Clear()
         g.players.Clear(sid)
         g.items.Clear()

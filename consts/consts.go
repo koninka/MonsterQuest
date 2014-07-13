@@ -403,6 +403,17 @@ func ParseCommandLine(){
     fmt.Println(*TEST)
 }
 
+func SetDefaultConstantsValues() {
+    for name, addr := range NameConstMapping {
+        if p, ok := addr.(*float64); ok {
+            *p = NameDefaultConstMapping[name].(float64)
+        } else if p, ok := addr.(*int); ok {
+            *p = NameDefaultConstMapping[name].(int)
+        }
+    }
+    Refresh()
+}
+
 func Refresh() {
     TICK_DURATION = time.Duration(1000.0 / TICKS_PER_SECOND) * time.Millisecond
 }
