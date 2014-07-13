@@ -187,6 +187,7 @@ define(['global', 'options', 'item', 'trackbar'], function(GLOBAL, OPTIONS, Item
             "gloves",
             "boots",
             "weapon",
+            "expendable"
         ]
         return a.indexOf(item.itemType) != -1;
     }

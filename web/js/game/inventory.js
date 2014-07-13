@@ -110,7 +110,8 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             "helmet" : ["head"],
             "gloves" : ["forearm"],
             "boots" : ["feet"],
-            "weapon" : ["left-hand"]
+            "weapon" : ["left-hand"],
+            "expendable" : ["ammo"]
         }
         var slot = itemType[item.itemType];
         if(!slot)
