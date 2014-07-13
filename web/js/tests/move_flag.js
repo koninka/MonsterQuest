@@ -61,48 +61,46 @@ define(['utils/testsAPI'], function(testsAPI) {
                     testsAPI.StartTesting();
                  });
 
-                // it('should move player from one map edge to another map edge[big playerVelocity]', function(done){
-                //     var player = { x: 3.5, y: 6.5 };
+                it('should move player from one map edge to another map edge[big playerVelocity]', function(done){
+                    var player = { x: 0.5, y: 3.5 };
 
-                //     testsAPI.SetWSHandler(function(e) {
+                    testsAPI.SetWSHandler(function(e) {
 
-                //        var response = JSON.parse(e.data);
+                       var response = JSON.parse(e.data);
 
-                //         if (response['action'] == testsAPI.startTestingAction) {
-                //             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                //             testsAPI.SetUpConstants(30);
-                //             testsAPI.SetUpMap([
-                //                 [".", ".", ".", ".", ".", "."],
-                //                 [".", ".", ".", ".", ".", "."],
-                //                 [".", ".", ".", ".", ".", "."],
-                //                 [".", ".", ".", ".", ".", "."],
-                //                 [".", ".", ".", ".", ".", "."],
-                //                 [".", ".", ".", ".", ".", "."],
-                //                 [".", ".", ".", ".", ".", "."]
-                //             ]);
-                //         } else if (response['action'] == testsAPI.setUpConstAction) {
-                //             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                //         } else if (response['action'] == testsAPI.setUpMapAction) {
-                //             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                //             testsAPI.PutPlayer(player['x'], player['y']);
-                //         } else if (response['action'] == testsAPI.putPlayerAction) {
-                //             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                //             player['id'] = response['id'];
-                //             player['sid'] = response['sid'];
-                //             testsAPI.MovePlayer(player['sid'], "north");
-                //             testsAPI.Sleep(testsAPI.tickDuration * 4, testsAPI.Examine, player['id']);
-                //         } else if (response['action'] == testsAPI.examineAction) {
-                //             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                //             expect(response['x']).to.equal(player['x']);
-                //             expect(response['y']).to.be.below(player['y']);
-                //             testsAPI.MovePlayer(player['sid'], dirs[moveCounter++]);
-                //             testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
-                //             done();
-                //         }
-                //     });
+                        if (response['action'] == testsAPI.startTestingAction) {
+                            testsAPI.Ok(response['result']);
+                            testsAPI.SetUpConstants(10000);
+                            testsAPI.SetUpMap([
+                                [".", ".", ".", ".", ".", "."],
+                                [".", ".", ".", ".", ".", "."],
+                                [".", ".", ".", ".", ".", "."],
+                                [".", ".", ".", ".", ".", "."],
+                                [".", ".", ".", ".", ".", "."],
+                                [".", ".", ".", ".", ".", "."],
+                                [".", ".", ".", ".", ".", "."]
+                            ]);
+                        } else if (response['action'] == testsAPI.setUpConstAction) {
+                            testsAPI.Ok(response['result']);
+                        } else if (response['action'] == testsAPI.setUpMapAction) {
+                            testsAPI.Ok(response['result']);
+                            testsAPI.PutPlayer(player['x'], player['y']);
+                        } else if (response['action'] == testsAPI.putPlayerAction) {
+                            testsAPI.Ok(response['result']);
+                            player['id'] = response['id'];
+                            player['sid'] = response['sid'];
+                            testsAPI.MovePlayer(player['sid'], "east");
+                            testsAPI.Sleep(testsAPI.tickDuration * 4, testsAPI.Examine, player['id']);
+                        } else if (response['action'] == testsAPI.examineAction) {
+                            testsAPI.Ok(response['result']);
+                            testsAPI.Equal(response['x'], 5.5);
+                            testsAPI.Equal(player['y'], response['y']);
+                            done();
+                        }
+                    });
 
-                //     testsAPI.StartTesting();
-                //  });
+                    testsAPI.StartTesting();
+                 });
 
                 it('should not move player in all directions[walls around]', function(done){
                     var player = { x: 1.5, y: 1.5 };

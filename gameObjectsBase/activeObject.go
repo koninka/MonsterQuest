@@ -35,8 +35,8 @@ type Kinder interface {
 
 type Activer interface {
     GameObjecter
-    GetShiftedFrontSide(int) geometry.Point
-    GetCollisionableSide(int) (geometry.Segment, geometry.Point)
+    GetShiftedFrontSide(int, float64) geometry.Point
+    GetCollisionableSide(int, float64) (geometry.Segment, geometry.Point)
     GetDir() int
     SetDir(dir int)
     Init()
@@ -122,27 +122,27 @@ type ActiveObject struct {
     ClearDir bool
 }
 
-func (obj *ActiveObject) GetShiftedCenter(dir int) geometry.Point {
+func (obj *ActiveObject) GetShiftedCenter(dir int, shift float64) geometry.Point {
     mx, my := GetShiftByDirection(dir)
     point := obj.Center
-    point.Move(float64(mx) * consts.VELOCITY, float64(my) * consts.VELOCITY)
+    point.Move(float64(mx) * shift, float64(my) * shift)
     return point
 }
 
-func (obj *ActiveObject) GetShiftedFrontSide(dir int) geometry.Point{
+func (obj *ActiveObject) GetShiftedFrontSide(dir int, shift float64) geometry.Point{
     mx, my := GetShiftByDirection(dir)
     point := obj.Center
-    point.Move(float64(mx) * (consts.OBJECT_HALF + consts.VELOCITY), float64(my) * (consts.OBJECT_HALF + consts.VELOCITY))
+    point.Move(float64(mx) * (consts.OBJECT_HALF + shift), float64(my) * (consts.OBJECT_HALF + shift))
     return point;
 }
 
 func (obj *ActiveObject) Move(dir int) {
-    obj.Center = obj.GetShiftedCenter(dir)
+    obj.Center = obj.GetShiftedCenter(dir, consts.VELOCITY)
 }
 
-func (obj *ActiveObject) GetCollisionableSide(dir int) (geometry.Segment, geometry.Point) {
+func (obj *ActiveObject) GetCollisionableSide(dir int, shift float64) (geometry.Segment, geometry.Point) {
     var p1, p2, p3 geometry.Point
-    p1 = obj.GetShiftedCenter(dir)
+    p1 = obj.GetShiftedCenter(dir, shift)
     p2 = p1
     p3 = p1
     switch dir {
