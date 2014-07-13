@@ -217,7 +217,6 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
 
     Game.prototype.InitTrackBar = function(chain_number){
         GLOBAL.trackbar = new TrackBar();
-        GLOBAL.trackbar.Init();
         game.InitChain(chain_number + 1);
     }
 

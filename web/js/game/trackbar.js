@@ -10,13 +10,18 @@ define(["global", "options"], function(GLOBAL, OPTIONS){
         );
     }
 
-    function SliderMouseDown(data){
+    function StartDrag(data){
         data.originalEvent.preventDefault();
         this.data = data;
         this.dragging = true;
     }
 
-    function SliderMouseUp(data){
+    function Drag(data){
+        if(!this.dragging) return
+        this.position = this.data.getLocalPosition(this.parent);
+    }
+
+    function StopDrag(data){
         //if(!this.dragging) return;
         this.dragging = false;
         this.data = null;
@@ -25,7 +30,7 @@ define(["global", "options"], function(GLOBAL, OPTIONS){
     function TrackBar(){
         PIXI.DisplayObjectContainer.call(this);
         var I = this;
-        this.Init();
+        this.AddToScreen();
         this.cur = 0;
         this.low = 0;
         this.high = 0;
@@ -45,7 +50,7 @@ define(["global", "options"], function(GLOBAL, OPTIONS){
         slider.anchor.y = 0.5; 
         slider.position.y += bar.height / 2;
         slider.interactive = true;
-        slider.mousedown = SliderMouseDown;
+        slider.mousedown = StartDrag;
         slider.mousemove = function(data){
             if(this.dragging){
                 var x = this.data.getLocalPosition(this.parent).x;
@@ -57,7 +62,7 @@ define(["global", "options"], function(GLOBAL, OPTIONS){
                 I.SetCur(Math.floor(x * (I.high - I.low) / bar.width));
             }
         }
-        slider.mouseup = slider.mouseupoutside = SliderMouseUp;
+        slider.mouseup = slider.mouseupoutside = StopDrag;
         exit.anchor.x = exit.anchor.y = 0.5;
         exit.position.x = background.width - 10;
         exit.position.y = 5;
@@ -94,7 +99,7 @@ define(["global", "options"], function(GLOBAL, OPTIONS){
         text.anchor.x = 1;
         text.anchor.y = 1;
         text.position.x = bp.x + this.bar.width;
-        text.position.y = bp.y //- 10;
+        text.position.y = bp.y
         this.addChild(this.high_text);
     }
 
@@ -147,7 +152,7 @@ define(["global", "options"], function(GLOBAL, OPTIONS){
         this.Show();
     }
 
-    TrackBar.prototype.Init = function(){
+    TrackBar.prototype.AddToScreen = function(){
         GLOBAL.graphic.stage.addChild(this);
         this.Hide();
         this.position = OPTIONS.trackbar.position;
