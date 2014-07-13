@@ -1,4 +1,4 @@
-define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
+define(['global', 'options', 'item', 'trackbar'], function(GLOBAL, OPTIONS, Item, trackbar){
     
     function CountLabel(count){
         PIXI.DisplayObjectContainer.call(this);
@@ -16,7 +16,7 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
         if(this.count == undefined)
             this.count = 1;
         this.draw = GLOBAL.graphic.Text(
-             this.count, 
+            this.count, 
             {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'white', wordWrap : true, wordWrapWidth : 200},
             0, 
             0
@@ -85,6 +85,10 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
         }
         return null;
     }
+    
+    function ShowBar(data){
+        GLOBAL.trackbar.Show();
+    }
 
     function InventoryItem(item){
         Item.call(this, item);
@@ -99,13 +103,23 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
         this.onRightClick = function(data){
             data.originalEvent.preventDefault();
             var keys = KeyboardJS.activeKeys();
-            if(keys[0] == 'shift')
-                GLOBAL.game.sendViaWS({action: "drop", id: m.id});
-            else if(keys[0] == 'ctrl')
-                GLOBAL.game.sendViaWS({action: "destroyItem", id: m.id});
-            else
-                GLOBAL.game.sendViaWS({action: "examine", id: m.id});
-            GLOBAL.game.SelfExamine();
+            if(I.count > 1){
+                if(keys[0] == 'shift')
+                    ShowBar({action: "drop", id : m.id});
+                else if(keys[0] == 'ctrl')
+                    ShowBar({action: "destroyItem", id: m.id});
+                else
+                    GLOBAL.game.sendViaWS({action: "examine", id: m.id});
+            } else {
+                if(keys[0] == 'shift')
+                    GLOBAL.game.sendViaWS({action: "drop", id: m.id});
+                else if(keys[0] == 'ctrl')
+                    GLOBAL.game.sendViaWS({action: "destroyItem", id: m.id});
+                else
+                    GLOBAL.game.sendViaWS({action: "examine", id: m.id});
+                GLOBAL.game.SelfExamine();
+            }
+            
         }
         this.drawable.mousedown = function(data){
             var event = data.originalEvent;
@@ -159,6 +173,7 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
     }
     
     InventoryItem.prototype.SetCount = function(count){
+        this.count = count;
         this.counter.SetCount(count);
     }
 

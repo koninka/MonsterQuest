@@ -1,5 +1,5 @@
-define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'options', 'global', 'quickpanel'], 
-    function(JQuery, utils, Player, View, Graphic, Inventory, OPTIONS, GLOBAL, QuickPanel) {
+define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'options', 'global', 'quickpanel', 'trackbar'], 
+    function(JQuery, utils, Player, View, Graphic, Inventory, OPTIONS, GLOBAL, QuickPanel, TrackBar) {
 
     var player_id = (parseInt(utils.getQueryVariable('id')));
     var fist_id = parseInt(utils.getQueryVariable('fistId'));
@@ -215,6 +215,12 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         th.SelfExamine();
     }
 
+    Game.prototype.InitTrackBar = function(chain_number){
+        GLOBAL.trackbar = new TrackBar();
+        GLOBAL.trackbar.Init();
+        game.InitChain(chain_number + 1);
+    }
+
     Game.prototype.SelfExamine = function(){
         this.sendViaWS({action: "examine", id: player_id})
     }
@@ -276,6 +282,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         AddToChain(this.InitLook);
         AddToChain(this.InitDictionary);
         AddToChain(this.InitQuickPanel);
+        AddToChain(this.InitTrackBar);
         
         this.InitChain(0);
         this.InitKeyboard()
