@@ -214,4 +214,5 @@ define({
     "Great axe of Durin" : "/imgs/angband/Great axe of Durin.png",
     "Bow of Belthronding" : "/imgs/angband/Bow of Belthronding.png",
     "Bow of Bard" : "/imgs/angband/Bow of Bard.png",
+    "Steel arrow" : "/imgs/angband/Steel arrow.png",
 })
