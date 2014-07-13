@@ -27,6 +27,7 @@ define({
     "trackbar_bar" : "/imgs/trackbar/trackbar_bar.png",
     "trackbar_slider" : "/imgs/trackbar/trackbar_slider.png",
     "trackbar_exit" : "/imgs/trackbar/trackbar_exit.png",
+    "trackbar_ok" : "/imgs/trackbar/trackbar_ok.png",
 	zombie : {
 		corpse: "/imgs/zombie/zombie_corpse_1.png",
 		legs  : [
