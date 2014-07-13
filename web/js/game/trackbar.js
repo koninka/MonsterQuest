@@ -77,6 +77,14 @@ define(["global", "options"], function(GLOBAL, OPTIONS){
         ok.position.y = background.height - 5;
         ok.interactive = true;
 
+        this.interactive = true;
+        this.mousedown = StartDrag;
+        this.mousemove = function(data){
+            var p = data.getLocalPosition(this);
+            if(p.y < 10 && p.x < background.width - 20)
+                Drag.call(this, data);
+        }
+        this.mouseup = this.mouseupoutside = StopDrag;
     }
 
     TrackBar.prototype = Object.create(PIXI.DisplayObjectContainer.prototype);
