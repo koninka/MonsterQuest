@@ -86,8 +86,8 @@ define(['global', 'options', 'item', 'trackbar'], function(GLOBAL, OPTIONS, Item
         return null;
     }
     
-    function ShowBar(data){
-        GLOBAL.trackbar.Show();
+    function ShowBar(count, data){
+        GLOBAL.trackbar.SetAndShow(0, count, data);
     }
 
     function InventoryItem(item){
@@ -105,9 +105,9 @@ define(['global', 'options', 'item', 'trackbar'], function(GLOBAL, OPTIONS, Item
             var keys = KeyboardJS.activeKeys();
             if(I.count > 1){
                 if(keys[0] == 'shift')
-                    ShowBar({action: "drop", id : m.id});
+                    ShowBar(I.count, {action: "drop", id : m.id});
                 else if(keys[0] == 'ctrl')
-                    ShowBar({action: "destroyItem", id: m.id});
+                    ShowBar(I.count, {action: "destroyItem", id: m.id});
                 else
                     GLOBAL.game.sendViaWS({action: "examine", id: m.id});
             } else {
