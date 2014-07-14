@@ -83,12 +83,15 @@ type OnGoingEffect struct {
 }
 
 func (me *OnGoingEffect) apply(activator Activer) {
-    dc := int(float64(me.val) / float64(me.duration))
-    start := time.Now()
-    for time.Since(start) < me.duration {
-        activator.ModifyCharacteristic(me.characteristic, dc)
-        time.Sleep(time.Second)
+    a := func(){
+        dc := int(float64(me.val) / float64(me.duration))
+        start := time.Now()
+        for time.Since(start) < me.duration {
+            activator.ModifyCharacteristic(me.characteristic, dc)
+            time.Sleep(time.Second)
+        }
     }
+    go a()
 }
 
 func (me *OnGoingEffect) GetFullInfo() consts.JsonType {
