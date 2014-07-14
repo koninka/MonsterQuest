@@ -114,6 +114,7 @@ func (p* Player) RestoreItem(item gameObjectsBase.Itemer, place int) {
 }
 
 func (p* Player) RestoreSlot(item gameObjectsBase.Itemer, slotIota int) {
+    p.Inventory.RestoreItem(item)
     p.slots[slotIota].item = item
     item.SetOwner(p)
 }
@@ -178,7 +179,7 @@ func (p* Player) DeleteItem(item gameObjectsBase.Itemer, amount int) (bool, game
 func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) (bool, consts.JsonType) {
     var res consts.JsonType = nil
     slot := p.slots[slotIota]
-    if slot == nil || !slot.isSuitableType(item.GetItemType())  || item.GetItemClass() != consts.ITEM_CLASS_GARMENT {
+    if slot == nil || !slot.isSuitableType(item.GetItemType())  || item.GetItemClass() != consts.ITEM_CLASS_GARMENT || p.Equipped(item) {
         return false, res
     }
     p.Unequip(slotIota)
@@ -202,6 +203,8 @@ func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) (bool, consts.
                     db.Exec("CALL clone_slot(?, ?, ?)", p.DBId, slotIota, s)
                 }
             }
+        } else {
+            p.Unequip(slotIota)
         }
         slot.item = item
     }

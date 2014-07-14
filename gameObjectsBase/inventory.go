@@ -90,11 +90,13 @@ func (inv* InventoryObj) AddItem(item Itemer, owner Activer) (int, Itemer) {
     return place, i
 }
 
-func (inv* InventoryObj) RestoreItem(i Itemer, place int) {
+func (inv* InventoryObj) RestoreItem(i Itemer, place ...int) {
     var id int64 = i.GetID()
-    inv.cells[place] = id
     inv.kinds[i.GetKindId()] = id
     inv.Items[i.GetID()] = i
+    if len(place) > 0 {
+        inv.cells[place[0]] = id
+    }
 }
 
 func (inv* InventoryObj) GetPlace(id int64) int {
