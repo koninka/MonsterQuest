@@ -139,6 +139,7 @@ func (p* Player) RestoreSlot(item gameObjectsBase.Itemer, slotIota int) {
         // p.slots[s].item = item
     }
     item.SetOwner(p)
+    item.EquipItem(p.Inventory)
 }
 
 func (p* Player) getSlotByItem(item gameObjectsBase.Itemer) int {
