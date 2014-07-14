@@ -127,7 +127,11 @@ const (
     ITEM_T_BOOTS
     ITEM_T_WEAPON
     ITEM_T_EXPENDABLE
-    ITEM_ST_DEFAULT = -1
+)
+
+const ITEM_ST_DEFAULT = -1
+
+const (
     ITEM_ST_ONE_HANDED = iota
     ITEM_ST_TWO_HANDED
     ITEM_ST_BOW

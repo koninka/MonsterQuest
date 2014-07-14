@@ -142,21 +142,6 @@ BEGIN
    CALL `inc_user_item_amount`(uid, iid, place_num, amnt);
 END//
 
-DROP PROCEDURE IF EXISTS `clone_slot` //
-CREATE PROCEDURE `clone_slot`(IN `uid` INT, IN `slot_num` INT, IN `new_slot_num` INT)
-BEGIN
-   DECLARE amnt, iid INT;
-   DELETE FROM `users_slots` WHERE `user_id` = uid  AND `item_id` = iid AND `slot` = new_slot_num;
-   SELECT `amount`, `item_id` INTO amnt, iid  FROM `users_slots` WHERE `user_id` = uid AND `slot` = slot_num;
-   INSERT INTO `users_slots`(`user_id`, `item_id`, `slot`) VALUES(uid, iid, new_slot_num);
-END//
-
-DROP PROCEDURE IF EXISTS `delete_clone_slot` //
-CREATE PROCEDURE `delete_clone_slot`(IN `uid` INT, IN `slot_num` INT)
-BEGIN
-   DELETE FROM `users_slots` WHERE `user_id` = uid  AND `item_id` = iid AND `slot` = slot_num;
-END//
-
 DROP PROCEDURE IF EXISTS `dec_user_slot_amount` //
 CREATE PROCEDURE `dec_user_slot_amount`(IN `uid` INT, IN `iid` INT, IN `slot_num` INT, IN `amnt` INT)
 BEGIN
