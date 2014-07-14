@@ -56,4 +56,4 @@ INSERT INTO artifacts(name, atype, weight, allocation_info, power_info, flags, e
    ('Great axe of Durin', '0:7:1', 230, '1:4:127', '0:4d4:10:20:15', 'SLAY_DEMON|SLAY_TROLL|SLAY_ORC|RES_FEAR|RES_ACID|RES_FIRE|RES_LIGHT|RES_DARK|RES_CHAOS|', '', '5:TUNNEL@3:STR|CON@-1:STEALTH', '', 'The twin massive axe heads of this ancient demon\'s dread gleam with mithril inlay telling sagas of endurance.  The powers of Khazad-dûm protect its wielder and slay all evils found underground.'),
    ('Bow of Belthronding', '0:7:2', 40, '5:6:127', '0:0d0:20:22:0', '', '', '3:DEX@1:SPEED|STEALTH', '', 'The great bow of Beleg Cúthalion, the most famous archer of the Elves. Its backbone of black yew holds strings of bear sinew, and of old, onlyBeleg himself could draw them.'),
    ('Bow of Bard', '0:7:2', 40, '5:6:127', '0:0d0:17:19:0', '', '', '2:MIGHT@1:DEX|SPEED', '', 'The great yew bow of grim-faced Bard, who shot the mightiest arrow that songs record.'),
-   ('Steel arrow', '0:8:4', 3, '80:1:127', '0:0d0:17:19:0', '', '', '', '', '');
+   ('Steel arrow', '0:8:4', 3, '80:1:127', '0:0d0:17:19:0', '', '', '', '', 'Steel arrow.'),
