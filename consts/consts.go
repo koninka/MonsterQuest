@@ -385,7 +385,7 @@ const (
 
 const (
     BONUS_PERCENT_NAME = "percent"
-    BONUS_CONSTANT_NAME = "constant"
+    BONUS_CONSTANT_NAME = "const"
 )
 
 var NameBonusMapping = map[string] int {
