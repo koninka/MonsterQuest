@@ -239,7 +239,7 @@ func parseBonusFromDB(bonusStr string) [] *Bonus {
 func parseEffectFromDB(effectStr string) [] Effecter {
     effects := make([] Effecter, 0, 30)
     parts := strings.Split(effectStr, ":")
-    duration := time.Duration(utils.ParseInt(parts[3]))
+    duration := time.Duration(utils.ParseInt(parts[3])) * time.Second
     characteristics := strings.Split(parts[1], "|")
     if parts[0] == "M" {
         val := utils.ParseInt(parts[2])
