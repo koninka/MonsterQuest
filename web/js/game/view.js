@@ -128,7 +128,7 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
         var txt = '';
         var bonuses = data.bonuses;
         var effects = data.effects;
-        var characteristics = data.characteristics;
+        var characteristics = data.stats;
         delete data.action;
         delete data.result;
         delete data.bonuses;
