@@ -335,6 +335,7 @@ type Itemer interface {
     GetAmount() int
     GetItemClass() int
     GetItemSubtype() int
+    incAmount(int)
     DecAmount(int)
     setAmount(int)
     UseItem(*InventoryObj)
@@ -450,6 +451,9 @@ func (i* Item) GetAmount() int {
 func (i* Item) DecAmount(int) {
 }
 
+func (i* Item) incAmount(int) {
+}
+
 func (i* Item) setAmount(int) {
 }
 
@@ -535,6 +539,10 @@ func (i* StackItem) GetInfo() consts.JsonType {
 
 func (i* StackItem) GetAmount() int {
     return i.amount
+}
+
+func (i* StackItem) incAmount(amount int) {
+    i.amount += amount
 }
 
 func (i* StackItem) DecAmount(amount int) {
@@ -638,14 +646,15 @@ func newStackItem(ik *ItemKind, owner Activer, amount int) StackItem {
 // }
 
 func splitItem(inv* InventoryObj, i Itemer, amount int) (int, Itemer) {
-    new_i := newConsumableItem(i.GetKind(), i.GetOwner(), i.GetAmount() - amount)
+    new_i := newItem(i.GetKind(), i.GetOwner(), i.GetAmount() - amount)
     place := inv.getPlaceById(i.GetID())
     inv.cells[place] = new_i.GetID()
     delete(inv.Items, i.GetID())
     inv.Items[new_i.GetID()] = new_i
     inv.kinds[new_i.GetKindId()] = new_i.GetID()
-    i.SetOwner(nil)
     i.ForcePlace(i.GetOwner().GetCenter())
+    new_i.SetOwner(i.GetOwner())
+    i.SetOwner(nil)
     i.setAmount(amount)
     return place, new_i
 }

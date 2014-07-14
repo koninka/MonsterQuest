@@ -61,7 +61,7 @@ type Activer interface {
     GetAttackPoint() *geometry.Point
     ClearAttackPoint()
     GetItems() map[int64] Itemer
-    AddItem(Itemer) int
+    AddItem(Itemer) (int, Itemer)
     DropItem(Itemer, int) (int, Itemer)
     GetCharacteristic(charIota int) int
     SetCharacteristic(charIota, newVal int)
@@ -278,7 +278,7 @@ func (obj *ActiveObject) ClearAttackPoint() {
     obj.AttackPoint = nil
 }
 
-func (obj *ActiveObject) AddItem(item Itemer) int {
+func (obj *ActiveObject) AddItem(item Itemer) (int, Itemer) {
     return obj.Inventory.AddItem(item, obj)
 }
 

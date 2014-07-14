@@ -39,6 +39,13 @@ define({
     ],
     quickpanel : {
         size : 10
+    },
+    trackbar : {
+        position : {x : 100, y : 100},
+        bar_position : {
+            x : 20,
+            y : 40
+        }
     }
 
 })

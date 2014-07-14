@@ -36,7 +36,7 @@ func (inv* InventoryObj) dropItem(i Itemer) int {
     return place
 }
 
-func (inv* InventoryObj) DeleteItem(i Itemer, amount int) int {
+func (inv* InventoryObj) DeleteItem(i Itemer, amount int) (int, Itemer) {
     var place int = inv.getPlaceById(i.GetID())
     if i.GetAmount() - amount <= 0 {
         place = inv.dropItem(i)
@@ -44,7 +44,7 @@ func (inv* InventoryObj) DeleteItem(i Itemer, amount int) int {
     } else {
         i.DecAmount(amount)
     }
-    return place
+    return place, i
 }
 
 func (inv* InventoryObj) DropItem(i Itemer, amount int) (int, Itemer) {
@@ -67,24 +67,27 @@ func (inv* InventoryObj) DropItem(i Itemer, amount int) (int, Itemer) {
     return place, new_item
 }
 
-func (inv* InventoryObj) AddItem(i Itemer, owner Activer) int {
-    var place int = -1
-    if item_id, isExist := inv.kinds[i.GetKindId()]; isExist {
+func (inv* InventoryObj) AddItem(item Itemer, owner Activer) (int, Itemer) {
+    var (
+        i Itemer = item
+        place int = -1
+    )
+    if item_id, isExist := inv.kinds[item.GetKindId()]; isExist {
         if inv.Items[item_id].IsHeapItem() {
-            i = nil
             place = inv.getPlaceById(item_id)
-            // inv.Items[item_id]
-            // item.IncAmount
+            inv.Items[item_id].incAmount(item.GetAmount())
+            i = nil
+            i = inv.Items[item_id]
         }
     } else {
-        inv.kinds[i.GetKindId()] = i.GetID()
+        inv.kinds[item.GetKindId()] = item.GetID()
     }
     if place == -1 {
-        inv.Items[i.GetID()] = i
-        i.SetOwner(owner)
-        place = inv.placeItem(i.GetID())
+        inv.Items[item.GetID()] = i
+        item.SetOwner(owner)
+        place = inv.placeItem(item.GetID())
     }
-    return place
+    return place, i
 }
 
 func (inv* InventoryObj) RestoreItem(i Itemer, place int) {

@@ -23,6 +23,11 @@ define({
     "weapon_slot" :  "/imgs/slots/weapon.png",
     "wrists_slot" :  "/imgs/slots/wrists.png",
     item : "/imgs/angband/Ring of Tulkas.png",
+    "trackbar_background" : "/imgs/trackbar/trackbar_background.png",
+    "trackbar_bar" : "/imgs/trackbar/trackbar_bar.png",
+    "trackbar_slider" : "/imgs/trackbar/trackbar_slider.png",
+    "trackbar_exit" : "/imgs/trackbar/trackbar_exit.png",
+    "trackbar_ok" : "/imgs/trackbar/trackbar_ok.png",
 	zombie : {
 		corpse: "/imgs/zombie/zombie_corpse_1.png",
 		legs  : [
@@ -210,4 +215,5 @@ define({
     "Great axe of Durin" : "/imgs/angband/Great axe of Durin.png",
     "Bow of Belthronding" : "/imgs/angband/Bow of Belthronding.png",
     "Bow of Bard" : "/imgs/angband/Bow of Bard.png",
+    "Steel arrow" : "/imgs/angband/Steel arrow.png",
 })
