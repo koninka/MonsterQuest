@@ -71,6 +71,7 @@ func (inv* InventoryObj) AddItem(item Itemer, owner Activer) (int, Itemer) {
     var (
         i Itemer = item
         place int = -1
+        isHeap bool = false
     )
     if item_id, isExist := inv.kinds[item.GetKindId()]; isExist {
         if inv.Items[item_id].IsHeapItem() {
@@ -78,11 +79,12 @@ func (inv* InventoryObj) AddItem(item Itemer, owner Activer) (int, Itemer) {
             inv.Items[item_id].incAmount(item.GetAmount())
             i = nil
             i = inv.Items[item_id]
+            isHeap = true
         }
     } else {
         inv.kinds[item.GetKindId()] = item.GetID()
     }
-    if place == -1 {
+    if !isHeap {
         inv.Items[item.GetID()] = i
         item.SetOwner(owner)
         place = inv.placeItem(item.GetID())
