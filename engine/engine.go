@@ -805,7 +805,8 @@ func (g *Game) IsSIDValid(sid string) bool {
 }
 
 func (g *Game) LogoutPlayer(sid string) {
-    p := g.players.getPlayerBySession(sid)
+    p, exists := g.players.sessions[sid]
+    if !exists { return }
     conn := g.id2conn[p.GetID()]
     g.CloseConnection(conn)
     if g.field.Initialized() {
