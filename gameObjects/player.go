@@ -144,7 +144,18 @@ func (p* Player) RestoreSlot(item gameObjectsBase.Itemer, slotIota int) {
 func (p* Player) getSlotByItem(item gameObjectsBase.Itemer) int {
     var slot int = consts.SLOT_DEFAULT
     for i, s := range p.slots {
-        if s.item != nil && s.item.GetID() == item.GetID() {
+        if s.item != nil && (s.item.GetID() == item.GetID()) {
+            slot = i
+            break
+        }
+    }
+    return slot
+}
+
+func (p* Player) getSlotByItemType(it int) int {
+    var slot int = consts.SLOT_DEFAULT
+    for i, s := range p.slots {
+        if s.isSuitableType(it) {
             slot = i
             break
         }
@@ -167,9 +178,14 @@ func (p* Player) DropItem(item gameObjectsBase.Itemer, amount int) (int, gameObj
 }
 
 func (p* Player) PickUpItem(item gameObjectsBase.Itemer) (bool, gameObjectsBase.Itemer) {
+    var err error = nil
     db := connect.CreateConnect()
     place, i := p.AddItem(item)
-    _, err := db.Exec("CALL inc_user_item_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, item.GetAmount());
+    if item.IsHeapItem() && place == -1 {
+        _, err = db.Exec("CALL inc_user_slot_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), p.getSlotByItemType(item.GetItemType()), item.GetAmount())
+    } else {
+        _, err = db.Exec("CALL inc_user_item_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, item.GetAmount());
+    }
     if err != nil {
         //
         fmt.Println(err)
