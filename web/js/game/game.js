@@ -298,7 +298,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
             game.Init();
         }
         this.sock.onclose = function(e) {
-            alert('Logout after 3 seconds');
+            //alert('Connection closed');
             setTimeout(function () {
                 window.location.href = "/";
             }, 1000);
