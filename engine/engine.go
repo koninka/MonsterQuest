@@ -309,6 +309,7 @@ func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
             }
         }
     }
+    fmt.Println("EQUIP RESULT ", res)
     return res
 }
 
@@ -328,6 +329,7 @@ func (g *Game) unequipItem(json consts.JsonType) consts.JsonType {
             }
         }
     }
+    fmt.Println("UNEQUIP RESULT ", res)
     return res
 }
 
