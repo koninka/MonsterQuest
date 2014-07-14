@@ -138,6 +138,7 @@ func (p* Player) RestoreSlot(item gameObjectsBase.Itemer, slotIota int) {
         }
         // p.slots[s].item = item
     }
+    item.EquipItem(p.Inventory)
     item.SetOwner(p)
     item.EquipItem(p.Inventory)
 }
@@ -319,7 +320,7 @@ func (p *Player) GetItem(id int64) gameObjectsBase.Itemer {
 }
 
 func (p *Player) IsEquippedItem(item gameObjectsBase.Itemer) bool {
-    return (item.GetID() == p.fist.GetID() && p.slots[consts.SLOT_LEFT_HAND].item == nil) || item.IsEquipped()
+    return (item.GetID() == p.fist.GetID() && (p.slots[consts.SLOT_LEFT_HAND].item == nil || p.slots[consts.SLOT_RIGHT_HAND].item == nil)) || item.IsEquipped()
 }
 
 func (p *Player) GetFistID() int64 {
