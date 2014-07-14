@@ -684,10 +684,10 @@ func ItemFromJson(itemDesc consts.JsonType) Itemer {
                 effects : make([]Effecter, 0, 100),
             }
             for _, bonusDesc := range bonuses {
-                kind.bonuses = append(kind.bonuses, BonusFromJson(bonusDesc.(consts.JsonType)))
+                kind.bonuses = append(kind.bonuses, BonusFromJson(consts.JsonType(bonusDesc.(map[string] interface{}))))
             }
             for _, effectDesc := range effects {
-                kind.effects = append(kind.effects, EffectFromJson(effectDesc.(consts.JsonType)))
+                kind.effects = append(kind.effects, EffectFromJson(consts.JsonType(effectDesc.(map[string] interface{}))))
             }
             return newItem(kind, nil)
             // return &Item{NewGameObject(utils.GenerateId(), *geometry.MakePoint(0, 0)), &kind, nil}
