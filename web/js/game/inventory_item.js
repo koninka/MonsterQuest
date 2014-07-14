@@ -210,7 +210,8 @@ define(['global', 'options', 'item', 'trackbar'], function(GLOBAL, OPTIONS, Item
                 id : this.item.id
             };
         } else {
-            GLOBAL.game.sendViaWS({action: "use", id: this.item.id })
+            GLOBAL.game.sendViaWS({action: "use", id: this.item.id });
+            GLOBAL.game.SelfExamine();
         }
     }
 
