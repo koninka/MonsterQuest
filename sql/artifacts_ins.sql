@@ -57,3 +57,4 @@ INSERT INTO artifacts(name, atype, weight, allocation_info, power_info, flags, e
    ('Bow of Belthronding', '0:7:2', 40, '5:6:127', '0:0d0:20:22:0', '', '', '3:DEX@1:SPEED|STEALTH', '', 'The great bow of Beleg Cúthalion, the most famous archer of the Elves. Its backbone of black yew holds strings of bear sinew, and of old, onlyBeleg himself could draw them.'),
    ('Bow of Bard', '0:7:2', 40, '5:6:127', '0:0d0:17:19:0', '', '', '2:MIGHT@1:DEX|SPEED', '', 'The great yew bow of grim-faced Bard, who shot the mightiest arrow that songs record.'),
    ('Steel arrow', '0:8:4', 3, '80:1:127', '0:0d0:17:19:0', '', '', '', '', 'Steel arrow.'),
+   ('Food', '0:8:4', 3, '80:1:127', '0:0d0:17:19:0', '', 'M:HP:300:30', '', '', 'Restore health.');
