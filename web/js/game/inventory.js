@@ -20,7 +20,10 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         this.weapon_id = [];
         this.fistId = fistId;
         var I = this;
-        GLOBAL.graphic.field.click = function(){
+        GLOBAL.graphic.field.click = function(data){
+            var event = data.originalEvent;
+            if(event.which != 1 && event.button != 0) return
+            //if(event.which == 3 || event.button == 2)
             var point = GLOBAL.graphic.PointerToGameCoords();
             if(GLOBAL.use_mode){
                 GLOBAL.use_mode.x = point.x;
