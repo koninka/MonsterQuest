@@ -52,9 +52,26 @@ func logoutAction(u4 string) string {
     return string(resJSON)
 }
 
+func findSIDAndLogOut(login string){
+    var sid string
+    db := connect.CreateConnect()
+    stmt, _ := db.Prepare(`
+        SELECT s.sid FROM sessions s
+        INNER JOIN users u ON s.user_id = u.id
+        WHERE u.login = ?
+    `)
+    defer stmt.Close()
+    err := stmt.QueryRow(login).Scan(&sid)
+    fmt.Println(err)
+    if err != sql.ErrNoRows {
+        engine.GetInstance().LogoutPlayer(sid)
+    }
+}
+
 func loginAction(login, pass string) string {
     result := map[string] interface{} {"result": "invalidCredentials"}
     if isExistUser(login, pass) {
+        findSIDAndLogOut(login)
         db := connect.CreateConnect()
         sid := utils.GenerateSID()
         stmt, _ := db.Prepare("CALL add_user_session(?, ?)")
