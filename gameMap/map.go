@@ -120,15 +120,16 @@ func (f *GameField) LinkToCells(obj gameObjectsBase.GameObjecter) {
     r := obj.GetRectangle()
     ltc, ltr := int(r.LeftTop.X), int(r.LeftTop.Y)
     rbc, rbr := int(r.RightBottom.X), int(r.RightBottom.Y)
-    // fmt.Printf("ltc - %d, ltr - %d, rbc - %d, rbr - %d\n", ltc, ltr, rbc, rbr)
-    f.Field[ltr][ltc].link(obj)
-    if ltr < f.Height && rbc < f.Width {
+    if !f.OutOfRange(ltc, ltr) {
+        f.Field[ltr][ltc].link(obj)
+    }
+    if !f.OutOfRange(rbc, ltr) {
         f.Field[ltr][rbc].link(obj)
     }
-    if rbr < f.Height && rbc < f.Width {
+    if !f.OutOfRange(rbc, rbr) {
         f.Field[rbr][rbc].link(obj)
     }
-    if rbr < f.Height && ltc < f.Width {
+    if !f.OutOfRange(ltc, rbr) {
         f.Field[rbr][ltc].link(obj)
     }
 }
@@ -137,16 +138,16 @@ func (f *GameField) UnlinkFromCells(obj gameObjectsBase.GameObjecter) {
     r := obj.GetRectangle()
     ltc, ltr := int(r.LeftTop.X), int(r.LeftTop.Y)
     rbc, rbr := int(r.RightBottom.X), int(r.RightBottom.Y)
-    // fmt.Println(obj.GetCenter())
-    // fmt.Printf("ltc - %d, ltr - %d, rbc - %d, rbr - %d\n", ltc, ltr, rbc, rbr)
-    f.Field[ltr][ltc].unlink(obj)
-    if ltr < f.Height && rbc < f.Width {
+    if !f.OutOfRange(ltc, ltr) {
+        f.Field[ltr][ltc].unlink(obj)
+    }
+    if !f.OutOfRange(rbc, ltr) {
         f.Field[ltr][rbc].unlink(obj)
     }
-    if rbr < f.Height && rbc < f.Width {
+    if !f.OutOfRange(rbc, rbr) {
         f.Field[rbr][rbc].unlink(obj)
     }
-    if rbr < f.Height && ltc < f.Width {
+    if !f.OutOfRange(ltc, rbr) {
         f.Field[rbr][ltc].unlink(obj)
     }
 }
