@@ -497,7 +497,7 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                         item := gameObjectsBase.ItemFromJson(consts.JsonType(itemDesc.(map[string] interface{})))
                         if item != nil {
                             g.items.addItem(item)
-                            p.AddItem(item)
+                            p.PickUpItem(item)
                             idxs = append(idxs, item.GetID())
                         }
                     }
@@ -509,7 +509,7 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                     for slotName, itemDesc := range slots {
                         item := gameObjectsBase.ItemFromJson(consts.JsonType(itemDesc.(map[string] interface{})))
                         if item != nil {
-                            p.AddItem(item)
+                            p.PickUpItem(item)
                             isEquip, _ := p.Equip(item, consts.NameSlotMapping[slotName])
                             if isEquip {
                                 g.items.addItem(item)
@@ -633,6 +633,14 @@ func (g *Game) startTesting() consts.JsonType {
     return res
 }
 
+func (g *Game) clearDB() {
+    var tables = [] string { "users_inventory", "users_slots" }
+    db := connect.CreateConnect()
+    for _, table := range tables {
+        db.Exec(fmt.Sprintf("DELETE FROM %s", table))
+    }
+}
+
 func (g *Game) stopTesting(sid string) consts.JsonType {
     res := utils.JsonAction("stopTesting", "badAction")
     if *consts.TEST && consts.TEST_MODE {
@@ -651,6 +659,7 @@ func (g *Game) stopTesting(sid string) consts.JsonType {
         g.players.Clear(sid)
         g.items.Clear()
         g.field.Clear()
+        g.clearDB()
         res["result"] = "ok"
     }
     return res
