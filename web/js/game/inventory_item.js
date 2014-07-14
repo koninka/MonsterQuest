@@ -120,6 +120,7 @@ define(['global', 'options', 'item', 'trackbar'], function(GLOBAL, OPTIONS, Item
                 GLOBAL.game.SelfExamine();
             }
             
+            
         }
         this.drawable.mousedown = function(data){
             var event = data.originalEvent;
@@ -202,7 +203,7 @@ define(['global', 'options', 'item', 'trackbar'], function(GLOBAL, OPTIONS, Item
             var s = GLOBAL.game.inventory.FindSlot(this.item);
             GLOBAL.game.sendViaWS({action: "equip", id: this.item.id, slot: s});
             GLOBAL.game.SelfExamine();
-        } else if(UseOnTarget(item)){
+        } else if(UseOnTarget(this.item)){
             GLOBAL.game.inventory.Hide();
             GLOBAL.use_mode = {
                 action : "use",
