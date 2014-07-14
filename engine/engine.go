@@ -806,7 +806,8 @@ func (g *Game) IsSIDValid(sid string) bool {
 
 func (g *Game) LogoutPlayer(sid string) {
     p := g.players.getPlayerBySession(sid)
-    delete(g.id2conn, p.GetID())
+    conn := g.id2conn[p.GetID()]
+    g.CloseConnection(conn)
     if g.field.Initialized() {
         g.field.UnlinkFromCells(p)
     }
