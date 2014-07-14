@@ -9,6 +9,8 @@ define(['utils/testsAPI'], function(testsAPI) {
 
             after(testsAPI.Logout);
 
+            beforeEach(testsAPI.BeforeEach);
+
             afterEach(testsAPI.AfterEach);
 
             describe('Player move', function() {
@@ -58,7 +60,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should move player from one map edge to another map edge[big playerVelocity]', function(done){
@@ -99,7 +100,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should not move player in all directions[walls around]', function(done){
@@ -142,7 +142,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should not move player[another players on way]', function(done){
@@ -199,7 +198,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should successfully move player in all directions[bound collision with walls]', function(done){
@@ -249,7 +247,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should successfully move player in all directions[bound collision with players]', function(done){
@@ -316,7 +313,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should successfully move player in east and west[bound collision with wall(north) and player(south)]', function(done){
@@ -373,7 +369,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                  it('should successfully move player[wall sliding(left, north)]', function(done){
@@ -411,7 +406,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should successfully move player[wall sliding(right, north)]', function(done){
@@ -449,7 +443,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should successfully move player[wall sliding(left, south)]', function(done){
@@ -487,7 +480,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should successfully move player[wall sliding(right, south)]', function(done){
@@ -525,7 +517,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should successfully move player[wall sliding(top, east)]', function(done){
@@ -563,7 +554,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should successfully move player[wall sliding(bottom, east)]', function(done){
@@ -601,7 +591,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should successfully move player[wall sliding(top, west)]', function(done){
@@ -639,7 +628,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should successfully move player[wall sliding(bottom, west)]', function(done){
@@ -677,7 +665,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                 });
             });
 
@@ -748,7 +735,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                 });
 
 
@@ -817,7 +803,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                 });
 
             });

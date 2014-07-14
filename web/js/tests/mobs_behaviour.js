@@ -10,6 +10,8 @@ define(['utils/testsAPI'], function(testsAPI) {
 
             after(testsAPI.Logout);
 
+            beforeEach(testsAPI.BeforeEach);
+
             afterEach(testsAPI.AfterEach);
 
             describe('Move flag', function() {
@@ -54,7 +56,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should successfully walk around', function(done){
@@ -100,7 +101,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should successfully walk around in narrow tunnel', function(done){
@@ -146,7 +146,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('should stay in place[cramped and dark][not empty place]', function(done){
@@ -212,7 +211,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
             });
 
@@ -261,7 +259,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('mob(orc) should attack another mob(animal) and after then the animal mustn\'t attack the orc(animal don\'t have blow flag)[orc hate animal, orc and animal are close]', function(done){
@@ -326,7 +323,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('mob(orc) should attack another mob(animal) and after then the animal must attack the orc[orc hate animal, orc and animal are close]', function(done){
@@ -391,7 +387,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('mob(orc) and mob(animal) should stay in place[orc hate animal, orc and animal located far]', function(done){
@@ -457,7 +452,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                  });
 
                 it('mob(orc) shouldn\'t attack player, player shouldn\'t attack mob[orc don\'t hate player]', function(done){
@@ -519,7 +513,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                 });
 
                 it('mob(orc) should attack player[orc hate player]', function(done){
@@ -580,7 +573,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                 });
 
                 it('mob should walk around in narrow tunnel and attack player at least once[orc hate player]', function(done){
@@ -638,7 +630,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                 });
             });
         });

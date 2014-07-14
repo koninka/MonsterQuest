@@ -6,6 +6,8 @@ define(['utils/testsAPI'], function(testsAPI) {
 
             before(testsAPI.Prepare);
 
+            beforeEach(testsAPI.BeforeEach);
+
             afterEach(testsAPI.AfterEach);
 
             after(testsAPI.Logout);
@@ -48,7 +50,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should fail pick up item[too far]', function(done) {
@@ -92,7 +93,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should fail pick up item[player already has it in inventory]', function(done) {
@@ -130,7 +130,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should fail pick up item[object doesn\'t exists]', function(done) {
@@ -165,7 +164,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should successfully destroy item', function(done) {
@@ -209,7 +207,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should successfully destroy item in inventory', function(done) {
@@ -247,7 +244,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should fail destroy item[object doesn\'t exists]', function(done) {
@@ -282,7 +278,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should fail destroy item[too far]', function(done) {
@@ -329,7 +324,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should fail destroy player fist item[default weapon]', function(done) {
@@ -365,7 +359,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should successfully drop item', function(done) {
@@ -403,7 +396,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should fail drop item[player hasn\'t it in inventory]', function(done) {
@@ -447,7 +439,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should fail drop item[object doesn\'t exists]', function(done) {
@@ -482,7 +473,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should fail drop player fist item[default weapon]', function(done) {
@@ -518,7 +508,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
 
@@ -573,7 +562,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should fail destroy item[item in other player\'s inventory]', function(done) {
@@ -627,7 +615,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should fail drop item[item in other player\'s inventory]', function(done) {
@@ -681,7 +668,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should fail pick up item[too heavy]', function(done) {
@@ -727,7 +713,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should successfully equip item', function(done) {
@@ -770,7 +755,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should fail equip item[badSlot]', function(done) {
@@ -808,7 +792,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should fail equip player fist item[default weapon]', function(done) {
@@ -846,7 +829,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should successfully unequip item', function(done) {
@@ -889,7 +871,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should fail unequip item[badSlot]', function(done) {
@@ -927,7 +908,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             it('should successfully equip/unequip item', function(done) {
@@ -980,7 +960,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                     }
                 });
 
-                testsAPI.StartTesting();
             });
 
             function HardItemTest(Action, ActionName, desc) {
@@ -1039,7 +1018,6 @@ define(['utils/testsAPI'], function(testsAPI) {
                         }
                     });
 
-                    testsAPI.StartTesting();
                 });
             }
 

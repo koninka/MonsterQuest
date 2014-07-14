@@ -63,6 +63,10 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
         return data.fist_id;
     }
 
+    function BeforeEach() {
+        StartTesting();
+    }
+
     function AfterEach(done) {
         SetWSHandler(function(e){
             var resp = JSON.parse(e.data);
@@ -295,6 +299,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
     return {
         Prepare: Prepare,
         Logout: Logout,
+        BeforeEach: BeforeEach,
         AfterEach: AfterEach,
         StartTesting: StartTesting,
         StopTesting: StopTesting,
