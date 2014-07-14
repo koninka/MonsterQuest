@@ -165,10 +165,13 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
     }
     g.linkConnectionWithPlayer(json["sid"].(string), conn)
     if action != "look" && action != "move" {
-        fmt.Println(json)
+        fmt.Println("REQUEST ", json)
     }
     res := g.doPlayersAction(action, json)
     if res != nil {
+        // if action != "look" && action != "move" {
+        //     fmt.Println("RESPONSE ", res)
+        // }
         conn.send <- res
     }
 }
@@ -200,6 +203,7 @@ func (g *Game) setLocationAction(json consts.JsonType) consts.JsonType {
 }
 
 func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
+    fmt.Println("game items ", g.items)
     res := utils.JsonAction("pickUp", "badId")
     idParam := json["id"]
     if idParam != nil {
@@ -207,8 +211,13 @@ func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
         p := g.players.getPlayerBySession(json["sid"].(string))
         if item != nil && !item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) <= float64(consts.PICK_UP_RADIUS) {
             if p.CanPickUp(item) {
-                if p.PickUpItem(item) {
+                ok, i := p.PickUpItem(item)
+                if ok {
                     g.field.UnlinkFromCells(item)
+                    if item.GetID() != i.GetID() {
+                        g.items.deleteItem(item)
+                        item = nil
+                    }
                     res["result"] = "ok"
                 }
             } else {
@@ -216,12 +225,13 @@ func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
             }
         }
     }
-    fmt.Println(res)
+    fmt.Println("game items ", g.items)
     return res
 }
 
 func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("drop", "badId")
+    fmt.Println("game items ", g.items)
     idParam := json["id"]
     if idParam != nil {
         item := g.items.getItem(int64(idParam.(float64)))
@@ -233,18 +243,19 @@ func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
             }
             _, new_item := p.DropItem(item, amount)
             if new_item != nil {
-                new_item.SetID(utils.GenerateId())
                 g.items.addItem(new_item)
             }
             g.field.LinkToCells(item)
             res["result"] = "ok"
         }
     }
+    fmt.Println("game items ", g.items)
     return res
 }
 
 func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("destroyItem", "badId")
+    fmt.Println("game items ", g.items)
     idParam := json["id"]
     if idParam != nil {
         item := g.items.getItem(int64(idParam.(float64)))
@@ -257,7 +268,10 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
             // if item.GetAmount() - amount <= 0 {
             g.items.deleteItem(item)
             if item.IsOwner(p) {
-                p.DeleteItem(item, amount)
+                _, new_item := p.DeleteItem(item, amount)
+                if new_item != nil {
+                    g.items.addItem(new_item)
+                }
             } else if !item.HasOwner() {
                 g.field.UnlinkFromCells(item)
             }
@@ -267,7 +281,7 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
             res["result"] = "ok"
         }
     }
-    fmt.Println(res)
+    fmt.Println("game items ", g.items)
     return res
 }
 

@@ -143,18 +143,22 @@ func (p* Player) DropItem(item gameObjectsBase.Itemer, amount int) (int, gameObj
     return place, new_item
 }
 
-func (p* Player) PickUpItem(item gameObjectsBase.Itemer) bool {
+func (p* Player) PickUpItem(item gameObjectsBase.Itemer) (bool, gameObjectsBase.Itemer) {
     db := connect.CreateConnect()
-    _, err := db.Exec("CALL inc_user_item_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), p.AddItem(item), item.GetAmount());
+    place, i := p.AddItem(item)
+    _, err := db.Exec("CALL inc_user_item_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, item.GetAmount());
     if err != nil {
         //
         fmt.Println(err)
     }
-    return err == nil
+    return err == nil, i
 }
 
-func (p* Player) DeleteItem(item gameObjectsBase.Itemer, amount int) bool {
-    var res bool = false
+func (p* Player) DeleteItem(item gameObjectsBase.Itemer, amount int) (bool, gameObjectsBase.Itemer) {
+    var (
+        i gameObjectsBase.Itemer = item
+        res bool = false
+    )
     db := connect.CreateConnect()
     if s := p.getSlotByItem(item); s != consts.SLOT_DEFAULT {
         if item.GetAmount() - amount <= 0 {
@@ -163,10 +167,12 @@ func (p* Player) DeleteItem(item gameObjectsBase.Itemer, amount int) bool {
         _, err := db.Exec("CALL dec_user_slot_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), s, amount);
         res = err == nil
     } else {
-        _, err := db.Exec("CALL dec_user_item_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), p.Inventory.DeleteItem(item, amount), amount);
+        var place int
+        place, i = p.Inventory.DeleteItem(item, amount)
+        _, err := db.Exec("CALL dec_user_item_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, amount);
         res = err == nil
     }
-    return res
+    return res, i
 }
 
 func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) (bool, consts.JsonType) {
