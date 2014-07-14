@@ -246,7 +246,7 @@ func (p *Player) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer)
 
 func (p *Player) Equipped(item gameObjectsBase.Itemer) bool {
     for _, slot := range p.slots {
-        if slot.item == item {
+        if slot.item != nil && slot.item.GetID() == item.GetID() {
             return true
         }
     }
