@@ -669,7 +669,65 @@ define(['utils/testsAPI'], function(testsAPI) {
             });
 
 
-            describe('Player move', function() {
+            describe('Player attack', function() {
+
+                it('player should not hit yourself by use fists', function(done){
+                    var player = { x: 3.5, y: 2.5, hp: 1000, max_hp: 1000};
+                    var isSetMap = false;
+                    var isSetConst = false;
+                    var counter = 0;
+                    this.timeout(5500);
+                    testsAPI.SetWSHandler(function(e) {
+                       var response = JSON.parse(e.data);
+                       console.log(response);
+                        if (response['action'] == testsAPI.startTestingAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
+                            testsAPI.SetUpConstants();
+                            testsAPI.SetUpMap([
+                                    ["#", "#", "#", "#", "#"],
+                                    ["#", ".", ".", ".", "#"],
+                                    ["#", ".", ".", ".", "#"],
+                                    ["#", ".", ".", ".", "#"],
+                                    ["#", ".", ".", ".", "#"],
+                                    ["#", "#", "#", "#", "#"]
+                                ]);
+                        } else if (response['action'] == testsAPI.setUpConstAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
+                            isSetConst = true;
+                        } else if (response['action'] == testsAPI.setUpMapAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
+                            isSetMap = true;
+                        } else if (response['action'] == testsAPI.putPlayerAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
+                            player.id = response['id'];
+                            player.sid  = response['sid'];
+                            player.fist_id = response['fistId'];
+                            counter++;
+                        } else if (response['action'] == testsAPI.examineAction) {
+                            expect(response['result']).to.equal(testsAPI.actionResultOk);
+                            var actor = response["id"] == player.id ? player : 0;
+                            actor.ex_hp = response["health"];
+                        }  else if (response['action'] == testsAPI.enforceAction) {
+                            testsAPI.Ok(response['result']);
+                            testsAPI.Ok(response['actionResult']['result']);
+                            testsAPI.Equal(response['actionResult']['action'], testsAPI.useAction);
+                            testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player.id);
+                        }
+                        if (isSetMap && isSetConst) {
+                            testsAPI.PutPlayer(player.x, player.y, [], {HP: player.hp, MAX_HP: player.max_hp});
+                            isSetMap = isSetConst = false;
+                        }
+                        if (counter == 1) {
+                            counter = 0;
+                            testsAPI.Use(player.sid, player.fist_id, player.x, player.y);
+                        }
+                        if (player.hasOwnProperty('ex_hp')) {
+                            expect(player.ex_hp).to.be.equal(player.hp);
+                            done();
+                        }
+                    });
+
+                })
 
                 it('player should attack monster by use, mob shouldn\'t attack player[mob don\'t have blow flag]', function(done){
                     var player = { x: 3.5, y: 2.5, hp: 1000, max_hp: 1000};
