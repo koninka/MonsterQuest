@@ -507,9 +507,8 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                     }
                     res["inventory"] = idxs
                 }
-                var idxs []int64
                 if slots, okey := json["slots"].(map[string] interface{}); okey {
-                    fmt.Println(slots)
+                    idxs := make(map[string] int64)
                     for slotName, itemDesc := range slots {
                         item := gameObjectsBase.ItemFromJson(consts.JsonType(itemDesc.(map[string] interface{})))
                         if item != nil {
@@ -517,7 +516,7 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                             isEquip, _ := p.Equip(item, consts.NameSlotMapping[slotName])
                             if isEquip {
                                 g.items.addItem(item)
-                                idxs = append(idxs, item.GetID())
+                                idxs[slotName] = item.GetID()
                             }
                         }
                     }
