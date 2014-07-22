@@ -99,7 +99,9 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
             playerVelocity: playerVelocity_,
             ticksPerSecond: ticksPerSecond_,
             slideThreshold: slideThreshold_,
-            pickUpRadius: pickUpRadius_
+            pickUpRadius: pickUpRadius_,
+            screenRowCount: 10,
+            screenColumnCount: 10
         });
     }
 
