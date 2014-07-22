@@ -27,7 +27,7 @@ type Game struct {
     id2conn map[int64] *connection
     conn2id map[*connection] int64
     dictionary consts.JsonType
-    projectilesManager *projectileManager.ProjectileManager
+    projectileManager *projectileManager.ProjectileManager
 }
 
 var gameInstance *Game
@@ -63,7 +63,7 @@ func GetInstance() *Game {
             make(consts.JsonType),
             nil,
         }
-        gameInstance.projectilesManager = projectileManager.NewProjectileManager(&gameInstance.field)
+        gameInstance.projectileManager = projectileManager.NewProjectileManager(&gameInstance.field)
         gameObjectsBase.InitGameItems()
         gameInstance.dictionary = gameInstance.mobs.initializeMobTypes()
         if !*consts.TEST {
@@ -807,7 +807,7 @@ func (g *Game) updateWorld() {
     for _, m := range g.mobs.mobs {
         m.Do()
     }
-    g.projectilesManager.Do()
+    g.projectileManager.Do()
 }
 
 func (g *Game) IsSIDValid(sid string) bool {
