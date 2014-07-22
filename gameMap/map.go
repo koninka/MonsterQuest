@@ -7,12 +7,14 @@ import (
     "MonsterQuest/consts"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/geometry"
+    projectilesModule "MonsterQuest/projectileManager/projectiles"
 )
 
 type fieldCell struct {
     background byte
     actors map[int64] gameObjectsBase.Activer
     items map[int64] gameObjectsBase.Itemer
+    projectiles map[int64] projectilesModule.Projectiler
 }
 
 func (cell *fieldCell) isBlocked() bool {
@@ -28,6 +30,8 @@ func (cell *fieldCell) link(obj gameObjectsBase.GameObjecter) {
         cell.actors[actor.GetID()] = actor
     } else if item, ok := obj.(gameObjectsBase.Itemer); ok {
         cell.items[item.GetID()] = item
+    } else if projectile, ok := obj.(*projectilesModule.Projectile); ok {
+        cell.projectiles[projectile.GetID()] = projectile
     } else {
         panic(fmt.Sprintf("Link to cell something wrong"))
     }
@@ -38,6 +42,8 @@ func (cell *fieldCell) unlink(obj gameObjectsBase.GameObjecter) {
         delete(cell.actors, actor.GetID())
     } else if item, ok := obj.(gameObjectsBase.Itemer); ok {
         delete(cell.items, item.GetID())
+    } else if projectile, ok := obj.(*projectilesModule.Projectile); ok {
+        delete(cell.projectiles, projectile.GetID())
     } else {
         panic(fmt.Sprintf("Unlink from cell something wrong"))
     }
@@ -50,7 +56,7 @@ type GameField struct {
 }
 
 func newFieldCell(background byte) *fieldCell {
-    return &fieldCell{background, make(map[int64] gameObjectsBase.Activer), make(map[int64] gameObjectsBase.Itemer)}
+    return &fieldCell{background, make(map[int64] gameObjectsBase.Activer), make(map[int64] gameObjectsBase.Itemer), make(map[int64] projectilesModule.Projectiler)}
 }
 
 func NewGameField() GameField {
