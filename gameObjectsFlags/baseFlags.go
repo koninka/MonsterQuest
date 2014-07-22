@@ -148,7 +148,7 @@ func (a *BlowFlag) Do(obj gameObjectsBase.Activer) {
             }
             obj.ClearAttackPoint()
         }
-        if target, exists := obj.GetTarget(); exists {
+        if target, exists := obj.GetTarget(); exists && target.GetID() != obj.GetID() {
             msg := obj.Attack()
             obj.ZeroCooldown()
             if msg != nil {
