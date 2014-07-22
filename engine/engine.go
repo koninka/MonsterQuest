@@ -443,8 +443,8 @@ func (g *Game) putMob(json consts.JsonType) consts.JsonType {
         }
         var ok bool
         if ok, res["result"] = utils.CheckJsonRequest(json, requiredFields); ok {
-            damage := json["dealtDamage"].(string)
-            if utils.IsDiceDesc(damage) {
+            damage, ok := json["dealtDamage"].(string)
+            if ok && utils.IsDiceDesc(damage) {
                 flags := json["flags"].([] interface{})
                 var stats = map[string] interface{} {}
                 if json["stats"] != nil {
