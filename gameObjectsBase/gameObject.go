@@ -15,7 +15,7 @@ type GameObjecter interface {
     GetType() string
     GetInfo() consts.JsonType
     GetFullInfo() consts.JsonType
-    Move(dx, dy float64)
+    Shift(dx, dy float64)
 }
 
 type GameObject struct {
@@ -63,7 +63,7 @@ func (obj *GameObject) GetFullInfo() consts.JsonType {
     return obj.GetInfo()
 }
 
-func (obj *GameObject) Move(dx, dy float64) {
+func (obj *GameObject) Shift(dx, dy float64) {
     obj.Center.Move(dx, dy)
 }
 

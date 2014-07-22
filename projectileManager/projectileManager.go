@@ -28,7 +28,7 @@ func (pm *ProjectileManager) Do() {
         norm := math.Sqrt(x * x + y * y)
         dx := x * shift / norm
         dy := y * shift / norm
-        p.Move(dx, dy)
+        p.Shift(dx, dy)
         if collisionOccured, actor := pm.CheckCollision(); collisionOccured {
             if p.(*pM.AreaDamageProjectile) != nil {
                 
