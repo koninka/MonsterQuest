@@ -56,6 +56,8 @@ func (pm *ProjectileManager) Do() {
                     // actor.GetHit(???)
                 }
             }
+            pm.field.UnlinkFromCells(p)
+            delete(pm.projectiles, p.GetID())
         }
     }
 }
