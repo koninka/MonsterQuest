@@ -7,6 +7,7 @@ import (
     "MonsterQuest/consts"
     "MonsterQuest/utils"
     "MonsterQuest/gameObjectsBase"
+    "MonsterQuest/notifier"
     pM "MonsterQuest/projectileManager/projectiles"
 )
 
@@ -49,6 +50,7 @@ func (pm *ProjectileManager) Do() {
         if collisionOccured, actor := pm.CheckCollision(p); collisionOccured {
             if p.(*pM.AreaDamageProjectile) != nil {
 
+                notifier.GameNotifier.NotifyAboutFireball(fb.GetCenter().X, fb.GetCenter().Y, fb.Radius)
             } else {
                 if actor != nil {
                     // actor.GetHit(???)

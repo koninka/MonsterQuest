@@ -111,6 +111,11 @@ func (g *Game) NotifyAboutAttack(attacker, target gameObjectsBase.Activer, msg c
     }
 }
 
+func (g *Game) NotifyAboutFireball(x, y float64, radius int) {
+    var msg = consts.JsonType { "x" : x, "y" : y, "radius" : radius, "type" : consts.FIREBALL_EFFECT_TYPE_NAME }
+    g.notifyInRadius(x, y, msg)
+}
+
 func (g *Game) sendTick(tick int64) {
     g.ticks <- tick
 }

@@ -9,6 +9,10 @@ import (
 type JsonType map[string] interface{}
 
 const (
+    FIREBALL_EFFECT_TYPE_NAME = "fireball"
+)
+
+const (
     DEFAULT_DICE = "0d0"
 )
 
