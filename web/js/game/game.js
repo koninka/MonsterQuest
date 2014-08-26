@@ -4,6 +4,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
     var player_id = (parseInt(utils.getQueryVariable('id')));
     var fist_id = parseInt(utils.getQueryVariable('fistId'));
     var inventory_ = null;
+    var slots_ = null;
     function Game(sid, wsuri) {
         this.sid      = sid;
         this.sock     = null;
@@ -169,7 +170,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         var th = game;
         th.quickpanel = new QuickPanel(); 
         th.initInventory();
-        th.SetInventory(inventory_);
+        th.SetInventory(inventory_, slots_);
         th.InitChain(chain_number + 1);   
     };
 
@@ -207,6 +208,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
                 th.view.player = th.player;
                 //th.initInventory();
                 inventory_ = data.inventory;
+                slots_ = data.slots;
                 //th.SetInventory(data.inventory);
                 //th.setExamineData(data);
                 th.InitChain(chain_number + 1);
