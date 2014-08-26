@@ -16,6 +16,18 @@ type ProjectileManager struct {
 }
 
 func (pm *ProjectileManager) CheckCollision(p pM.Projectiler) (bool, gameObjectsBase.Activer) {
+    center := p.GetCenter()
+    col, row := int(center.X), int(center.Y)
+    if pm.field.IsBlocked(col, row) {
+        return true, nil
+    } else {
+        for _, actor := range pm.field.GetActors(col, row) {
+            r := actor.GetRectangle()
+            if r.In(&center) {
+                return true, actor
+            }
+        }
+    }
     return false, nil
 }
 
