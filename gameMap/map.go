@@ -232,7 +232,6 @@ func (f *GameField) FreeForObject(x, y float64) bool {
     for _, point := range pts {
         for _, actor := range f.GetActors(int(point.X), int(point.Y)) {
             r := actor.GetRectangle()
-            fmt.Println(r, rect, rect.CrossedByRect(&r))
             if rect.CrossedByRect(&r) {
                 return false
             }

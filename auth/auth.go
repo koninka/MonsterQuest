@@ -124,7 +124,6 @@ func JsonHandler(w http.ResponseWriter, r *http.Request) {
     json.Unmarshal(body, &rawData)
     data := rawData.(map[string] interface{})
     var response string
-    fmt.Println("http json handler", data)
     if data["action"] == "logout" {
         response = logoutAction(data["sid"].(string))
     } else {

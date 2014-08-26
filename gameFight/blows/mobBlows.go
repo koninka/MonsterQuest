@@ -1,7 +1,6 @@
 package blows
 
 import (
-    "fmt"
     "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/gameFight/fightUtils"
 )
@@ -45,7 +44,6 @@ func getMobBlowType(name string) fightBase.Blower {
     if r, ok := mobBlowsType[name]; ok {
         return r
     } else {
-        fmt.Println("blow NONE")
         return mobBlowsType["NONE"]
     }
 }

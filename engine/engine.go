@@ -168,14 +168,8 @@ func (g *Game) CheckOutPlayersAction(conn *connection, json consts.JsonType) {
         return
     }
     g.linkConnectionWithPlayer(json["sid"].(string), conn)
-    if action != "look" && action != "move" {
-        fmt.Println("REQUEST ", json)
-    }
     res := g.doPlayersAction(action, json)
     if res != nil {
-        // if action != "look" && action != "move" {
-        //     fmt.Println("RESPONSE ", res)
-        // }
         conn.send <- res
     }
 }
@@ -188,7 +182,6 @@ func (g *Game) moveItem(json consts.JsonType) consts.JsonType {
         res["result"] = "badCell"
     } else if idParam != nil {
         cell := int(cellParam.(float64))
-        fmt.Println("game items ", g.items)
         p := g.players.getPlayerBySession(json["sid"].(string))
         if p.MoveItem(p.Inventory.GetItem(int64(idParam.(float64))), cell) {
             res["result"] = "ok"
@@ -208,7 +201,6 @@ func (g *Game) setLocationAction(json consts.JsonType) consts.JsonType {
 }
 
 func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
-    fmt.Println("game items ", g.items)
     res := utils.JsonAction("pickUp", "badId")
     idParam := json["id"]
     if idParam != nil {
@@ -230,13 +222,11 @@ func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
             }
         }
     }
-    fmt.Println("game items ", g.items)
     return res
 }
 
 func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("drop", "badId")
-    fmt.Println("game items ", g.items)
     idParam := json["id"]
     if idParam != nil {
         item := g.items.getItem(int64(idParam.(float64)))
@@ -254,13 +244,11 @@ func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
             res["result"] = "ok"
         }
     }
-    fmt.Println("game items ", g.items)
     return res
 }
 
 func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("destroyItem", "badId")
-    fmt.Println("game items ", g.items)
     idParam := json["id"]
     if idParam != nil {
         item := g.items.getItem(int64(idParam.(float64)))
@@ -286,7 +274,6 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
             res["result"] = "ok"
         }
     }
-    fmt.Println("game items ", g.items)
     return res
 }
 
@@ -313,7 +300,6 @@ func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
             }
         }
     }
-    fmt.Println("EQUIP RESULT ", res)
     return res
 }
 
@@ -333,7 +319,6 @@ func (g *Game) unequipItem(json consts.JsonType) consts.JsonType {
             }
         }
     }
-    fmt.Println("UNEQUIP RESULT ", res)
     return res
 }
 
@@ -411,11 +396,9 @@ func (g *Game) setUpConstants(json consts.JsonType) consts.JsonType {
 func (g *Game) getConstants() consts.JsonType {
     res := utils.JsonAction("getConst", "badAction")
     if *consts.TEST && consts.TEST_MODE {
-        fmt.Println(consts.VELOCITY)
         for name, val := range consts.NameConstMapping {
             res[name] = val
         }
-        fmt.Println(consts.VELOCITY)
         res["result"] = "ok"
     }
     return res

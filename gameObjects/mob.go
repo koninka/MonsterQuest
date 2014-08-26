@@ -196,7 +196,6 @@ func (m *Mob) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer) co
             }
         }
     } else {
-        // fmt.Println("set target")
         m.SetTarget(attacker)
     }
     return res
@@ -240,6 +239,5 @@ func NewTestMob(x, y float64, race int, damage string, flags [] interface{}) *Mo
     for _, flag := range flags {
         kind.AddFlag(gameObjectsFlags.GetFlag(flag.(string)))
     }
-    fmt.Println(kind.GetFlags())
     return &Mob{gameObjectsBase.NewActiveObject(-1, x, y, &kind), 5}
  }

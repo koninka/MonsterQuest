@@ -200,7 +200,6 @@ func (p* Player) DeleteItem(item gameObjectsBase.Itemer, amount int) (bool, game
         res bool = false
     )
     db := connect.CreateConnect()
-    fmt.Println(p.Inventory)
     if s := p.getSlotByItem(item); s != consts.SLOT_DEFAULT {
         if item.GetAmount() - amount <= 0 {
             p.slots[s].item = nil
@@ -213,7 +212,6 @@ func (p* Player) DeleteItem(item gameObjectsBase.Itemer, amount int) (bool, game
         _, err := db.Exec("CALL dec_user_item_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, amount);
         res = err == nil
     }
-    fmt.Println(p.Inventory)
     return res, i
 }
 
