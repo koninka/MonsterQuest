@@ -84,9 +84,9 @@ func (g *Game) initializeDictionary(){
     g.dictionary[string(consts.WALL_SYMBOL)] = "wall"
 }
 
-func (g *Game) NotifyAboutAttack(attacker, target gameObjectsBase.Activer, msg consts.JsonType) {
-    lt, rb := g.field.GetVisibleArea(attacker.GetCenter().X, attacker.GetCenter().Y, consts.VISION_RADIUS)
-    notified := make(map[int64]bool)
+func (g *Game) notifyInRadius(x, y float64, msg consts.JsonType) {
+    lt, rb := g.field.GetVisibleArea(x, y, consts.VISION_RADIUS)
+    notified := make(map[int64] bool)
     for i := int(lt.Y); i < int(rb.Y); i++ {
         for j := int(lt.X); j < int(rb.X); j++ {
             for _, actor := range g.field.GetActors(i, j) {
@@ -101,6 +101,10 @@ func (g *Game) NotifyAboutAttack(attacker, target gameObjectsBase.Activer, msg c
             }
         }
     }
+}
+
+func (g *Game) NotifyAboutAttack(attacker, target gameObjectsBase.Activer, msg consts.JsonType) {
+    g.notifyInRadius(attacker.GetCenter().X, attacker.GetCenter().Y, msg)
     t, isMob := target.(*gameObjects.Mob)
     if msg["killed"] == true && isMob {
         go g.mobs.takeAwayMob(t)
