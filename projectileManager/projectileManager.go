@@ -48,8 +48,7 @@ func (pm *ProjectileManager) Do() {
         dy := y * shift / norm
         p.Shift(dx, dy)
         if collisionOccured, actor := pm.CheckCollision(p); collisionOccured {
-            if p.(*pM.AreaDamageProjectile) != nil {
-
+            if fb, ok := p.(*pM.AreaDamageProjectile); ok {
                 notifier.GameNotifier.NotifyAboutFireball(fb.GetCenter().X, fb.GetCenter().Y, fb.Radius)
             } else {
                 if actor != nil {
