@@ -115,6 +115,11 @@ func registerAction(login, pass string) string {
     return string(resJSON)
 }
 
+func createResponse(action, result string) string {
+    r, _ := json.Marshal(map[string] string{"result": result, "action": action})
+    return string(r)
+}
+
 func JsonHandler(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Access-Control-Allow-Origin", "*")
     w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
@@ -123,21 +128,55 @@ func JsonHandler(w http.ResponseWriter, r *http.Request) {
     var rawData interface{}
     json.Unmarshal(body, &rawData)
     data := rawData.(map[string] interface{})
-    var response string
-    if data["action"] == "logout" {
-        response = logoutAction(data["sid"].(string))
+    var (
+        action string = data["action"].(string)
+        response string
+    )
+    var requiredFields = map[string] string {}
+    switch action {
+        case "logout":
+            requiredFields["sid"] = "badSid"
+        case "login":
+            requiredFields["login"]    = "invalidCredentials"
+            requiredFields["password"] = "invalidCredentials"
+        case "register":
+            requiredFields["login"]    = "badLogin"
+            requiredFields["password"] = "badPassword"
+    }
+    var ok bool
+    res := utils.JsonAction(action, "badAction")
+    if ok, res["result"] = utils.CheckJsonRequest(data, requiredFields); !ok {
+        r, _ := json.Marshal(res)
+        response = string(r)
     } else {
-        if data["action"] == "startTesting" {
-            r, _ := json.Marshal(map[string] string{"result": "ok"})
-            response = string(r)
-        } else {
-            login, pass := data["login"].(string), data["password"].(string)
-            switch data["action"] {
-                case "login":    response = loginAction(login, pass)
-                case "register": response = registerAction(login, pass)
-            }
+        switch action {
+            case "startTesting":
+                response = createResponse(action, "ok")
+            case "logout":
+                if sid, err := data["sid"].(string); err {
+                    response = logoutAction(sid)
+                } else {
+                    response = createResponse(action, "badSid")
+                }
+            case "login":
+                login, err1  := data["login"].(string)
+                passwd, err2 := data["password"].(string)
+                if err1 && err2 {
+                    response = loginAction(login, passwd)
+                } else {
+                    response = createResponse(action, "invalidCredentials")
+                }
+            case "register":
+                login, err1  := data["login"].(string)
+                passwd, err2 := data["password"].(string)
+                if err1 && err2 {
+                    response = registerAction(login, passwd)
+                } else if err1 {
+                    response = createResponse(action, "badLogin")
+                } else if err2 {
+                    response = createResponse(action, "badPassword")
+                }
         }
-
     }
     fmt.Fprintf(w, "%s", response)
 }
