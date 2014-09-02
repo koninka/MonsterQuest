@@ -371,7 +371,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   ws.sendJSON({action: 'getConst', sid: data.ssid});
                } else if (response['action'] == 'getConst') {
                   expect(response['result']).to.equal('ok');
-                  expect(Object.keys(response).length).to.equal(8);
+                  expect(Object.keys(response).length).to.equal(9);
                   expect(response).to.have.property('playerVelocity');
                   expect(response).to.have.property('slideThreshold');
                   expect(response).to.have.property('ticksPerSecond');
