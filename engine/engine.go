@@ -731,8 +731,8 @@ func (g *Game) examineAction(json consts.JsonType) consts.JsonType {
             for k, v := range obj.GetFullInfo() {
                 res[k] = v
             }
-            p := g.players.getPlayerBySession(json["sid"].(string))
-            if p.GetID() == id {
+            p := g.players.getPlayerById(id)
+            if p != nil {
                 res["inventory"] = p.GetInventoryInfo()
             }
             res["result"] = "ok"
