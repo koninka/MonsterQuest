@@ -93,23 +93,21 @@ func loginAction(login, pass string) string {
 
 func registerAction(login, pass string) string {
     result := map[string] string{"result": "ok"}
-    if isExistUser(login, "") {
+    if !matchRegexp("^[a-zA-Z0-9]{2,36}$", login) {
+        result["result"] = "badLogin"
+    } else if !matchRegexp("^.{6,36}$", pass) {
+        result["result"] = "badPassword"
+    } else if isExistUser(login, "") {
         result["result"] = "loginExists"
     } else {
-        if !matchRegexp("^[a-zA-Z0-9]{2,36}$", login) {
-            result["result"] = "badLogin"
-        } else if !matchRegexp("^.{6,36}$", pass) {
-            result["result"] = "badPassword"
-        } else {
-            db := connect.CreateConnect()
-            stmt, _ := db.Prepare("INSERT INTO users(login, password) VALUES(?, ?)")
-            defer stmt.Close()
-            res, _ := stmt.Exec(login, pass)
-            user_id, _ := res.LastInsertId()
-            stmt, _ = db.Prepare("INSERT INTO users_position(user_id, x, y) VALUES(?, ?, ?)")
-            defer stmt.Close()
-            stmt.Exec(user_id, consts.DEFAULT_PLAYER_POS_X, consts.DEFAULT_PLAYER_POS_Y)
-        }
+        db := connect.CreateConnect()
+        stmt, _ := db.Prepare("INSERT INTO users(login, password) VALUES(?, ?)")
+        defer stmt.Close()
+        res, _ := stmt.Exec(login, pass)
+        user_id, _ := res.LastInsertId()
+        stmt, _ = db.Prepare("INSERT INTO users_position(user_id, x, y) VALUES(?, ?, ?)")
+        defer stmt.Close()
+        stmt.Exec(user_id, consts.DEFAULT_PLAYER_POS_X, consts.DEFAULT_PLAYER_POS_Y)
     }
     resJSON, _ := json.Marshal(result)
     return string(resJSON)
