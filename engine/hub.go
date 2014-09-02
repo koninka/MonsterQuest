@@ -22,7 +22,9 @@ func (h *websocketHub) run() {
             h.connections[c] = true
         case c := <-h.unregister:
             delete(h.connections, c)
-            c.ws.Close()
+            if (c != nil && c.ws != nil) {
+                c.ws.Close()
+            }
         case m := <-h.broadcast:
             for c := range h.connections {
                 c.send <- m
