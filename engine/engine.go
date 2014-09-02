@@ -488,16 +488,14 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                 g.players.add(p)
                 g.field.LinkToCells(p)
                 if ok {
-                    var idxs []int64
                     for _, itemDesc := range inventory {
                         item := gameObjectsBase.ItemFromJson(consts.JsonType(itemDesc.(map[string] interface{})))
                         if item != nil {
                             g.items.addItem(item)
                             p.PickUpItem(item)
-                            idxs = append(idxs, item.GetID())
                         }
                     }
-                    res["inventory"] = idxs
+                    res["inventory"] = p.GetInventoryInfo()
                 }
                 if slots, okey := json["slots"].(map[string] interface{}); okey {
                     idxs := make(map[string] int64)
