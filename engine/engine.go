@@ -141,31 +141,34 @@ func (g *Game) linkConnectionWithPlayer(sid string, conn *connection) {
 }
 
 func (g *Game) doPlayersAction(action string, json consts.JsonType) consts.JsonType {
-    var res consts.JsonType
-    switch action {
-    case "move": g.moveAction(json)
-    case "use": res = g.useAction(json)
-    case "attack": g.attackAction(json)
-    case "getDictionary": res = g.getDictionaryAction()
-    case "look": res = g.lookAction(json["sid"].(string))
-    case "examine": res = g.examineAction(json)
-    case "startTesting" : res = g.startTesting()
-    case "stopTesting"  : res = g.stopTesting(json["sid"].(string))
-    case "setUpMap" : res = g.setUpMap(json)
-    case "pickUp" : res = g.pickUpItem(json)
-    case "drop" : res = g.dropItem(json)
-    case "destroyItem" : res = g.destroyItem(json)
-    case "equip" : res = g.equipItem(json)
-    case "unequip" : res = g.unequipItem(json)
-    case "moveItem" : res = g.moveItem(json)
-    case "getConst" : res = g.getConstants()
-    case "setUpConst" : res = g.setUpConstants(json)
-    case "putMob" : res = g.putMob(json)
-    case "putPlayer" : res = g.putPlayer(json)
-    case "putItem" : res = g.putItem(json)
-    case "enforce" : res = g.enforceAction(json)
-    case "setLocation" : res = g.setLocationAction(json)
-    default: res = g.badAction(action)
+    res := utils.JsonAction(action, "badSid")
+    sid, ok := utils.GetSidFromJson(json)
+    if ok {
+        switch action {
+            case "move": g.moveAction(json)
+            case "use": res = g.useAction(json)
+            case "attack": g.attackAction(json)
+            case "getDictionary": res = g.getDictionaryAction()
+            case "look": res = g.lookAction(sid)
+            case "examine": res = g.examineAction(json)
+            case "startTesting" : res = g.startTesting()
+            case "stopTesting"  : res = g.stopTesting(sid)
+            case "setUpMap" : res = g.setUpMap(json)
+            case "pickUp" : res = g.pickUpItem(json)
+            case "drop" : res = g.dropItem(json)
+            case "destroyItem" : res = g.destroyItem(json)
+            case "equip" : res = g.equipItem(json)
+            case "unequip" : res = g.unequipItem(json)
+            case "moveItem" : res = g.moveItem(json)
+            case "getConst" : res = g.getConstants()
+            case "setUpConst" : res = g.setUpConstants(json)
+            case "putMob" : res = g.putMob(json)
+            case "putPlayer" : res = g.putPlayer(json)
+            case "putItem" : res = g.putItem(json)
+            case "enforce" : res = g.enforceAction(json)
+            case "setLocation" : res = g.setLocationAction(json)
+            default: res = g.badAction(action)
+        }
     }
     return res
 }
@@ -211,9 +214,9 @@ func (g *Game) setLocationAction(json consts.JsonType) consts.JsonType {
 
 func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("pickUp", "badId")
-    idParam := json["id"]
-    if idParam != nil {
-        item := g.items.getItem(int64(idParam.(float64)))
+    id, ok := utils.GetIdFromJson(json)
+    if ok {
+        item := g.items.getItem(id)
         p := g.players.getPlayerBySession(json["sid"].(string))
         if item != nil && !item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) <= float64(consts.PICK_UP_RADIUS) {
             if p.CanPickUp(item) {
@@ -236,9 +239,9 @@ func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
 
 func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("drop", "badId")
-    idParam := json["id"]
-    if idParam != nil {
-        item := g.items.getItem(int64(idParam.(float64)))
+    id, ok := utils.GetIdFromJson(json)
+    if ok {
+        item := g.items.getItem(id)
         p := g.players.getPlayerBySession(json["sid"].(string))
         if item != nil && item.IsOwner(p) {
             var amount int = 1
@@ -258,9 +261,9 @@ func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
 
 func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("destroyItem", "badId")
-    idParam := json["id"]
-    if idParam != nil {
-        item := g.items.getItem(int64(idParam.(float64)))
+    id, ok := utils.GetIdFromJson(json)
+    if ok {
+        item := g.items.getItem(id)
         p := g.players.getPlayerBySession(json["sid"].(string))
         if item != nil && (item.IsOwner(p) || (!item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) <= consts.PICK_UP_RADIUS)) {
             var amount int = 1

@@ -23,6 +23,18 @@ func GetIdFromJson(req consts.JsonType) (int64, bool) {
     return int64(id), ok
 }
 
+func GetSidFromJson(req consts.JsonType) (string, bool) {
+    var (
+        ok bool = false
+        sid string = ""
+    )
+    sidParam := req["sid"]
+    if sidParam != nil {
+        sid, ok = sidParam.(string)
+    }
+    return sid, ok
+}
+
 func GetPointFromJson(req consts.JsonType) (*geometry.Point, bool) {
     var pt *geometry.Point
     x, x_ok := req["x"].(float64)
