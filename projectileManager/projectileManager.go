@@ -61,14 +61,14 @@ func (pm *ProjectileManager) Do() {
     }
 }
 
-func (pm *ProjectileManager) NewArrowProjectile(start, finish *geometry.Point, damage int) {
+func (pm *ProjectileManager) NewArrowProjectile(start, finish *geometry.Point, damage int, owner gameObjectsBase.Activer) {
     id := utils.GenerateId()
-    pm.projectiles[id] = pM.NewProjectile(id, start, finish, damage)
+    pm.projectiles[id] = pM.NewProjectile(id, start, finish, damage, owner)
 }
 
-func (pm *ProjectileManager) NewFireBallProjectile(start, finish *geometry.Point, damage, radius int) {
+func (pm *ProjectileManager) NewFireBallProjectile(start, finish *geometry.Point, damage, radius int, owner gameObjectsBase.Activer) {
     id := utils.GenerateId()
-    pm.projectiles[id] = pM.NewAreaDamageProjectile(id, start, finish, damage, radius)
+    pm.projectiles[id] = pM.NewAreaDamageProjectile(id, start, finish, damage, radius, owner)
 }
 
 func NewProjectileManager(field *gameMap.GameField) *ProjectileManager {
