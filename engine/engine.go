@@ -145,9 +145,7 @@ func (g *Game) doPlayersAction(action string, json consts.JsonType) consts.JsonT
     sid, ok := utils.GetSidFromJson(json)
     if ok {
         switch action {
-            case "move":
-                res = nil
-                g.moveAction(json)
+            case "move": res = g.moveAction(json)
             case "use": res = g.useAction(json)
             case "attack": g.attackAction(json)
             case "getDictionary": res = g.getDictionaryAction()
@@ -336,9 +334,11 @@ func (g *Game) unequipItem(json consts.JsonType) consts.JsonType {
     return res
 }
 
-func (g *Game) moveAction(json consts.JsonType) {
+func (g *Game) moveAction(json consts.JsonType) consts.JsonType {
+    res := utils.JsonAction("move", "ok")
     p := g.players.getPlayerBySession(json["sid"].(string))
     p.SetDir(consts.NameDirMapping[json["direction"].(string)])
+    return res
 }
 
 func (g *Game) useAction(json consts.JsonType) consts.JsonType {

@@ -1,6 +1,7 @@
 package auth
 
 import (
+    "fmt"
     "os"
     "net/http"
     "io/ioutil"
