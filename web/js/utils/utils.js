@@ -22,7 +22,7 @@ define(function() {
    }
 
    function gameShutDown(message) {
-      //alert("Game is going shutdown due to " + message);
+      alert("Game is going shutdown due to " + message);
       window.location.assign("/");
    }
 
