@@ -3,7 +3,7 @@ package fightBase
 type Blower interface {
     IsRange() bool
     GetBlowRadius() float64
-    GetType() string
+    GetBlowType() string
     GetDamage() int
 }
 
@@ -25,7 +25,7 @@ func (bb *BaseBlow) GetBlowRadius() float64 {
     return bb.blowRadius
 }
 
-func (bb *BaseBlow) GetType() string {
+func (bb *BaseBlow) GetBlowType() string {
     return bb.typeName
 }
 

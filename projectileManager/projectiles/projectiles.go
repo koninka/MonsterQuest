@@ -1,18 +1,20 @@
 package projectiles
 
 import (
+    "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/geometry"
 )
 
 type Projectiler interface {
+    fightBase.Blower
     gameObjectsBase.GameObjecter
     GetDestination() geometry.Point
-    GetDamage() int
     GetOwner() gameObjectsBase.Activer
 }
 
 type Projectile struct {
+    fightBase.BaseBlow
     gameObjectsBase.GameObject
     Destination geometry.Point
     DealtDamage int
@@ -33,6 +35,7 @@ func (p *Projectile) GetOwner() gameObjectsBase.Activer {
 
 func NewProjectile(id int64, start, finish *geometry.Point, damage int, owner gameObjectsBase.Activer) *Projectile {
     return &Projectile{
+        fightBase.NewBaseBlow(fightBase.BM_HIT, 10.0, "hit"),
         gameObjectsBase.NewGameObject(id, *start),
         *finish,
         damage,

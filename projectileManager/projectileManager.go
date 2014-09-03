@@ -52,7 +52,7 @@ func (pm *ProjectileManager) Do() {
                 notifier.GameNotifier.NotifyAboutFireball(fb.GetCenter().X, fb.GetCenter().Y, fb.Radius)
             } else {
                 if actor != nil {
-                    // actor.GetHit(???)
+                    actor.GetHit(p, p.GetOwner())
                 }
             }
             pm.field.UnlinkFromCells(p)
