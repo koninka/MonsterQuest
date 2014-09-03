@@ -1,7 +1,6 @@
 package auth
 
 import (
-    "fmt"
     "os"
     "net/http"
     "io/ioutil"
@@ -62,7 +61,6 @@ func findSIDAndLogOut(login string){
     `)
     defer stmt.Close()
     err := stmt.QueryRow(login).Scan(&sid)
-    fmt.Println(err)
     if err != sql.ErrNoRows {
         engine.GetInstance().LogoutPlayer(sid)
     }
