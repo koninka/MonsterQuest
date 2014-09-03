@@ -144,6 +144,7 @@ func (g *Game) doPlayersAction(action string, json consts.JsonType) consts.JsonT
     res := utils.JsonAction(action, "badSid")
     sid, ok := utils.GetSidFromJson(json)
     if ok {
+        res["result"] = "ok"
         switch action {
             case "move": g.moveAction(json)
             case "use": res = g.useAction(json)
