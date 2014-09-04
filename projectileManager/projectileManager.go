@@ -28,12 +28,16 @@ func (pm *ProjectileManager) CheckCollision(p pM.Projectiler) (bool, gameObjects
                 return true, actor
             }
         }
+        if geometry.Distance(center, p.GetDestination()) < 1e-2 {
+            return true, nil
+        }
     }
     return false, nil
 }
 
 func (pm *ProjectileManager) Do() {
     for _, p := range pm.projectiles {
+        pm.field.UnlinkFromCells(p)
         var shift float64
         d := geometry.Distance(p.GetCenter(), p.GetDestination())
         if d > consts.PROJECTILE_VELOCITY {
@@ -44,9 +48,7 @@ func (pm *ProjectileManager) Do() {
         x := p.GetDestination().X - p.GetCenter().X
         y := p.GetDestination().Y - p.GetCenter().Y
         norm := math.Sqrt(x * x + y * y)
-        dx := x * shift / norm
-        dy := y * shift / norm
-        p.Shift(dx, dy)
+        p.Shift(x * shift / norm, y * shift / norm)
         if collisionOccured, actor := pm.CheckCollision(p); collisionOccured {
             if fb, ok := p.(*pM.AreaDamageProjectile); ok {
                 notifier.GameNotifier.NotifyAboutFireball(fb.GetCenter().X, fb.GetCenter().Y, fb.Radius)
@@ -55,8 +57,9 @@ func (pm *ProjectileManager) Do() {
                     actor.GetHit(p, p.GetOwner())
                 }
             }
-            pm.field.UnlinkFromCells(p)
             delete(pm.projectiles, p.GetID())
+        } else {
+            pm.field.LinkToCells(p)
         }
     }
 }

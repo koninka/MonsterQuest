@@ -30,7 +30,7 @@ func (cell *fieldCell) link(obj gameObjectsBase.GameObjecter) {
         cell.actors[actor.GetID()] = actor
     } else if item, ok := obj.(gameObjectsBase.Itemer); ok {
         cell.items[item.GetID()] = item
-    } else if projectile, ok := obj.(*projectilesModule.Projectile); ok {
+    } else if projectile, ok := obj.(projectilesModule.Projectiler); ok {
         cell.projectiles[projectile.GetID()] = projectile
     } else {
         panic(fmt.Sprintf("Link to cell something wrong"))
@@ -42,7 +42,7 @@ func (cell *fieldCell) unlink(obj gameObjectsBase.GameObjecter) {
         delete(cell.actors, actor.GetID())
     } else if item, ok := obj.(gameObjectsBase.Itemer); ok {
         delete(cell.items, item.GetID())
-    } else if projectile, ok := obj.(*projectilesModule.Projectile); ok {
+    } else if projectile, ok := obj.(projectilesModule.Projectiler); ok {
         delete(cell.projectiles, projectile.GetID())
     } else {
         panic(fmt.Sprintf("Unlink from cell something wrong"))
@@ -188,18 +188,19 @@ func (f *GameField) GetActors(col, row int) map[int64] gameObjectsBase.Activer {
 }
 
 func (f *GameField) GetObjects(col, row int) map[int64] gameObjectsBase.GameObjecter {
-    if f.OutOfRange(col, row) {
-        return make(map[int64] gameObjectsBase.GameObjecter)
-    } else {
-        objects := make(map[int64] gameObjectsBase.GameObjecter)
+    objects := make(map[int64] gameObjectsBase.GameObjecter)
+    if !f.OutOfRange(col, row) {
         for id, actor := range f.Field[row][col].actors {
             objects[id] = actor
         }
         for id, item := range f.Field[row][col].items {
             objects[id] = item
         }
-        return objects
+        for id, projectile := range f.Field[row][col].projectiles {
+            objects[id] = projectile
+        }
     }
+    return objects
 }
 
 func (f *GameField) GetBackground(col, row int) byte {
