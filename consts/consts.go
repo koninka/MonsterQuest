@@ -9,7 +9,7 @@ import (
 type JsonType map[string] interface{}
 
 const (
-    FIREBALL_EFFECT_TYPE_NAME = "fireball"
+    FIREBALL_NAME = "fireball"
 )
 
 const (
