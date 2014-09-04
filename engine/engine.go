@@ -14,7 +14,7 @@ import (
     "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/notifier"
     "MonsterQuest/geometry"
-    "MonsterQuest/projectileManager"
+    pm "MonsterQuest/projectileManager"
 )
 
 type Game struct {
@@ -28,7 +28,7 @@ type Game struct {
     id2conn map[int64] *connection
     conn2id map[*connection] int64
     dictionary consts.JsonType
-    projectileManager *projectileManager.ProjectileManager
+    projectileManager *pm.ProjectileManager
 }
 
 var gameInstance *Game
@@ -64,7 +64,8 @@ func GetInstance() *Game {
             make(consts.JsonType),
             nil,
         }
-        gameInstance.projectileManager = projectileManager.NewProjectileManager(&gameInstance.field)
+        pm.InitProjectileManager(&gameInstance.field)
+        gameInstance.projectileManager = pm.PManager
         gameObjectsBase.InitGameItems()
         gameInstance.dictionary = gameInstance.mobs.initializeMobTypes()
         if !*consts.TEST {
@@ -353,9 +354,11 @@ func (g *Game) useAction(json consts.JsonType) consts.JsonType {
         xParam := json["x"]
         yParam := json["y"]
         res["result"] = "badSlot"
+        fmt.Println(json)
         if xParam != nil && yParam != nil {
             if item := p.GetItem(id); item != nil && item.IsWeapon() {
                 if p.IsEquippedItem(item) {
+                    // if item.Get
                     p.SetAttackPoint(xParam.(float64), yParam.(float64))
                     res["message"] = fmt.Sprintf("attack point (%f, %f)", xParam.(float64), yParam.(float64))
                     res["result"] = "ok"

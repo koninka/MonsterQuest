@@ -9,6 +9,7 @@ import (
     "MonsterQuest/consts"
     "MonsterQuest/geometry"
     "MonsterQuest/connect"
+    pm "MonsterQuest/projectileManager"
 )
 
 type playerKind struct {
@@ -97,12 +98,22 @@ func (p *Player) Do() {
 func (p *Player) Attack() consts.JsonType {
     var res consts.JsonType = nil
     t, _ := p.GetTarget()
-    if d := geometry.Distance(p.GetCenter(), t.GetCenter()); d <= p.GetAttackRadius() {
-        res = t.GetHit(p.weapon, p)
-    }
-    if res != nil {
-        res["attacker"] = p.GetID()
-        res["target"] = t.GetID()
+    ls := p.slots[consts.SLOT_LEFT_HAND].item
+    rs := p.slots[consts.SLOT_RIGHT_HAND].item
+    as := p.slots[consts.SLOT_AMMO].item
+    pc := p.GetCenter()
+    tc := t.GetCenter()
+    if ((ls != nil && ls.GetItemSubtype() == consts.ITEM_ST_BOW) || (rs != nil && rs.GetItemSubtype() == consts.ITEM_ST_BOW)) && as != nil {
+        fmt.Println("arrow projectile!!")
+        pm.PManager.NewArrowProjectile(&pc, &tc, 30, p)
+    } else {
+        if d := geometry.Distance(pc, tc); d <= p.GetAttackRadius() {
+            res = t.GetHit(p.weapon, p)
+        }
+        if res != nil {
+            res["attacker"] = p.GetID()
+            res["target"] = t.GetID()
+        }
     }
     p.Target = nil
     return res
