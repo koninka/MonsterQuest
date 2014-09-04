@@ -28,6 +28,9 @@ func (pm *ProjectileManager) CheckCollision(p pM.Projectiler) (bool, gameObjects
                 return true, actor
             }
         }
+        if geometry.Distance(center, p.GetDestination()) < 1e-2 {
+            return true, nil
+        }
     }
     return false, nil
 }
