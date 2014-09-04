@@ -210,8 +210,6 @@ define(['options', 'global', 'actor_info', 'attack', 'item', 'projectile'], func
 
     View.prototype.setActors = function(players){
         var actors_on_scene = [];
-       // var last = null;
-        //players.push({id: 100500, type: "item", name: "ring", x: 10, y: 10});
         for(var i = 0; i < players.length; ++i){
             var id = players[i].id;
             var x = players[i].x;
