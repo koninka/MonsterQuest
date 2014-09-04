@@ -158,7 +158,7 @@ func (f *GameField) UnlinkFromCells(obj gameObjectsBase.GameObjecter) {
     }
 }
 
-func (f *GameField) getVisibleSpace(coord, radiusVision, bound int) (v1 int, v2 int) {
+func (f *GameField) getSpace(coord, radiusVision, bound int) (v1 int, v2 int) {
     r := radiusVision + 1
     if coord - r < 0 {
         v1 = 0
@@ -173,10 +173,10 @@ func (f *GameField) getVisibleSpace(coord, radiusVision, bound int) (v1 int, v2 
     return
 }
 
-func (f *GameField) GetVisibleArea(x, y float64, radiusVision int) (geometry.Point, geometry.Point) {
-    l, r := f.getVisibleSpace(int(x), radiusVision, f.Width - 1)
-    t, b := f.getVisibleSpace(int(y), radiusVision, f.Height - 1)
-    return geometry.Point{float64(l), float64(t)}, geometry.Point{float64(r), float64(b)}
+func (f *GameField) GetSquareArea(x, y float64, boundSize int) (geometry.Point, geometry.Point) {
+    l, r := f.getSpace(int(x), boundSize, f.Width - 1)
+    t, b := f.getSpace(int(y), boundSize, f.Height - 1)
+    return geometry.Point{ float64(l), float64(t) }, geometry.Point{ float64(r), float64(b) }
 }
 
 func (f *GameField) GetActors(col, row int) map[int64] gameObjectsBase.Activer {
