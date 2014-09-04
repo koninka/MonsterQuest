@@ -4,6 +4,7 @@ import (
     "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/geometry"
+    "MonsterQuest/consts"
 )
 
 type Projectiler interface {
@@ -21,6 +22,10 @@ type Projectile struct {
     Owner gameObjectsBase.Activer
 }
 
+func (p *Projectile) GetRectangle() geometry.Rectangle {
+    return geometry.Rectangle{ p.GetCenter(), p.GetCenter() }
+}
+
 func (p *Projectile) GetDestination() geometry.Point {
     return p.Destination
 }
@@ -31,6 +36,17 @@ func (p *Projectile) GetDamage() int {
 
 func (p *Projectile) GetOwner() gameObjectsBase.Activer {
     return p.Owner
+}
+
+func (p *Projectile) GetInfo() consts.JsonType {
+    info := p.GameObject.GetInfo()
+    info["type"] = consts.PROJECTILE_TYPE
+    info["name"] = "player"// consts.FIREBALL_NAME
+    return info
+}
+
+func (p *Projectile) GetFullInfo() consts.JsonType {
+    return p.GetInfo()
 }
 
 func NewProjectile(id int64, start, finish *geometry.Point, damage int, owner gameObjectsBase.Activer) *Projectile {
