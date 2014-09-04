@@ -4,6 +4,7 @@ import (
     "database/sql"
     "time"
     "fmt"
+    "math"
     "MonsterQuest/connect"
     "MonsterQuest/consts"
     "MonsterQuest/utils"
@@ -167,6 +168,7 @@ func (g *Game) doPlayersAction(action string, json consts.JsonType) consts.JsonT
             case "putItem" : res = g.putItem(json)
             case "enforce" : res = g.enforceAction(json)
             case "setLocation" : res = g.setLocationAction(json)
+            case "useSkill" : res = g.useSkillAction(json)
             default: res = g.badAction(action)
         }
     }
@@ -363,6 +365,24 @@ func (g *Game) useAction(json consts.JsonType) consts.JsonType {
             p.UseItem(int64(json["id"].(float64)))
             res["result"] = "ok"
         }
+    }
+    return res
+}
+
+func (g *Game) useSkillAction(json consts.JsonType) consts.JsonType {
+    res := utils.JsonAction("useSkill", "badPoint")
+    x, ok1 := json["x"].(float64)
+    y, ok2 := json["y"].(float64)
+    if ok1 && ok2 {
+        p := g.players.getPlayerBySession(json["sid"].(string))
+        start := p.GetCenter()
+        finish := geometry.MakePoint(x, y)
+        shift := math.Sqrt(2) / 2 + 1e-2
+        alpha := math.Atan2(finish.Y - start.Y, finish.X - start.X)
+        start.Move(shift * math.Cos(alpha), shift * math.Sin(alpha))
+        damage := p.GetCharacteristic(consts.CHARACTERISTIC_INTELLEGENCE) * consts.FIREBALL_DAMAGE_MULTIPLIER
+        g.projectileManager.NewFireBallProjectile(&start, finish, damage, consts.FIREBALL_RADIUS, p)
+        res["result"] = "ok"
     }
     return res
 }
