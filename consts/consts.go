@@ -10,6 +10,8 @@ type JsonType map[string] interface{}
 
 const (
     FIREBALL_NAME = "fireball"
+    FIREBALL_RADIUS = 3
+    FIREBALL_DAMAGE_MULTIPLIER = 5
 )
 
 const (
@@ -22,6 +24,7 @@ const (
     MOB_TYPE = "mob"
     PLAYER_TYPE = "player"
     ITEM_TYPE = "item"
+    PROJECTILE_TYPE = "projectile"
     SERVER_PORT = ":8080"
     ATTACK_RADIUS = 1.4
 	DATABASE_TICK_DURATION = 1 * time.Second
