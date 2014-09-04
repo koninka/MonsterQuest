@@ -16,7 +16,7 @@ define(['global', 'options', 'item'], function(GLOBAL, OPTIONS, Item){
     Projectile.prototype.Move = function(pos){
         var dx = pos.x - this.item.x;
         var dy = pos.y - this.item.y;
-        this.drawable.rotation = Math.atan2(dy, dx); 
+        this.drawable.itemTile.rotation = Math.atan2(dy, dx);
         Item.prototype.Move.call(this, pos);
     }
 
