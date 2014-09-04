@@ -216,7 +216,7 @@ define(['options', 'global', 'actor_info', 'attack', 'item', 'projectile'], func
             var y = players[i].y;
             if(this.actors[id]){
                 this.actors[id].Move({x: x, y: y}, this.player);
-                if(players[i].type != 'item')
+                if(this.actors[id].SetHP)
                     this.actors[id].SetHP(players[i].health);
             } else {
                 var name = players[i].name || players[i].type;
