@@ -1,4 +1,4 @@
-define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, GLOBAL, actorInfo, attack,Item) {
+define(['options', 'global', 'actor_info', 'attack', 'item', 'projectile'], function(OPTIONS, GLOBAL, actorInfo, attack, Item, Projectile) {
     var TILE_SIZE = 32;
     var graphic = null;
 
@@ -224,9 +224,11 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
                 var name = players[i].name || players[i].type;
                 var t = actorInfo[name];
                 var a = name;
-                if(players[i].type == 'item'){
+                if(players[i].type == 'item')
                     this.actors[id] = new Item(players[i]);
-                } else
+                else if(players[i].type == 'projectile')
+                    this.actors[id] = new Projectile(players[i]);
+                else
                     this.actors[id] = new t.class(id, x, y, a, {cur : players[i].health, max : players[i].maxHealth}, players[i].login, true, this.player, t.opt);
             }
             actors_on_scene[id] = true;

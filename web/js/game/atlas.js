@@ -217,4 +217,5 @@ define({
     "Bow of Belthronding" : "/imgs/angband/Bow of Belthronding.png",
     "Bow of Bard" : "/imgs/angband/Bow of Bard.png",
     "Steel arrow" : "/imgs/angband/Steel arrow.png",
+    "default_projectile" : "/imgs/default_projectile.png",
 })
