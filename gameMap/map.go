@@ -188,18 +188,19 @@ func (f *GameField) GetActors(col, row int) map[int64] gameObjectsBase.Activer {
 }
 
 func (f *GameField) GetObjects(col, row int) map[int64] gameObjectsBase.GameObjecter {
-    if f.OutOfRange(col, row) {
-        return make(map[int64] gameObjectsBase.GameObjecter)
-    } else {
-        objects := make(map[int64] gameObjectsBase.GameObjecter)
+    objects := make(map[int64] gameObjectsBase.GameObjecter)
+    if !f.OutOfRange(col, row) {
         for id, actor := range f.Field[row][col].actors {
             objects[id] = actor
         }
         for id, item := range f.Field[row][col].items {
             objects[id] = item
         }
-        return objects
+        for id, projectile := range f.Field[row][col].projectiles {
+            objects[id] = projectile
+        }
     }
+    return objects
 }
 
 func (f *GameField) GetBackground(col, row int) byte {
