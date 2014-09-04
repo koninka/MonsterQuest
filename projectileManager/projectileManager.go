@@ -51,7 +51,18 @@ func (pm *ProjectileManager) Do() {
         p.Shift(x * shift / norm, y * shift / norm)
         if collisionOccured, actor := pm.CheckCollision(p); collisionOccured {
             if fb, ok := p.(*pM.AreaDamageProjectile); ok {
-                notifier.GameNotifier.NotifyAboutFireball(fb.GetCenter().X, fb.GetCenter().Y, fb.Radius)
+                x, y := fb.GetCenter().X, fb.GetCenter().Y
+                notifier.GameNotifier.NotifyAboutFireball(x, y, fb.Radius)
+                lt, rb := pm.field.GetSquareArea(x, y, fb.Radius)
+                l, r := int(lt.X), int(rb.X)
+                t, b := int(lt.Y), int(rb.Y)
+                for i := t; i < b; i++ {
+                    for j := l; j < r; j++ {
+                        for _, actor := range pm.field.GetActors(j, i) {
+                            go notifier.GameNotifier.NotifyAboutAttack(p.GetOwner(), actor, actor.GetHit(p, p.GetOwner()))
+                        }
+                    }
+                }
             } else {
                 if actor != nil {
                     actor.GetHit(p, p.GetOwner())
