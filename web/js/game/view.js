@@ -1,4 +1,4 @@
-define(['options', 'global', 'actor_info', 'attack', 'item', 'projectile'], function(OPTIONS, GLOBAL, actorInfo, attack, Item, Projectile) {
+define(['options', 'global', 'actor_info', 'animation_manager', 'item', 'projectile'], function(OPTIONS, GLOBAL, actorInfo, AnimationManager, Item, Projectile) {
     var TILE_SIZE = 32;
     var graphic = null;
 
@@ -201,6 +201,7 @@ define(['options', 'global', 'actor_info', 'attack', 'item', 'projectile'], func
             this._examine.position.x = 20;
             this._examine.position.y = 20;
         })*/
+
     }
 
     View.prototype.initExamine = function(){
@@ -236,6 +237,7 @@ define(['options', 'global', 'actor_info', 'attack', 'item', 'projectile'], func
                 this.actors[i].Destroy();
                 delete this.actors[i];
             }
+        AnimationManager.Update();
     }
 
     View.prototype.setMap = function(map, player_pos){
@@ -248,23 +250,30 @@ define(['options', 'global', 'actor_info', 'attack', 'item', 'projectile'], func
     }
 
     View.prototype.StartEvent = function(event) {
-        var action = event.action;
-        this[action](event);
+        var action = event.event;
+        switch (action){
+            case 'attack' : this.Attack(event); break;
+            case 'explode': this.Explode(event);break;
+        }
     }
 
-    View.prototype.attack = function(data){
+    View.prototype.Attack = function(data){
         var target_id = data.target;
         var a = data.attacker;
-        //console.log(data);
         var target = (target_id == this.player.id) ? this.player : this.actors[target_id];
-        attack(data.description, target.pt);
+        AnimationManager.RunAnimation(data.description.blowType, target.pt);
         target.Hit();
         if(data.killed)
             target.Kill();
-            
-        //this.actors[a].Attack(data.description, this.actors[t].pt);
-        //this.actors[t].Hit();
     }
+
+    View.prototype.Explode = function(data){
+        var anim = AnimationManager.RunAnimation('explosion', data);
+        anim.scale.x = data.radius;
+        anim.scale.y = data.radius;
+    }
+
+
 
     View.prototype.DefineImaginaryBounds = function(){
         var off_x = (OPTIONS.screenColumnCount) / 2 * OPTIONS.TILE_SIZE;
