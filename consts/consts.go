@@ -11,6 +11,8 @@ type JsonType map[string] interface{}
 const (
     FIREBALL_NAME = "fireball"
     FIREBALL_RADIUS = 3
+    FIREBALL_RANGE = 12.5
+    ARROW_RANGE = 9.5
     FIREBALL_DAMAGE_MULTIPLIER = 5
 )
 

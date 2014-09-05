@@ -68,7 +68,7 @@ func (pm *ProjectileManager) Do() {
 
 func (pm *ProjectileManager) NewArrowProjectile(start, finish *geometry.Point, damage int, owner gameObjectsBase.Activer) {
     id := utils.GenerateId()
-    pm.projectiles[id] = pM.NewProjectile(id, start, finish, damage, owner)
+    pm.projectiles[id] = pM.NewProjectile(id, start, finish, damage, consts.ARROW_RANGE, owner)
 }
 
 func (pm *ProjectileManager) NewFireBallProjectile(start, finish *geometry.Point, damage, radius int, owner gameObjectsBase.Activer) {

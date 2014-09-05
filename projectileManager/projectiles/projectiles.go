@@ -48,9 +48,9 @@ func (p *Projectile) GetFullInfo() consts.JsonType {
     return p.GetInfo()
 }
 
-func NewProjectile(id int64, start, finish *geometry.Point, damage int, owner gameObjectsBase.Activer) *Projectile {
+func NewProjectile(id int64, start, finish *geometry.Point, damage int, prange float64, owner gameObjectsBase.Activer) *Projectile {
     return &Projectile{
-        fightBase.NewBaseBlow(fightBase.BM_HIT, 10.0, "hit"),
+        fightBase.NewBaseBlow(fightBase.BM_HIT, prange, "hit"),
         gameObjectsBase.NewGameObject(id, *start),
         *finish,
         damage,
@@ -65,7 +65,7 @@ type AreaDamageProjectile struct {
 
 func NewAreaDamageProjectile(id int64, start, finish *geometry.Point, damage, radius int, owner gameObjectsBase.Activer) *AreaDamageProjectile {
     return &AreaDamageProjectile{
-        *NewProjectile(id, start, finish, damage, owner),
+        *NewProjectile(id, start, finish, damage, consts.FIREBALL_RANGE, owner),
         radius,
     }
 }
