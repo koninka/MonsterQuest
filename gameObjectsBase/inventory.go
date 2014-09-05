@@ -38,11 +38,10 @@ func (inv* InventoryObj) dropItem(i Itemer) int {
 
 func (inv* InventoryObj) DeleteItem(i Itemer, amount int) (int, Itemer) {
     var place int = inv.getPlaceById(i.GetID())
-    if i.GetAmount() - amount <= 0 {
+    i.DecAmount(amount)
+    if i.GetAmount() <= 0 {
         place = inv.dropItem(i)
         i = nil
-    } else {
-        i.DecAmount(amount)
     }
     return place, i
 }

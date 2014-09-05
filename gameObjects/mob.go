@@ -171,14 +171,17 @@ func (m *Mob) Do() {
 
 func (m *Mob) Attack() consts.JsonType {
     var res consts.JsonType = nil
-    bl := m.Kind.(*MobKind).blowList
-    t, _ := m.GetTarget()
-    if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d <= m.GetAttackRadius() {
-        // fmt.Printf("dist %f, attack radius %f\n", geometry.Distance(m.GetCenter(), t.GetCenter()), m.GetAttackRadius())
-        // fmt.Printf("mob %d attack obj race - %d, id - %d\n", m.GetID(), t.GetKind().GetRace(), t.GetID())
-        res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE), m)
-        res["attacker"] = m.GetID()
-        res["target"] = t.GetID()
+    if target, exists := m.GetTarget(); exists && target.GetID() != m.GetID() {
+        m.ClearAttackPoint()
+        bl := m.Kind.(*MobKind).blowList
+        t, _ := m.GetTarget()
+        if d := geometry.Distance(m.GetCenter(), t.GetCenter()); d <= m.GetAttackRadius() {
+            // fmt.Printf("dist %f, attack radius %f\n", geometry.Distance(m.GetCenter(), t.GetCenter()), m.GetAttackRadius())
+            // fmt.Printf("mob %d attack obj race - %d, id - %d\n", m.GetID(), t.GetKind().GetRace(), t.GetID())
+            res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE), m)
+            res["attacker"] = m.GetID()
+            res["target"] = t.GetID()
+        }
     }
     return res
 }

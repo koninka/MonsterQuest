@@ -97,24 +97,32 @@ func (p *Player) Do() {
 
 func (p *Player) Attack() consts.JsonType {
     var res consts.JsonType = nil
-    t, _ := p.GetTarget()
-    ls := p.slots[consts.SLOT_LEFT_HAND].item
-    rs := p.slots[consts.SLOT_RIGHT_HAND].item
-    as := p.slots[consts.SLOT_AMMO].item
+    li := p.slots[consts.SLOT_LEFT_HAND].item
+    ri := p.slots[consts.SLOT_RIGHT_HAND].item
+    ai := p.slots[consts.SLOT_AMMO].item
     pc := p.GetCenter()
-    tc := t.GetCenter()
-    if ((ls != nil && ls.GetItemSubtype() == consts.ITEM_ST_BOW) || (rs != nil && rs.GetItemSubtype() == consts.ITEM_ST_BOW)) && as != nil {
+    target, existTarget := p.GetTarget()
+    if ((li != nil && li.GetItemSubtype() == consts.ITEM_ST_BOW) || (ri != nil && ri.GetItemSubtype() == consts.ITEM_ST_BOW)) && ai != nil {
+        var pt geometry.Point
+        if existTarget {
+            pt = target.GetCenter()
+        } else {
+            pt = *p.GetAttackPoint()
+        }
         fmt.Println("arrow projectile!!")
-        pm.PManager.NewArrowProjectile(&pc, &tc, 30, p)
-    } else {
-        if d := geometry.Distance(pc, tc); d <= p.GetAttackRadius() {
-            res = t.GetHit(p.weapon, p)
+        pm.PManager.NewArrowProjectile(&pc, &pt, 30, p)
+        p.DeleteItem(ai, 1)
+        // ai.DecAmount()
+    } else if existTarget {
+        if d := geometry.Distance(pc, target.GetCenter()); d <= p.GetAttackRadius() {
+            res = target.GetHit(p.weapon, p)
         }
         if res != nil {
             res["attacker"] = p.GetID()
-            res["target"] = t.GetID()
+            res["target"] = target.GetID()
         }
     }
+    p.ClearAttackPoint()
     p.Target = nil
     return res
 }
@@ -211,15 +219,15 @@ func (p* Player) DeleteItem(item gameObjectsBase.Itemer, amount int) (bool, game
         res bool = false
     )
     db := connect.CreateConnect()
+    var place int
+    place, i = p.Inventory.DeleteItem(item, amount)
     if s := p.getSlotByItem(item); s != consts.SLOT_DEFAULT {
-        if item.GetAmount() - amount <= 0 {
+        if item.GetAmount() <= 0 {
             p.slots[s].item = nil
         }
         _, err := db.Exec("CALL dec_user_slot_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), s, amount);
         res = err == nil
     } else {
-        var place int
-        place, i = p.Inventory.DeleteItem(item, amount)
         _, err := db.Exec("CALL dec_user_item_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), place, amount);
         res = err == nil
     }
@@ -289,7 +297,7 @@ func (p *Player) Equipped(item gameObjectsBase.Itemer) bool {
 }
 
 func (p *Player) MoveItem(item gameObjectsBase.Itemer, to_cell int) bool {
-    if item.GetOwner().GetID() != p.GetID() || p.Equipped(item) {
+    if owner := item.GetOwner(); (owner != nil && owner.GetID() != p.GetID()) || p.Equipped(item) {
         return false
     }
     from_cell := p.Inventory.GetPlace(item.GetID())
