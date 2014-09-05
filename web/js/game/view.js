@@ -1,4 +1,4 @@
-define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, GLOBAL, actorInfo, attack,Item) {
+define(['options', 'global', 'actor_info', 'animation_manager', 'item', 'projectile'], function(OPTIONS, GLOBAL, actorInfo, AnimationManager, Item, Projectile) {
     var TILE_SIZE = 32;
     var graphic = null;
 
@@ -201,6 +201,7 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
             this._examine.position.x = 20;
             this._examine.position.y = 20;
         })*/
+
     }
 
     View.prototype.initExamine = function(){
@@ -210,23 +211,23 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
 
     View.prototype.setActors = function(players){
         var actors_on_scene = [];
-       // var last = null;
-        //players.push({id: 100500, type: "item", name: "ring", x: 10, y: 10});
         for(var i = 0; i < players.length; ++i){
             var id = players[i].id;
             var x = players[i].x;
             var y = players[i].y;
             if(this.actors[id]){
                 this.actors[id].Move({x: x, y: y}, this.player);
-                if(players[i].type != 'item')
+                if(this.actors[id].SetHP)
                     this.actors[id].SetHP(players[i].health);
             } else {
                 var name = players[i].name || players[i].type;
                 var t = actorInfo[name];
                 var a = name;
-                if(players[i].type == 'item'){
+                if(players[i].type == 'item')
                     this.actors[id] = new Item(players[i]);
-                } else
+                else if(players[i].type == 'projectile')
+                    this.actors[id] = new Projectile(players[i]);
+                else
                     this.actors[id] = new t.class(id, x, y, a, {cur : players[i].health, max : players[i].maxHealth}, players[i].login, true, this.player, t.opt);
             }
             actors_on_scene[id] = true;
@@ -236,6 +237,7 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
                 this.actors[i].Destroy();
                 delete this.actors[i];
             }
+        AnimationManager.Update();
     }
 
     View.prototype.setMap = function(map, player_pos){
@@ -248,23 +250,30 @@ define(['options', 'global', 'actor_info', 'attack', 'item'], function(OPTIONS, 
     }
 
     View.prototype.StartEvent = function(event) {
-        var action = event.action;
-        this[action](event);
+        var action = event.event;
+        switch (action){
+            case 'attack' : this.Attack(event); break;
+            case 'explode': this.Explode(event);break;
+        }
     }
 
-    View.prototype.attack = function(data){
+    View.prototype.Attack = function(data){
         var target_id = data.target;
         var a = data.attacker;
-        //console.log(data);
         var target = (target_id == this.player.id) ? this.player : this.actors[target_id];
-        attack(data.description, target.pt);
+        AnimationManager.RunAnimation(data.description.blowType, target.pt);
         target.Hit();
         if(data.killed)
             target.Kill();
-            
-        //this.actors[a].Attack(data.description, this.actors[t].pt);
-        //this.actors[t].Hit();
     }
+
+    View.prototype.Explode = function(data){
+        var anim = AnimationManager.RunAnimation('explosion', data);
+        anim.scale.x = data.radius;
+        anim.scale.y = data.radius;
+    }
+
+
 
     View.prototype.DefineImaginaryBounds = function(){
         var off_x = (OPTIONS.screenColumnCount) / 2 * OPTIONS.TILE_SIZE;

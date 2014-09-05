@@ -41,7 +41,6 @@ func (p *Projectile) GetOwner() gameObjectsBase.Activer {
 func (p *Projectile) GetInfo() consts.JsonType {
     info := p.GameObject.GetInfo()
     info["type"] = consts.PROJECTILE_TYPE
-    info["name"] = "player"// consts.FIREBALL_NAME
     return info
 }
 

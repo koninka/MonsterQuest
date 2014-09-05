@@ -22,14 +22,16 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         var I = this;
         GLOBAL.graphic.field.click = function(data){
             var event = data.originalEvent;
-            if(event.which != 1 && event.button != 0) return
-            //if(event.which == 3 || event.button == 2)
             var point = GLOBAL.graphic.PointerToGameCoords();
+            console.log(event);
             if(GLOBAL.use_mode){
                 GLOBAL.use_mode.x = point.x;
                 GLOBAL.use_mode.y = point.y;
                 GLOBAL.game.sendViaWS(GLOBAL.use_mode);
                 GLOBAL.use_mode = null;
+            } else if(event.which == 3 || event.button == 2){
+                console.log("useSkill")
+               GLOBAL.game.sendViaWS({action: "useSkill", x: point.x, y: point.y});
             } else {
                 for(var i = 0; i < I.weapon_id.length; ++i){
                     var id = I.weapon_id[i];

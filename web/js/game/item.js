@@ -25,33 +25,38 @@ define(['global', 'options'], function(GLOBAL, OPTIONS){
     Item.prototype.constructor = Item;
 
     Item.prototype.InitSprite = function (){
+        var drawable = new PIXI.DisplayObjectContainer();
+        this.drawable = drawable;
         var tile = GLOBAL.graphic.Sprite(this.item.name);
-        this.drawable = tile;
-        tile.interactive = true;
+        tile.position.x = tile.position.y = OPTIONS.TILE_SIZE / 2;
+        tile.anchor = {x : 0.5, y : 0.5};
+        drawable.itemTile = tile;
+        drawable.addChild(tile);
+        drawable.interactive = true;
         var m = this;
-        tile.click = function(data){
+        drawable.click = function(data){
             var now = Date.now();
-            var lc = tile.click.lastClick;
+            var lc = drawable.click.lastClick;
             var diff = now - lc;
             var event = data.originalEvent;
             if(event.which == 3 || event.button == 2) {
                 if(m.onRightClick)
                     m.onRightClick(data);
             } else if(lc && (diff < 350)) {
-                tile.click.lastClick = 0;
+                drawable.click.lastClick = 0;
                 if(m.onDoubleClick)
                     m.onDoubleClick(data);
             } else {
-                tile.click.lastClick = now;
+                drawable.click.lastClick = now;
                 if(m.onClick)
                     m.onClick(data);
             }
         }
-        tile.click.lastClick = 0;
+        drawable.click.lastClick = 0;
         GLOBAL.graphic.DrawObj(
-            tile,
-            tile.position.x = (this.item.x - GLOBAL.game.player.pt.x) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2,
-            tile.position.y = (this.item.y - GLOBAL.game.player.pt.y) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2
+            drawable,
+            drawable.position.x = (this.item.x - GLOBAL.game.player.pt.x) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2,
+            drawable.position.y = (this.item.y - GLOBAL.game.player.pt.y) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2
         )
     }
 
