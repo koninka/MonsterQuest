@@ -132,7 +132,7 @@ define(['options', 'global', 'actor_info', 'animation_manager', 'item', 'project
         delete data.action;
         delete data.result;
         delete data.bonuses;
-        delete data.characteristics;
+        delete data.stats;
         delete data.inventory;
         for(var i in data)
             txt += i + ' : ' + data[i] + "\n";
