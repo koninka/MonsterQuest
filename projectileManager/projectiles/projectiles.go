@@ -1,6 +1,7 @@
 package projectiles
 
 import (
+    "math"
     "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/gameObjectsBase"
     "MonsterQuest/geometry"
@@ -49,6 +50,9 @@ func (p *Projectile) GetFullInfo() consts.JsonType {
 }
 
 func NewProjectile(id int64, start, finish *geometry.Point, damage int, prange float64, owner gameObjectsBase.Activer) *Projectile {
+    shift := math.Sqrt(2) / 2 + 1e-2
+    alpha := math.Atan2(finish.Y - start.Y, finish.X - start.X)
+    start.Move(shift * math.Cos(alpha), shift * math.Sin(alpha))
     return &Projectile{
         fightBase.NewBaseBlow(fightBase.BM_HIT, prange, "hit"),
         gameObjectsBase.NewGameObject(id, *start),
@@ -61,6 +65,26 @@ func NewProjectile(id int64, start, finish *geometry.Point, damage int, prange f
 type AreaDamageProjectile struct {
     Projectile
     Radius int
+}
+
+type ArrowProjectile struct {
+    Projectile
+}
+
+func (p *AreaDamageProjectile) GetInfo() consts.JsonType {
+    info := p.Projectile.GetInfo()
+    info["name"] = consts.FIREBALL_NAME
+    return info
+}
+
+func (p *ArrowProjectile) GetInfo() consts.JsonType {
+    info := p.Projectile.GetInfo()
+    info["name"] = consts.ARROW_NAME
+    return info
+}
+
+func NewArrowProjectile(id int64, start, finish *geometry.Point, damage int, owner gameObjectsBase.Activer) *ArrowProjectile {
+    return &ArrowProjectile{*NewProjectile(id, start, finish, damage, consts.ARROW_RANGE, owner)}
 }
 
 func NewAreaDamageProjectile(id int64, start, finish *geometry.Point, damage, radius int, owner gameObjectsBase.Activer) *AreaDamageProjectile {

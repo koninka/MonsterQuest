@@ -4,7 +4,6 @@ import (
     "database/sql"
     "time"
     "fmt"
-    "math"
     "MonsterQuest/connect"
     "MonsterQuest/consts"
     "MonsterQuest/utils"
@@ -354,7 +353,6 @@ func (g *Game) useAction(json consts.JsonType) consts.JsonType {
         xParam := json["x"]
         yParam := json["y"]
         res["result"] = "badSlot"
-        fmt.Println(json)
         if xParam != nil && yParam != nil {
             if item := p.GetItem(id); item != nil && item.IsWeapon() {
                 if p.IsEquippedItem(item) {
@@ -379,12 +377,8 @@ func (g *Game) useSkillAction(json consts.JsonType) consts.JsonType {
     if ok1 && ok2 {
         p := g.players.getPlayerBySession(json["sid"].(string))
         start := p.GetCenter()
-        finish := geometry.MakePoint(x, y)
-        shift := math.Sqrt(2) / 2 + 1e-2
-        alpha := math.Atan2(finish.Y - start.Y, finish.X - start.X)
-        start.Move(shift * math.Cos(alpha), shift * math.Sin(alpha))
         damage := p.GetCharacteristic(consts.CHARACTERISTIC_INTELLEGENCE) * consts.FIREBALL_DAMAGE_MULTIPLIER
-        g.projectileManager.NewFireBallProjectile(&start, finish, damage, consts.FIREBALL_RADIUS, p)
+        g.projectileManager.NewFireBallProjectile(&start, geometry.MakePoint(x, y), damage, consts.FIREBALL_RADIUS, p)
         res["result"] = "ok"
     }
     return res

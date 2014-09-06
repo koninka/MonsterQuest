@@ -109,7 +109,6 @@ func (p *Player) Attack() consts.JsonType {
         } else {
             pt = *p.GetAttackPoint()
         }
-        fmt.Println("arrow projectile!!")
         pm.PManager.NewArrowProjectile(&pc, &pt, 30, p)
         p.DeleteItem(ai, 1)
         // ai.DecAmount()
