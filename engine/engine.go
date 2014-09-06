@@ -86,7 +86,7 @@ func (g *Game) initializeDictionary(){
 }
 
 func (g *Game) notifyInRadius(x, y float64, msg consts.JsonType) {
-    lt, rb := g.field.GetVisibleArea(x, y, consts.VISION_RADIUS)
+    lt, rb := g.field.GetSquareArea(x, y, consts.VISION_RADIUS)
     notified := make(map[int64] bool)
     for i := int(lt.Y); i < int(rb.Y); i++ {
         for j := int(lt.X); j < int(rb.X); j++ {
@@ -784,7 +784,7 @@ func (g *Game) lookAction(sid string) consts.JsonType {
     if py - r < 0 {
         srow = r - py
     }
-    lt, rb := g.field.GetVisibleArea(player.Center.X, player.Center.Y, player.GetRadiusVision())
+    lt, rb := g.field.GetSquareArea(player.Center.X, player.Center.Y, player.GetRadiusVision())
     l, r := int(lt.X), int(rb.X)
     t, b := int(lt.Y), int(rb.Y)
     for i := t; i < b; i++ {

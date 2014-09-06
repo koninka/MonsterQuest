@@ -178,7 +178,7 @@ func (h *HateFlag) Do(obj gameObjectsBase.Activer) {
         return
     }
     center := obj.GetCenter()
-    lt, rb := h.field.GetVisibleArea(center.X, center.Y, obj.GetRadiusVision())
+    lt, rb := h.field.GetSquareArea(center.X, center.Y, obj.GetRadiusVision())
     for i := int(lt.Y); i < int(rb.Y); i++ {
         for j := int(lt.X); j < int(rb.X); j++ {
             for _, m := range h.field.GetActors(j, i) {
