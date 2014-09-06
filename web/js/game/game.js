@@ -1,8 +1,9 @@
-define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'options', 'global', 'quickpanel', 'trackbar'], 
-    function(JQuery, utils, Player, View, Graphic, Inventory, OPTIONS, GLOBAL, QuickPanel, TrackBar) {
+define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'options', 'global', 'quickpanel', 'trackbar', 'xpbar'], 
+    function(JQuery, utils, Player, View, Graphic, Inventory, OPTIONS, GLOBAL, QuickPanel, TrackBar, XPBar) {
 
     var player_id = (parseInt(utils.getQueryVariable('id')));
     var fist_id = parseInt(utils.getQueryVariable('fistId'));
+    var look_data = null;
     var inventory_ = null;
     var slots_ = null;
     function Game(sid, wsuri) {
@@ -55,16 +56,19 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         this.player.SetHP(hp);
     }
 
+    Game.prototype.setXP = function(data){
+        this.xpbar.SetXP(data.cur_xp, data.max_xp);
+    }
     Game.prototype.checkKeys = function(){
         if(this.dirsDown[0]) this.movePlayer(this.dirsDown[0]);
     }
 
-    Game.prototype.initGraphic = function() {
-        this.graphic = new Graphic(this.view, this);
-    }
+    
 
     Game.prototype.sendViaWS = function(hash) {
         hash["sid"] = this.sid;
+        if(hash.action != 'look')
+          console.log(hash);
         this.sock.send(JSON.stringify(hash));
         //console.log("request " + JSON.stringify(hash));
     }
@@ -107,8 +111,8 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
     };
 
     Game.prototype.SetInventory = function(inventory, slots) {
-        console.log(inventory);
-        console.log(slots);
+        //console.log(inventory);
+        //console.log(slots);
         this.inventory.SetItems(inventory, slots);
     };
 
@@ -118,6 +122,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         var result = data["result"];
         if (data["tick"]) {
             th.tick = data["tick"];
+            data['events'].push({x: 5, y: 5, radius: 5, event:'explode'})
             th.GetEvents(data["events"]);
             th.sendViaWS({action: "look"});
         } else if (result == "badSid") {
@@ -136,7 +141,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
                         th.setExamineData(data);
                     } else
                         th.SetInventory(data.inventory, data.slots);
-                    console.log(JSON.stringify(data));
+                    //console.log(JSON.stringify(data));
                     break
                 case "getOptions":
                     th.setOptions(data['options']);
@@ -144,12 +149,11 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
                     th.setDictionary(data.dictionary);
                     break;
                 case "look":
-                  
                     th.setPlayerCoords(data.x, data.y);
                     th.setHP(data['health']);
                     th.setMap(data['map'], th.player.pt);
                     th.setActors(data['actors']);
-                  
+                    th.setXP(data);
                     break;
                 case "attack":
                     th.attack(data);
@@ -166,8 +170,15 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         }
     }
 
+    Game.prototype.InitGraphic = function(chain_number) {
+        var th = game;
+        th.graphic = new Graphic(th.view, th);
+        th.graphic.LoadTextures(function(){th.InitChain(chain_number + 1); })
+    }
+
     Game.prototype.InitQuickPanel = function(chain_number) {
         var th = game;
+        th.InitXPBar(look_data);
         th.quickpanel = new QuickPanel(); 
         th.initInventory();
         th.SetInventory(inventory_, slots_);
@@ -186,6 +197,10 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         th.sendViaWS({action: "getDictionary"});
     }
 
+    Game.prototype.InitXPBar = function (data){
+        game.xpbar = new XPBar(data.cur_xp, data.max_xp);
+    }
+
     Game.prototype.InitLook = function (chain_number){
         var th = game;
         th.sock.onmessage = function(e){
@@ -193,6 +208,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
             if(data["action"] == "look"){
                 th.defineRadiusFromMap(data['map']);
                 th.player.InitAnimation(true, th.player);
+                look_data = data;
                 th.InitChain(chain_number + 1);
             }
         }
@@ -272,14 +288,13 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
 
     Game.prototype.Init = function() {
         this.firstLook = true;
-        this.initGraphic();
         this.init_chain = [];
         var I = this;
         function AddToChain(initFunc){
             I.init_chain.push(initFunc)
         }
+        AddToChain(this.InitGraphic);
         AddToChain(this.InitPlayer);
-        
         AddToChain(this.InitLook);
         AddToChain(this.InitDictionary);
         AddToChain(this.InitQuickPanel);
