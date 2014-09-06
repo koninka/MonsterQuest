@@ -30,6 +30,9 @@ define({
     "trackbar_ok" : "/imgs/trackbar/trackbar_ok.png",
     "xpbar_block" : "/imgs/xpbar_block.png",
     "xpbar_connector" : "/imgs/xpbar_connector.png",
+    characteristics_window_top : "/imgs/characteristics_window_top.png",
+    characteristics_window_middle : "/imgs/characteristics_window_middle.png",
+    characteristics_window_bottom : "/imgs/characteristics_window_bottom.png",
     "Food" : "/imgs/Food.png",
 	zombie : {
 		corpse: "/imgs/zombie/zombie_corpse_1.png",
