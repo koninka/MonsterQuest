@@ -4,7 +4,6 @@ import (
     "database/sql"
     "time"
     "fmt"
-    "math"
     "MonsterQuest/connect"
     "MonsterQuest/consts"
     "MonsterQuest/utils"
@@ -14,7 +13,7 @@ import (
     "MonsterQuest/gameObjectsFlags"
     "MonsterQuest/notifier"
     "MonsterQuest/geometry"
-    "MonsterQuest/projectileManager"
+    pm "MonsterQuest/projectileManager"
 )
 
 type Game struct {
@@ -28,7 +27,7 @@ type Game struct {
     id2conn map[int64] *connection
     conn2id map[*connection] int64
     dictionary consts.JsonType
-    projectileManager *projectileManager.ProjectileManager
+    projectileManager *pm.ProjectileManager
 }
 
 var gameInstance *Game
@@ -64,7 +63,8 @@ func GetInstance() *Game {
             make(consts.JsonType),
             nil,
         }
-        gameInstance.projectileManager = projectileManager.NewProjectileManager(&gameInstance.field)
+        pm.InitProjectileManager(&gameInstance.field)
+        gameInstance.projectileManager = pm.PManager
         gameObjectsBase.InitGameItems()
         gameInstance.dictionary = gameInstance.mobs.initializeMobTypes()
         if !*consts.TEST {
@@ -356,6 +356,7 @@ func (g *Game) useAction(json consts.JsonType) consts.JsonType {
         if xParam != nil && yParam != nil {
             if item := p.GetItem(id); item != nil && item.IsWeapon() {
                 if p.IsEquippedItem(item) {
+                    // if item.Get
                     p.SetAttackPoint(xParam.(float64), yParam.(float64))
                     res["message"] = fmt.Sprintf("attack point (%f, %f)", xParam.(float64), yParam.(float64))
                     res["result"] = "ok"
@@ -376,12 +377,8 @@ func (g *Game) useSkillAction(json consts.JsonType) consts.JsonType {
     if ok1 && ok2 {
         p := g.players.getPlayerBySession(json["sid"].(string))
         start := p.GetCenter()
-        finish := geometry.MakePoint(x, y)
-        shift := math.Sqrt(2) / 2 + 1e-2
-        alpha := math.Atan2(finish.Y - start.Y, finish.X - start.X)
-        start.Move(shift * math.Cos(alpha), shift * math.Sin(alpha))
         damage := p.GetCharacteristic(consts.CHARACTERISTIC_INTELLEGENCE) * consts.FIREBALL_DAMAGE_MULTIPLIER
-        g.projectileManager.NewFireBallProjectile(&start, finish, damage, consts.FIREBALL_RADIUS, p)
+        g.projectileManager.NewFireBallProjectile(&start, geometry.MakePoint(x, y), damage, consts.FIREBALL_RADIUS, p)
         res["result"] = "ok"
     }
     return res

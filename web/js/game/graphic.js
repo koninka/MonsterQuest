@@ -4,6 +4,7 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
     }
 
     function Graphic(view, game) {
+        var I = this;
         this.width = 1000;
         this.height = 600;
         this.textures = {};
@@ -11,24 +12,7 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
         this.dict = null;
         this.stage = new PIXI.Stage('0x000000', true);
         this.pointer = {};
-        var I = this;
-        var loadA = function(t, a){
-            if(a instanceof Array){
-                t = [];
-                for (var i = 0; i < a.length; ++i)
-                    t.push(loadA({}, a[i]))
-            } else if(a instanceof Object){
-                t = {}
-                for(var i in a){
-                    t[i] = loadA({}, a[i]);
-                }
-            } else
-                t = PIXI.Texture.fromImage(a);
-            return t;
-        }
-        var PreloadResourses = function () {
-            I.textures = loadA({}, atlas);
-        }
+        
         $('#view').append(this.renderer.view);
         $('#view').bind('contextmenu', function(){
             return false;
@@ -50,10 +34,10 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
             }
         }
         this.stage.addChild(this.field);
+        
+    }
 
-
-        PreloadResourses();
-        var prevtick;
+    function StartAnimate(I){
         var animate = function(){
             stats.begin();
             if(view.player && view.player.container)
@@ -63,8 +47,52 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
             stats.end();
         }
 
-        requestAnimFrame( animate );
+        requestAnimFrame( animate );  
     }
+
+    Graphic.prototype.LoadTextures = function(onComplete, onProgress) {
+        var I = this;
+        var count = 0;
+        function onImageLoad() {
+            count--;
+            if (onProgress) onProgress();
+            if (!count) {
+                StartAnimate(I);
+                if (onComplete)
+                    onComplete();
+            }
+        }
+        var GetCount = function(a){
+            if(a instanceof Array)
+                for (var i = 0; i < a.length; ++i)
+                    GetCount(a[i]);
+            else if(a instanceof Object)
+                for(var i in a)
+                    GetCount(a[i]);
+            else 
+                count++;
+        }
+        var loadA = function(t, a){
+            if(a instanceof Array){
+                t = [];
+                for (var i = 0; i < a.length; ++i)
+                    t.push(loadA({}, a[i]))
+            } else if(a instanceof Object){
+                t = {}
+                for(var i in a){
+                    t[i] = loadA({}, a[i]);
+                }
+            } else {
+                var loader = new PIXI.ImageLoader(a);
+                loader.addEventListener('loaded', onImageLoad);
+                loader.load();
+                t = loader.texture;
+            }
+            return t;
+        }
+        GetCount(atlas);
+        I.textures = loadA({}, atlas);
+    };
 
     Graphic.prototype.Texture = function(texture){
         return this.textures[texture] || this.textures['player'];

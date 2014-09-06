@@ -46,6 +46,12 @@ define({
             x : 20,
             y : 40
         }
+    },
+    xpbar : {
+        size : 10, // in blocks
+        height : 18,
+        height_of_color_line : 11,
+        offset : 3,
     }
 
 })

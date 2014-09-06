@@ -16,6 +16,8 @@ type ProjectileManager struct {
     projectiles map[int64] pM.Projectiler
 }
 
+var PManager *ProjectileManager = nil
+
 func (pm *ProjectileManager) CheckCollision(p pM.Projectiler) (bool, gameObjectsBase.Activer) {
     center := p.GetCenter()
     col, row := int(center.X), int(center.Y)
@@ -77,7 +79,7 @@ func (pm *ProjectileManager) Do() {
 
 func (pm *ProjectileManager) NewArrowProjectile(start, finish *geometry.Point, damage int, owner gameObjectsBase.Activer) {
     id := utils.GenerateId()
-    pm.projectiles[id] = pM.NewProjectile(id, start, finish, damage, owner)
+    pm.projectiles[id] = pM.NewArrowProjectile(id, start, finish, damage, owner)
 }
 
 func (pm *ProjectileManager) NewFireBallProjectile(start, finish *geometry.Point, damage, radius int, owner gameObjectsBase.Activer) {
@@ -85,6 +87,7 @@ func (pm *ProjectileManager) NewFireBallProjectile(start, finish *geometry.Point
     pm.projectiles[id] = pM.NewAreaDamageProjectile(id, start, finish, damage, radius, owner)
 }
 
-func NewProjectileManager(field *gameMap.GameField) *ProjectileManager {
-    return &ProjectileManager{field, make(map[int64] pM.Projectiler)}
+func InitProjectileManager(field *gameMap.GameField) {
+    PManager = &ProjectileManager{field, make(map[int64] pM.Projectiler)}
 }
+

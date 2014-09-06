@@ -138,7 +138,8 @@ type BlowFlag struct {
 
 func (a *BlowFlag) Do(obj gameObjectsBase.Activer) {
     if obj.ReadyAttack() {
-        if p := obj.GetAttackPoint(); p != nil && !a.field.OutOfRange(int(p.X), int(p.Y)) {
+        p := obj.GetAttackPoint()
+        if p != nil && !a.field.OutOfRange(int(p.X), int(p.Y)) {
             for _, actor := range a.field.GetActors(int(p.X), int(p.Y)) {
                 r := actor.GetRectangle()
                 if r.In(p) {
@@ -146,15 +147,22 @@ func (a *BlowFlag) Do(obj gameObjectsBase.Activer) {
                     break
                 }
             }
-            obj.ClearAttackPoint()
+            // obj.ClearAttackPoint()
         }
-        if target, exists := obj.GetTarget(); exists && target.GetID() != obj.GetID() {
+        if target, exists := obj.GetTarget(); exists || p != nil {
             msg := obj.Attack()
             obj.ZeroCooldown()
             if msg != nil {
                 notifier.GameNotifier.NotifyAboutAttack(obj, target, msg)
             }
         }
+        // if target, exists := obj.GetTarget(); exists && target.GetID() != obj.GetID() {
+        //     msg := obj.Attack()
+        //     obj.ZeroCooldown()
+        //     if msg != nil {
+        //         notifier.GameNotifier.NotifyAboutAttack(obj, target, msg)
+        //     }
+        // }
     } else {
         obj.IncCooldownCounter()
     }

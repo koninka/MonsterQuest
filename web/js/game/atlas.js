@@ -28,6 +28,8 @@ define({
     "trackbar_slider" : "/imgs/trackbar/trackbar_slider.png",
     "trackbar_exit" : "/imgs/trackbar/trackbar_exit.png",
     "trackbar_ok" : "/imgs/trackbar/trackbar_ok.png",
+    "xpbar_block" : "/imgs/xpbar_block.png",
+    "xpbar_connector" : "/imgs/xpbar_connector.png",
     "Food" : "/imgs/Food.png",
 	zombie : {
 		corpse: "/imgs/zombie/zombie_corpse_1.png",
@@ -218,4 +220,6 @@ define({
     "Bow of Bard" : "/imgs/angband/Bow of Bard.png",
     "Steel arrow" : "/imgs/angband/Steel arrow.png",
     "default_projectile" : "/imgs/default_projectile.png",
+    "arrow_projectile" : "/imgs/steel_arrow_projectile.png",
+    "fireball_projectile" : "/imgs/default_projectile.png",
 })
