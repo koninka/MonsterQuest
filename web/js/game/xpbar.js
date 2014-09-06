@@ -4,14 +4,6 @@ define(['options', 'global'], function(OPTIONS, GLOBAL){
     var block_width = 0;
     var connector_width = 0;
 
-    function AddSpriteToLayer(obj_name, layer, x, y){
-        var sprite = GLOBAL.graphic.Sprite(obj_name);
-        sprite.position.x = x;
-        sprite.position.y = y;
-        layer.addChild(sprite);
-        return sprite;
-    }
-
     function XPBar(cur, max){
         PIXI.DisplayObjectContainer.call(this);
         this.line_layer = new PIXI.Graphics(0, 0);
@@ -37,11 +29,11 @@ define(['options', 'global'], function(OPTIONS, GLOBAL){
     XPBar.prototype.constructor = XPBar;
 
     XPBar.prototype.AddBlock = function(x, y){
-        AddSpriteToLayer('xpbar_block', this.block_layer, x, y);
+        GLOBAL.graphic.AddSpriteToLayer('xpbar_block', this.block_layer, x, y);
     }
 
     XPBar.prototype.AddConnector = function(x, y){
-        AddSpriteToLayer('xpbar_connector', this.connector_layer, x - connector_width / 2, y);
+        GLOBAL.graphic.AddSpriteToLayer('xpbar_connector', this.connector_layer, x - connector_width / 2, y);
     }
 
     XPBar.prototype.InitBlocks = function(){

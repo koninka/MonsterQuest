@@ -152,6 +152,17 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
         return Math.atan2(dy, dx);
     }
 
+    Graphic.prototype.AddObjToLayer = function(obj, layer, x, y) {
+        obj.position.x = x;
+        obj.position.y = y;
+        layer.addChild(obj);
+        return obj;
+    };
+
+    Graphic.prototype.AddSpriteToLayer = function(sprite_name, layer, x, y){
+        return this.AddObjToLayer(this.Sprite(sprite_name), layer, x, y);
+    }
+
     //closed up pixi mem leak
     PIXI.Text.prototype.destroy = function(destroyTexture){
          this.texture.baseTexture.imageUrl = this.canvas._pixiId;
