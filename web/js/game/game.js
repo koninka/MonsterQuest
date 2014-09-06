@@ -1,11 +1,13 @@
-define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'options', 'global', 'quickpanel', 'trackbar', 'xpbar'], 
-    function(JQuery, utils, Player, View, Graphic, Inventory, OPTIONS, GLOBAL, QuickPanel, TrackBar, XPBar) {
+define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 
+    'options', 'global', 'quickpanel', 'trackbar', 'xpbar', 'characteristic_window'], 
+    
+function(JQuery, utils, Player, View, Graphic, Inventory, 
+    OPTIONS, GLOBAL, QuickPanel, TrackBar, XPBar, CharWind) {
 
     var player_id = (parseInt(utils.getQueryVariable('id')));
     var fist_id = parseInt(utils.getQueryVariable('fistId'));
     var look_data = null;
-    var inventory_ = null;
-    var slots_ = null;
+    var examine_data = null;
     function Game(sid, wsuri) {
         this.sid      = sid;
         this.sock     = null;
@@ -17,6 +19,7 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         this.graphic  = null;  //initGraphic
         this.inventory = null; // initInventory
         GLOBAL.game   = this;
+        this.ready = false;
     }
 
     Game.prototype.setDictionary = function(dict) {
@@ -139,8 +142,10 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
                             GLOBAL.SELFEXAMINE = false;
                         }
                         th.setExamineData(data);
-                    } else
+                    } else {
                         th.SetInventory(data.inventory, data.slots);
+                        th.chr_wnd.UpdateCount(data.stats);
+                    }
                     //console.log(JSON.stringify(data));
                     break
                 case "getOptions":
@@ -176,12 +181,18 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         th.graphic.LoadTextures(function(){th.InitChain(chain_number + 1); })
     }
 
+    Game.prototype.InitChrWnd = function(data){
+        var th = game;
+        th.chr_wnd = new CharWind(data.stats);
+    }
+
     Game.prototype.InitQuickPanel = function(chain_number) {
         var th = game;
         th.InitXPBar(look_data);
         th.quickpanel = new QuickPanel(); 
         th.initInventory();
-        th.SetInventory(inventory_, slots_);
+        th.SetInventory(examine_data.inventory, examine_data.slots);
+        th.InitChrWnd(examine_data);
         th.InitChain(chain_number + 1);   
     };
 
@@ -220,13 +231,9 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         th.sock.onmessage = function(e){
             var data = JSON.parse(e.data);
             if(data["action"] == "examine"){
+                examine_data = data;
                 th.player = new Player(player_id, data['login'], data['health'], data['maxHealth']);
                 th.view.player = th.player;
-                //th.initInventory();
-                inventory_ = data.inventory;
-                slots_ = data.slots;
-                //th.SetInventory(data.inventory);
-                //th.setExamineData(data);
                 th.InitChain(chain_number + 1);
             }
         }
@@ -279,6 +286,12 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
             if(!game.inventory.drawable.visible)
                 game.SelfExamine();
             game.ShowInventory();
+        });
+
+        KeyboardJS.on('p', function(){
+            if(!game.chr_wnd.visible)
+                game.SelfExamine();
+            game.chr_wnd.Toggle();
         })
 
         setInterval(function(){
@@ -301,7 +314,8 @@ define(['jquery', 'utils/utils', 'player', 'view', 'graphic', 'inventory', 'opti
         AddToChain(this.InitTrackBar);
         
         this.InitChain(0);
-        this.InitKeyboard()
+        this.InitKeyboard();
+        this.ready = true;
     };
 
     Game.prototype.Start = function() {
