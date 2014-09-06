@@ -218,4 +218,6 @@ define({
     "Bow of Bard" : "/imgs/angband/Bow of Bard.png",
     "Steel arrow" : "/imgs/angband/Steel arrow.png",
     "default_projectile" : "/imgs/default_projectile.png",
+    "arrow_projectile" : "/imgs/steel_arrow_projectile.png",
+    "fireball_projectile" : "/imgs/default_projectile.png",
 })
