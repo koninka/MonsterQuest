@@ -75,7 +75,7 @@ func (pm *ProjectileManager) Do() {
                 }
             } else {
                 if actor != nil {
-                    actor.GetHit(p, p.GetOwner())
+                    go notifier.GameNotifier.NotifyAboutAttack(p.GetOwner(), actor, actor.GetHit(p, p.GetOwner()))
                 }
             }
             delete(pm.projectiles, p.GetID())
