@@ -125,7 +125,6 @@ function(JQuery, utils, Player, View, Graphic, Inventory,
         var result = data["result"];
         if (data["tick"]) {
             th.tick = data["tick"];
-            data['events'].push({x: 5, y: 5, radius: 5, event:'explode'})
             th.GetEvents(data["events"]);
             th.sendViaWS({action: "look"});
         } else if (result == "badSid") {
