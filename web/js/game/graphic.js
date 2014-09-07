@@ -98,6 +98,10 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
         return this.textures[texture] || this.textures['player'];
     }
 
+    Graphic.prototype.SpriteOrNull = function(texture){
+        return (this.textures[texture]) ? this.Sprite(texture) : null;
+    }
+
     Graphic.prototype.Sprite = function(texture){
         return new PIXI.Sprite(this.Texture(texture));
     }
