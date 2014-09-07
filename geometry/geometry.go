@@ -51,19 +51,11 @@ func (s *Segment) CrossedBySegment(other *Segment) bool {
     d2 := direction(&other.Point1, &other.Point2, &s.Point2)
     d3 := direction(&s.Point1, &s.Point2, &other.Point1)
     d4 := direction(&s.Point1, &s.Point2, &other.Point2)
-    if ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0)) {
-        return true
-    } else if d1 == 0 && other.On(&s.Point1) {
-        return true
-    } else if d2 == 0 && other.On(&s.Point2) {
-        return true
-    } else if d3 == 0 && s.On(&other.Point1) {
-        return true
-    } else if d4 == 0 && s.On(&other.Point2) {
-        return true
-    } else {
-        return false
-    }
+    return (d1 * d2 < 0 && d3 * d4 < 0) ||
+        d1 == 0 && other.On(&s.Point1) ||
+        d2 == 0 && other.On(&s.Point2) ||
+        d3 == 0 && s.On(&other.Point1) ||
+        d4 == 0 && s.On(&other.Point2)
 }
 
 func (r *Rectangle) In(p *Point) bool {
