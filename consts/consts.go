@@ -110,6 +110,24 @@ var NameRaceMapping = map[string] int {
 }
 
 const (
+    PLAYER_CLASS_WARRIOR = iota
+    PLAYER_CLASS_ROGUE
+    PLAYER_CLASS_MAGE
+)
+
+const (
+    PLAYER_CLASS_NAME_WARRIOR = "warrior"
+    PLAYER_CLASS_NAME_ROGUE   = "rogue"
+    PLAYER_CLASS_NAME_MAGE    = "mage"
+)
+
+var NamePlayerClassMapping = map[string] int {
+    PLAYER_CLASS_NAME_WARRIOR : PLAYER_CLASS_WARRIOR,
+    PLAYER_CLASS_NAME_ROGUE   : PLAYER_CLASS_ROGUE,
+    PLAYER_CLASS_NAME_MAGE    : PLAYER_CLASS_MAGE,
+}
+
+const (
     FIST_ID = -1
     FIST_WEAP = "FIST"
 )
