@@ -269,8 +269,8 @@ define(['options', 'global', 'actor_info', 'animation_manager', 'item', 'project
 
     View.prototype.Explode = function(data){
         var anim = AnimationManager.RunAnimation('explosion', data);
-        anim.scale.x = data.radius;
-        anim.scale.y = data.radius;
+        anim.scale.x = data.radius * data.radius;
+        anim.scale.y = data.radius * data.radius;
     }
 
 
