@@ -35,6 +35,10 @@ define({
     characteristics_window_bottom : "/imgs/characteristics_window_bottom.png",
     minimize_btn_UP : "/imgs/minimize_btn_up.png",
     minimize_btn_DOWN : "/imgs/minimize_btn_down.png",
+    slider_border_bot : "/imgs/slider_border_bot.png",
+    slider_border_mid : "/imgs/slider_border_mid.png",
+    slider_border_top : "/imgs/slider_border_top.png",
+    slider_button     : "/imgs/slider_button.png",
     "Food" : "/imgs/Food.png",
 	zombie : {
 		corpse: "/imgs/zombie/zombie_corpse_1.png",
