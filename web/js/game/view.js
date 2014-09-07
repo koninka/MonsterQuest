@@ -132,7 +132,7 @@ define(['options', 'global', 'actor_info', 'animation_manager', 'item', 'project
         delete data.action;
         delete data.result;
         delete data.bonuses;
-        delete data.characteristics;
+        delete data.stats;
         delete data.inventory;
         for(var i in data)
             txt += i + ' : ' + data[i] + "\n";
@@ -269,8 +269,8 @@ define(['options', 'global', 'actor_info', 'animation_manager', 'item', 'project
 
     View.prototype.Explode = function(data){
         var anim = AnimationManager.RunAnimation('explosion', data);
-        anim.scale.x = data.radius;
-        anim.scale.y = data.radius;
+        anim.scale.x = data.radius * data.radius;
+        anim.scale.y = data.radius * data.radius;
     }
 
 

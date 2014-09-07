@@ -98,6 +98,10 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
         return this.textures[texture] || this.textures['player'];
     }
 
+    Graphic.prototype.SpriteOrNull = function(texture){
+        return (this.textures[texture]) ? this.Sprite(texture) : null;
+    }
+
     Graphic.prototype.Sprite = function(texture){
         return new PIXI.Sprite(this.Texture(texture));
     }
@@ -150,6 +154,17 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
         dx = this.pointer.x;
         dy = this.pointer.y;
         return Math.atan2(dy, dx);
+    }
+
+    Graphic.prototype.AddObjToLayer = function(obj, layer, x, y) {
+        obj.position.x = x;
+        obj.position.y = y;
+        layer.addChild(obj);
+        return obj;
+    };
+
+    Graphic.prototype.AddSpriteToLayer = function(sprite_name, layer, x, y){
+        return this.AddObjToLayer(this.Sprite(sprite_name), layer, x, y);
     }
 
     //closed up pixi mem leak

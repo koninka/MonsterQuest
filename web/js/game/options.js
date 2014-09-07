@@ -52,6 +52,11 @@ define({
         height : 18,
         height_of_color_line : 11,
         offset : 3,
+    },
+    chrwind : {
+        start : {x : 20, y : 3},
+        offset : 16,
+        position : {x : 100, y : 100},
     }
 
 })
