@@ -5,11 +5,9 @@ define(['global', 'options', 'count_label', 'button', 'sliderbar'], function(GLO
         this.background_layer      = new PIXI.DisplayObjectContainer();
         this.characteristics_layer = new PIXI.DisplayObjectContainer();
         this.counter_layer         = new PIXI.DisplayObjectContainer();
-        //this.add_buttons_layer     = new PIXI.DisplayObjectContainer();
         this.addChild(this.background_layer);
         this.addChild(this.characteristics_layer);
         this.addChild(this.counter_layer);
-        //this.addChild(this.add_buttons_layer);
         this.close_button = new Button('minimize_btn');
         
         var I = this;
@@ -58,23 +56,7 @@ define(['global', 'options', 'count_label', 'button', 'sliderbar'], function(GLO
         var middle = this.AddToBackground('characteristics_window_middle',  1, top.height);
         var bottom = this.AddToBackground('characteristics_window_bottom',  0, top.height + middle.height);
         this.close_button.position.x = top.width - this.close_button.width;
-        this.sliderbar = new SliderBar(top.height + middle.height - this.close_button.height);
-        this.sliderbar.position.x = top.width - this.sliderbar.breadth / 2;
-        this.sliderbar.position.y = this.close_button.height + 5;
-        this.addChild(this.sliderbar);
-        //this.sliderbar.Hide();
-        //this.close_button.position.y = this.close_button.height / 2;
     };
-
-    //CharacteristicWindow.prototype.AddButton = function(x, y, characteristic_name){
-    //    var btn = GLOBAL.graphic.AddSpriteToLayer('add_characteristic_btn', this.add_buttons_layer, x, y);
-    //    btn.interactive = true;
-    //    btn.click = function(data){
-    //        data.originalEvent.preventDefault();
-    //        GLOBAL.game.sendViaWS({action: "add_characteristic", characteristic : characteristic_name});
-    //    }
-    //    return btn;
-    //}
 
     function CorrectPosition(layer, x){
         if (layer.position.x < x)
@@ -89,14 +71,12 @@ define(['global', 'options', 'count_label', 'button', 'sliderbar'], function(GLO
             0
         );
         GLOBAL.graphic.AddObjToLayer(t, this.characteristics_layer, x, y);
-        x += t.width// + OPTIONS.chrwind.offset;
+        x += t.width;
         t.counter = new CountLabel();
         t.counter.SetCount(count);
         t.counter.Show();
         GLOBAL.graphic.AddObjToLayer(t.counter, this.counter_layer, 0, y);
         CorrectPosition(this.counter_layer, x);
-        //x += t.counter.width + OPTIONS.chrwind.offset;
-        //CorrectPosition(this.add_buttons_layer, x);
         return t;
     }
 
