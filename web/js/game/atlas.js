@@ -33,6 +33,8 @@ define({
     characteristics_window_top : "/imgs/characteristics_window_top.png",
     characteristics_window_middle : "/imgs/characteristics_window_middle.png",
     characteristics_window_bottom : "/imgs/characteristics_window_bottom.png",
+    minimize_btn_UP : "/imgs/minimize_btn_up.png",
+    minimize_btn_DOWN : "/imgs/minimize_btn_down.png",
     "Food" : "/imgs/Food.png",
 	zombie : {
 		corpse: "/imgs/zombie/zombie_corpse_1.png",
