@@ -37,6 +37,11 @@ func matchRegexp(pattern, str string) bool {
     return result
 }
 
+func classExists(class string) bool {
+    _, ok := consts.NamePlayerClassMapping[class]; 
+    return class == "" || ok;
+}
+
 func logoutAction(u4 string) string {
     result := map[string] string{"result": "ok"}
     db := connect.CreateConnect()
@@ -90,7 +95,7 @@ func loginAction(login, pass string) string {
     return string(resJSON)
 }
 
-func registerAction(login, pass string) string {
+func registerAction(login, pass, class string) string {
     result := map[string] string{"result": "ok"}
     if !matchRegexp("^[a-zA-Z0-9]{2,36}$", login) {
         result["result"] = "badLogin"
@@ -98,6 +103,8 @@ func registerAction(login, pass string) string {
         result["result"] = "badPassword"
     } else if isExistUser(login, "") {
         result["result"] = "loginExists"
+    } else if !classExists(class){
+        result["result"] = "badClass"
     } else {
         db := connect.CreateConnect()
         stmt, _ := db.Prepare("INSERT INTO users(login, password) VALUES(?, ?)")
@@ -164,10 +171,11 @@ func JsonHandler(w http.ResponseWriter, r *http.Request) {
                     response = createResponse(action, "invalidCredentials")
                 }
             case "register":
-                login, err1  := data["login"].(string)
+                login,  err1 := data["login"].(string)
                 passwd, err2 := data["password"].(string)
+                class,  _ := data["class"].(string)
                 if err1 && err2 {
-                    response = registerAction(login, passwd)
+                    response = registerAction(login, passwd, class)
                 } else if err1 {
                     response = createResponse(action, "badLogin")
                 } else if err2 {
