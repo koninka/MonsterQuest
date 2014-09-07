@@ -112,7 +112,7 @@ func (p *Player) Attack() consts.JsonType {
         pm.PManager.NewArrowProjectile(&pc, &pt, 30, p)
         p.DeleteItem(ai, 1)
         // ai.DecAmount()
-    } else if existTarget {
+    } else if existTarget && (target.GetID() != p.GetID()) {
         if d := geometry.Distance(pc, target.GetCenter()); d <= p.GetAttackRadius() {
             res = target.GetHit(p.weapon, p)
         }
