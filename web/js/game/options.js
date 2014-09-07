@@ -55,7 +55,7 @@ define({
     },
     chrwind : {
         start : {x : 20, y : 3},
-        offset : 20,
+        offset : 16,
         position : {x : 100, y : 100},
     }
 

@@ -1,4 +1,4 @@
-define(['global', 'options', 'count_label', 'button'], function(GLOBAL, OPTIONS, CountLabel, Button){
+define(['global', 'options', 'count_label', 'button', 'sliderbar'], function(GLOBAL, OPTIONS, CountLabel, Button, SliderBar){
     var max_x = 0;
     function CharacteristicWindow(char_list){
         PIXI.DisplayObjectContainer.call(this);
@@ -11,6 +11,7 @@ define(['global', 'options', 'count_label', 'button'], function(GLOBAL, OPTIONS,
         this.addChild(this.counter_layer);
         //this.addChild(this.add_buttons_layer);
         this.close_button = new Button('minimize_btn');
+        
         var I = this;
         this.close_button.onClick = function(){
             I.Hide();
@@ -57,6 +58,11 @@ define(['global', 'options', 'count_label', 'button'], function(GLOBAL, OPTIONS,
         var middle = this.AddToBackground('characteristics_window_middle',  1, top.height);
         var bottom = this.AddToBackground('characteristics_window_bottom',  0, top.height + middle.height);
         this.close_button.position.x = top.width - this.close_button.width;
+        this.sliderbar = new SliderBar(top.height + middle.height - this.close_button.height);
+        this.sliderbar.position.x = top.width - this.sliderbar.breadth / 2;
+        this.sliderbar.position.y = this.close_button.height + 5;
+        this.addChild(this.sliderbar);
+        //this.sliderbar.Hide();
         //this.close_button.position.y = this.close_button.height / 2;
     };
 
@@ -83,7 +89,7 @@ define(['global', 'options', 'count_label', 'button'], function(GLOBAL, OPTIONS,
             0
         );
         GLOBAL.graphic.AddObjToLayer(t, this.characteristics_layer, x, y);
-        x += t.width + OPTIONS.chrwind.offset;
+        x += t.width// + OPTIONS.chrwind.offset;
         t.counter = new CountLabel();
         t.counter.SetCount(count);
         t.counter.Show();
