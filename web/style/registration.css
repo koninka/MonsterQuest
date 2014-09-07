@@ -164,3 +164,13 @@ input#testBtn {
     top : 10px;
     position: absolute;
 }
+
+#class_container {
+    display: none;
+    width: 100%;
+    text-align: center;
+}
+
+#class_container img {
+    display: inline-block;
+}
