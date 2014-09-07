@@ -236,7 +236,7 @@ func (obj *ActiveObject) GetKind() Kinder {
 }
 
 func (obj *ActiveObject) GetHit(blow fightBase.Blower, attacker Activer) consts.JsonType {
-    var res = consts.JsonType { "action" : "attack" }
+    var res = consts.JsonType { "event" : "attack" }
     res["description"] = consts.JsonType {
         "blowType" : blow.GetBlowType(),
         "dealtDamage" : blow.GetDamage(),
