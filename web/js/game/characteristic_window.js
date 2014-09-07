@@ -1,4 +1,4 @@
-define(['global', 'options', 'count_label'], function(GLOBAL, OPTIONS, CountLabel){
+define(['global', 'options', 'count_label', 'button'], function(GLOBAL, OPTIONS, CountLabel, Button){
     var max_x = 0;
     function CharacteristicWindow(char_list){
         PIXI.DisplayObjectContainer.call(this);
@@ -10,6 +10,12 @@ define(['global', 'options', 'count_label'], function(GLOBAL, OPTIONS, CountLabe
         this.addChild(this.characteristics_layer);
         this.addChild(this.counter_layer);
         //this.addChild(this.add_buttons_layer);
+        this.close_button = new Button('minimize_btn');
+        var I = this;
+        this.close_button.onClick = function(){
+            I.Hide();
+        }
+        this.addChild(this.close_button);
         GLOBAL.graphic.stage.addChild(this);
         this.characteristics_layer.characteristics = {};
         this.free_points = 0;
@@ -50,6 +56,8 @@ define(['global', 'options', 'count_label'], function(GLOBAL, OPTIONS, CountLabe
         var top = this.AddToBackground('characteristics_window_top', 0, 0);
         var middle = this.AddToBackground('characteristics_window_middle',  1, top.height);
         var bottom = this.AddToBackground('characteristics_window_bottom',  0, top.height + middle.height);
+        this.close_button.position.x = top.width - this.close_button.width;
+        //this.close_button.position.y = this.close_button.height / 2;
     };
 
     //CharacteristicWindow.prototype.AddButton = function(x, y, characteristic_name){
@@ -97,7 +105,7 @@ define(['global', 'options', 'count_label'], function(GLOBAL, OPTIONS, CountLabe
 
     CharacteristicWindow.prototype.UpdateCount = function(char_list){
         for(var c in char_list){
-            var counter = this.characteristics_layer.characteristics[name].counter;
+            var counter = this.characteristics_layer.characteristics[c].counter;
             counter.SetCount(char_list[c]);
             counter.Show();
         }
