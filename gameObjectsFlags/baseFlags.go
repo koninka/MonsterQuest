@@ -76,7 +76,7 @@ func (m *MoveFlag) checkCollisionWithActorsInCell(col, row int, segment *geometr
     res := false
     for _, actor := range m.field.GetActors(col, row) {
         r := actor.GetRectangle()
-        res = res || r.CrossedBySegment(segment)
+        res = res || r.StrongCrossedBySegment(segment)
     }
     return res
 }

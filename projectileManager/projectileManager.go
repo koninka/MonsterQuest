@@ -18,20 +18,28 @@ type ProjectileManager struct {
 
 var PManager *ProjectileManager = nil
 
-func (pm *ProjectileManager) CheckCollision(p pM.Projectiler) (bool, gameObjectsBase.Activer) {
+func (pm *ProjectileManager) CheckCollision(p pM.Projectiler, dx, dy float64) (bool, gameObjectsBase.Activer) {
     center := p.GetCenter()
-    col, row := int(center.X), int(center.Y)
-    if pm.field.IsBlocked(col, row) {
-        return true, nil
-    } else {
-        for _, actor := range pm.field.GetActors(col, row) {
-            r := actor.GetRectangle()
-            if r.In(&center) {
-                return true, actor
+    newCenter := geometry.MakePoint(center.X + dx, center.Y + dy)
+    rects := make([]*geometry.Rectangle, 0, 100)
+    rect2obj := make(map[*geometry.Rectangle] gameObjectsBase.Activer)
+    for i := int(math.Min(center.Y, newCenter.Y)); i <= int(math.Max(center.Y, newCenter.Y)); i++ {
+        for j := int(math.Min(center.X, newCenter.X)); j <= int(math.Max(center.X, newCenter.X)); j++ {
+            if pm.field.IsBlocked(j, i) {
+                rects = append(rects, pm.field.GetCellRectangle(j, i))
+            } else {
+                for _, actor := range pm.field.GetActors(j, i) {
+                    r := actor.GetRectangle()
+                    rects = append(rects, &r)
+                    rect2obj[&r] = actor
+                }
             }
         }
-        if geometry.Distance(center, p.GetDestination()) < 1e-2 {
-            return true, nil
+    }
+    s := geometry.MakeSegment(center.X, center.Y, center.X + dx, center.Y + dy)
+    for _, rect := range rects {
+        if rect.CrossedBySegment(s) {
+            return true, rect2obj[rect]
         }
     }
     return false, nil
@@ -50,8 +58,8 @@ func (pm *ProjectileManager) Do() {
         x := p.GetDestination().X - p.GetCenter().X
         y := p.GetDestination().Y - p.GetCenter().Y
         norm := math.Sqrt(x * x + y * y)
-        p.Shift(x * shift / norm, y * shift / norm)
-        if collisionOccured, actor := pm.CheckCollision(p); collisionOccured {
+        dx, dy := x * shift / norm, y * shift / norm
+        if collisionOccured, actor := pm.CheckCollision(p, dx, dy); collisionOccured {
             if fb, ok := p.(*pM.AreaDamageProjectile); ok {
                 x, y := fb.GetCenter().X, fb.GetCenter().Y
                 notifier.GameNotifier.NotifyAboutFireball(x, y, fb.Radius)
@@ -72,6 +80,7 @@ func (pm *ProjectileManager) Do() {
             }
             delete(pm.projectiles, p.GetID())
         } else {
+            p.Shift(dx, dy)
             pm.field.LinkToCells(p)
         }
     }
