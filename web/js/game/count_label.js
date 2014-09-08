@@ -22,6 +22,7 @@ define(['global', 'options'], function(GLOBAL, OPTIONS){
             0
         );
         this.draw.position = {x : 0, y : 0}
+        this.width = this.draw.width;
         this.addChild(this.draw);
         if (this.auto_hide)
             if(this.count < 2)
