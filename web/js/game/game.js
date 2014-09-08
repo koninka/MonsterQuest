@@ -60,7 +60,7 @@ function(JQuery, utils, Player, View, Graphic, Inventory,
     }
 
     Game.prototype.setXP = function(data){
-        this.xpbar.SetXP(data.cur_xp, data.max_xp);
+        this.xpbar.SetXP(data.cur_exp, data.max_exp);
     }
     Game.prototype.checkKeys = function(){
         if(this.dirsDown[0]) this.movePlayer(this.dirsDown[0]);
@@ -208,7 +208,7 @@ function(JQuery, utils, Player, View, Graphic, Inventory,
     }
 
     Game.prototype.InitXPBar = function (data){
-        game.xpbar = new XPBar(data.cur_xp, data.max_xp);
+        game.xpbar = new XPBar(data.cur_exp, data.max_exp);
     }
 
     Game.prototype.InitLook = function (chain_number){
