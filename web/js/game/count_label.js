@@ -1,7 +1,7 @@
 define(['global', 'options'], function(GLOBAL, OPTIONS){ 
     function CountLabel(){
         PIXI.DisplayObjectContainer.call(this);
-        //this.draw = undefined
+        this.auto_hide = true;
         //this.SetCount(count);
     }
     
@@ -23,10 +23,11 @@ define(['global', 'options'], function(GLOBAL, OPTIONS){
         );
         this.draw.position = {x : 0, y : 0}
         this.addChild(this.draw);
-        if(this.count < 2)
-            this.Hide()
-        else
-            this.Show();
+        if (this.auto_hide)
+            if(this.count < 2)
+                this.Hide()
+            else
+                this.Show();
     }
     
     CountLabel.prototype.Show = function(){
