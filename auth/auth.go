@@ -37,11 +37,6 @@ func matchRegexp(pattern, str string) bool {
     return result
 }
 
-func classExists(class string) bool {
-    _, ok := consts.NamePlayerClassMapping[class]; 
-    return class == "" || ok;
-}
-
 func logoutAction(u4 string) string {
     result := map[string] string{"result": "ok"}
     db := connect.CreateConnect()
@@ -97,19 +92,20 @@ func loginAction(login, pass string) string {
 
 func registerAction(login, pass, class string) string {
     result := map[string] string{"result": "ok"}
+    class_numb, class_exists := consts.NamePlayerClassMapping[class]
     if !matchRegexp("^[a-zA-Z0-9]{2,36}$", login) {
         result["result"] = "badLogin"
     } else if !matchRegexp("^.{6,36}$", pass) {
         result["result"] = "badPassword"
     } else if isExistUser(login, "") {
         result["result"] = "loginExists"
-    } else if !classExists(class){
+    } else if !class_exists {
         result["result"] = "badClass"
     } else {
         db := connect.CreateConnect()
-        stmt, _ := db.Prepare("INSERT INTO users(login, password) VALUES(?, ?)")
+        stmt, _ := db.Prepare("INSERT INTO users(login, password, class) VALUES(?, ?, ?)")
         defer stmt.Close()
-        res, _ := stmt.Exec(login, pass)
+        res, _ := stmt.Exec(login, pass, class_numb)
         user_id, _ := res.LastInsertId()
         stmt, _ = db.Prepare("INSERT INTO users_position(user_id, x, y) VALUES(?, ?, ?)")
         defer stmt.Close()

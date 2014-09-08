@@ -7,10 +7,18 @@ GRANT ALL
 ON `monsterquest`.*
 TO `monster_user`@localhost IDENTIFIED BY 'qwerty';
 
+#CREATE TABLE classes (
+#    id   INT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
+#    name VARCHAR(60) NOT NULL,
+#    UNIQUE KEY(name)
+#);
+
 CREATE TABLE users (
 	id       INT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	login    VARCHAR(36) NOT NULL,
 	password VARCHAR(36) NOT NULL,
+        class    INT         NOT NULL,
+        #class_id int         not null references classes(id) on delete set null,
    UNIQUE KEY(login)
 );
 
