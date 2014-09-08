@@ -506,7 +506,16 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
             if !(isGoodPoint && g.field.FreeForObject(pt.X, pt.Y)) {
                 res["result"] = "badPlacing"
             } else {
-                p := gameObjects.NewPlayer(utils.GenerateId(), -1, "", utils.GenerateSID(), pt.X, pt.Y)
+                var class int = consts.PLAYER_CLASS_WARRIOR
+                if json["class"] != nil {
+                    var exists bool
+                    class, exists = consts.NamePlayerClassMapping[json["class"].(string)]
+                    if !exists {
+                        res["result"] = "badClass"
+                        return res
+                    }
+                }
+                p := gameObjects.NewPlayer(utils.GenerateId(), -1, class, "", utils.GenerateSID(), pt.X, pt.Y)
                 g.setCharacteristicsToActiveObject(p, stats)
                 g.players.add(p)
                 g.field.LinkToCells(p)
@@ -694,7 +703,7 @@ func (g *Game) getDictionaryAction() consts.JsonType {
 func (g *Game) CreatePlayer(sid string) *gameObjects.Player {
     db := connect.CreateConnect()
     stmt, _ := db.Prepare(`
-        SELECT u.id, u.login, up.x, up.y
+        SELECT u.id, u.login, u.class, up.x, up.y
         FROM users u
         INNER JOIN users_position as up ON u.id = up.user_id
         INNER JOIN sessions s ON s.user_id = u.id AND s.sid = ?
@@ -702,9 +711,10 @@ func (g *Game) CreatePlayer(sid string) *gameObjects.Player {
     defer stmt.Close()
     var dbId int64
     var login string
+    var class int
     var x, y float64
-    stmt.QueryRow(sid).Scan(&dbId, &login, &x, &y)
-    p := gameObjects.NewPlayer(utils.GenerateId(), dbId, login, sid, x, y)
+    stmt.QueryRow(sid).Scan(&dbId, &login, &class, &x, &y)
+    p := gameObjects.NewPlayer(utils.GenerateId(), dbId, class, login, sid, x, y)
     g.players.add(p)
     rows, _ := db.Query("SELECT item_id, amount, place FROM users_inventory WHERE user_id = ?", dbId)
     for rows.Next() {
@@ -806,10 +816,12 @@ func (g *Game) lookAction(sid string) consts.JsonType {
             }
         }
     }
-    res["actors"] = visibleObjects
-	res["x"] = player.Center.X
-	res["y"] = player.Center.Y
-    res["health"] = player.GetHP()
+    res["actors"]  = visibleObjects
+	res["x"]       = player.Center.X
+	res["y"]       = player.Center.Y
+    res["health"]  = player.GetHP()
+    res["cur_exp"] = player.GetExp()
+    res["max_exp"] = player.GetMaxExp()
     return res
 }
 

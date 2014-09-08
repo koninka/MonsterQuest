@@ -58,9 +58,14 @@ type Player struct {
     Login string
     SID string
     DBId int64
+    class int
     slots map[int] *slot
     weapon fightBase.Blower
     fist gameObjectsBase.Itemer
+}
+
+func (p *Player) GetClassName() string{
+    return consts.PlayerClassNameMapping[p.class]
 }
 
 func (p *Player) GetType() string {
@@ -74,7 +79,8 @@ func (p* Player) GetInventoryInfo() []consts.JsonType {
 func (p *Player) GetInfo() consts.JsonType {
     info := p.ActiveObject.GetInfo()
     info["login"] = p.Login
-    info["type"] = consts.PLAYER_TYPE
+    info["type"]  = consts.PLAYER_TYPE
+    info["class"] = p.GetClassName()
     return info
 }
 
@@ -86,13 +92,23 @@ func (p *Player) GetFullInfo() consts.JsonType {
             slots[slotName] = p.slots[slot].item.GetFullInfo()
         }
     }
-    info["slots"] = slots
+    info["slots"]   = slots
     return info
 }
 
 func (p *Player) Do() {
     p.DoWithObj(p)
     p.Dir = -1
+}
+
+func (p *Player) LvLUp(a gameObjectsBase.Activer){
+    fmt.Println("player LVLUP")
+    p.ActiveObject.LvLUp(a)
+    switch p.class {
+        case consts.PLAYER_CLASS_WARRIOR: p.ActiveObject.ModifyCharacteristic(consts.CHARACTERISTIC_STRENGTH, 3) 
+        case consts.PLAYER_CLASS_ROGUE  : p.ActiveObject.ModifyCharacteristic(consts.CHARACTERISTIC_DEXTERITY,  3)
+        case consts.PLAYER_CLASS_MAGE   : p.ActiveObject.ModifyCharacteristic(consts.CHARACTERISTIC_INTELLEGENCE, 3)
+    }
 }
 
 func (p *Player) Attack() consts.JsonType {
@@ -342,13 +358,13 @@ func (p *Player) GetFistID() int64 {
     return p.fist.GetID()
 }
 
-func NewPlayer(id, dbId int64, login, sid string, x, y float64) *Player {
+func NewPlayer(id, dbId int64, class int, login, sid string, x, y float64) *Player {
     slots := make(map[int] *slot)
     for slotType, itemType := range consts.SlotItemMapping {
         slots[slotType] = newSlot(itemType)
     }
     p := &Player{gameObjectsBase.NewActiveObject(id, x, y, getPlayerKind()),
-        login, sid, dbId, slots, wpns.GetWeapon(consts.FIST_WEAP), nil}
+        login, sid, dbId, class, slots, wpns.GetWeapon(consts.FIST_WEAP), nil}
     p.fist  = gameObjectsBase.NewFistItem(p)
     return p
 }
