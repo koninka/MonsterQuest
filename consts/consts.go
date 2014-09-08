@@ -127,6 +127,12 @@ var NamePlayerClassMapping = map[string] int {
     PLAYER_CLASS_NAME_MAGE    : PLAYER_CLASS_MAGE,
 }
 
+var PlayerClassNameMapping = map[int] string {
+    PLAYER_CLASS_WARRIOR : PLAYER_CLASS_NAME_WARRIOR,
+    PLAYER_CLASS_ROGUE   : PLAYER_CLASS_NAME_ROGUE,
+    PLAYER_CLASS_MAGE    : PLAYER_CLASS_NAME_MAGE,
+}
+
 const (
     FIST_ID = -1
     FIST_WEAP = "FIST"
