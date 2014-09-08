@@ -290,6 +290,8 @@ const (
     CHARACTERISTIC_MP
     CHARACTERISTIC_MAX_MP
     CHARACTERISTIC_CAPACITY
+    CHARACTERISTIC_LVL
+    CHARACTERISTIC_EXP
     CHARACTERISTICS_COUNT
 )
 
@@ -311,6 +313,8 @@ const (
     DEFAULT_HP = DEFAULT_MAX_HP
     DEFAULT_MP = DEFAULT_MAX_MP
     DEFAULT_CAPACITY = CAPACITY_MULTIPLIER * DEFAULT_STRENGTH
+    DEFAULT_LVL = 1
+    DEFAULT_EXP = 0
 )
 
 var CharacteristicDefaultValueMapping = map[int] int {
@@ -325,6 +329,8 @@ var CharacteristicDefaultValueMapping = map[int] int {
     CHARACTERISTIC_MP                : DEFAULT_MP,
     CHARACTERISTIC_MAX_MP            : DEFAULT_MAX_MP,
     CHARACTERISTIC_CAPACITY          : DEFAULT_CAPACITY,
+    CHARACTERISTIC_LVL               : DEFAULT_LVL,
+    CHARACTERISTIC_EXP               : DEFAULT_EXP,
 }
 
 const (
@@ -339,6 +345,8 @@ const (
     CHARACTERISTIC_NAME_MP = "MP"
     CHARACTERISTIC_NAME_MAX_MP = "MAX_MP"
     CHARACTERISTIC_NAME_CAPACITY = "CAPACITY"
+    CHARACTERISTIC_NAME_LVL = "LVL"
+    CHARACTERISTIC_NAME_EXP = "EXP"
 )
 
 var CharacteristicNameMapping = map[int] string {
@@ -353,6 +361,8 @@ var CharacteristicNameMapping = map[int] string {
     CHARACTERISTIC_MP                : CHARACTERISTIC_NAME_MP,
     CHARACTERISTIC_MAX_MP            : CHARACTERISTIC_NAME_MAX_MP,
     CHARACTERISTIC_CAPACITY          : CHARACTERISTIC_NAME_CAPACITY,
+    CHARACTERISTIC_LVL               : CHARACTERISTIC_NAME_LVL,
+    CHARACTERISTIC_EXP               : CHARACTERISTIC_NAME_EXP,
 }
 
 var NameCharacteristicMapping = map[string] int {
@@ -367,6 +377,8 @@ var NameCharacteristicMapping = map[string] int {
     CHARACTERISTIC_NAME_MP                : CHARACTERISTIC_MP,
     CHARACTERISTIC_NAME_MAX_MP            : CHARACTERISTIC_MAX_MP,
     CHARACTERISTIC_NAME_CAPACITY          : CHARACTERISTIC_CAPACITY,
+    CHARACTERISTIC_NAME_LVL               : CHARACTERISTIC_LVL,
+    CHARACTERISTIC_NAME_EXP               : CHARACTERISTIC_EXP,
 }
 
 const (
