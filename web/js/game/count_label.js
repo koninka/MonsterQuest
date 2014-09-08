@@ -15,9 +15,10 @@ define(['global', 'options'], function(GLOBAL, OPTIONS){
             this.removeChild(this.draw);
         if(this.count == undefined)
             this.count = 1;
+        var font = this.font || '12px Helvetica';
         this.draw = GLOBAL.graphic.Text(
             this.count, 
-            {'font': '12px Helvetica', 'font-weight': 'bold', fill: 'white', wordWrap : true, wordWrapWidth : 200},
+            {'font': font, 'font-weight': 'bold', fill: 'white', wordWrap : true, wordWrapWidth : 200},
             0, 
             0
         );
