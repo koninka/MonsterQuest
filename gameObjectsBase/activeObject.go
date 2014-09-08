@@ -1,6 +1,7 @@
 package gameObjectsBase
 
 import (
+    "fmt"
     "MonsterQuest/gameFight/fightBase"
     "MonsterQuest/geometry"
     "MonsterQuest/consts"
@@ -47,6 +48,8 @@ type Activer interface {
     SetTarget(Activer)
     GetRadiusVision() int
     GetDealtDamage() int
+    GetExp() int
+    GetMaxExp() int
     GetHP() int
     GetMaxHP() int
     GetAttackRadius() float64
@@ -68,6 +71,9 @@ type Activer interface {
     ModifyCharacteristic(charIota, val int)
     ModifyBonus(charIota, val int)
     MergeInfo(consts.JsonType) consts.JsonType
+    IncExp(this Activer,count int)
+    LvLUp(this Activer)
+    GetLvL() int
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -120,6 +126,10 @@ type ActiveObject struct {
     Characteristics map[int] int
     Bonuses map[int] int
     ClearDir bool
+}
+
+func countExp(lvl int) int{
+    return lvl * 1000 //close up
 }
 
 func (obj *ActiveObject) GetShiftedCenter(dir int, shift float64) geometry.Point {
@@ -209,6 +219,14 @@ func (obj *ActiveObject) GetDealtDamage() int {
     return 0
 }
 
+func (obj *ActiveObject) GetExp() int {
+    return obj.Characteristics[consts.CHARACTERISTIC_EXP] 
+}
+
+func (obj *ActiveObject) GetMaxExp() int {
+    return countExp(obj.GetLvL() + 1);
+}
+
 func (obj *ActiveObject) GetHP() int {
     return obj.Characteristics[consts.CHARACTERISTIC_HP]
 }
@@ -235,15 +253,37 @@ func (obj *ActiveObject) GetKind() Kinder {
     return obj.Kind
 }
 
+func (obj *ActiveObject) GetLvL() int{
+    return obj.Characteristics[consts.CHARACTERISTIC_LVL] 
+}
+
+func (obj *ActiveObject) LvLUp(a Activer) {
+    fmt.Println("active object lvlup")
+    obj.Characteristics[consts.CHARACTERISTIC_EXP] = 0
+    obj.Characteristics[consts.CHARACTERISTIC_LVL] += 1
+}
+
+func (obj *ActiveObject) IncExp(a Activer, count int){
+    obj.Characteristics[consts.CHARACTERISTIC_EXP] += count
+    if obj.Characteristics[consts.CHARACTERISTIC_EXP] >= obj.GetMaxExp(){
+        a.LvLUp(a)
+    }
+}
+
 func (obj *ActiveObject) GetHit(blow fightBase.Blower, attacker Activer) consts.JsonType {
     var res = consts.JsonType { "event" : "attack" }
     res["description"] = consts.JsonType {
         "blowType" : blow.GetBlowType(),
         "dealtDamage" : blow.GetDamage(),
     }
-    obj.Characteristics[consts.CHARACTERISTIC_HP] -= blow.GetDamage()
-    if obj.Characteristics[consts.CHARACTERISTIC_HP] <= 0 {
-        res["killed"] = true
+    if !obj.Killed() {
+        obj.Characteristics[consts.CHARACTERISTIC_HP] -= blow.GetDamage()
+        if obj.Killed() {
+            res["killed"] = true
+            if obj != attacker {
+                attacker.IncExp(attacker, 500) //need Dice
+            }
+        }
     }
     return res
 }
