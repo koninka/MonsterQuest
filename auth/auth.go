@@ -78,9 +78,13 @@ func loginAction(login, pass string) string {
         _, err := stmt.Exec(login, sid)
         if err == nil {
             host, _ := os.Hostname()
+            //
+            result["action"] = "login"
+            //
             result["sid"] = sid
             result["result"] = "ok"
             result["webSocket"] = "ws://" + host + consts.SERVER_PORT + "/websocket"
+            // result["webSocket"] = "ws://" + "192.168.173.230" + consts.SERVER_PORT + "/websocket"
             p := engine.GetInstance().CreatePlayer(sid)
             result["id"] = p.GetID()
             result["fistId"] = p.GetFistID()
@@ -122,12 +126,22 @@ func createResponse(action, result string) string {
 
 func JsonHandler(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Access-Control-Allow-Origin", "*")
+
     w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+    w.Header().Set("Access-Control-Allow-Headers", "Content-type")
     w.Header().Set("Content-type", "application/json")
+   // w.Header().Set("Status Code", "200")
+    if r.Method == "OPTIONS" {
+        fmt.Fprintf(w, "OK")
+        return
+    }
     body, _ := ioutil.ReadAll(r.Body)
     var rawData interface{}
     json.Unmarshal(body, &rawData)
-    data := rawData.(map[string] interface{})
+    data, ok2 := rawData.(map[string] interface{})
+    if !ok2 {
+        fmt.Println(data, rawData, r.Body)
+    }
     var (
         action string = data["action"].(string)
         response string

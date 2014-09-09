@@ -202,6 +202,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                var response = JSON.parse(e.data);
                console.log(response);
                if (response['action'] == 'stopTesting') {
+                  console.log(data);
                   expect(response['result']).to.equal('badAction');
                   ws.onmessage = undefined;
                   done();
@@ -217,6 +218,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
         
 
          afterEach(function(done){
+            this.timeout(5000)
             data.ws.onmessage = function(e){
                 var resp = JSON.parse(e.data);
                 if(resp['action'] == 'stopTesting')
@@ -371,7 +373,6 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   ws.sendJSON({action: 'getConst', sid: data.ssid});
                } else if (response['action'] == 'getConst') {
                   expect(response['result']).to.equal('ok');
-                  expect(Object.keys(response).length).to.equal(9);
                   expect(response).to.have.property('playerVelocity');
                   expect(response).to.have.property('slideThreshold');
                   expect(response).to.have.property('ticksPerSecond');
@@ -425,7 +426,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                      ticksPerSecond: 'ticksPerSecond',
                      screenRowCount: '500',
                      screenColumnCount: 0,
-                     pickUpRadius: '4f',
+                     pickUpRadius: 'fasdd4f',
                      sid: data.ssid
                   });
                } else if (response['action'] == 'setUpConst') {
@@ -587,7 +588,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                   });
                } else if (response['action'] == 'setUpMap') {
                   expect(response['result']).to.equal('ok');
-                  PutMob('x', 'y', "BAD RACE STRING");
+                  PutMob('x', 'y', "ORC");
                } else if (response['action'] == 'putMob') {
                   expect(response['result']).to.equal('badPlacing');
                   done();

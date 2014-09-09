@@ -15,12 +15,14 @@ func GetIdFromJson(req consts.JsonType) (int64, bool) {
     var (
         ok bool = false
         id float64 = -1
+        intid int64
     )
     idParam := req["id"]
     if idParam != nil {
         id, ok = idParam.(float64)
     }
-    return int64(id), ok
+    intid = int64(id)
+    return intid, ok
 }
 
 func GetSidFromJson(req consts.JsonType) (string, bool) {
