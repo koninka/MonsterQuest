@@ -99,7 +99,7 @@ func registerAction(login, pass, class string) string {
         result["result"] = "badPassword"
     } else if isExistUser(login, "") {
         result["result"] = "loginExists"
-    } else if !class_exists {
+    } else if !class_exists && class != "" {
         result["result"] = "badClass"
     } else {
         db := connect.CreateConnect()

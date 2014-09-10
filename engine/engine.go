@@ -90,7 +90,7 @@ func (g *Game) notifyInRadius(x, y float64, msg consts.JsonType) {
     notified := make(map[int64] bool)
     for i := int(lt.Y); i < int(rb.Y); i++ {
         for j := int(lt.X); j < int(rb.X); j++ {
-            for _, actor := range g.field.GetActors(i, j) {
+            for _, actor := range g.field.GetActors(j,i) {
                 id := actor.GetID()
                 if !notified[id] {
                     notified[id] = true
