@@ -33,10 +33,12 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
                 console.log("useSkill")
                GLOBAL.game.sendViaWS({action: "useSkill", x: point.x, y: point.y});
             } else {
+                if (I.weapon_id.length > 0)
                 for(var i = 0; i < I.weapon_id.length; ++i){
                     var id = I.weapon_id[i];
                     GLOBAL.game.sendViaWS({action: "use", id: id, x: point.x, y: point.y});
                 }
+                else GLOBAL.game.sendViaWS({action: "use", id: fistId, x: point.x, y: point.y})
             }
         }
     }
@@ -148,7 +150,6 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
         var cell_y = -1;
         var slt_id = {};
         this.weapon_id = [];
-        
         if(slots)
         for(var s in slots){
             var x = -1;
@@ -177,7 +178,7 @@ define(['global', 'inventory_item', 'options'], function(GLOBAL, IItem, OPTIONS)
             }
             var x = cell_x;
             var y = cell_y;
-            if(item.cell !== null){
+            if(item.cell != null){
                 y = Math.floor(item.cell / inventory_size.x);
                 x = item.cell % inventory_size.x;
             }

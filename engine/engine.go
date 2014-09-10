@@ -4,6 +4,7 @@ import (
     "database/sql"
     "time"
     "fmt"
+    //"math"
     "MonsterQuest/connect"
     "MonsterQuest/consts"
     "MonsterQuest/utils"
@@ -149,7 +150,6 @@ func (g *Game) doPlayersAction(action string, json consts.JsonType) consts.JsonT
         switch action {
             case "move": res = g.moveAction(json)
             case "use": res = g.useAction(json)
-            case "attack": g.attackAction(json)
             case "getDictionary": res = g.getDictionaryAction()
             case "look": res = g.lookAction(sid)
             case "examine": res = g.examineAction(json)
@@ -294,15 +294,15 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
 
 func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("equip", "badId")
-    idParam := json["id"]
-    if idParam != nil {
+    id, ok := utils.GetIdFromJson(json)
+    if ok {
         res["result"] = "badSlot"
         slotParam := json["slot"]
         if slotParam != nil {
             slot, isExistSlot := consts.NameSlotMapping[slotParam.(string)]
             if isExistSlot {
                 p := g.players.getPlayerBySession(json["sid"].(string))
-                item := p.GetItem(int64(idParam.(float64)))
+                item := p.GetItem(id)
                 if item != nil {
                     isEquip, slots := p.Equip(item, slot)
                     if isEquip {
@@ -347,9 +347,8 @@ func (g *Game) moveAction(json consts.JsonType) consts.JsonType {
 func (g *Game) useAction(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("use", "badId")
     res["message"] = "some string"
-    idParam := json["id"]
-    if idParam != nil {
-        id := int64(idParam.(float64))
+    id, ok := utils.GetIdFromJson(json) //todo
+    if ok {
         p := g.players.getPlayerBySession(json["sid"].(string))
         xParam := json["x"]
         yParam := json["y"]
@@ -383,15 +382,6 @@ func (g *Game) useSkillAction(json consts.JsonType) consts.JsonType {
         res["result"] = "ok"
     }
     return res
-}
-
-func (g *Game) attackAction(json consts.JsonType) {
-    pt := json["point"].(map[string] interface{})
-    x, ok1 := pt["x"].(float64)
-    y, ok2 := pt["y"].(float64)
-    if ok1 && ok2 {
-        g.players.getPlayerBySession(json["sid"].(string)).SetAttackPoint(float64(x), float64(y))
-    }
 }
 
 func (g *Game) inDictionary(k string) bool {
@@ -778,36 +768,43 @@ func (g *Game) lookAction(sid string) consts.JsonType {
     if player == nil {
         return nil
     }
-    visibleSpaceSide := 2 * (consts.VISION_RADIUS + 1)
+    visibleSpaceSide := 2 * (consts.VISION_RADIUS ) + 1// check this plz
+    //visibleSpaceSide := 2 * (consts.VISION_RADIUS + 1)
+    px, py := int(player.Center.X), int(player.Center.Y)
     visibleSpace := make([][]string, visibleSpaceSide)
+    visibleObjects := make([]consts.JsonType, 0, 1000)
+    var addedObjects = map[int64] bool {player.GetID() : true}
     for i := 0; i < visibleSpaceSide; i++ {
         visibleSpace[i] = make([]string, visibleSpaceSide)
         for j := 0; j < visibleSpaceSide; j++ {
-            visibleSpace[i][j] = string(consts.WALL_SYMBOL)
+            fx, fy := px - consts.VISION_RADIUS + j, py - consts.VISION_RADIUS + i
+            if fx > 0 && fy > 0 && fx < g.field.Width && fy < g.field.Height{
+                visibleSpace[i][j] = string(g.field.GetBackground(fx, fy))
+                for id, obj := range g.field.GetObjects(fx, fy) {
+                    if !addedObjects[id] {
+                        visibleObjects = append(visibleObjects,  obj.GetInfo())
+                        addedObjects[id] = true
+                    }
+                }
+            } else {
+                visibleSpace[i][j] = string(consts.WALL_SYMBOL)
+            }
         }
     }
-    px, py := int(player.Center.X), int(player.Center.Y)
-    var scol, srow int
-    r := player.GetRadiusVision() + 1
-    if px - r < 0 {
-        scol = r - px
-    }
-    if py - r < 0 {
-        srow = r - py
-    }
-    lt, rb := g.field.GetSquareArea(player.Center.X, player.Center.Y, player.GetRadiusVision())
-    l, r := int(lt.X), int(rb.X)
-    t, b := int(lt.Y), int(rb.Y)
-    for i := t; i < b; i++ {
-        for j := l; j < r; j++ {
-            visibleSpace[i - t + srow][j - l + scol] = string(g.field.GetBackground(j, i))
+    /*l := int(math.Max(0.0, float64(px - consts.VISION_RADIUS)))
+    r := int(math.Min(float64(g.field.Width - 1), float64(px + consts.VISION_RADIUS)))
+    t := int(math.Max(0.0, float64(py - consts.VISION_RADIUS)))
+    b := int(math.Min(float64(g.field.Height - 1), float64(py + consts.VISION_RADIUS)))
+    for i := t; i <= b; i++ {
+        for j := l; j <= r; j++ {
+            visibleSpace[i - t][j - l] = string(g.field.GetBackground(j, i))
         }
-    }
+    }*/
     res["map"] = visibleSpace
-    visibleObjects := make([]consts.JsonType, 0, 1000)
+    /*visibleObjects := make([]consts.JsonType, 0, 1000)
     var addedObjects = map[int64] bool {player.GetID() : true}
-    for i := t; i < b; i++ {
-        for j := l; j < r; j++ {
+    for i := t; i <= b; i++ {
+        for j := l; j <= r; j++ {
             for id, obj := range g.field.GetObjects(j, i) {
                 if !addedObjects[id] {
                     visibleObjects = append(visibleObjects,  obj.GetInfo())
@@ -822,6 +819,7 @@ func (g *Game) lookAction(sid string) consts.JsonType {
     res["health"]  = player.GetHP()
     res["cur_exp"] = player.GetExp()
     res["max_exp"] = player.GetMaxExp()
+    }*/
     return res
 }
 

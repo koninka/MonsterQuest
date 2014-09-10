@@ -17,11 +17,11 @@ define(['options', 'global', 'actor_info', 'animation_manager', 'item', 'project
 
     Background.prototype.SetMap = function(map, pt){
         var TS = OPTIONS.TILE_SIZE;
-        var off_x = OPTIONS.screenColumnCount / 2;
-        var off_y = OPTIONS.screenRowCount    / 2;
-        var y = (-pt.y % 1 - off_y) * TS + TS / 2;
+        var off_x = OPTIONS.screenColumnCount / 2 - 1;
+        var off_y = OPTIONS.screenRowCount    / 2 - 1;
+        var y = (-pt.y % 1 - off_y) * TS;
         for(var i = 0; i < map.length; ++i){
-            var x = (-pt.x % 1 - off_x) * TS + TS / 2;
+            var x = (-pt.x % 1 - off_x) * TS;
             for(var j = 0; j < map[i].length; ++j){
                 if(this._data[i][j] != map[i][j]){
                     this.map[i][j].setTexture(graphic.Texture(this.dictionary[map[i][j]]));
@@ -221,7 +221,7 @@ define(['options', 'global', 'actor_info', 'animation_manager', 'item', 'project
                     this.actors[id].SetHP(players[i].health);
             } else {
                 var name = players[i].name || players[i].type;
-                var t = actorInfo[name];
+                var t = actorInfo[name] || actorInfo['player'];
                 var a = name;
                 if(players[i].type == 'item')
                     this.actors[id] = new Item(players[i]);
@@ -276,9 +276,9 @@ define(['options', 'global', 'actor_info', 'animation_manager', 'item', 'project
 
 
     View.prototype.DefineImaginaryBounds = function(){
-        var off_x = (OPTIONS.screenColumnCount) / 2 * OPTIONS.TILE_SIZE;
-        var off_y = (OPTIONS.screenRowCount   ) / 2 * OPTIONS.TILE_SIZE;
-        var c = { x: graphic.width / 2, y : graphic.height / 2 };
+        var off_x = (OPTIONS.screenColumnCount) / 2 * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE;
+        var off_y = (OPTIONS.screenRowCount   ) / 2 * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE;
+        var c = { x: graphic.width / 2, y : graphic.height / 2};
         var g = new PIXI.Graphics(0, 0);
         g.beginFill(0);
         g.drawRect(0, 0, c.x - off_x, graphic.height);

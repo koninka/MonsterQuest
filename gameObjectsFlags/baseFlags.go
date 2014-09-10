@@ -34,7 +34,7 @@ func (m *MoveFlag) checkCollisionWithWalls(obj gameObjectsBase.Activer, dir int,
         }
         return false, pos
     }
-    eps := 2.0
+    eps := consts.SLIDE_THRESHOLD
     side, pos := obj.GetCollisionableSide(dir, shift)
     res1 := m.field.IsBlocked(int(side.Point1.X), int(side.Point1.Y))
     res2 := m.field.IsBlocked(int(side.Point2.X), int(side.Point2.Y))
