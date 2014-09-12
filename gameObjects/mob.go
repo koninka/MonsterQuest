@@ -88,8 +88,9 @@ func (m *Mob) GetType() string {
 
 func (m *Mob) GetInfo() consts.JsonType {
     info := m.ActiveObject.GetInfo()
+    info["type"] = "monster"
     info["name"] = m.Kind.GetName()
-    info["type"] = consts.MOB_TYPE
+    info["mobType"] = consts.RaceNameMapping[m.Kind.GetRace()]
     return info
 }
 

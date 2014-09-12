@@ -24,6 +24,7 @@ const (
 const (
     WALL_SYMBOL = '#'
     GRASS_SYMBOL = '.'
+    MONSTER_TYPE = "monster"
     MOB_TYPE = "mob"
     PLAYER_TYPE = "player"
     ITEM_TYPE = "item"
@@ -107,6 +108,20 @@ var NameRaceMapping = map[string] int {
     UNDEAD_RACE_NAME : UNDEAD_RACE,
     ANIMAL_RACE_NAME : ANIMAL_RACE,
     PLAYER_RACE_NAME : PLAYER_RACE,
+}
+
+var RaceNameMapping = map[int] string {
+    NO_RACE : NO_RACE_NAME ,
+    ORC_RACE : ORC_RACE_NAME ,
+    EVIL_RACE : EVIL_RACE_NAME ,
+    TROLL_RACE : TROLL_RACE_NAME,
+    GIANT_RACE : GIANT_RACE_NAME ,
+    DEMON_RACE : DEMON_RACE_NAME ,
+    METAL_RACE : METAL_RACE_NAME ,
+    DRAGON_RACE : DRAGON_RACE_NAME ,
+    UNDEAD_RACE : UNDEAD_RACE_NAME ,
+    ANIMAL_RACE : ANIMAL_RACE_NAME ,
+    PLAYER_RACE : PLAYER_RACE_NAME ,
 }
 
 const (
