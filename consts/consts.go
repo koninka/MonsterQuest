@@ -24,7 +24,7 @@ const (
 const (
     WALL_SYMBOL = '#'
     GRASS_SYMBOL = '.'
-    MOB_TYPE = "mob"
+    MOB_TYPE = "monster"
     PLAYER_TYPE = "player"
     ITEM_TYPE = "item"
     PROJECTILE_TYPE = "projectile"
