@@ -251,11 +251,14 @@ func (p* Player) DeleteItem(item gameObjectsBase.Itemer, amount int) (bool, game
     return res, i
 }
 
-func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) (bool, consts.JsonType) {
+func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) (int, consts.JsonType) {
     var res consts.JsonType = nil
     slot := p.slots[slotIota]
-    if slot == nil || !slot.isSuitableType(item.GetItemType())  || item.GetItemClass() != consts.ITEM_CLASS_GARMENT || p.Equipped(item) {
-        return false, res
+    if slot == nil || !slot.isSuitableType(item.GetItemType())  {
+        return consts.BADSLOT, res
+    }
+    if item.GetItemClass() != consts.ITEM_CLASS_GARMENT || p.Equipped(item) {
+        return consts.BADID, res   
     }
     p.Unequip(slotIota)
     db := connect.CreateConnect()
@@ -273,7 +276,11 @@ func (p *Player) Equip(item gameObjectsBase.Itemer, slotIota int) (bool, consts.
         }
         slot.item = item
     }
-    return err == nil, res
+    if err == nil {
+        return consts.OK, res
+    } else {
+        return consts.BADID, res
+    }
 }
 
 func (p *Player) Unequip(slotIota int) (bool, consts.JsonType) {

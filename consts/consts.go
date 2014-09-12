@@ -20,6 +20,11 @@ const (
 const (
     DEFAULT_DICE = "0d0"
 )
+const (
+    BADSLOT = iota
+    BADID
+    OK
+)
 
 const (
     WALL_SYMBOL = '#'

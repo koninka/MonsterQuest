@@ -1,7 +1,7 @@
 package engine
 
 import (
-    "database/sql"
+    //"database/sql"
     "time"
     "fmt"
     //"math"
@@ -296,6 +296,8 @@ func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("equip", "badId")
     id, ok := utils.GetIdFromJson(json)
     if ok {
+        json["action"] = "pickUp"
+        g.doPlayersAction("pickUp", json)
         res["result"] = "badSlot"
         slotParam := json["slot"]
         if slotParam != nil {
@@ -304,17 +306,24 @@ func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
                 p := g.players.getPlayerBySession(json["sid"].(string))
                 item := p.GetItem(id)
                 if item != nil {
-                    isEquip, slots := p.Equip(item, slot)
-                    if isEquip {
+                    reason, slots := p.Equip(item, slot)
+                    if reason == consts.OK {
                         if slots != nil {
                             res["slots"] = slots
                         }
                         res["result"] = "ok"
+                    } else if reason == consts.BADID {
+                        res["result"] = "badId"
+                    } else if reason == consts.BADSLOT {
+                        res["result"] = "badSlot"
                     }
+                } else {
+                    res["result"] = "badId"
                 }
             }
         }
     }
+    fmt.Println(res)
     return res
 }
 
@@ -426,14 +435,44 @@ func (g *Game) getConstants() consts.JsonType {
     return res
 }
 
-func (g *Game) setCharacteristicsToActiveObject(obj gameObjectsBase.Activer, characteristics map[string] interface{}) {
-    for c, v := range consts.CharacteristicDefaultValueMapping {
-        if characteristics[consts.CharacteristicNameMapping[c]] == nil {
-            obj.SetCharacteristic(c, v)
-        } else {
-            obj.SetCharacteristic(c, int(characteristics[consts.CharacteristicNameMapping[c]].(float64)))
+func (g *Game) setCharacteristicsToActiveObject(obj gameObjectsBase.Activer, characteristics map[string] interface{}) bool {
+    res := true
+    func() {
+        defer func(){
+            if r := recover(); r != nil {
+                res = false
+            } 
+        }()
+        for c, v := range consts.CharacteristicDefaultValueMapping {
+            if characteristics[consts.CharacteristicNameMapping[c]] == nil {
+                obj.SetCharacteristic(c, v)
+            } else {
+                obj.SetCharacteristic(c, int(characteristics[consts.CharacteristicNameMapping[c]].(float64)))
+            }
         }
-    }
+    }()
+    return res
+}
+
+func (g *Game) setInventoryToActiveObject(obj gameObjectsBase.Activer, inventory map[string] interface{}) bool{
+    res := true
+    func() {
+        defer func(){
+            if r := recover(); r != nil {
+                res = false
+            }
+        }()
+        for _, v := range inventory {
+            json, ok := v.(consts.JsonType)
+            if !ok {
+                res = false
+                return
+            } 
+            x := gameObjectsBase.ItemFromJson(json)
+            obj.AddItem(x)
+        } 
+    }()
+    return res
 }
 
 func (g *Game) putMob(json consts.JsonType) consts.JsonType {
@@ -453,7 +492,17 @@ func (g *Game) putMob(json consts.JsonType) consts.JsonType {
                 flags := json["flags"].([] interface{})
                 var stats = map[string] interface{} {}
                 if json["stats"] != nil {
-                    stats = json["stats"].(map[string] interface{})
+                    stats, ok = json["stats"].(map[string] interface{})
+                    if !ok {
+                        res["result"] = "badStats"
+                    }
+                }
+                var inventory = map[string] interface{}{}
+                if json["inventory"] != nil {
+                    inventory, ok = json["inventory"].(map[string] interface{})
+                    if !ok {
+                        res["result"] = "badInventory"
+                    }
                 }
                 pt, isGoodPoint := utils.GetPointFromJson(json)
                 race, isExistRace := consts.NameRaceMapping[json["race"].(string)]
@@ -465,7 +514,14 @@ func (g *Game) putMob(json consts.JsonType) consts.JsonType {
                     res["result"] = "badRace"
                 } else {
                     m := gameObjects.NewTestMob(pt.X, pt.Y, race, damage, flags)
-                    g.setCharacteristicsToActiveObject(m, stats)
+                    if !g.setCharacteristicsToActiveObject(m, stats){
+                        res["result"] = "badStats"
+                        return res
+                    }
+                    if !g.setInventoryToActiveObject(m, inventory){
+                        res["result"] = "badInventory"
+                        return res
+                    }
                     res["id"] = g.mobs.registerMob(m)
                     res["result"] = "ok"
                 }
@@ -522,14 +578,28 @@ func (g *Game) putPlayer(json consts.JsonType) consts.JsonType {
                 if slots, okey := json["slots"].(map[string] interface{}); okey {
                     idxs := make(map[string] int64)
                     for slotName, itemDesc := range slots {
-                        item := gameObjectsBase.ItemFromJson(consts.JsonType(itemDesc.(map[string] interface{})))
-                        if item != nil {
-                            p.PickUpItem(item)
-                            isEquip, _ := p.Equip(item, consts.NameSlotMapping[slotName])
-                            if isEquip {
-                                g.items.addItem(item)
-                                idxs[slotName] = item.GetID()
+                        if itemd, item_converted := itemDesc.(map[string] interface{}); item_converted {
+                            item := gameObjectsBase.ItemFromJson(consts.JsonType(itemd))
+                            if item != nil {
+                                p.PickUpItem(item)
+                                reason, _ := p.Equip(item, consts.NameSlotMapping[slotName])
+                                if reason == consts.OK {
+                                    g.items.addItem(item)
+                                    idxs[slotName] = item.GetID()
+                                } else if reason == consts.BADID {
+                                    res["result"] = "badId"
+                                    fmt.Println("wrong id")
+                                    return res
+                                } else {
+                                    res["result"] = "badSlot"
+                                    fmt.Println("wrong slot")
+                                    return res
+                                }
                             }
+                        } else {
+                            fmt.Println("fail to convert")
+                            res["result"] = "badSlot"
+                            return res
                         }
                     }
                     res["slots"] = idxs
