@@ -355,6 +355,7 @@ type Item struct {
     GameObject
     kind *ItemKind
     owner Activer
+    deleted bool
 }
 
 func (i *Item) GetType() string {
@@ -447,11 +448,19 @@ func (i* Item) GetItemSubtype() int {
     return i.kind.subtype
 }
 
+func toInt(b bool) int {
+    if b {
+        return 1
+    }
+    return 0
+}
+
 func (i* Item) GetAmount() int {
-    return 1
+    return toInt(!i.deleted)
 }
 
 func (i* Item) DecAmount(int) {
+    i.deleted = true
 }
 
 func (i* Item) incAmount(int) {
@@ -633,7 +642,7 @@ func NewFistItem(owner Activer) Itemer {
 }
 
 func newBaseItem(ik *ItemKind, owner Activer) Item {
-    return Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, ik, owner}
+    return Item{GameObject{utils.GenerateId(), geometry.Point{-1, -1}}, ik, owner, false}
 }
 
 func newConsumableItem(ik* ItemKind, owner Activer, amount int) *ConsumableItem {

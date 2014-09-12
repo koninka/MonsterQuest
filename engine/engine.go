@@ -812,14 +812,13 @@ func (g *Game) lookAction(sid string) consts.JsonType {
                 }
             }
         }
-    }
+    }*/
     res["actors"]  = visibleObjects
 	res["x"]       = player.Center.X
 	res["y"]       = player.Center.Y
     res["health"]  = player.GetHP()
     res["cur_exp"] = player.GetExp()
     res["max_exp"] = player.GetMaxExp()
-    }*/
     return res
 }
 
@@ -833,11 +832,13 @@ func (g *Game) updateWorld() {
     g.projectileManager.Do()
 }
 
-func (g *Game) IsSIDValid(sid string) bool {
-    db := connect.CreateConnect()
+func (g *Game) IsSIDValid(sid string) (res bool) {
+    _, res = g.players.sessions[sid]
+    return
+    /*db := connect.CreateConnect()
     stmt, _ := db.Prepare(connect.MakeSelect("sessions", "sid = ?", "id"))
     defer stmt.Close()
-    return stmt.QueryRow(sid).Scan() != sql.ErrNoRows
+    return stmt.QueryRow(sid).Scan() != sql.ErrNoRows*/
 }
 
 func (g *Game) LogoutPlayer(sid string) {

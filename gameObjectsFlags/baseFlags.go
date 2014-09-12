@@ -21,7 +21,7 @@ type MoveFlag struct {
 
 func (m *MoveFlag) checkCollisionWithWalls(obj gameObjectsBase.Activer, dir int, shift float64) (bool, geometry.Point) {
     pos := obj.GetShiftedFrontSide(dir, shift)
-    if m.field.IsBlocked(int(pos.X), int(pos.Y)) {
+    if m.field.IsBlocked(int(math.Floor(pos.X)), int(math.Floor(pos.Y))) {
         switch dir {
         case consts.NORTH_DIR:
             pos.Y = math.Ceil(pos.Y) + consts.OBJECT_HALF
@@ -47,7 +47,7 @@ func (m *MoveFlag) checkCollisionWithWalls(obj gameObjectsBase.Activer, dir int,
             } else {
                 near = math.Floor(side.Point1.X) - side.Point1.X
             }
-            if math.Abs(near) < eps {
+            if math.Abs(near) <= eps {
                 side.Point1.X = side.Point1.X + near
                 side.Point2.X = side.Point2.X + near
             } else {
@@ -60,7 +60,7 @@ func (m *MoveFlag) checkCollisionWithWalls(obj gameObjectsBase.Activer, dir int,
             } else {
                 near = math.Floor(side.Point1.Y) - side.Point1.Y
             }
-            if math.Abs(near) < eps {
+            if math.Abs(near) <= eps {
                 side.Point1.Y = side.Point1.Y + near
                 side.Point2.Y = side.Point2.Y + near
             } else {

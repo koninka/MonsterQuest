@@ -239,6 +239,7 @@ func (p* Player) DeleteItem(item gameObjectsBase.Itemer, amount int) (bool, game
     if s := p.getSlotByItem(item); s != consts.SLOT_DEFAULT {
         if item.GetAmount() <= 0 {
             p.slots[s].item = nil
+            i = nil
         }
         _, err := db.Exec("CALL dec_user_slot_amount(?, ?, ?, ?)", p.DBId, item.GetKindId(), s, amount);
         res = err == nil
