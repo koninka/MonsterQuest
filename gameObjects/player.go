@@ -79,6 +79,7 @@ func (p* Player) GetInventoryInfo() []consts.JsonType {
 func (p *Player) GetInfo() consts.JsonType {
     info := p.ActiveObject.GetInfo()
     info["login"] = p.Login
+    info["name"] = p.Login
     info["type"]  = consts.PLAYER_TYPE
     info["class"] = p.GetClassName()
     return info
