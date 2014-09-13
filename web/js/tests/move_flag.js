@@ -679,6 +679,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                     this.timeout(5500);
                     testsAPI.SetWSHandler(function(e) {
                        var response = JSON.parse(e.data);
+                       var actor = {};
                        console.log(response);
                         if (response['action'] == testsAPI.startTestingAction) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
@@ -705,7 +706,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                             counter++;
                         } else if (response['action'] == testsAPI.examineAction) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            var actor = response["id"] == player.id ? player : 0;
+                            actor = response["id"] == player.id ? player : 0;
                             actor.ex_hp = response["health"];
                         }  else if (response['action'] == testsAPI.enforceAction) {
                             testsAPI.Ok(response['result']);
@@ -721,8 +722,8 @@ define(['utils/testsAPI'], function(testsAPI) {
                             counter = 0;
                             testsAPI.Use(player.sid, player.fist_id, player.x, player.y);
                         }
-                        if (player.hasOwnProperty('ex_hp')) {
-                            expect(player.ex_hp).to.be.equal(player.hp);
+                        if (actor.hasOwnProperty('ex_hp')) {
+                            expect(actionResultOk.ex_hp).to.be.equal(player.hp);
                             done();
                         }
                     });
