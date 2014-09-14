@@ -23,40 +23,51 @@ define(['utils/testsAPI'], function(testsAPI) {
 
                     testsAPI.SetWSHandler(function(e) {
 
-                       var response = JSON.parse(e.data);
-
-                        if (response['action'] == testsAPI.startTestingAction) {
-                            expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            testsAPI.SetUpConstants();
-                            testsAPI.SetUpMap([
-                                [".", ".", ".", "."],
-                                [".", ".", ".", "."],
-                                [".", ".", ".", "."],
-                                [".", ".", ".", "."]
-                            ]);
-                        } else if (response['action'] == testsAPI.setUpConstAction) {
-                            expect(response['result']).to.equal(testsAPI.actionResultOk);
-                        } else if (response['action'] == testsAPI.setUpMapAction) {
-                            expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            testsAPI.PutPlayer(player['x'], player['y']);
-                        } else if (response['action'] == testsAPI.putPlayerAction) {
-                            expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            player['id'] = response['id'];
-                            player['sid'] = response['sid'];
-                            testsAPI.MovePlayer(player['sid'], dirs[moveCounter++]);
-                            testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
-                        } else if (response['action'] == testsAPI.examineAction) {
-                            var shift = testsAPI.GetShiftByDir(dirs[moveCounter - 1]);
-                            player['x'] += shift[0];
-                            player['y'] += shift[1];
-                            expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            expect(response['x']).to.equal(player['x']);
-                            expect(response['y']).to.equal(player['y']);
-                            if (moveCounter < dirs.length) {
+                        var response = JSON.parse(e.data);
+                        if (response["tick"]) return;
+                        switch (response['action']){
+                            case testsAPI.startTestingAction:
+                                expect(response['result']).to.equal(testsAPI.actionResultOk);
+                                testsAPI.SetUpConstants(); 
+                                break;
+                            case testsAPI.setUpConstAction:
+                                expect(response['result']).to.equal(testsAPI.actionResultOk);
+                                testsAPI.SetUpMap([
+                                    [".", ".", ".", "."],
+                                    [".", ".", ".", "."],
+                                    [".", ".", ".", "."],
+                                    [".", ".", ".", "."]
+                                ]); 
+                                break;
+                            case testsAPI.setUpMapAction:
+                                expect(response['result']).to.equal(testsAPI.actionResultOk);
+                                testsAPI.PutPlayer(player.x, player.y, [], {HP: player.hp, MAX_HP: player.max_hp});
+                                break;
+                            case testsAPI.putPlayerAction:
+                                expect(response['result']).to.equal(testsAPI.actionResultOk);
+                                player.id = response['id'];
+                                player.sid  = response['sid'];
+                                player.fist_id = response['fistId']; 
                                 testsAPI.MovePlayer(player['sid'], dirs[moveCounter++]);
-                                testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
-                            } else
-                                done();
+                                break;
+                            case testsAPI.examineAction:
+                                var shift = testsAPI.GetShiftByDir(dirs[moveCounter - 1]);
+                                player['x'] += shift[0];
+                                player['y'] += shift[1];
+                                expect(response['result']).to.equal(testsAPI.actionResultOk);
+                                expect(response['x']).to.equal(player['x']);
+                                expect(response['y']).to.equal(player['y']);
+                                if (moveCounter < dirs.length) {
+                                    testsAPI.MovePlayer(player['sid'], dirs[moveCounter++]);
+                                } else
+                                    done();
+                                break;
+                            case "move":
+                                testsAPI.Ok(response['result'])
+                                testsAPI.Sleep(testsAPI.tickDuration * 2, testsAPI.Examine, player['id'])
+                                break;
+                            default:
+                                throw new Error("unexpected response:" + JSON.stringify(response));
                         }
                     });
 
@@ -679,52 +690,48 @@ define(['utils/testsAPI'], function(testsAPI) {
                     this.timeout(5500);
                     testsAPI.SetWSHandler(function(e) {
                        var response = JSON.parse(e.data);
-                       var actor = {};
-                       console.log(response);
-                        if (response['action'] == testsAPI.startTestingAction) {
-                            expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            testsAPI.SetUpConstants();
-                            testsAPI.SetUpMap([
+                        var actor = {};
+                        console.log(response);
+                        if (response['tick']) return;
+                        switch (response['action']){
+                            case testsAPI.startTestingAction:
+                                expect(response['result']).to.equal(testsAPI.actionResultOk);
+                                testsAPI.SetUpConstants(); 
+                                break;
+                            case testsAPI.setUpConstAction:
+                                expect(response['result']).to.equal(testsAPI.actionResultOk);
+                                testsAPI.SetUpMap([
                                     ["#", "#", "#", "#", "#"],
                                     ["#", ".", ".", ".", "#"],
                                     ["#", ".", ".", ".", "#"],
                                     ["#", ".", ".", ".", "#"],
                                     ["#", ".", ".", ".", "#"],
                                     ["#", "#", "#", "#", "#"]
-                                ]);
-                        } else if (response['action'] == testsAPI.setUpConstAction) {
-                            expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            isSetConst = true;
-                        } else if (response['action'] == testsAPI.setUpMapAction) {
-                            expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            isSetMap = true;
-                        } else if (response['action'] == testsAPI.putPlayerAction) {
-                            expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            player.id = response['id'];
-                            player.sid  = response['sid'];
-                            player.fist_id = response['fistId'];
-                            counter++;
-                        } else if (response['action'] == testsAPI.examineAction) {
-                            expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            actor = response["id"] == player.id ? player : 0;
-                            actor.ex_hp = response["health"];
-                        }  else if (response['action'] == testsAPI.enforceAction) {
-                            testsAPI.Ok(response['result']);
-                            testsAPI.Ok(response['actionResult']['result']);
-                            testsAPI.Equal(response['actionResult']['action'], testsAPI.useAction);
-                            testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player.id);
-                        }
-                        if (isSetMap && isSetConst) {
-                            testsAPI.PutPlayer(player.x, player.y, [], {HP: player.hp, MAX_HP: player.max_hp});
-                            isSetMap = isSetConst = false;
-                        }
-                        if (counter == 1) {
-                            counter = 0;
-                            testsAPI.Use(player.sid, player.fist_id, player.x, player.y);
-                        }
-                        if (actor.hasOwnProperty('ex_hp')) {
-                            expect(actionResultOk.ex_hp).to.be.equal(player.hp);
-                            done();
+                                ]); 
+                                break;
+                            case testsAPI.setUpMapAction:
+                                expect(response['result']).to.equal(testsAPI.actionResultOk);
+                                testsAPI.PutPlayer(player.x, player.y, [], {HP: player.hp, MAX_HP: player.max_hp});
+                                break;
+                            case testsAPI.putPlayerAction:
+                                expect(response['result']).to.equal(testsAPI.actionResultOk);
+                                player.id = response['id'];
+                                player.sid  = response['sid'];
+                                player.fist_id = response['fistId']; 
+                                testsAPI.Use(player.sid, player.fist_id, player.x, player.y);
+                                break;
+                            case testsAPI.useAction:
+                                testsAPI.Ok(response['result']);
+                                testsAPI.Sleep(testsAPI.tickDuration * 2, testsAPI.Examine, player.id);
+                                break;
+                            case testsAPI.examineAction:
+                                expect(response['result']).to.equal(testsAPI.actionResultOk);
+                                actor = response["id"] == player.id ? player : 0;
+                                expect(response["health"]).to.be.equal(player.hp);
+                                done();
+                                break;
+                            default:
+                                throw new Error("unexpected response:" + JSON.stringify(response));
                         }
                     });
 
@@ -771,12 +778,10 @@ define(['utils/testsAPI'], function(testsAPI) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
                             var actor = response["id"] == mob.id ? mob : player;
                             actor.ex_hp = response["health"];
-                        }  else if (response['action'] == testsAPI.enforceAction) {
+                        }  else if (response['action'] == testsAPI.useAction) {
                             testsAPI.Ok(response['result']);
-                            testsAPI.Ok(response['actionResult']['result']);
-                            testsAPI.Equal(response['actionResult']['action'], testsAPI.useAction);
-                            testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, mob.id);
-                            testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player.id);
+                            testsAPI.Sleep(testsAPI.tickDuration * 2, testsAPI.Examine, mob.id);
+                            testsAPI.Sleep(testsAPI.tickDuration * 2, testsAPI.Examine, player.id);
                         }
                         if (isSetMap && isSetConst) {
                             testsAPI.PutMob(mob.x, mob.y, "ORC", "50d44", mob.flags, [], {HP: mob.hp, MAX_HP: mob.max_hp});
@@ -838,12 +843,10 @@ define(['utils/testsAPI'], function(testsAPI) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
                             var actor = response["id"] == mob.id ? mob : player;
                             actor.ex_hp = response["health"];
-                        }  else if (response['action'] == testsAPI.enforceAction) {
+                        }  else if (response['action'] == testsAPI.useAction) {
                             testsAPI.Ok(response['result']);
-                            testsAPI.Ok(response['actionResult']['result']);
-                            testsAPI.Equal(response['actionResult']['action'], testsAPI.useAction);
-                            testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, mob.id);
-                            testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player.id);
+                            testsAPI.Sleep(testsAPI.tickDuration * 2, testsAPI.Examine, mob.id);
+                            testsAPI.Sleep(testsAPI.tickDuration * 2, testsAPI.Examine, player.id);
                         }
                         if (isSetMap && isSetConst) {
                             testsAPI.PutMob(mob.x, mob.y, "ORC", "2d1", mob.flags, [], {HP: mob.hp, MAX_HP: mob.max_hp});

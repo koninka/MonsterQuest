@@ -823,6 +823,9 @@ func (g *Game) getDictionaryAction() consts.JsonType {
 }
 
 func (g *Game) newPlayerPos(old_x, old_y float64)(float64, float64){
+    if !g.field.Initialized() {
+        return 0, 0
+    }
     h := g.field.Height
     w := g.field.Width
     count := 0

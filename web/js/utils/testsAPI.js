@@ -2,27 +2,27 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
 
     var expect   = chai.expect;
     
-    var stopTestingAction = "stopTesting",
+    var stopTestingAction  = "stopTesting",
         startTestingAction = "startTesting",
-        equipAction = "equip",
-        unequipAction = "unequip",
-        destroyAction = "destroyItem",
-        useAction = "use",
-        enforceAction = "enforce",
-        loginAction = "login",
-        logoutAction = "logout",
-        pickUpAction = "pickUp",
-        dropAction = "drop",
-        setUpConstAction = 'setUpConst',
-        getConstAction = 'getConst',
-        setUpMapAction = 'setUpMap',
-        putPlayerAction = 'putPlayer',
-        putMobAction = 'putMob',
-        putItemAction = 'putItem',
-        examineAction = 'examine';
+        equipAction        = "equip",
+        unequipAction      = "unequip",
+        destroyAction      = "destroyItem",
+        useAction          = "use",
+        enforceAction      = "enforce",
+        loginAction        = "login",
+        logoutAction       = "logout",
+        pickUpAction       = "pickUp",
+        dropAction         = "drop",
+        setUpConstAction   = 'setUpConst',
+        getConstAction     = 'getConst',
+        setUpMapAction     = 'setUpMap',
+        putPlayerAction    = 'putPlayer',
+        putMobAction       = 'putMob',
+        putItemAction      = 'putItem',
+        examineAction      = 'examine';
 
-    var actionResultOk = 'ok',
-        actionResultBadId = 'badId',
+    var actionResultOk         = 'ok',
+        actionResultBadId      = 'badId',
         actionResultBadPlacing = 'badPlacing';
 
 
@@ -77,7 +77,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
     }
 
     function SendViaWS(obj) {
-      obj["sid"] = data.ssid;
+      obj["sid"] = obj["sid"] || data.ssid;
       data.ws.sendJSON(obj);
     }
 
@@ -174,34 +174,25 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
 
     function MovePlayer(sid, direction) {
       SendViaWS({
-         action: enforceAction,
-         enforcedAction: {
-            sid: sid,
-            action: "move",
-            direction: direction
-         }
-      });
+        sid: sid,
+        action: "move",
+        direction: direction
+     });
     }
 
     function PickUp(sid, id) {
         SendViaWS({
-            action: enforceAction,
-            enforcedAction: {
-                sid: sid,
-                action: pickUpAction,
-                id: id
-            }
+            sid: sid,
+            action: pickUpAction,
+            id: id
         });
     }
 
     function Drop(sid, id) {
         SendViaWS({
-            action: enforceAction,
-            enforcedAction: {
-                sid: sid,
-                action: dropAction,
-                id: id
-            }
+            sid: sid,
+            action: dropAction,
+            id: id
         });
     }
 
@@ -215,43 +206,31 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
             action.x = x;
             action.y = y;
         }
-        SendViaWS({
-            action: enforceAction,
-            enforcedAction: action
-        });
+        SendViaWS(action);
     }
 
     function Destroy(sid, id) {
         SendViaWS({
-            action: enforceAction,
-            enforcedAction: {
-                sid: sid,
-                action: destroyAction,
-                id: id
-            }
+            sid: sid,
+            action: destroyAction,
+            id: id
         });
     }
 
     function Equip(sid, id, slot) {
         SendViaWS({
-            action: enforceAction,
-            enforcedAction: {
-                sid: sid,
-                action: equipAction,
-                id: id,
-                slot: slot
-            }
+            sid: sid,
+            action: equipAction,
+            id: id,
+            slot: slot
         });
     }
 
     function Unequip(sid, slot) {
         SendViaWS({
-            action: enforceAction,
-            enforcedAction: {
-                sid: sid,
-                action: unequipAction,
-                slot: slot
-            }
+            sid: sid,
+            action: unequipAction,
+            slot: slot
         });
     }
 
@@ -260,17 +239,29 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
             SendViaWS({action: examineAction, id: id});
         else 
             SendViaWS({
-                action: enforceAction,
-                enforcedAction: {
-                    sid: sid,
-                    action: examineAction,
-                    id: id
-                }
+                sid: sid,
+                action: examineAction,
+                id: id
             });
     }
 
     function Sleep(time, callback, param) {
       setTimeout(function() { callback(param); }, time)
+    }
+
+    function Wait(time, callback, param){
+        var handler = data.ws.onmessage;
+        var ticks = 0;
+        SetWSHandler(function(e) {
+            var response = JSON.parse(e.data);
+            if (response['tick']){
+                ticks++
+                if (ticks >= time){
+                    SetWSHandler(handler)
+                    callback(param); 
+                }
+            }// else throw new Error('Tick handler :: unexpected responce:'+ JSON.stringify(response))
+        })
     }
 
     function GetShiftByDir(dir) {
@@ -299,6 +290,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
     }
 
     return {
+        Wait : Wait,
         Prepare: Prepare,
         Logout: Logout,
         BeforeEach: BeforeEach,
