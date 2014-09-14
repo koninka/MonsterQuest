@@ -4,7 +4,7 @@ import (
     //"database/sql"
     "time"
     "fmt"
-    //"math"
+    "math"
     "MonsterQuest/connect"
     "MonsterQuest/consts"
     "MonsterQuest/utils"
@@ -148,28 +148,29 @@ func (g *Game) doPlayersAction(action string, json consts.JsonType) consts.JsonT
     sid, ok := utils.GetSidFromJson(json)
     if ok {
         switch action {
-            case "move": res = g.moveAction(json)
-            case "use": res = g.useAction(json)
+            case "move"         : res = g.moveAction(json)
+            case "use"          : res = g.useAction(json)
             case "getDictionary": res = g.getDictionaryAction()
-            case "look": res = g.lookAction(sid)
-            case "examine": res = g.examineAction(json)
+            case "look"         : res = g.lookAction(sid)
+            case "examine"      : res = g.examineAction(json)
             case "startTesting" : res = g.startTesting()
             case "stopTesting"  : res = g.stopTesting(sid)
-            case "setUpMap" : res = g.setUpMap(json)
-            case "pickUp" : res = g.pickUpItem(json)
-            case "drop" : res = g.dropItem(json)
-            case "destroyItem" : res = g.destroyItem(json)
-            case "equip" : res = g.equipItem(json)
-            case "unequip" : res = g.unequipItem(json)
-            case "moveItem" : res = g.moveItem(json)
-            case "getConst" : res = g.getConstants()
-            case "setUpConst" : res = g.setUpConstants(json)
-            case "putMob" : res = g.putMob(json)
-            case "putPlayer" : res = g.putPlayer(json)
-            case "putItem" : res = g.putItem(json)
-            case "enforce" : res = g.enforceAction(json)
-            case "setLocation" : res = g.setLocationAction(json)
-            case "useSkill" : res = g.useSkillAction(json)
+            case "setUpMap"     : res = g.setUpMap(json)
+            case "pickUp"       : res = g.pickUpItem(json)
+            case "drop"         : res = g.dropItem(json)
+            case "destroyItem"  : res = g.destroyItem(json)
+            case "equip"        : res = g.equipItem(json)
+            case "unequip"      : res = g.unequipItem(json)
+            case "moveItem"     : res = g.moveItem(json)
+            case "getConst"     : res = g.getConstants()
+            case "setUpConst"   : res = g.setUpConstants(json)
+            case "putMob"       : res = g.putMob(json)
+            case "putPlayer"    : res = g.putPlayer(json)
+            case "putItem"      : res = g.putItem(json)
+            case "enforce"      : res = g.enforceAction(json)
+            case "setLocation"  : res = g.setLocationAction(json)
+            case "useSkill"     : res = g.useSkillAction(json)
+            case "revive"       : res = g.reviveAction(json)
             default: res = g.badAction(action)
         }
     }
@@ -221,6 +222,11 @@ func (g *Game) pickUpItem(json consts.JsonType) consts.JsonType {
     if ok {
         item := g.items.getItem(id)
         p := g.players.getPlayerBySession(json["sid"].(string))
+        if *consts.FEATURE {
+            if p.Killed() {
+                return utils.JsonAction(res["action"].(string), "killed")
+            }
+        }
         if item != nil && !item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) <= float64(consts.PICK_UP_RADIUS) {
             if p.CanPickUp(item) {
                 ok, i := p.PickUpItem(item)
@@ -246,6 +252,11 @@ func (g *Game) dropItem(json consts.JsonType) consts.JsonType {
     if ok {
         item := g.items.getItem(id)
         p := g.players.getPlayerBySession(json["sid"].(string))
+        if *consts.FEATURE {
+            if p.Killed() {
+                return utils.JsonAction(res["action"].(string), "killed")
+            }
+        }
         if item != nil && item.IsOwner(p) {
             var amount int = 1
             if json["amount"] != nil {
@@ -268,6 +279,11 @@ func (g *Game) destroyItem(json consts.JsonType) consts.JsonType {
     if ok {
         item := g.items.getItem(id)
         p := g.players.getPlayerBySession(json["sid"].(string))
+        if *consts.FEATURE {
+            if p.Killed() {
+                return utils.JsonAction(res["action"].(string), "killed")
+            }
+        }
         if item != nil && (item.IsOwner(p) || (!item.HasOwner() && geometry.Distance(p.GetCenter(), item.GetCenter()) <= consts.PICK_UP_RADIUS)) {
             var amount int = 1
             if json["amount"] != nil {
@@ -304,6 +320,11 @@ func (g *Game) equipItem(json consts.JsonType) consts.JsonType {
             slot, isExistSlot := consts.NameSlotMapping[slotParam.(string)]
             if isExistSlot {
                 p := g.players.getPlayerBySession(json["sid"].(string))
+                if *consts.FEATURE {
+                    if p.Killed() {
+                        return utils.JsonAction(res["action"].(string), "killed")
+                    }
+                }
                 item := p.GetItem(id)
                 if item != nil {
                     reason, slots := p.Equip(item, slot)
@@ -334,6 +355,11 @@ func (g *Game) unequipItem(json consts.JsonType) consts.JsonType {
         slot, isExistSlot := consts.NameSlotMapping[slotParam.(string)]
         if isExistSlot {
             p := g.players.getPlayerBySession(json["sid"].(string))
+            if *consts.FEATURE {
+                if p.Killed() {
+                    return utils.JsonAction(res["action"].(string), "killed")
+                }
+            }
             isUnequip, slots := p.Unequip(slot)
             if isUnequip {
                 res["result"] = "ok"
@@ -349,6 +375,11 @@ func (g *Game) unequipItem(json consts.JsonType) consts.JsonType {
 func (g *Game) moveAction(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("move", "ok")
     p := g.players.getPlayerBySession(json["sid"].(string))
+    if *consts.FEATURE {
+        if p.Killed() {
+            return utils.JsonAction(res["action"].(string), "killed")
+        }
+    }
     p.SetDir(consts.NameDirMapping[json["direction"].(string)])
     return res
 }
@@ -359,6 +390,11 @@ func (g *Game) useAction(json consts.JsonType) consts.JsonType {
     id, ok := utils.GetIdFromJson(json) //todo
     if ok {
         p := g.players.getPlayerBySession(json["sid"].(string))
+        if *consts.FEATURE {
+            if p.Killed() {
+                return utils.JsonAction(res["action"].(string), "killed")
+            }
+        }
         xParam := json["x"]
         yParam := json["y"]
         res["result"] = "badSlot"
@@ -385,10 +421,30 @@ func (g *Game) useSkillAction(json consts.JsonType) consts.JsonType {
     y, ok2 := json["y"].(float64)
     if ok1 && ok2 {
         p := g.players.getPlayerBySession(json["sid"].(string))
+        if *consts.FEATURE {
+            if p.Killed() {
+                return utils.JsonAction(res["action"].(string), "killed")
+            }
+        }
         start := p.GetCenter()
         damage := p.GetCharacteristic(consts.CHARACTERISTIC_INTELLEGENCE) * consts.FIREBALL_DAMAGE_MULTIPLIER
         g.projectileManager.NewFireBallProjectile(&start, geometry.MakePoint(x, y), damage, consts.FIREBALL_RADIUS, p)
         res["result"] = "ok"
+    }
+    return res
+}
+
+func (g *Game) reviveAction(json consts.JsonType) consts.JsonType{
+    res := utils.JsonAction("revive", "badAction")
+    p := g.players.getPlayerBySession(json["sid"].(string))
+    c := p.GetCenter()
+    if *consts.FEATURE {
+        if p.Killed(){
+            res["result"] = "ok"
+            g.field.UnlinkFromCells(p)
+            x,y := g.newPlayerPos(c.X, c.Y)
+            p.SetRevivePoint(x, y)
+        }
     }
     return res
 }
