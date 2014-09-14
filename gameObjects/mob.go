@@ -182,8 +182,6 @@ func (m *Mob) Attack() consts.JsonType {
             // fmt.Printf("dist %f, attack radius %f\n", geometry.Distance(m.GetCenter(), t.GetCenter()), m.GetAttackRadius())
             // fmt.Printf("mob %d attack obj race - %d, id - %d\n", m.GetID(), t.GetKind().GetRace(), t.GetID())
             res = t.GetHit(bl.ChooseBlowMethod(consts.BT_MELEE), m)
-            res["attacker"] = m.GetID()
-            res["target"] = t.GetID()
         }
     }
     return res

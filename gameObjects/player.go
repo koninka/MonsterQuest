@@ -133,10 +133,6 @@ func (p *Player) Attack() consts.JsonType {
         if d := geometry.Distance(pc, target.GetCenter()); d <= p.GetAttackRadius() {
             res = target.GetHit(p.weapon, p)
         }
-        if res != nil {
-            res["attacker"] = p.GetID()
-            res["target"] = target.GetID()
-        }
     }
     p.ClearAttackPoint()
     p.Target = nil

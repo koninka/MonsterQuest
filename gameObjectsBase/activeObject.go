@@ -276,11 +276,13 @@ func (obj *ActiveObject) GetHit(blow fightBase.Blower, attacker Activer) consts.
         "blowType" : blow.GetBlowType(),
         "dealtDamage" : blow.GetDamage(),
     }
+    res["attacker"] = attacker.GetID()
+    res["target"] = obj.GetID()
     if !obj.Killed() {
         obj.Characteristics[consts.CHARACTERISTIC_HP] -= blow.GetDamage()
         if obj.Killed() {
             res["killed"] = true
-            if obj != attacker {
+            if obj.GetID() != attacker.GetID() {
                 attacker.IncExp(attacker, 500) //need Dice
             }
         }
