@@ -760,6 +760,22 @@ func (g *Game) getDictionaryAction() consts.JsonType {
     return res
 }
 
+func (g *Game) newPlayerPos(old_x, old_y float64)(float64, float64){
+    h := g.field.Height
+    w := g.field.Width
+    count := 0
+    for {
+        count++
+        hx := int(math.Min(float64(h), float64(count)))
+        hy := int(math.Min(float64(w), float64(count - 1)))
+        for i, j := 0, hy; i < hx && 0 <= j; i, j = i + 1, j - 1 {
+            if !g.field.IsBlocked(j, i) {
+                return float64(j) + consts.OBJECT_HALF, float64(i) + consts.OBJECT_HALF
+            }    
+        }
+    }
+}
+
 func (g *Game) CreatePlayer(sid string) *gameObjects.Player {
     db := connect.CreateConnect()
     stmt, _ := db.Prepare(`
@@ -774,8 +790,12 @@ func (g *Game) CreatePlayer(sid string) *gameObjects.Player {
     var class int
     var x, y float64
     stmt.QueryRow(sid).Scan(&dbId, &login, &class, &x, &y)
+    if x == consts.DEFAULT_PLAYER_POS_X || y == consts.DEFAULT_PLAYER_POS_Y {
+        x, y = g.newPlayerPos(x, y)
+    }
     p := gameObjects.NewPlayer(utils.GenerateId(), dbId, class, login, sid, x, y)
     g.players.add(p)
+    g.field.LinkToCells(p)
     rows, _ := db.Query("SELECT item_id, amount, place FROM users_inventory WHERE user_id = ?", dbId)
     for rows.Next() {
         var (
