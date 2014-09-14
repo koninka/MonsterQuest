@@ -134,15 +134,17 @@ func (m *Mob) goToTarget() {
     target := m.Target.GetCenter()
     dx := target.X - m.Center.X
     dy := target.Y - m.Center.Y
+    adx := math.Abs(dx)
+    ady := math.Abs(dy)
     eps := 0.2
-    if dice.Throw(4, 1) % 2 == 0 {
-        if math.Abs(dx) > eps {
+    if adx > ady {
+        if adx > eps {
             m.chooseHorizontalDir(dx)
         } else {
             m.chooseVerticalDir(dy)
         }
     } else {
-        if math.Abs(dy) > eps {
+        if ady > eps {
             m.chooseVerticalDir(dy)
         } else {
             m.chooseHorizontalDir(dx)
