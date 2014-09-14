@@ -34,7 +34,7 @@ const (
     ITEM_TYPE = "item"
     PROJECTILE_TYPE = "projectile"
     SERVER_PORT = ":8080"
-    ATTACK_RADIUS = 1.4
+    ATTACK_RADIUS = 1.5
 	DATABASE_TICK_DURATION = 1 * time.Second
 	LIVING_AFTER_DEAD_DURATION = 2 * time.Second
 	DEFAULT_ATTACK_COOLDOWN = 1
