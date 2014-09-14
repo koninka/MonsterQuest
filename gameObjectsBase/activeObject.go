@@ -74,6 +74,8 @@ type Activer interface {
     IncExp(this Activer,count int)
     LvLUp(this Activer)
     GetLvL() int
+    RestoreHP()
+    RestoreMP()
 }
 
 /*==========STRUCTS AND IMPLEMENTATION==============*/
@@ -288,6 +290,14 @@ func (obj *ActiveObject) GetHit(blow fightBase.Blower, attacker Activer) consts.
         }
     }
     return res
+}
+
+func (obj *ActiveObject) RestoreHP() {
+    obj.Characteristics[consts.CHARACTERISTIC_HP] = obj.Characteristics[consts.CHARACTERISTIC_MAX_HP]
+}
+
+func (obj *ActiveObject) RestoreMP() {
+    obj.Characteristics[consts.CHARACTERISTIC_MP] = obj.Characteristics[consts.CHARACTERISTIC_MAX_MP]
 }
 
 func (obj *ActiveObject) Killed() bool {
