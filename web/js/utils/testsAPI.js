@@ -39,7 +39,7 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
     var consts = {};
     var ticksPerSecond = 55;
     var tickDuration = 1000 / ticksPerSecond;
-    var slideThreshold = 0.26;
+    var slideThreshold = 0.23;
     var playerVelocity = 0.15;
     var pickUpRadius = 2.4;
     var default_damage = "3d2";

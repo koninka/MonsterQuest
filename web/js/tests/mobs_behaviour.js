@@ -306,13 +306,13 @@ define(['utils/testsAPI'], function(testsAPI) {
                             m["ex_hp"] = response['health'];
                         }
                         if (isPutMob1 && isPutMob2) {
-                            testsAPI.Sleep(3000, testsAPI.Examine, mob1['id']);
-                            testsAPI.Sleep(3000, testsAPI.Examine, mob2['id']);
+                            testsAPI.Sleep(1000, testsAPI.Examine, mob1['id']);
+                            testsAPI.Sleep(1000, testsAPI.Examine, mob2['id']);
                             isPutMob1 = isPutMob2 = false;
                         }
                         if (isSetMap && isSetConst) {
-                            testsAPI.PutMob(mob1.x, mob1.y, mob1.race, "5d4", mob1.flags, [], {HP: mob1.hp, MAX_HP: mob1.max_hp});
-                            testsAPI.PutMob(mob2.x, mob2.y, mob2.race, "3d4", mob2.flags, [], {HP: mob2.hp, MAX_HP: mob2.max_hp});
+                            testsAPI.PutMob(mob1.x, mob1.y, mob1.race, "1d1", mob1.flags, [], {HP: mob1.hp, MAX_HP: mob1.max_hp});
+                            testsAPI.PutMob(mob2.x, mob2.y, mob2.race, "1d1", mob2.flags, [], {HP: mob2.hp, MAX_HP: mob2.max_hp});
                             isSetMap = isSetConst = false;
                         }
                         if (mob1.hasOwnProperty('ex_hp') && mob2.hasOwnProperty('ex_hp')) {
@@ -370,13 +370,13 @@ define(['utils/testsAPI'], function(testsAPI) {
                             m["ex_hp"] = response['health'];
                         }
                         if (isPutMob1 && isPutMob2) {
-                            testsAPI.Sleep(2000, testsAPI.Examine, mob1['id']);
-                            testsAPI.Sleep(2000, testsAPI.Examine, mob2['id']);
+                            testsAPI.Sleep(1000, testsAPI.Examine, mob1['id']);
+                            testsAPI.Sleep(1000, testsAPI.Examine, mob2['id']);
                             isPutMob1 = isPutMob2 = false;
                         }
                         if (isSetMap && isSetConst) {
-                            testsAPI.PutMob(mob1.x, mob1.y, mob1.race, "4d5", mob1.flags, [], {HP: mob1.hp, MAX_HP: mob1.max_hp});
-                            testsAPI.PutMob(mob2.x, mob2.y, mob2.race, "3d4", mob2.flags, [], {HP: mob2.hp, MAX_HP: mob2.max_hp});
+                            testsAPI.PutMob(mob1.x, mob1.y, mob1.race, "1d1", mob1.flags, [], {HP: mob1.hp, MAX_HP: mob1.max_hp});
+                            testsAPI.PutMob(mob2.x, mob2.y, mob2.race, "1d1", mob2.flags, [], {HP: mob2.hp, MAX_HP: mob2.max_hp});
                             isSetMap = isSetConst = false;
                         }
                         if (mob1.hasOwnProperty('ex_hp') && mob2.hasOwnProperty('ex_hp')) {
@@ -517,7 +517,7 @@ define(['utils/testsAPI'], function(testsAPI) {
 
                 it('mob(orc) should attack player[orc hate player]', function(done){
                     var player = { x: 3.3, y: 2.5, hp: 1000, max_hp: 1000};
-                    var mob = { x: 2.4, y: 2.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_PLAYER", "CAN_BLOW"]};
+                    var mob = { x: 2.2, y: 2.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_PLAYER", "CAN_BLOW"]};
                     var isSetMap = false;
                     var isSetConst = false;
                     var counter = 0;
