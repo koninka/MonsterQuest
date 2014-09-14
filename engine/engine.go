@@ -864,16 +864,18 @@ func (g *Game) lookAction(sid string) consts.JsonType {
     if player == nil {
         return nil
     }
-    visibleSpaceSide := 2 * (consts.VISION_RADIUS ) + 1// check this plz
-    //visibleSpaceSide := 2 * (consts.VISION_RADIUS + 1)
+    YCount := consts.SCREEN_ROW_COUNT
+    XCount := consts.SCREEN_COLUMN_COUNT
+    YRad   := (YCount - 1) / 2
+    XRad   := (XCount - 1) / 2
     px, py := int(player.Center.X), int(player.Center.Y)
-    visibleSpace := make([][]string, visibleSpaceSide)
+    visibleSpace := make([][]string, YCount)
     visibleObjects := make([]consts.JsonType, 0, 1000)
     var addedObjects = map[int64] bool {player.GetID() : true}
-    for i := 0; i < visibleSpaceSide; i++ {
-        visibleSpace[i] = make([]string, visibleSpaceSide)
-        for j := 0; j < visibleSpaceSide; j++ {
-            fx, fy := px - consts.VISION_RADIUS + j, py - consts.VISION_RADIUS + i
+    for i := 0; i < YCount; i++ {
+        visibleSpace[i] = make([]string, XCount)
+        for j := 0; j < XCount; j++ {
+            fx, fy := px - XRad + j, py - YRad + i
             if fx > 0 && fy > 0 && fx < g.field.Width && fy < g.field.Height{
                 visibleSpace[i][j] = string(g.field.GetBackground(fx, fy))
                 for id, obj := range g.field.GetObjects(fx, fy) {
@@ -887,28 +889,7 @@ func (g *Game) lookAction(sid string) consts.JsonType {
             }
         }
     }
-    /*l := int(math.Max(0.0, float64(px - consts.VISION_RADIUS)))
-    r := int(math.Min(float64(g.field.Width - 1), float64(px + consts.VISION_RADIUS)))
-    t := int(math.Max(0.0, float64(py - consts.VISION_RADIUS)))
-    b := int(math.Min(float64(g.field.Height - 1), float64(py + consts.VISION_RADIUS)))
-    for i := t; i <= b; i++ {
-        for j := l; j <= r; j++ {
-            visibleSpace[i - t][j - l] = string(g.field.GetBackground(j, i))
-        }
-    }*/
-    res["map"] = visibleSpace
-    /*visibleObjects := make([]consts.JsonType, 0, 1000)
-    var addedObjects = map[int64] bool {player.GetID() : true}
-    for i := t; i <= b; i++ {
-        for j := l; j <= r; j++ {
-            for id, obj := range g.field.GetObjects(j, i) {
-                if !addedObjects[id] {
-                    visibleObjects = append(visibleObjects,  obj.GetInfo())
-                    addedObjects[id] = true
-                }
-            }
-        }
-    }*/
+    res["map"]     = visibleSpace
     res["actors"]  = visibleObjects
 	res["x"]       = player.Center.X
 	res["y"]       = player.Center.Y
