@@ -649,6 +649,21 @@ define(['tester', 'utils/ws', 'jquery'], function(tester, wsock, JQuery) {
                console.log(e.data);
                if (response['action'] == 'startTesting') {
                   expect(response['result']).to.equal('ok');
+                  ws.sendJSON({
+                     action: 'setUpMap',
+                     map:
+                        [
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                           [".", ".", ".", ".", ".", ".", ".", ".", ".", "."],
+                        ],
+                     sid : data.ssid
+                  });
                   PutMob(0.5, 0.5, "ORC", "f3f");
                } else if (response['action'] == 'putMob') {
                   expect(response['result']).to.equal('badDamage');
