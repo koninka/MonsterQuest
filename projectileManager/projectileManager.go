@@ -29,9 +29,11 @@ func (pm *ProjectileManager) CheckCollision(p pM.Projectiler, dx, dy float64) (b
                 rects = append(rects, pm.field.GetCellRectangle(j, i))
             } else {
                 for _, actor := range pm.field.GetActors(j, i) {
-                    r := actor.GetRectangle()
-                    rects = append(rects, &r)
-                    rect2obj[&r] = actor
+                    if actor.GetID() != p.GetOwner().GetID(){
+                        r := actor.GetRectangle()
+                        rects = append(rects, &r)
+                        rect2obj[&r] = actor
+                    }
                 }
             }
         }
