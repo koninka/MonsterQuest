@@ -62,6 +62,15 @@ type Player struct {
     slots map[int] *slot
     weapon fightBase.Blower
     fist gameObjectsBase.Itemer
+    revivePoint *geometry.Point
+}
+
+func (p *Player) GetRevivePoint() *geometry.Point{
+    return p.revivePoint
+}
+
+func (p* Player) SetRevivePoint(x, y float64){
+    p.revivePoint = &geometry.Point{x, y}
 }
 
 func (p *Player) GetClassName() string{
@@ -302,6 +311,13 @@ func (p *Player) Unequip(slotIota int) (bool, consts.JsonType) {
     return err == nil, res
 }
 
+func (p *Player) Revive(){
+    p.ForcePlace(*p.revivePoint)
+    p.revivePoint = nil
+    p.RestoreHP()
+    p.RestoreMP()
+}
+
 func (p *Player) GetHit(blow fightBase.Blower, attacker gameObjectsBase.Activer) consts.JsonType {
     res := p.ActiveObject.GetHit(blow, attacker)
     return res
@@ -369,7 +385,7 @@ func NewPlayer(id, dbId int64, class int, login, sid string, x, y float64) *Play
         slots[slotType] = newSlot(itemType)
     }
     p := &Player{gameObjectsBase.NewActiveObject(id, x, y, getPlayerKind()),
-        login, sid, dbId, class, slots, wpns.GetWeapon(consts.FIST_WEAP), nil}
+        login, sid, dbId, class, slots, wpns.GetWeapon(consts.FIST_WEAP), nil, nil}
     p.fist  = gameObjectsBase.NewFistItem(p)
     return p
 }

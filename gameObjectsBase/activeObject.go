@@ -73,7 +73,9 @@ type Activer interface {
     MergeInfo(consts.JsonType) consts.JsonType
     IncExp(this Activer,count int)
     LvLUp(this Activer)
+    GetRevivePoint() *geometry.Point
     GetLvL() int
+    Revive()
     RestoreHP()
     RestoreMP()
 }
@@ -132,6 +134,14 @@ type ActiveObject struct {
 
 func countExp(lvl int) int{
     return lvl * 1000 //close up
+}
+
+func (obj *ActiveObject) GetRevivePoint() *geometry.Point {
+    return nil
+}
+
+func (obj *ActiveObject) Revive(){
+    
 }
 
 func (obj *ActiveObject) GetShiftedCenter(dir int, shift float64) geometry.Point {
