@@ -468,13 +468,15 @@ var NameBonusMapping = map[string] int {
 }
 
 var (
-    TEST = flag.Bool("test", false, "a bool")
+    TEST      = flag.Bool("test", false, "a bool")
+    FEATURE   = flag.Bool("feature", false, "a bool")
     TEST_MODE = false
 )
 
 func ParseCommandLine(){
     flag.Parse()
-    fmt.Println(*TEST)
+    fmt.Println("test:",    *TEST)
+    fmt.Println("feature:", *FEATURE)
 }
 
 func SetDefaultConstantsValues() {
