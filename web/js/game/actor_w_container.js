@@ -131,7 +131,8 @@ define(['options', 'global', 'actor'] ,function(OPTIONS, GLOBAL, Actor){
         GLOBAL.graphic.DrawObj(
             this.container,
             this.container.position.x = (this.pt.x - player.pt.x) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2,
-            this.container.position.y = (this.pt.y - player.pt.y) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2
+            this.container.position.y = (this.pt.y - player.pt.y) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2,
+            this.layer
         )
     }
 

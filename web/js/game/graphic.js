@@ -2,8 +2,9 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
     function getRandomInt (min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
+    var game = null;
 
-    function Graphic(view, game) {
+    function Graphic(view, game_) {
         var I = this;
         this.width = 1000;
         this.height = 600;
@@ -18,10 +19,22 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
             return false;
         });
         global.graphic = this;
+        game = game_;
+        this.InitField()
+    }
 
-        //InitField
-        this.field = new PIXI.DisplayObjectContainer();
+    Graphic.prototype.InitField = function(){
+        this.field                  = new PIXI.DisplayObjectContainer();
+        this.field.player_layer     = new PIXI.DisplayObjectContainer();
+        this.field.background_layer = new PIXI.DisplayObjectContainer();
+        this.field.item_layer       = new PIXI.DisplayObjectContainer();
+        this.field.others_layer     = new PIXI.DisplayObjectContainer();
+        this.field.addChild(this.field.background_layer);
+        this.field.addChild(this.field.item_layer);
+        this.field.addChild(this.field.others_layer);
+        this.field.addChild(this.field.player_layer);
         this.field.interactive = true;
+        var I = this;
         this.field.mousemove = function(data){
             I.pointer = data.getLocalPosition(this);
             I.pointer.x -= I.width/2;
@@ -34,7 +47,6 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
             }
         }
         this.stage.addChild(this.field);
-        
     }
 
     function StartAnimate(I){
@@ -111,19 +123,20 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
         obj.position.y += this.height / 2;
     }
 
-    Graphic.prototype.DrawObj = function(obj, x, y){
+    Graphic.prototype.DrawObj = function(obj, x, y, layer){
         if(x != undefined)
             obj.position.x = x;
         if(y != undefined)
             obj.position.y = y;
         this.Center(obj);
-        this.field.addChild(obj);
+        var field = layer || this.field;
+        field.addChild(obj);
         return obj;
     }
 
-    Graphic.prototype.Draw = function(texture, x, y){
+    Graphic.prototype.Draw = function(texture, x, y, layer){
         var tile = this.Sprite(texture);
-        return this.DrawObj(tile, x, y);
+        return this.DrawObj(tile, x, y, layer);
     }
 
     Graphic.prototype.Clear = function(){
@@ -134,11 +147,11 @@ define(['jquery', 'options', 'global', 'atlas'], function(JQuery, OPTIONS, globa
     }
 
     Graphic.prototype.Remove = function(sprite){
-        this.field.removeChild(sprite)
+        sprite.parent.removeChild(sprite)
     }
 
-    Graphic.prototype.drawGroup = function(group, x, y) {
-        return this.DrawObj(group, x, y);
+    Graphic.prototype.drawGroup = function(group, x, y, layer) {
+        return this.DrawObj(group, x, y, layer);
     }
 
     Graphic.prototype.Text = function(text, style, x, y){

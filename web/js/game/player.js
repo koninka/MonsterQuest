@@ -2,6 +2,7 @@ define(['actor_simpleTopDown', 'global'], function(ActorSTD, GLOBAL){
 
     function Player(id, name, health, mHealth) {
         //id, x, y, type, health, name, init, player, opt
+        this.layer = GLOBAL.graphic.field.player_layer;
         ActorSTD.call(this, id, 0, 0, 'player', {cur: health, max: mHealth}, name, false, this, {idle: true});
         this.login = name;
     }

@@ -56,7 +56,8 @@ define(['global', 'options'], function(GLOBAL, OPTIONS){
         GLOBAL.graphic.DrawObj(
             drawable,
             drawable.position.x = (this.item.x - GLOBAL.game.player.pt.x) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2,
-            drawable.position.y = (this.item.y - GLOBAL.game.player.pt.y) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2
+            drawable.position.y = (this.item.y - GLOBAL.game.player.pt.y) * OPTIONS.TILE_SIZE - OPTIONS.TILE_SIZE / 2,
+            GLOBAL.graphic.field.item_layer
         )
     }
 

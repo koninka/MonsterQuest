@@ -41,7 +41,7 @@ define(['options', 'global', 'actor_info', 'animation_manager', 'item', 'project
         for(var i = 0; i < map.length; ++i){
             this.map.push([])
             for(var j = 0; j < map[i].length; ++j){
-                var tile = graphic.Draw(this.dictionary[map[i][j]], 0, 0);
+                var tile = graphic.Draw(this.dictionary[map[i][j]], 0, 0, graphic.field.background_layer);
                 tile.anchor.x = 0.5;
                 tile.anchor.y = 0.5;
                 this.map[i].push(tile);
