@@ -283,8 +283,8 @@ define(['options', 'global', 'actor_info', 'animation_manager', 'item', 'project
         g.beginFill(0);
         g.drawRect(0, 0, c.x - off_x, graphic.height);
         g.drawRect(0, 0, graphic.width,  c.y - off_y);
-        g.drawRect(0, graphic.height - c.y + off_y - OPTIONS.TILE_SIZE, graphic.width, c.y - off_y);
-        g.drawRect(graphic.width - c.x + off_x - OPTIONS.TILE_SIZE, 0, c.x - off_x, graphic.height);
+        g.drawRect(0, graphic.height - c.y + off_y - OPTIONS.TILE_SIZE, graphic.width, graphic.height);
+        g.drawRect(graphic.width - c.x + off_x - OPTIONS.TILE_SIZE, 0, graphic.width, graphic.height);
         this.bounds = g;
         graphic.stage.addChild(this.bounds);
     }
