@@ -666,6 +666,7 @@ func (g *Game) enforceAction(json consts.JsonType) consts.JsonType {
 
 func (g *Game) setUpMap(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("setUpMap", "badAction")
+    sid := json["sid"].(string)
     loadingFailed := func () consts.JsonType {
         res["result"] = "badMap"
         return res
@@ -698,7 +699,7 @@ func (g *Game) setUpMap(json consts.JsonType) consts.JsonType {
         if !g.field.LoadFromStrings(mapStrs) {
             return loadingFailed()
         }
-
+        g.clearObjects(sid)
         res["result"] = "ok"
     }
 
@@ -726,6 +727,14 @@ func (g *Game) clearDB() {
     }
 }
 
+func (g * Game) clearObjects(sid string) {
+    g.mobs.Clear()
+    g.players.Clear(sid)
+    g.items.Clear()
+    //g.field.Clear()
+    g.clearDB()
+}
+
 func (g *Game) stopTesting(sid string) consts.JsonType {
     res := utils.JsonAction("stopTesting", "badAction")
     if *consts.TEST && consts.TEST_MODE {
@@ -740,11 +749,8 @@ func (g *Game) stopTesting(sid string) consts.JsonType {
         }
         consts.TEST_MODE = false
         consts.SetDefaultConstantsValues()
-        g.mobs.Clear()
-        g.players.Clear(sid)
-        g.items.Clear()
+        g.clearObjects(sid)
         g.field.Clear()
-        g.clearDB()
         res["result"] = "ok"
     }
     return res
