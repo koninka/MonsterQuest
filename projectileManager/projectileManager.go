@@ -68,10 +68,15 @@ func (pm *ProjectileManager) Do() {
                 lt, rb := pm.field.GetSquareArea(x, y, fb.Radius)
                 l, r := int(lt.X), int(rb.X)
                 t, b := int(lt.Y), int(rb.Y)
+                notified := make(map[int64] bool)
                 for i := t; i < b; i++ {
                     for j := l; j < r; j++ {
                         for _, actor := range pm.field.GetActors(j, i) {
-                            go notifier.GameNotifier.NotifyAboutAttack(p.GetOwner(), actor, actor.GetHit(p, p.GetOwner()))
+                            id := actor.GetID()
+                            if !notified[id] {
+                                notified[id] = true
+                                go notifier.GameNotifier.NotifyAboutAttack(p.GetOwner(), actor, actor.GetHit(p, p.GetOwner()))
+                            }
                         }
                     }
                 }
