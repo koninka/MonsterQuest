@@ -32,6 +32,7 @@ func getPlayerKind() *playerKind {
         kind.SetRace(consts.PLAYER_RACE)
         kind.Flags = append(kind.Flags, gameObjectsFlags.GetFlag("CAN_MOVE"))
         kind.Flags = append(kind.Flags, gameObjectsFlags.GetFlag("CAN_BLOW"))
+        kind.Flags = append(kind.Flags, gameObjectsFlags.GetFlag("CAN_REVIVE"))
     }
     return kind
 }

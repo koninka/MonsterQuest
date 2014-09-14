@@ -1,7 +1,7 @@
 package gameObjectsFlags
 
 import (
-    // "fmt"
+    //"fmt"
     "math"
     "MonsterQuest/gameMap"
     "MonsterQuest/geometry"
@@ -179,8 +179,8 @@ func (h *HateFlag) Do(obj gameObjectsBase.Activer) {
     }
     center := obj.GetCenter()
     lt, rb := h.field.GetSquareArea(center.X, center.Y, obj.GetRadiusVision())
-    for i := int(lt.Y); i < int(rb.Y); i++ {
-        for j := int(lt.X); j < int(rb.X); j++ {
+    for i := int(lt.Y); i <= int(rb.Y); i++ {
+        for j := int(lt.X); j <= int(rb.X); j++ {
             for _, m := range h.field.GetActors(j, i) {
                 if m.GetKind().GetRace() == h.hated && obj.GetID() != m.GetID() {
                     obj.SetTarget(m)
@@ -188,5 +188,17 @@ func (h *HateFlag) Do(obj gameObjectsBase.Activer) {
                 }
             }
         }
+    }
+}
+
+type ReviveFlag struct {
+    Flag
+}
+
+func (r *ReviveFlag) Do(obj gameObjectsBase.Activer) {
+    if obj.Killed() && obj.GetRevivePoint() != nil {
+        r.field.UnlinkFromCells(obj)
+        obj.Revive()
+        r.field.LinkToCells(obj)
     }
 }
