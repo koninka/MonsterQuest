@@ -119,6 +119,10 @@ function(JQuery, utils, Player, View, Graphic, Inventory,
         this.inventory.SetItems(inventory, slots);
     };
 
+    Game.prototype.Revive = function (){
+        this.sendViaWS({action: "revive"})
+    }
+
     function OnMessage(e){
         var th = game;
         var data = JSON.parse(e.data);
@@ -129,8 +133,8 @@ function(JQuery, utils, Player, View, Graphic, Inventory,
             th.sendViaWS({action: "look"});
         } else if (result == "badSid") {
             utils.gameShutDown("Bad user's security ID");
-        } else if (result == "badId") {
-            //utils.gameShutDown("Bad ID");
+        } else if (result == "killed") {
+            th.Revive();
         } else {
             switch (data["action"]) {
                 case "equip":
