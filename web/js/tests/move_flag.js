@@ -780,8 +780,8 @@ define(['utils/testsAPI'], function(testsAPI) {
                             actor.ex_hp = response["health"];
                         }  else if (response['action'] == testsAPI.useAction) {
                             testsAPI.Ok(response['result']);
-                            testsAPI.Sleep(testsAPI.tickDuration * 2, testsAPI.Examine, mob.id);
-                            testsAPI.Sleep(testsAPI.tickDuration * 2, testsAPI.Examine, player.id);
+                            testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, mob.id);
+                            testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player.id);
                         }
                         if (isSetMap && isSetConst) {
                             testsAPI.PutMob(mob.x, mob.y, "ORC", "50d44", mob.flags, [], {HP: mob.hp, MAX_HP: mob.max_hp});

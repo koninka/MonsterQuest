@@ -55,7 +55,7 @@ define(['utils/testsAPI'], function(testsAPI) {
                  });
 
                 it('should successfully walk around', function(done){
-                    var mob = { x: 1.5, y: 1.2 };
+                    var mob = { x: 1.5, y: 1.5 };
                     var isSetMap = false;
                     var isSetConst = false;
                     this.timeout(4500);
@@ -239,7 +239,7 @@ define(['utils/testsAPI'], function(testsAPI) {
 
                 it('mob(orc) should attack another mob(animal) and after then the animal mustn\'t attack the orc(animal don\'t have blow flag)[orc hate animal, orc and animal are close]', function(done){
                     var mob1 = { x: 2.5, y: 3.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_ANIMAL", "CAN_BLOW"]};
-                    var mob2 = { x: 2.5, y: 4.2, hp: 450, max_hp: 450, race: "ANIMAL", flags: []};
+                    var mob2 = { x: 2.5, y: 4.5, hp: 450, max_hp: 450, race: "ANIMAL", flags: []};
                     var isSetMap = false;
                     var isSetConst = false;
                     var isPutMob1 = false;
@@ -303,7 +303,7 @@ define(['utils/testsAPI'], function(testsAPI) {
 
                 it('mob(orc) should attack another mob(animal) and after then the animal must attack the orc[orc hate animal, orc and animal are close]', function(done){
                     var mob1 = { x: 2.5, y: 3.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_ANIMAL", "CAN_BLOW"]};
-                    var mob2 = { x: 2.5, y: 4.2, hp: 450, max_hp: 450, race: "ANIMAL", flags: ["CAN_BLOW"]};
+                    var mob2 = { x: 2.5, y: 4.5, hp: 450, max_hp: 450, race: "ANIMAL", flags: ["CAN_BLOW"]};
                     var isSetMap = false;
                     var isSetConst = false;
                     var isPutMob1 = false;
@@ -493,7 +493,7 @@ define(['utils/testsAPI'], function(testsAPI) {
 
                 it('mob(orc) should attack player[orc hate player]', function(done){
                     var player = { x: 3.3, y: 2.5, hp: 1000, max_hp: 1000};
-                    var mob = { x: 2.4, y: 2.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_PLAYER", "CAN_BLOW"]};
+                    var mob = { x: 2.2, y: 2.5, hp: 500, max_hp: 500, race: "ORC", flags: ["HATE_PLAYER", "CAN_BLOW"]};
                     var isSetMap = false;
                     var isSetConst = false;
                     var counter = 0;
