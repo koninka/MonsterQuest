@@ -210,7 +210,10 @@ func (g *Game) setLocationAction(json consts.JsonType) consts.JsonType {
     res := utils.JsonAction("setLocation", "badPlacing")
     pt, ok := utils.GetPointFromJson(json)
     if ok {
-        g.players.getPlayerBySession(json["sid"].(string)).ForcePlace(*pt)
+        p := g.players.getPlayerBySession(json["sid"].(string))
+        g.field.UnlinkFromCells(p)
+        p.ForcePlace(*pt)
+        g.field.LinkToCells(p)
         res["result"] = "ok"
     }
     return res;
