@@ -4,7 +4,7 @@ import (
     "bufio"
     "os"
     "strings"
-    "time"
+    //"time"
     "MonsterQuest/gameFight/blows"
     "MonsterQuest/gameObjects"
     "MonsterQuest/connect"
@@ -28,7 +28,7 @@ func (ml *mobList) takeAwayMob(m *gameObjects.Mob) {
         instance.field.LinkToCells(item)
         instance.items.addItem(item)
     }
-    time.Sleep(consts.LIVING_AFTER_DEAD_DURATION)
+    //time.Sleep(consts.LIVING_AFTER_DEAD_DURATION)
     delete(ml.mobs, m.GetID())
     GetInstance().field.UnlinkFromCells(m)
 }

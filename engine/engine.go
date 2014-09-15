@@ -109,7 +109,7 @@ func (g *Game) NotifyAboutAttack(attacker, target gameObjectsBase.Activer, msg c
     g.notifyInRadius(attacker.GetCenter().X, attacker.GetCenter().Y, msg)
     t, isMob := target.(*gameObjects.Mob)
     if msg["killed"] == true && isMob {
-        go g.mobs.takeAwayMob(t)
+        g.mobs.takeAwayMob(t)
     }
 }
 
