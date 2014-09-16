@@ -55,8 +55,8 @@ define(['utils/testsAPI'], function(testsAPI) {
                                 player['x'] += shift[0];
                                 player['y'] += shift[1];
                                 expect(response['result']).to.equal(testsAPI.actionResultOk);
-                                expect(response['x']).to.equal(player['x']);
-                                expect(response['y']).to.equal(player['y']);
+                                expect(response['x']).to.be.closeTo(player['x'], 0.01);
+                                expect(response['y']).to.be.closeTo(player['y'], 0.01);
                                 if (moveCounter < dirs.length) {
                                     testsAPI.MovePlayer(player['sid'], dirs[moveCounter++]);
                                 } else
@@ -105,8 +105,8 @@ define(['utils/testsAPI'], function(testsAPI) {
                             testsAPI.Sleep(testsAPI.tickDuration * 4, testsAPI.Examine, player['id']);
                         } else if (response['action'] == testsAPI.examineAction) {
                             testsAPI.Ok(response['result']);
-                            testsAPI.Equal(response['x'], 5.5);
-                            testsAPI.Equal(player['y'], response['y']);
+                            expect(response['x']).to.be.closeTo(5.5, 0.01);
+                            expect(response['y']).to.be.closeTo(player['y'], 0.01);
                             done();
                         }
                     });
@@ -143,8 +143,8 @@ define(['utils/testsAPI'], function(testsAPI) {
                             testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
                         } else if (response['action'] == testsAPI.examineAction) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            expect(response['x']).to.equal(player['x']);
-                            expect(response['y']).to.equal(player['y']);
+                            expect(response['x']).to.be.closeTo(player['x'], 0.01);
+                            expect(response['y']).to.be.closeTo(player['y'], 0.01);
                             if (moveCounter < dirs.length) {
                                 testsAPI.MovePlayer(player['sid'], dirs[moveCounter++]);
                                 testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
@@ -199,8 +199,8 @@ define(['utils/testsAPI'], function(testsAPI) {
                             }
                         } else if (response['action'] == testsAPI.examineAction) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            expect(response['x']).to.equal(player['x']);
-                            expect(response['y']).to.equal(player['y']);
+                            expect(response['x']).to.be.closeTo(player['x'], 0.01);
+                            expect(response['y']).to.be.closeTo(player['y'], 0.01);
                             if (moveCounter < dirs.length) {
                                 testsAPI.MovePlayer(player['sid'], dirs[moveCounter++]);
                                 testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
@@ -245,14 +245,14 @@ define(['utils/testsAPI'], function(testsAPI) {
                             player['x'] += shift[0];
                             player['y'] += shift[1];
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            expect(response['x']).to.equal(player['x']);
-                            expect(response['y']).to.equal(player['y']);
+                            expect(response['x']).to.be.closeTo(player['x'], 0.01);
+                            expect(response['y']).to.be.closeTo(player['y'], 0.01);
                             if (moveCounter < dirs.length) {
                                 testsAPI.MovePlayer(player['sid'], dirs[moveCounter++]);
                                 testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
                             } else {
-                                expect(response['x']).to.equal(originX);
-                                expect(response['y']).to.equal(originY);
+                                expect(response['x']).to.be.closeTo(originX, 0.01);
+                                expect(response['y']).to.be.closeTo(originY, 0.01);
                                 done();
                             }
                         }
@@ -311,14 +311,14 @@ define(['utils/testsAPI'], function(testsAPI) {
                             player['x'] += shift[0];
                             player['y'] += shift[1];
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            expect(response['x']).to.equal(player['x']);
-                            expect(response['y']).to.equal(player['y']);
+                            expect(response['x']).to.be.closeTo(player['x'], 0.01);
+                            expect(response['y']).to.be.closeTo(player['y'], 0.01);
                             if (moveCounter < dirs.length) {
                                 testsAPI.MovePlayer(player['sid'], dirs[moveCounter++]);
                                 testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
                             } else {
-                                expect(response['x']).to.equal(originX);
-                                expect(response['y']).to.equal(originY);
+                                expect(response['x']).to.be.closeTo(originX, 0.01);
+                                expect(response['y']).to.be.closeTo(originY, 0.01);
                                 done();
                             }
                         }
@@ -367,14 +367,14 @@ define(['utils/testsAPI'], function(testsAPI) {
                             player['x'] += shift[0];
                             player['y'] += shift[1];
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            expect(response['x']).to.equal(player['x']);
-                            expect(response['y']).to.equal(player['y']);
+                            expect(response['x']).to.be.closeTo(player['x'], 0.01);
+                            expect(response['y']).to.be.closeTo(player['y'], 0.01);
                             if (moveCounter < dirs.length) {
                                 testsAPI.MovePlayer(player['sid'], dirs[moveCounter++]);
                                 testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
                             } else {
-                                expect(response['x']).to.equal(originX);
-                                expect(response['y']).to.equal(originY);
+                                expect(response['x']).to.be.closeTo(originX, 0.01);
+                                expect(response['y']).to.be.closeTo(originY, 0.01);
                                 done();
                             }
                         }
@@ -411,8 +411,8 @@ define(['utils/testsAPI'], function(testsAPI) {
                             testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
                         } else if (response['action'] == testsAPI.examineAction) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            expect(response['x']).to.equal(0.5);
-                            expect(response['y']).to.equal(player['y'] - testsAPI.playerVelocity);
+                            expect(response['x']).to.be.closeTo(0.5, 0.01);
+                            expect(response['y']).to.be.closeTo(player['y'] - testsAPI.playerVelocity, 0.01);
                             done();
                         }
                     });
@@ -448,8 +448,8 @@ define(['utils/testsAPI'], function(testsAPI) {
                             testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
                         } else if (response['action'] == testsAPI.examineAction) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            expect(response['x']).to.equal(2.5);
-                            expect(response['y']).to.equal(player['y'] - testsAPI.playerVelocity);
+                            expect(response['x']).to.be.closeTo(2.5, 0.01);
+                            expect(response['y']).to.be.closeTo(player['y'] - testsAPI.playerVelocity, 0.01);
                             done();
                         }
                     });
@@ -485,8 +485,8 @@ define(['utils/testsAPI'], function(testsAPI) {
                             testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
                         } else if (response['action'] == testsAPI.examineAction) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            expect(response['x']).to.equal(0.5);
-                            expect(response['y']).to.equal(player['y'] + testsAPI.playerVelocity);
+                            expect(response['x']).to.be.closeTo(0.5, 0.01);
+                            expect(response['y']).to.be.closeTo(player['y'] + testsAPI.playerVelocity, 0.01);
                             done();
                         }
                     });
@@ -522,8 +522,8 @@ define(['utils/testsAPI'], function(testsAPI) {
                             testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
                         } else if (response['action'] == testsAPI.examineAction) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            expect(response['x']).to.equal(2.5);
-                            expect(response['y']).to.equal(player['y'] + testsAPI.playerVelocity);
+                            expect(response['x']).to.be.closeTo(2.5, 0.01);
+                            expect(response['y']).to.be.closeTo(player['y'] + testsAPI.playerVelocity, 0.01);
                             done();
                         }
                     });
@@ -559,8 +559,8 @@ define(['utils/testsAPI'], function(testsAPI) {
                             testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
                         } else if (response['action'] == testsAPI.examineAction) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            expect(response['x']).to.equal(player['x'] + testsAPI.playerVelocity);
-                            expect(response['y']).to.equal(0.5);
+                            expect(response['x']).to.be.closeTo(player['x'] + testsAPI.playerVelocity, 0.01);
+                            expect(response['y']).to.be.closeTo(0.5, 0.01);
                             done();
                         }
                     });
@@ -596,8 +596,8 @@ define(['utils/testsAPI'], function(testsAPI) {
                             testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
                         } else if (response['action'] == testsAPI.examineAction) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            expect(response['x']).to.equal(player['x'] + testsAPI.playerVelocity);
-                            expect(response['y']).to.equal(2.5);
+                            expect(response['x']).to.be.closeTo(player['x'] + testsAPI.playerVelocity, 0.01);
+                            expect(response['y']).to.be.closeTo(2.5, 0.01);
                             done();
                         }
                     });
@@ -633,8 +633,8 @@ define(['utils/testsAPI'], function(testsAPI) {
                             testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
                         } else if (response['action'] == testsAPI.examineAction) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            expect(response['x']).to.equal(player['x'] - testsAPI.playerVelocity);
-                            expect(response['y']).to.equal(0.5);
+                            expect(response['x']).to.be.closeTo(player['x'] - testsAPI.playerVelocity, 0.01);
+                            expect(response['y']).to.be.closeTo(0.5, 0.01);
                             done();
                         }
                     });
@@ -670,8 +670,8 @@ define(['utils/testsAPI'], function(testsAPI) {
                             testsAPI.Sleep(testsAPI.tickDuration * 2.5, testsAPI.Examine, player['id']);
                         } else if (response['action'] == testsAPI.examineAction) {
                             expect(response['result']).to.equal(testsAPI.actionResultOk);
-                            expect(response['x']).to.equal(player['x'] - testsAPI.playerVelocity);
-                            expect(response['y']).to.equal(2.5);
+                            expect(response['x']).to.be.closeTo(player['x'] - testsAPI.playerVelocity, 0.01);
+                            expect(response['y']).to.be.closeTo(2.5, 0.01);
                             done();
                         }
                     });
